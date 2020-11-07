@@ -1,0 +1,54 @@
+{
+  "_from": "sky-core",
+  "_id": "sky-core@0.1.0",
+  "_inBundle": false,
+  "_integrity": "sha1-VKFb4d3WDpW97n5mm7xofpghbo8=",
+  "_location": "/sky-core",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "sky-core",
+    "name": "sky-core",
+    "escapedName": "sky-core",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "https://registry.npm.taobao.org/sky-core/download/sky-core-0.1.0.tgz",
+  "_shasum": "54a15be1ddd60e95bdee7e669bbc687e98216e8f",
+  "_spec": "sky-core",
+  "_where": "C:\\Users\\User\\Documents\\js\\sky\\sky-core-demo",
+  "author": {
+    "name": "linsk"
+  },
+  "dependencies": {},
+  "deprecated": false,
+  "description": "Javascript toolkit core library",
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@rollup/plugin-alias": "^3.0.1",
+    "@rollup/plugin-node-resolve": "^7.1.1",
+    "rollup": "^1.31.1",
+    "rollup-plugin-babel": "^4.3.3"
+  },
+  "license": "MIT",
+  "main": "dist/sky.js",
+  "module": "utils.js",
+  "name": "sky-core",
+  "scripts": {
+    "build-polyfill": "npx rollup --config build/rollup.config.polyfill.js && npx rollup --config build/rollup.config.polyfill-compat.js && npx rollup --config build/rollup.config.polyfill-modern.js",
+    "build-sky": "npx rollup --config build/rollup.config.sky.js && npx rollup --config build/rollup.config.sky-compat.js && npx rollup --config build/rollup.config.sky-modern.js"
+  },
+  "keywords": [
+    "polyfill",
+    "core-js",
+    "shim"
+  ],
+  "version": "0.1.7"
+}

@@ -1,0 +1,12 @@
+import {modern_defineProperty} from "../../impl-modern/Object/object-property";
+import {compat_defineProperty,ie8_defineProperty} from "../../impl-compat/Object/object-property";
+
+if(!Object.defineProperty) {
+	if(Object.prototype.__defineSetter__){
+		Object.defineProperty=modern_defineProperty;
+	}else{
+		Object.defineProperty=compat_defineProperty;
+	}
+}else if(!Object.defineProperties){
+	Object.defineProperty=ie8_defineProperty;
+}

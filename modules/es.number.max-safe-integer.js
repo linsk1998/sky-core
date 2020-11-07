@@ -1,0 +1,1 @@
+import "../polyfill/Number/MAX_SAFE_INTEGER";

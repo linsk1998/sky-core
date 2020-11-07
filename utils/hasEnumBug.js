@@ -1,0 +1,1 @@
+export var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');

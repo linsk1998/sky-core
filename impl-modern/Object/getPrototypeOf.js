@@ -1,0 +1,1 @@
+export var getPrototypeOf=Object.getPrototypeOf;
