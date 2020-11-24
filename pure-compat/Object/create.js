@@ -1,0 +1,1 @@
+export {create} from "../../impl-compat/Object/create";

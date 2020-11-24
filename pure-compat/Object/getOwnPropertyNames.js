@@ -1,0 +1,1 @@
+export {getOwnPropertyNames} from "../../impl-compat/Object/getOwnPropertyNames";

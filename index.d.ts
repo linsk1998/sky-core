@@ -1,4 +1,4 @@
-declare module "sky-core"{ 
+declare module "sky-core/utils"{ 
 	export function overload(args:ArrayLike<any>,thisVal:any):any;
 	export function overload(checks:((arg:any)=>boolean)[],thisVal:any,target:Function):void;
 	
@@ -73,4 +73,66 @@ declare module "sky-core"{
 	export function setCookie(key:string,value:string,timeout?:number,path?:string,domain?:string):void;
 
 	
+}
+declare module "sky-core/pure/Array/from"{
+	export var from:typeof Array.from;
+}
+declare module "sky-core/pure/Array/isArray"{
+	export var isArray:typeof Array.isArray;
+}
+declare module "sky-core/polyfill/Object/assign"{}
+declare module "sky-core/pure/Object/assign"{
+	export var assign:typeof Object.assign;
+}
+declare module "sky-core/polyfill/Object/create"{}
+declare module "sky-core/pure/Object/create"{
+	export var create:typeof Object.create;
+}
+declare module "sky-core/polyfill/Object/defineProperties"{}
+declare module "sky-core/pure/Object/defineProperties"{
+	export var defineProperties:typeof Object.defineProperties;
+}
+declare module "sky-core/polyfill/Object/defineProperty"{}
+declare module "sky-core/pure/Object/defineProperty"{
+	export var defineProperty:typeof Object.defineProperty;
+}
+declare module "sky-core/polyfill/Object/entries"{}
+declare module "sky-core/pure/Object/entries"{
+	export var entries:typeof Object.entries;
+}
+declare module "sky-core/polyfill/Object/fromEntries"{}
+declare module "sky-core/pure/Object/fromEntries"{
+	export var fromEntries:typeof Object.fromEntries;
+}
+declare module "sky-core/polyfill/Object/getOwnPropertyDescriptor"{}
+declare module "sky-core/pure/Object/getOwnPropertyDescriptor"{
+	export var getOwnPropertyDescriptor:typeof Object.getOwnPropertyDescriptor;
+}
+declare module "sky-core/polyfill/Object/getOwnPropertyDescriptors"{}
+declare module "sky-core/pure/Object/getOwnPropertyDescriptors"{
+	export var getOwnPropertyDescriptors:typeof Object.getOwnPropertyDescriptors;
+}
+declare module "sky-core/polyfill/Object/getOwnPropertyNames"{}
+declare module "sky-core/pure/Object/getOwnPropertyNames"{
+	export var getOwnPropertyNames:typeof Object.getOwnPropertyNames;
+}
+declare module "sky-core/polyfill/Object/getPrototypeOf"{}
+declare module "sky-core/pure/Object/getPrototypeOf"{
+	export var getPrototypeOf:typeof Object.getPrototypeOf;
+}
+declare module "sky-core/polyfill/Object/is"{}
+declare module "sky-core/pure/Object/is"{
+	export var is:typeof Object.is;
+}
+declare module "sky-core/polyfill/Object/keys"{}
+declare module "sky-core/pure/Object/keys"{
+	export var keys:typeof Object.keys;
+}
+declare module "sky-core/polyfill/Object/setPrototypeOf"{}
+declare module "sky-core/pure/Object/setPrototypeOf"{
+	export var setPrototypeOf:typeof Object.setPrototypeOf;
+}
+declare module "sky-core/polyfill/Object/values"{}
+declare module "sky-core/pure/Object/values"{
+	export var values:typeof Object.values;
 }

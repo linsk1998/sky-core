@@ -1,4 +1,4 @@
-import {compat_createObject} from "../../impl-compat/Object/object-inherits";
+export {create} from "../../impl-compat/Object/create";
 if(!Object.create){
-	Object.create=compat_createObject;
+	Object.create=create;
 }

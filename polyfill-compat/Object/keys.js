@@ -1,7 +1,5 @@
 
-import "../../polyfill/globalThis";
-import "../../polyfill/String/prototype/startsWith";
-import {compat_keys} from "../../impl-compat/Object/object-enum";
+import {keys as compat_keys} from "../../impl-compat/Object/keys";
 if(!Object.keys){
 	Object.keys=compat_keys;
 }

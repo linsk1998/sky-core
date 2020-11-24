@@ -1,0 +1,1 @@
+export {fromEntries} from "sky-core/pure/Object/fromEntries";

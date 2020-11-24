@@ -1,4 +1,4 @@
-import {nativeSymbol} from "../native/Symbol";
+import {Symbol as nativeSymbol} from "../native/Symbol";
 export function nosymbol_forIn(obj,fn,thisArg){
 	for(var key in obj) {
 		if(key.startsWith("@@")){

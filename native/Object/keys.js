@@ -1,1 +1,1 @@
-export var nativeKeys=Object.keys;
+export var keys=Object.keys;

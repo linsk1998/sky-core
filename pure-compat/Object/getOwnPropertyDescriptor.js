@@ -1,0 +1,1 @@
+export {getOwnPropertyDescriptor} from "../../impl-compat/Object/getOwnPropertyDescriptor";

@@ -1,5 +1,6 @@
-import {dontEnums} from "./dontEnums";
-import {getPrototypeOf} from "../impl-compat/Object/getPrototypeOf";
+import "../../polyfill/String/prototype/startsWith";
+import {dontEnums} from "../../utils-compat/dontEnums";
+import {getPrototypeOf} from "./getPrototypeOf";
 
 export function keys(obj){
 	var result=[],key;
@@ -23,7 +24,7 @@ export function keys(obj){
 	var i=dontEnums.length;
 	while(i-->0){
 		key=dontEnums[i];
-		if(hasOwn(obj,key)){
+		if(Object.prototype.hasOwnProperty.call(obj,key)){
 			result.push(key);
 		}
 	}

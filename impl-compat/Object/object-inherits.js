@@ -1,5 +1,5 @@
 import { compat_forIn } from "./object-enum";
-export function compat_createObject(proto){
+export function compat_create(proto){
 	function F(){}
 	F.prototype = proto;
 	return new F();

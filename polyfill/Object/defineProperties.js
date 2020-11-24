@@ -1,6 +1,5 @@
-import "./defineProperty";
-import "./keys";
-import { defineProperties } from "../../impl/Object";
+import {defineProperties} from "../../impl/Object/defineProperties";
+
 if(!Object.defineProperties){
 	Object.defineProperties=defineProperties;
 }

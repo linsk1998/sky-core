@@ -1,3 +1,6 @@
+
+import {compat_getPrototypeOf} from "../impl-compat/Object/object-inherits";
+
 export var dontEnums=["toString","toLocaleString","valueOf","hasOwnProperty", "isPrototypeOf","propertyIsEnumerable"];
 export function hasOwn(obj,key){
 	if(typeof obj!=="object"){
@@ -35,7 +38,7 @@ export function compat_forIn(obj,fn,thisArg){
 		}
 	}
 	var i=dontEnums.length;
-	var proto=Object.getPrototypeOf(obj);
+	var proto=compat_getPrototypeOf(obj);
 	//遍历nonEnumerableProps数组
 	while(i--){
 		var prop=dontEnums[i];
@@ -52,7 +55,7 @@ export function compat_keys(obj){
 	var result=[],key;
 	var isJsObject=obj instanceof Object;
 	if(!isJsObject){
-		var proto=Object.getPrototypeOf(obj);
+		var proto=compat_getPrototypeOf(obj);
 		if(proto){
 			for(key in obj){
 				if(!key.startsWith("@@") && !key.startsWith("__") && proto[key]!==obj[key]){

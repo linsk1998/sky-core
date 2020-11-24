@@ -1,1 +1,5 @@
-export var setPrototypeOf=Object.setPrototypeOf; 
+
+export function setPrototypeOf(obj,proto){
+	obj.__proto__=proto;
+	return obj; 
+}

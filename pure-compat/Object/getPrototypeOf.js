@@ -1,1 +1,1 @@
-export {compat_getPrototypeOf as getPrototypeOf} from "../../impl-compat/Object/object-inherits";
+export {getPrototypeOf} from "../../impl-compat/Object/getPrototypeOf";

@@ -1,7 +1,6 @@
+import {getPrototypeOf} from "../../impl-modern/Object/getPrototypeOf";
 if(!Object.getPrototypeOf){
 	if('__proto__' in Object.prototype){
-		Object.getPrototypeOf=function(object){
-			return object.__proto__;
-		};
+		Object.getPrototypeOf=getPrototypeOf;
 	}
 }

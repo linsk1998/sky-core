@@ -7,7 +7,7 @@ export function compat_defineProperty(obj, prop, descriptor){
 	obj['@@desc:'+prop]=descriptor;
 };
 
-var native_defineProperty=Object.defineProperty;
+import {defineProperty as native_defineProperty} from "../../native/Object/defineProperty";
 export function ie8_defineProperty(obj, prop, descriptor){
 	if(obj instanceof Object){
 		compat_defineProperty.apply(Object,arguments);

@@ -1,2 +1,2 @@
 import "../polyfill/globalThis";
-export var nativeSymbol=globalThis.Symbol;
+export var Symbol=globalThis.Symbol;

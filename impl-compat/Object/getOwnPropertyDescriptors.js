@@ -1,3 +1,5 @@
+import "../../polyfill/Array/prototype/includes";
+import "../../polyfill/String/prototype/startsWith";
 import {keys as compat_keys} from "./keys";
 export function getOwnPropertyDescriptors(obj){
 	var o={};

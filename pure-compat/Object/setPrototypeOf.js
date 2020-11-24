@@ -1,0 +1,1 @@
+export {setPrototypeOf} from "../../impl-compat/Object/setPrototypeOf";

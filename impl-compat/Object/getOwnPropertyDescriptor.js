@@ -6,4 +6,4 @@ export function getOwnPropertyDescriptor(obj,prop){
 	if(Object.prototype.hasOwnProperty.call(obj,prop)){
 		return {value: obj[prop], writable: true, enumerable: true, configurable: true};
 	}
-}; 
+};

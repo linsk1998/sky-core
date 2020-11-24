@@ -1,0 +1,4 @@
+import {values} from "../../impl/Object/values";
+if(!Object.values){
+	Object.values=values;
+}

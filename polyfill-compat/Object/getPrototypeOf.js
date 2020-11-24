@@ -1,4 +1,4 @@
-import {compat_getPrototypeOf} from "../../impl-compat/Object/object-inherits";
+import {getPrototypeOf} from "../../impl-compat/Object/object-inherits";
 if(!Object.getPrototypeOf){
-	Object.getPrototypeOf=compat_getPrototypeOf;
+	Object.getPrototypeOf=getPrototypeOf;
 }
