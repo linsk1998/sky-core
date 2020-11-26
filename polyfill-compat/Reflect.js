@@ -1,16 +1,22 @@
+import "sky-core/polyfill/globalThis";
+import { apply } from "../impl/Reflect/apply";
+import { construct } from "../impl/Reflect/construct";
+import { defineProperty } from "../impl/Reflect/defineProperty";
+import { getPrototypeOf } from "sky-core/pure/Object/getPrototypeOf";
+import { getOwnPropertyDescriptor } from "sky-core/pure/Object/getOwnPropertyDescriptor";
+import { set as compat_set } from "../impl-compat/Reflect/set";
+import { get as compat_get } from "../impl-compat/Reflect/get";
+import { deleteProperty as compat_deleteProperty } from "../impl-compat/Reflect/deleteProperty";
 
-import {apply,construct,defineProperty} from "../impl/Reflect";
-import {compat_set,compat_get,compat_deleteProperty} from "../impl-compat/Object/object-property";
-
-if(!globalThis.Reflect){
-	globalThis.Reflect={
-		apply:apply,
-		construct:construct,
-		defineProperty:defineProperty,
-		getPrototypeOf:Object.getPrototypeOf,
-		getOwnPropertyDescriptor:Object.getOwnPropertyDescriptor
+if(!globalThis.Reflect) {
+	globalThis.Reflect = {
+		apply: apply,
+		construct: construct,
+		defineProperty: defineProperty,
+		getPrototypeOf: getPrototypeOf,
+		getOwnPropertyDescriptor: getOwnPropertyDescriptor,
+		set: compat_set,
+		get: compat_get,
+		deleteProperty: compat_deleteProperty
 	};
-	Reflect.set=compat_set;
-	Reflect.get=compat_get;
-	Reflect.deleteProperty=compat_deleteProperty;
 }

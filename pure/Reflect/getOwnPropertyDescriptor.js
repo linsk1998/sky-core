@@ -1,0 +1,1 @@
+export { getOwnPropertyDescriptor } from "sky-core/pure/Object/getOwnPropertyDescriptor";

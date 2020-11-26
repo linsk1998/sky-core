@@ -1,16 +1,22 @@
+import "sky-core/polyfill/globalThis";
+import { apply } from "../impl/Reflect/apply";
+import { construct } from "../impl/Reflect/construct";
+import { defineProperty } from "../impl/Reflect/defineProperty";
+import { getPrototypeOf } from "sky-core/pure/Object/getPrototypeOf";
+import { getOwnPropertyDescriptor } from "sky-core/pure/Object/getOwnPropertyDescriptor";
+import { set as modern_set } from "../impl-modern/Reflect/set";
+import { get as modern_get } from "../impl-modern/Reflect/get";
+import { deleteProperty as modern_deleteProperty } from "../impl-modern/Reflect/deleteProperty";
 
-import {apply,construct,defineProperty} from "../impl/Reflect";
-import {modern_set,modern_get,modern_deleteProperty} from "../impl-modern/Object/object-property";
-
-if(!globalThis.Reflect){
-	globalThis.Reflect={
-		apply:apply,
-		construct:construct,
-		defineProperty:defineProperty,
-		getPrototypeOf:Object.getPrototypeOf,
-		getOwnPropertyDescriptor:Object.getOwnPropertyDescriptor
+if(!globalThis.Reflect) {
+	globalThis.Reflect = {
+		apply: apply,
+		construct: construct,
+		defineProperty: defineProperty,
+		getPrototypeOf: getPrototypeOf,
+		getOwnPropertyDescriptor: getOwnPropertyDescriptor,
+		set: modern_set,
+		get: modern_get,
+		deleteProperty: modern_deleteProperty
 	};
-	Reflect.set=modern_set;
-	Reflect.get=modern_get;
-	Reflect.deleteProperty=modern_deleteProperty;
 }

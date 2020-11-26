@@ -1,0 +1,1 @@
+export { getPrototypeOf } from "sky-core/pure/Object/getPrototypeOf";

@@ -12,7 +12,12 @@
 		],
 		"baseUrl": ".",
 		"paths": {
-			"sky-core/*":["./*"]
+			"sky-core/pure/*": [
+				"./pure/*"
+			],
+			"sky-core/polyfill/*": [
+				"./polyfill/*"
+			]
 		}
 	}
 }

@@ -1,0 +1,1 @@
+export var supportAccessor = !!Object.defineProperties || !!Object.prototype.__defineSetter__;
