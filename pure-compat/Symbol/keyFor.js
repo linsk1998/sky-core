@@ -1,0 +1,1 @@
+export { keyFor } from "../../impl-compat/Symbol/keyFor";
