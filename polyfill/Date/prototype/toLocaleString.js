@@ -1,13 +1,7 @@
-import "./Date.prototype.toLocaleFormat";
+import { toLocaleFormat } from "../../../impl/Date/prototype/toLocaleFormat";
 //部分非IE浏览器的toLocaleString未国际化
-if(new Date().toLocaleString().match(/[a-z]/i)){
+if(new Date().toLocaleString().match(/[a-z]/i)) {
 	Date.prototype.toLocaleString = function() {
-		return this.toLocaleFormat("%Y-%m-%d %H:%M:%S");
-	};
-	Date.prototype.toLocaleDateString = function() {
-		return this.toLocaleFormat("%Y-%m-%d");
-	};
-	Date.prototype.toLocaleTimeString = function() {
-		return this.toLocaleFormat("%H:%M:%S");
+		return toLocaleFormat.call(this, "%Y-%m-%d %H:%M:%S");
 	};
 }
