@@ -1,0 +1,1 @@
+export var parse = JSON.parse;

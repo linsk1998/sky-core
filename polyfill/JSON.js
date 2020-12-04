@@ -1,7 +1,8 @@
-import {stringify,parse} from "../impl/JSON";
-if(!globalThis.JSON){
-	globalThis.JSON={
-		stringify:stringify,
-		parse:parse
+import { parse } from "../impl/JSON/parse";
+import { stringify } from "../impl/JSON/stringify";
+if(!globalThis.JSON) {
+	globalThis.JSON = {
+		stringify: stringify,
+		parse: parse
 	};
 }
