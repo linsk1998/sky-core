@@ -1,6 +1,4 @@
-
-if(!Array.of){
-	Array.of=function(){
-		return Array.prototype.slice.call(arguments);
-	};
+import { of } from "../../impl/Array/of";
+if(!Array.of) {
+	Array.of = of;
 }

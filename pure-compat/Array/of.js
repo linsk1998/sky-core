@@ -1,0 +1,1 @@
+export { of } from "../../impl/Array/of";
