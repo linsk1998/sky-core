@@ -1,0 +1,1 @@
+export var Map = this.Map;
