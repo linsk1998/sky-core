@@ -1,0 +1,1 @@
+export var scripts = document.scripts || document.getElementsByTagName("SCRIPT");
