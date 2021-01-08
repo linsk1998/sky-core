@@ -1,6 +1,6 @@
-import "core-js/modules/es.global-this";
-if(!globalThis.localStorage){
-	globalThis.localStorage=new function(){
+
+if(!this.localStorage){
+	this.localStorage=new function(){
 		var ele=document.createElement("localStorage");
 		if(ele.addBehavior){
 			ele.addBehavior("#default#userData");

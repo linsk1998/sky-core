@@ -1,10 +1,13 @@
 
 import { Symbol } from "../impl/Symbol";
-import { Set as GSet } from "../native/Set";
-import { Set as modern_Set } from "../impl-modern/Set";
-import { Set as compat_Set } from "../impl-compat/Set";
-if(GSet && modern_Set.prototype[Symbol.iterator]) {
-	this.Set = modern_Set;
+import { Set } from "../native/Set";
+import { fixSet } from "../impl-modern/Set";
+import { createSet } from "../impl-compat/Set";
+
+if(Set) {
+	if(!Symbol || !Set.prototype[Symbol.iterator]){
+		this.Set = fixSet();
+	}
 } else {
-	this.Set = compat_Set;
+	this.Set = createSet();
 }

@@ -1,2 +1,2 @@
-import {from as array_from} from "../../impl/Array/from";
-export var from=Array.from || array_from
+import { from } from "../../impl/Array/from";
+export default Array.from || from;

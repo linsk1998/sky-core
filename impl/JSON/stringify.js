@@ -1,4 +1,4 @@
-import { keys } from "sky-core/pure/Object/keys";
+
 import { escapeString } from "../../utils/escapeString";
 import { isFunction } from "../../utils/isFunction";
 export function stringify(obj) {
@@ -23,7 +23,7 @@ export function stringify(obj) {
 						return stringify(obj.toJSON());
 					}
 					var items = [];
-					var ownKeys = keys(obj);
+					var ownKeys = Object.keys(obj);
 					for(var i = 0; i < ownKeys.length; i++) {
 						var key = ownKeys[i];
 						var value = obj[key];

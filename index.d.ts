@@ -171,3 +171,75 @@ declare module "sky-core/polyfill/Reflect/deleteProperty" { }
 declare module "sky-core/pure/Reflect/deleteProperty" {
 	export var deleteProperty: typeof Reflect.deleteProperty;
 }
+
+
+declare module "sky-core/polyfill/Symbol" { }
+declare module "sky-core/pure/Symbol" {
+	export function Symbol(description?: string): Symbol;
+	export namespace Symbol {
+		export var asyncIterator: typeof globalThis.Symbol.asyncIterator;
+		export var hasInstance: typeof globalThis.Symbol.hasInstance;
+		export var isConcatSpreadable: typeof globalThis.Symbol.isConcatSpreadable;
+		export var iterator: typeof globalThis.Symbol.iterator;
+		export var match: typeof globalThis.Symbol.match;
+		export var matchAll: typeof globalThis.Symbol.matchAll;
+		export var replace: typeof globalThis.Symbol.replace;
+		export var search: typeof globalThis.Symbol.search;
+		export var species: typeof globalThis.Symbol.species;
+		export var split: typeof globalThis.Symbol.split;
+		export var toPrimitive: typeof globalThis.Symbol.toPrimitive;
+		export var toStringTag: typeof globalThis.Symbol.toStringTag;
+		export var unscopables: typeof globalThis.Symbol.unscopables;
+	}
+}
+declare module "sky-core/polyfill/Symbol/for" { }
+declare module "sky-core/pure/Symbol/for" {
+	export default Symbol.for;
+}
+declare module "sky-core/polyfill/Symbol/keyFor" { }
+declare module "sky-core/pure/Symbol/keyFor" {
+	export var keyFor: typeof Symbol.keyFor;
+}
+
+
+declare module "sky-core/polyfill/Array/from" { }
+declare module "sky-core/pure/Array/from" {
+	export var from: typeof Array.from;
+}
+declare module "sky-core/polyfill/Array/isArray" { }
+declare module "sky-core/pure/Array/isArray" {
+	export var isArray: typeof Array.isArray;
+}
+declare module "sky-core/polyfill/Array/of" { }
+declare module "sky-core/pure/Array/of" {
+	export var of: typeof Array.of;
+}
+declare module "sky-core/polyfill/Array/prototype/every" { }
+declare module "sky-core/polyfill/Array/prototype/filter" { }
+declare module "sky-core/polyfill/Array/prototype/forEach" { }
+declare module "sky-core/polyfill/Array/prototype/indexOf" { }
+declare module "sky-core/polyfill/Array/prototype/lastIndexOf" { }
+declare module "sky-core/polyfill/Array/prototype/reduce" { }
+declare module "sky-core/polyfill/Array/prototype/reduceRight" { }
+declare module "sky-core/polyfill/Array/prototype/some" { }
+declare module "sky-core/polyfill/Array/prototype/@@iterator" { }
+declare module "sky-core/polyfill/Array/prototype/entries" { }
+declare module "sky-core/polyfill/Array/prototype/fill" { }
+declare module "sky-core/polyfill/Array/prototype/find" { }
+declare module "sky-core/polyfill/Array/prototype/findIndex" { }
+declare module "sky-core/polyfill/Array/prototype/flat" { }
+declare module "sky-core/polyfill/Array/prototype/flatMap" { }
+declare module "sky-core/polyfill/Array/prototype/includes" { }
+declare module "sky-core/polyfill/Array/prototype/map" { }
+
+declare module "sky-core/polyfill/Date/prototype/toLocaleDateString" { }
+declare module "sky-core/polyfill/Date/prototype/toLocaleFormat" { }
+declare module "sky-core/polyfill/Date/prototype/toLocaleString" { }
+declare module "sky-core/polyfill/Date/prototype/toLocaleTimeString" { }
+declare module "sky-core/polyfill/Date/now" { }
+declare module "sky-core/polyfill/Date/prototype/toISOString" { }
+declare module "sky-core/polyfill/Date/prototype/toJSON" { }
+
+declare module "sky-core/polyfill/Function/prototype/@@hasInstance" { }
+declare module "sky-core/polyfill/Function/prototype/bind" { }
+declare module "sky-core/polyfill/Function/prototype/name" { }

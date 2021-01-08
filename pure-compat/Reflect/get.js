@@ -1,2 +1,3 @@
 
-export { get } from "../../impl-compat/Reflect/get";
+import { get } from "../../impl-compat/Reflect/get";
+export default get;

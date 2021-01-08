@@ -1,1 +1,2 @@
-export {assign} from "../../impl/Object/assign";
+import { assign } from "../../impl/Object/assign";
+export default assign;

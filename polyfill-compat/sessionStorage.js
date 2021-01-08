@@ -1,9 +1,9 @@
 
-import "core-js/modules/es.global-this";
+
 import {getCookie} from "../utils/getCookie";
 import {setCookie} from "../utils/setCookie";
-if(!globalThis.sessionStorage){
-	globalThis.sessionStorage=new function(){
+if(!this.sessionStorage){
+	this.sessionStorage=new function(){
 		var ele=document.createElement("sessionStorage");
 		var sessionId=getCookie("JSESSIONID");
 		if(!sessionId){

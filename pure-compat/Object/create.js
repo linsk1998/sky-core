@@ -1,1 +1,2 @@
-export {create} from "../../impl-compat/Object/create";
+import { create } from "../../impl-compat/Object/create";
+export default create;

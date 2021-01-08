@@ -1,5 +1,6 @@
-import { contains as compat_contains } from "../../impl-compat/document/contains";
-
-module.exports = document.contains ? document : {
-	contains: compat_contains
-};
+import { contains } from "../../impl-compat/document/contains";
+define(function() {
+	return document.contains ? document : {
+		contains: contains
+	};
+});

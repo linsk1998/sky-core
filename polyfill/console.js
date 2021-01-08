@@ -1,12 +1,11 @@
-import "core-js/modules/es.global-this";
-if(!globalThis.console) {
-	console = {};
+import { noop } from "../utils/noop";
+if(!this.console) {
+	this.console = {};
 	console.stack = [];
 	console.log = console.info = console.error = console.warn = function(data) {
-		console.stack.push(data);
-		Debug.writeln(data);
+		if(window.Debug) {
+			Debug.writeln(data);
+		}
 	};
-	console.clear = function() {
-		console.stack = [];
-	};
+	console.clear = noop;
 }

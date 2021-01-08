@@ -1,3 +1,3 @@
-export function isWindow(obj){
-	return obj && typeof obj === "object" && "setInterval" in obj;
+export function isWindow(obj) {
+	return window == obj;
 };

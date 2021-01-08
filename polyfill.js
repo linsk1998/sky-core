@@ -1,78 +1,85 @@
-import "core-js/modules/es.global-this";
+import "sky-core/polyfill/globalThis";
 
-import "core-js/modules/es.number.is-finite";
-import "core-js/modules/es.number.is-nan";
-import "core-js/modules/es.number.is-integer.js";
-import "core-js/modules/es.string.trim";
-import "core-js/modules/es.string.trim-start";
-import "core-js/modules/es.string.trim-end";
-import "core-js/modules/es.string.ends-with";
-import "core-js/modules/es.string.starts-with";
-import "core-js/modules/es.string.includes";
-import "core-js/modules/es.string.repeat";
-import "core-js/modules/es.string.pad-start";
-import "core-js/modules/es.string.pad-end";
-import "core-js/modules/es.function.bind";
+import "sky-core/polyfill/Number/isFinite";
+import "sky-core/polyfill/Number/isNaN";
+import "sky-core/polyfill/Number/isInteger";
+import "sky-core/polyfill/Number/isSafeInteger";
+import "sky-core/polyfill/Number/parseFloat";
+import "sky-core/polyfill/Number/parseInt";
+import "sky-core/polyfill/String/prototype/trim";
+import "sky-core/polyfill/String/prototype/trimStart";
+import "sky-core/polyfill/String/prototype/trimEnd";
+import "sky-core/polyfill/String/prototype/endsWith";
+import "sky-core/polyfill/String/prototype/startsWith";
+import "sky-core/polyfill/String/prototype/includes";
+import "sky-core/polyfill/String/prototype/repeat";
+import "sky-core/polyfill/String/prototype/padStart";
+import "sky-core/polyfill/String/prototype/padEnd";
+import "sky-core/polyfill/Function/prototype/bind";
 
-import "core-js/modules/es.symbol";
-import "core-js/modules/es.symbol.description";
-import "core-js/modules/es.symbol.iterator";
+import "sky-core/polyfill/Symbol";
+import "sky-core/polyfill/Symbol/for";
+import "sky-core/polyfill/Symbol/keyFor";
+import "sky-core/polyfill/Object/getOwnPropertySymbols";
 
-import "core-js/modules/es.object.keys";
-import "core-js/modules/es.object.create";
-import "core-js/modules/es.object.get-prototype-of";
-import "core-js/modules/es.object.set-prototype-of";
-import "core-js/modules/es.object.get-own-property-descriptor";
-import "core-js/modules/es.object.define-property";
-import "core-js/modules/es.object.assign";
-import "core-js/modules/es.object.define-properties";
-import "core-js/modules/es.object.is";
+import "sky-core/polyfill/Object/keys";
+import "sky-core/polyfill/Object/create";
+import "sky-core/polyfill/Object/getPrototypeOf";
+import "sky-core/polyfill/Object/setPrototypeOf";
+import "sky-core/polyfill/Object/getOwnPropertyDescriptor";
+import "sky-core/polyfill/Object/defineProperty";
+import "sky-core/polyfill/Object/assign";
+import "sky-core/polyfill/Object/defineProperties";
+import "sky-core/polyfill/Object/is";
 
-import "./polyfill/Reflect"
+import "sky-core/polyfill/Reflect";
 
-import "core-js/modules/es.array.index-of";
-import "core-js/modules/es.array.last-index-of";
-import "core-js/modules/es.array.for-each";
-import "core-js/modules/es.array.map";
-import "core-js/modules/es.array.filter";
-import "core-js/modules/es.array.some";
-import "core-js/modules/es.array.every";
-import "core-js/modules/es.array.reduce";
+import "sky-core/polyfill/Array/prototype/indexOf";
+import "sky-core/polyfill/Array/prototype/lastIndexOf";
+import "sky-core/polyfill/Array/prototype/forEach";
+import "sky-core/polyfill/Array/prototype/map";
+import "sky-core/polyfill/Array/prototype/filter";
+import "sky-core/polyfill/Array/prototype/some";
+import "sky-core/polyfill/Array/prototype/every";
+import "sky-core/polyfill/Array/prototype/reduce";
 
-import "core-js/modules/es.array.from";
-import "core-js/modules/es.array.is-array";
-import "core-js/modules/es.array.of";
-import "core-js/modules/es.array.includes";
-import "core-js/modules/es.array.find-index";
-import "core-js/modules/es.array.find";
-import "core-js/modules/es.array.iterator";
+import "sky-core/polyfill/Array/from";
+import "sky-core/polyfill/Array/isArray";
+import "sky-core/polyfill/Array/of";
+import "sky-core/polyfill/Array/prototype/includes";
+import "sky-core/polyfill/Array/prototype/findIndex";
+import "sky-core/polyfill/Array/prototype/find";
+import "sky-core/polyfill/Array/prototype/@@iterator";
 
-import "core-js/modules/es.date.to-iso-string";
-import "core-js/modules/es.date.to-json";
-import "core-js/modules/es.date.now";
-import "./polyfill/Date.prototype.toLocaleFormat";
-import "./polyfill/Date.prototype.toLocaleString";
+import "sky-core/polyfill/Date/now";
+import "sky-core/polyfill/Date/constructor";
+import "sky-core/polyfill/Date/prototype/toJSON";
+import "sky-core/polyfill/Date/prototype/toISOString";
+import "sky-core/polyfill/Date/prototype/toLocaleFormat";
+import "sky-core/polyfill/Date/prototype/toLocaleString";
+import "sky-core/polyfill/Date/prototype/toLocaleDateString";
+import "sky-core/polyfill/Date/prototype/toLocaleTimeString";
 
-import "core-js/modules/es.set";
-import "core-js/modules/es.map";
+import "sky-core/polyfill/Set";
+import "sky-core/polyfill/Map";
 
-import "./polyfill/JSON";
+import "sky-core/polyfill/JSON";
 
-import "core-js/modules/web.url-search-params";
-import "core-js/modules/web.url";
-import "core-js/modules/es.promise";
-import "core-js/modules/es.promise.finally";
+import "sky-core/polyfill/Promise";
+import "sky-core/polyfill/Promise/finally";
 
-import "./polyfill/location";
-import "./polyfill/document.head";
-import "./polyfill/Element";
-import "./polyfill/console";
+import "sky-core/polyfill/URLSearchParams";
+import "sky-core/polyfill/URL";
 
-import "./polyfill/document.contains";
-import "./polyfill/localStorage";
-import "./polyfill/sessionStorage";
-import "./polyfill/document.scripts";
-import "./polyfill/Node";
+import "sky-core/polyfill/location";
+import "sky-core/polyfill/document/head";
+import "sky-core/polyfill/document/scripts";
+import "sky-core/polyfill/document/contains";
+import "sky-core/polyfill/Element";
+import "sky-core/polyfill/console";
+
+import "sky-core/polyfill/localStorage";
+import "sky-core/polyfill/sessionStorage";
 
 
-import "./polyfill/Event";
+import "sky-core/polyfill/Event";

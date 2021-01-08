@@ -1,1 +1,2 @@
-export { getPrototypeOf } from "sky-core/pure/Object/getPrototypeOf";
+import getPrototypeOf from "sky-core/pure/Object/getPrototypeOf";
+export default getPrototypeOf;

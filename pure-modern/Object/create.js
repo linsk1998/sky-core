@@ -1,2 +1,2 @@
-import {create as modern_create} from "../../impl-modern/Object/create";
-export var create=Object.create || modern_create;
+import { create } from "../../impl-modern/Object/create";
+export default Object.create || create;

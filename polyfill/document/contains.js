@@ -1,3 +1,3 @@
 
-import "../../polyfill-modern/document.contains";
-import "../../polyfill-compat/document.contains";
+import "../../polyfill-modern/document/contains";
+import "../../polyfill-compat/document/contains";

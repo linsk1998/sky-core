@@ -1,3 +1,3 @@
 
-import { get as modern_get } from "../../impl-modern/Reflect/get";
-export var get = Reflect.get || modern_get;
+import { get } from "../../impl-modern/Reflect/get";
+export default Reflect.get || get;

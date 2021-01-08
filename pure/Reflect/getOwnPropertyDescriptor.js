@@ -1,1 +1,2 @@
-export { getOwnPropertyDescriptor } from "sky-core/pure/Object/getOwnPropertyDescriptor";
+import getOwnPropertyDescriptor from "sky-core/pure/Object/getOwnPropertyDescriptor";
+export default getOwnPropertyDescriptor; 

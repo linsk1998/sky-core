@@ -1,6 +1,6 @@
 
 import { Symbol as SymbolConstructor } from "./Symbol/constructor";
-export function Symbol(desc) {
+function Symbol(desc) {
 	return new SymbolConstructor(desc);
 };
 Symbol.sham = true;
@@ -17,3 +17,4 @@ Symbol.split = "@@split";
 Symbol.toPrimitive = "@@toPrimitive";
 Symbol.toStringTag = "@@toStringTag";
 Symbol.unscopables = "@@unscopables";
+export { Symbol };

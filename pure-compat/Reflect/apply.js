@@ -1,1 +1,2 @@
-export { apply } from "../../impl/Reflect/apply";
+import { apply } from "../../impl/Reflect/apply";
+export default apply; 

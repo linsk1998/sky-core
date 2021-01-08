@@ -1,6 +1,5 @@
 import { isString } from "../../utils/isString";
 import { isArrayLike } from "../../utils/isArrayLike";
-import { Symbol } from "sky-core/pure/Symbol";
 export function from(arrayLike, mapFn, thisArg) {
 	var arr;
 	if(isString(arrayLike)) {

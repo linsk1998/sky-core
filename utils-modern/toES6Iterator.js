@@ -1,20 +1,20 @@
-import { Symbol } from "sky-core/pure/Symbol";
-function ES6Iterator(it) {
-	this.iterator = it;
+
+function ES6Iterator(it){
+	this.iterator=it;
 }
-ES6Iterator.prototype.next = function() {
-	var r = {};
-	try {
-		r.value = this.iterator.next();
-		r.done = false;
-	} catch(e) {
-		r.done = true;
+ES6Iterator.prototype.next=function(){
+	var r={};
+	try{
+		r.value=this.iterator.next();
+		r.done=false;
+	}catch(e){
+		r.done=true;
 	}
 	return r;
 };
-ES6Iterator.prototype[Symbol.iterator] = function() {
+ES6Iterator.prototype[Symbol.iterator]=function(){
 	return this;
 };
-export function toES6Iterator(it) {
+export function toES6Iterator(it){
 	return new ES6Iterator(it);
 };

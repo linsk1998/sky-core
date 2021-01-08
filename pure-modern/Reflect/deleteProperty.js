@@ -1,3 +1,3 @@
 
-import { deleteProperty as modern_deleteProperty } from "../../impl-modern/Reflect/deleteProperty";
-export var deleteProperty = Reflect.deleteProperty || modern_deleteProperty;
+import { deleteProperty } from "../../impl-modern/Reflect/deleteProperty";
+export default Reflect.deleteProperty || deleteProperty;

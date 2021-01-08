@@ -1,3 +1,3 @@
-
-import { defineProperty as reflect_defineProperty } from "../../impl/Reflect/defineProperty";
-export var defineProperty = Reflect.defineProperty || reflect_defineProperty;
+import { Reflect } from "../../native/Reflect";
+import { defineProperty } from "../../impl/Reflect/defineProperty";
+export default Reflect ? Reflect.defineProperty : defineProperty;

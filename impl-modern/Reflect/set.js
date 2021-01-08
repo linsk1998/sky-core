@@ -1,5 +1,3 @@
-import { getOwnPropertyDescriptor } from "sky-core/pure/Object/getOwnPropertyDescriptor";
-import { getPrototypeOf } from "sky-core/pure/Object/getPrototypeOf";
 
 export function set(target, propertyKey, value, receiver) {
 	if(receiver === void 0) {
@@ -12,7 +10,7 @@ export function set(target, propertyKey, value, receiver) {
 	}
 	var o = target, desc;
 	do {
-		desc = getOwnPropertyDescriptor(o, propertyKey);
+		desc = Object.getOwnPropertyDescriptor(o, propertyKey);
 		if(desc) {
 			if(desc.set) {
 				try {
@@ -26,7 +24,7 @@ export function set(target, propertyKey, value, receiver) {
 				return true;
 			}
 		}
-		o = getPrototypeOf(o);
+		o = Object.getPrototypeOf(o);
 	} while(o && o !== Object.prototype);
 	target[propertyKey] = value;
 	return true;

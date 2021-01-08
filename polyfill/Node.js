@@ -1,6 +1,5 @@
-import { head } from "sky-core/pure/document/head";
 if(this.Node) {
-	if(!('parentElement' in head)) {
+	if(!('parentElement' in Node.prototype)) {
 		Node.prototype.__defineGetter__("parentElement", function() {
 			var parent = this.parentNode;
 			if(parent && parent.nodeType === 1) {

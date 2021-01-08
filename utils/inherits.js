@@ -1,6 +1,5 @@
-import "core-js/modules/es.object.assign";
-import "core-js/modules/es.object.set-prototype-of";
-import {compat_inherits} from "../impl-compat/Object/object-inherits";
-import {modern_inherits} from "../impl-modern/Object/object-inherits";
+import { proto } from "../support/proto";
+import { inherits as compat_inherits } from "../utils-compat/inherits";
+import { inherits as modern_inherits } from "../utils-modern/inherits";
 
-export var inherits=-[1,]?modern_inherits:compat_inherits;
+export var inherits = proto ? modern_inherits : compat_inherits;

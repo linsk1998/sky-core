@@ -1,3 +1,1 @@
-if(!document.scripts) {
-	document.scripts = document.getElementsByTagName("script");
-}
+import "../../polyfill-modern/document/scripts";

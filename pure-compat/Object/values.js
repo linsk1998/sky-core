@@ -1,1 +1,2 @@
-export {values} from "../../impl/Object/values";
+import { values } from "../../impl/Object/values";
+export default values; 

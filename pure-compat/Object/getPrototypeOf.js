@@ -1,1 +1,2 @@
-export {getPrototypeOf} from "../../impl-compat/Object/getPrototypeOf";
+import { getPrototypeOf } from "../../impl-compat/Object/getPrototypeOf";
+export default getPrototypeOf;

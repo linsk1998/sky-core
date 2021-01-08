@@ -1,2 +1,3 @@
 
-export { defineProperty } from "../../impl/Reflect/defineProperty";
+import { defineProperty } from "../../impl/Reflect/defineProperty";
+export default defineProperty;

@@ -1,10 +1,12 @@
 
 import { Symbol } from "../impl/Symbol";
-import { Map as GMap } from "../native/Map";
-import { Map as modern_Map } from "../impl-modern/Map";
-import { Map as compat_Map } from "../impl-compat/Map";
-if(GMap && modern_Map.prototype[Symbol.iterator]) {
-	this.Map = modern_Map;
+import { Map } from "../native/Map";
+import { fixMap } from "../impl-modern/Map";
+import { createMap } from "../impl-compat/Map";
+if(Map) {
+	if(!Symbol || !Map.prototype[Symbol.iterator]){
+		this.Map = fixMap();
+	}
 } else {
-	this.Map = compat_Map;
+	this.Map = createMap();
 }

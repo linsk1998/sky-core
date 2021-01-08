@@ -1,1 +1,1 @@
-export var parse = JSON.parse;
+export default JSON.parse;

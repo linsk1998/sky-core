@@ -1,4 +1,4 @@
-import { Symbol } from "./Symbol";
+
 var symbol_cache = {};
 export default function(desc) {
 	if(Object.prototype.hasOwnProperty.call(symbol_cache, desc)) {

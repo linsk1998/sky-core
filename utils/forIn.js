@@ -1,16 +1,7 @@
 
-import {compat_forIn} from "../impl-compat/Object/object-enum";
-import {symbol_forIn,nosymbol_forIn} from "../impl-modern/Object/object-enum";
-import {hasEnumBug} from "../utils/hasEnumBug";
-var forIn;
-if(!globalThis.Symbol || !Symbol.sham){
-	if(hasEnumBug){
-		Object.keys=compat_keys;
-		forIn=compat_forIn;
-	}else{
-		forIn=nosymbol_forIn;
-	}
-}else{
-	forIn=symbol_forIn;
-}
-export {forIn};
+import { Symbol } from "../native/Symbol";
+import { hasEnumBug } from "../utils/hasEnumBug";
+import { forIn as compat_forIn } from "../utils-compat/forIn";
+import { symbol_forIn, nosymbol_forIn } from "../utils-modern/forIn";
+
+export var forIn = Symbol ? symbol_forIn : (hasEnumBug ? compat_forIn : nosymbol_forIn);

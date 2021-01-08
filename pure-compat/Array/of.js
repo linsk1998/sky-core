@@ -1,1 +1,2 @@
-export { of } from "../../impl/Array/of";
+import { of } from "../../impl/Array/of";
+export default of;

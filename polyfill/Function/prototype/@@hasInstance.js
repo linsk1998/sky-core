@@ -1,4 +1,4 @@
-import { Symbol } from "sky-core/pure/Symbol";
+import Symbol from "sky-core/pure/Symbol";
 
 if(!Function.prototype[Symbol.hasInstance]) {
 	Function.prototype[Symbol.hasInstance] = function(instance) {

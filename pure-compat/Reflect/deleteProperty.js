@@ -1,2 +1,3 @@
 
-export { deleteProperty } from "../../impl-compat/Reflect/deleteProperty";
+import { deleteProperty } from "../../impl-compat/Reflect/deleteProperty";
+export default deleteProperty;

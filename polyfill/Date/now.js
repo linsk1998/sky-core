@@ -1,6 +1,4 @@
-
-if(!Date.now){
-	Date.now=function(){
-		return new Date().getTime();
-	};
+import { now } from "../../impl/Date/now";
+if(!Date.now) {
+	Date.now = now;
 }

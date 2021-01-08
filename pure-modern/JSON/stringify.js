@@ -1,1 +1,1 @@
-export var stringify = JSON.stringify;
+export default JSON.stringify;

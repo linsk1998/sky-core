@@ -1,2 +1,3 @@
 
-export { set } from "../../impl-compat/Reflect/set";
+import { set } from "../../impl-compat/Reflect/set";
+export default set;

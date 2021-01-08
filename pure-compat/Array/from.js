@@ -1,1 +1,2 @@
-export { from } from "../../impl/Array/from";
+import { from } from "../../impl/Array/from";
+export default from;

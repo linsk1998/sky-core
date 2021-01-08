@@ -1,1 +1,1 @@
-import "../polyfill/String/prototype/[[iterator]]";
+import "../polyfill/String/prototype/@@iterator";

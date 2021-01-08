@@ -1,1 +1,2 @@
-export { isArray } from "../../impl/Array/isArray";
+import { isArray } from "../../impl/Array/isArray";
+export default isArray;

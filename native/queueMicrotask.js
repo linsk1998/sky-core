@@ -1,0 +1,1 @@
+export var queueMicrotask = this.queueMicrotask;

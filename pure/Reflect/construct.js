@@ -1,3 +1,4 @@
 
-import { construct as reflect_construct } from "../../impl/Reflect/construct";
-export var construct = Reflect.construct || reflect_construct;
+import { Reflect } from "../../native/Reflect";
+import { construct } from "../../impl/Reflect/construct";
+export default Reflect ? Reflect.construct : construct;

@@ -1,1 +1,2 @@
-export {setPrototypeOf} from "../../impl-compat/Object/setPrototypeOf";
+import { setPrototypeOf } from "../../impl-compat/Object/setPrototypeOf";
+export default setPrototypeOf;

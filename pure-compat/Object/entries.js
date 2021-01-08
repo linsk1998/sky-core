@@ -1,1 +1,2 @@
-export {entries} from "../../impl/Object/entries";
+import { entries } from "../../impl/Object/entries";
+export default entries; 

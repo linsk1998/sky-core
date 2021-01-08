@@ -1,2 +1,2 @@
-import { stringify as json_stringify } from "../../impl/JSON/stringify";
-export var stringify = globalThis.JSON ? JSON.stringify : json_stringify;
+import { stringify } from "../../impl/JSON/stringify";
+export default this.JSON ? JSON.stringify : stringify;

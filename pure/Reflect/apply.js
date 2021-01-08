@@ -1,2 +1,3 @@
-import { apply as reflect_apply } from "../../impl/Reflect/apply";
-export var apply = Reflect.apply || reflect_apply;
+import { apply } from "../../impl/Reflect/apply";
+import { Reflect } from "../../native/Reflect";
+export default Reflect ? Reflect.apply : apply;

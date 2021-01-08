@@ -1,5 +1,5 @@
 
-if(this.Proxy){
+if(!this.Proxy){
 	var seq=0;
 	var HANDLE_KEY=Proxy.HANDLE_KEY;
 	var TARGET_KEY=Proxy.TARGET_KEY;

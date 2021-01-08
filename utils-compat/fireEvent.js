@@ -1,18 +1,18 @@
 
-import "core-js/modules/es.object.assign";
-export function fireEvent(ele,evt,props){
-	if(!props){
-		return ele.fireEvent("on"+evt);
+//import "core-js/modules/es.object.assign";
+export function fireEvent(ele, evt, props) {
+	if(!props) {
+		return ele.fireEvent("on" + evt);
 	}
-	var e=document.createEventObject();
-	if('bubbles' in props){
-		e.cancelBubble=!props.bubbles;
+	var e = document.createEventObject();
+	if('bubbles' in props) {
+		e.cancelBubble = !props.bubbles;
 	}
-	try{
+	try {
 		delete props.type;
 		delete props.bubbles;
 		delete props.returnValue;
-	}catch(err){}
+	} catch(err) { }
 	Object.assign(e, props);
-	ele.fireEvent("on"+evt,e);
+	ele.fireEvent("on" + evt, e);
 };

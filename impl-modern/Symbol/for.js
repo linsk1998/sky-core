@@ -1,4 +1,4 @@
-import { Symbol } from "./Symbol";
+//import { Symbol } from "./Symbol";
 var symbol_cache = {};
 export var key_cache = {};
 export default function(desc) {

@@ -1,5 +1,14 @@
-import { Symbol } from "sky-core/pure/Symbol";
-import { Set as GSet } from "../native/Set";
-import { Set as modern_Set } from "../impl-modern/Set";
-import { Set as compat_Set } from "../impl-compat/Set";
-export var Set = (GSet && modern_Set.prototype[Symbol.iterator]) ? modern_Set : compat_Set;
+import { Symbol } from "../native/Symbol";
+import { Set } from "../native/Set";
+import { fixSet } from "../impl-modern/Set";
+import { createSet } from "../impl-compat/Set";
+export default (function() {
+	if(Set) {
+		if(!Symbol || !Set.prototype[Symbol.iterator]){
+			return fixSet();
+		}
+	} else {
+		return createSet();
+	}
+	return Set;
+})();

@@ -1,8 +1,8 @@
-import { create } from "sky-core/pure/Object/create";
+
 import { apply } from "./apply";
 
 export function construct(target, argumentsList, NewTarget) {
-	var o = create(target.prototype);
+	var o = Object.create(target.prototype);
 	if(!NewTarget) { NewTarget = o; }
 	var o2 = apply(target, NewTarget, argumentsList);
 	if(o2 !== void 0) {
