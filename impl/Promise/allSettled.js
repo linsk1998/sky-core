@@ -9,7 +9,7 @@ export function allSettled(promises) {
 		var c = 0;
 		promises.forEach(function(one, index) {
 			if(typeof one.then === "function") {
-				one['finally'](function(data) {
+				one.finally(function(data) {
 					c++;
 					result[index] = data;
 					if(c >= promises.length) {

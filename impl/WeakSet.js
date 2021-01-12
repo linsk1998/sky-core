@@ -20,8 +20,8 @@ WeakSet.prototype.add = function(key) {
 WeakSet.prototype.has = function(key) {
 	return this.map.has(key);
 };
-WeakSet.prototype['delete'] = function(key) {
-	this.map['delete'](key);
+WeakSet.prototype.delete = function(key) {
+	this.map.delete(key);
 	return this;
 };
 

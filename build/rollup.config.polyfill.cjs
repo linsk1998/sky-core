@@ -1,14 +1,14 @@
-
-import alias from "@rollup/plugin-alias";
-import inject from "@rollup/plugin-inject";
-import polyfill from "rollup-plugin-polyfill-inject";
-import es3ify from 'rollup-plugin-es3ify';
-import { modules, polyfills, pures } from "./alias-compat";
-export default {
+var alias = require("@rollup/plugin-alias");
+var inject = require("@rollup/plugin-inject");
+var polyfill = require("rollup-plugin-polyfill-inject");
+var es3ify = require('rollup-plugin-es3ify');
+var path = require("path");
+module.exports = {
 	input: './polyfill.js',
 	output: {
 		strict: false,
-		file: './dist/polyfill-compat.js',
+		file: './dist/polyfill.js',
+		interop: false,
 		format: 'iife'
 	},
 	context: "this",
@@ -49,6 +49,7 @@ export default {
 				"Object.getPrototypeOf": "sky-core/polyfill/Object/getPrototypeOf",
 				"Object.is": "sky-core/polyfill/Object/is",
 				"Object.keys": "sky-core/polyfill/Object/keys",
+				"Object.setPrototypeOf": "sky-core/polyfill/Object/setPrototypeOf",
 				"Object.values": "sky-core/polyfill/Object/values",
 				"Reflect": "sky-core/polyfill/Reflect",
 				"String.fromCodePoint": "sky-core/polyfill/String/fromCodePoint",
@@ -73,9 +74,12 @@ export default {
 			]
 		}),
 		alias({
-			entries: [
-				//{ find: 'core-js/modules', replacement: path.resolve(__dirname, "../modules") }
-			].concat(pures).concat(polyfills).concat(modules)
+			entries: {
+				'core-js/modules': path.resolve(__dirname, "../modules"),
+				'sky-core/pure': path.resolve(__dirname, "../pure"),
+				'sky-core/polyfill': path.resolve(__dirname, "../polyfill"),
+				'sky-core/utils': path.resolve(__dirname, "../utils")
+			}
 		}),
 		es3ify()
 	]

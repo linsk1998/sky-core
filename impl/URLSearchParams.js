@@ -55,7 +55,7 @@ URLSearchParams.prototype.set = function(key, value) {
 		this.append(key, value);
 	}
 };
-URLSearchParams.prototype['delete'] = function(key) {
+URLSearchParams.prototype.delete = function(key) {
 	this._data = this._data.filter(function(item) {
 		return item[1] != key;
 	});

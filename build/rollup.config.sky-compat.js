@@ -3,7 +3,7 @@ import alias from "@rollup/plugin-alias";
 import inject from "@rollup/plugin-inject";
 import polyfill from "rollup-plugin-polyfill-inject";
 import es3ify from 'rollup-plugin-es3ify';
-import { modules, polyfills, pures } from "./alias-compat";
+import { modules, polyfills, pures } from "./alias-compat.mjs";
 export default {
 	input: './sky.js',
 	output: {

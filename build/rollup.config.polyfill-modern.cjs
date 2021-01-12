@@ -1,24 +1,20 @@
 
-import alias from "@rollup/plugin-alias";
-import inject from "@rollup/plugin-inject";
-import polyfill from "rollup-plugin-polyfill-inject";
-import { modules, polyfills, pures } from "./alias-modern.mjs";
-export default {
-	input: './sky.js',
+var alias = require("@rollup/plugin-alias");
+var inject = require("@rollup/plugin-inject");
+var polyfill = require("rollup-plugin-polyfill-inject");
+var { modules, polyfills, pures } = require("./alias-modern.cjs");
+module.exports = {
+	input: './polyfill.js',
 	output: {
 		strict: false,
-		file: './dist/sky-modern.js',
-		format: 'iife',
-		name: 'Sky'
+		file: './dist/polyfill-modern.js',
+		format: 'iife'
 	},
 	context: "this",
 	plugins: [
 		inject({
 			"modules": {
-				"Object.defineProperties": "sky-core/pure/Object/defineProperties",
-				"Object.defineProperty": "sky-core/pure/Object/defineProperty",
-				"Symbol": "sky-core/pure/Symbol",
-				"XMLHttpRequest": "sky-core/pure/XMLHttpRequest"
+				"Symbol": "sky-core/pure/Symbol"
 			},
 			"include": [
 				"impl/**",

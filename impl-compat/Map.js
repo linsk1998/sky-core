@@ -2,7 +2,7 @@
 import { find } from "../utils/find";
 import { findIndex } from "../utils/findIndex";
 
-export function createMap(){
+export function createMap() {
 	function Map(arr) {
 		this.items = new Array();
 		if(arr) {
@@ -25,7 +25,7 @@ export function createMap(){
 		this.items.splice(0, this.items.length);
 		this.size = 0;
 	};
-	Map.prototype["delete"] = function(key) {
+	Map.prototype.delete = function(key) {
 		var i = findIndex(this.items, 0, key);
 		if(i >= 0) {
 			var r = this.items[i];

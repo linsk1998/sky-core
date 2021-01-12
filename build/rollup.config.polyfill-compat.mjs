@@ -2,19 +2,23 @@
 import alias from "@rollup/plugin-alias";
 import inject from "@rollup/plugin-inject";
 import polyfill from "rollup-plugin-polyfill-inject";
-import { modules, polyfills, pures } from "./alias-modern";
+import es3ify from 'rollup-plugin-es3ify';
+import { modules, polyfills, pures } from "./alias-compat.mjs";
 export default {
 	input: './polyfill.js',
 	output: {
 		strict: false,
-		file: './dist/polyfill-modern.js',
+		file: './dist/polyfill-compat.js',
 		format: 'iife'
 	},
 	context: "this",
 	plugins: [
 		inject({
 			"modules": {
-				"Symbol": "sky-core/pure/Symbol"
+				"Object.defineProperties": "sky-core/pure/Object/defineProperties",
+				"Object.defineProperty": "sky-core/pure/Object/defineProperty",
+				"Symbol": "sky-core/pure/Symbol",
+				"XMLHttpRequest": "sky-core/pure/XMLHttpRequest"
 			},
 			"include": [
 				"impl/**",
@@ -30,15 +34,14 @@ export default {
 				"Array.from": "sky-core/polyfill/Array/from",
 				"Array.isArray": "sky-core/polyfill/Array/isArray",
 				"Array.of": "sky-core/polyfill/Array/of",
-				//"Date": "sky-core/polyfill/Date/now",
+				"Date": "sky-core/polyfill/Date/now",
 				"Date": "sky-core/polyfill/Date/parse",
 				"Date": "sky-core/polyfill/Date/constructor",
+				"JSON": "sky-core/polyfill/JSON",
 				"Object.assign": "sky-core/polyfill/Object/assign",
 				"Object.create": "sky-core/polyfill/Object/create",
 				"Object.entries": "sky-core/polyfill/Object/entries",
 				"Object.fromEntries": "sky-core/polyfill/Object/fromEntries",
-				"Object.defineProperties": "sky-core/polyfill/Object/defineProperties",
-				"Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
 				"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
 				"Object.getOwnPropertyDescriptors": "sky-core/polyfill/Object/getOwnPropertyDescriptors",
 				"Object.getOwnPropertyNames": "sky-core/polyfill/Object/getOwnPropertyNames",
@@ -73,6 +76,7 @@ export default {
 			entries: [
 				//{ find: 'core-js/modules', replacement: path.resolve(__dirname, "../modules") }
 			].concat(pures).concat(polyfills).concat(modules)
-		})
+		}),
+		es3ify()
 	]
 };

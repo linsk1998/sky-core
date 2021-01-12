@@ -11,7 +11,7 @@ export function intersection(arg1) {
 			arr = Array.from(arr);
 		}
 		set.forEach(function(item) {
-			if(arr.indexOf(item) < 0) this['delete'](item);
+			if(arr.indexOf(item) < 0) this.delete(item);
 		}, set);
 	}
 	return Array.from(set);

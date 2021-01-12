@@ -1,6 +1,11 @@
 
 import fs from "fs";
 import path from "path";
+var __filename = new URL(import.meta.url).pathname;
+if(__filename.match(/^\/[A-Z]:\//i)) {
+	__filename = __filename.substr(1);
+}
+var __dirname = path.dirname(__filename);
 
 export var modules = fs.readdirSync(path.resolve(__dirname, "../modules-modern")).map(function(file) {
 	var name = file.replace(/\.js$/i, "");

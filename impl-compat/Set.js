@@ -1,5 +1,5 @@
 import "sky-core/polyfill/Array/prototype/indexOf";
-export function createSet(){
+export function createSet() {
 	function Set(arr) {
 		this.items = new Array();
 		if(arr) {
@@ -25,7 +25,7 @@ export function createSet(){
 		}
 		return this;
 	};
-	Set.prototype['delete'] = function(value) {
+	Set.prototype.delete = function(value) {
 		var i = this.items.indexOf(value);
 		if(i >= 0) {
 			this.items.splice(i, 1);
@@ -48,5 +48,5 @@ export function createSet(){
 		return this.items[Symbol.iterator]();
 	};
 	Set.prototype[Symbol.iterator] = Set.prototype.values;
-	return Set
+	return Set;
 };

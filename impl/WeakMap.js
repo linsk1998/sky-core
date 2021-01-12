@@ -23,7 +23,7 @@ WeakMap.prototype.get = function(key) {
 WeakMap.prototype.has = function(key) {
 	return this.symbol in key;
 };
-WeakMap.prototype['delete'] = function(key) {
+WeakMap.prototype.delete = function(key) {
 	delete key[this.symbol];
 	return this;
 };

@@ -11,7 +11,7 @@ export function difference(arg1) {
 		}
 		var j = arr.length;
 		while(j-- > 0) {
-			set['delete'](arr[j]);
+			set.delete(arr[j]);
 		}
 	}
 	return Array.from(set);

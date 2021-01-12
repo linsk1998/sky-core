@@ -1,15 +1,15 @@
 
-import alias from "@rollup/plugin-alias";
-import inject from "@rollup/plugin-inject";
-import polyfill from "rollup-plugin-polyfill-inject";
-import { modules, polyfills, pures } from "./alias-modern.mjs";
-export default {
-	input: './sky.js',
+var alias = require("@rollup/plugin-alias");
+var inject = require("@rollup/plugin-inject");
+var polyfill = require("rollup-plugin-polyfill-inject");
+var es3ify = require('rollup-plugin-es3ify');
+var { modules, polyfills, pures } = require("./alias-compat.cjs");
+module.exports = {
+	input: './polyfill.js',
 	output: {
 		strict: false,
-		file: './dist/sky-modern.js',
-		format: 'iife',
-		name: 'Sky'
+		file: './dist/polyfill-compat.js',
+		format: 'iife'
 	},
 	context: "this",
 	plugins: [
@@ -34,15 +34,14 @@ export default {
 				"Array.from": "sky-core/polyfill/Array/from",
 				"Array.isArray": "sky-core/polyfill/Array/isArray",
 				"Array.of": "sky-core/polyfill/Array/of",
-				//"Date": "sky-core/polyfill/Date/now",
+				"Date": "sky-core/polyfill/Date/now",
 				"Date": "sky-core/polyfill/Date/parse",
 				"Date": "sky-core/polyfill/Date/constructor",
+				"JSON": "sky-core/polyfill/JSON",
 				"Object.assign": "sky-core/polyfill/Object/assign",
 				"Object.create": "sky-core/polyfill/Object/create",
 				"Object.entries": "sky-core/polyfill/Object/entries",
 				"Object.fromEntries": "sky-core/polyfill/Object/fromEntries",
-				"Object.defineProperties": "sky-core/polyfill/Object/defineProperties",
-				"Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
 				"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
 				"Object.getOwnPropertyDescriptors": "sky-core/polyfill/Object/getOwnPropertyDescriptors",
 				"Object.getOwnPropertyNames": "sky-core/polyfill/Object/getOwnPropertyNames",
@@ -77,6 +76,7 @@ export default {
 			entries: [
 				//{ find: 'core-js/modules', replacement: path.resolve(__dirname, "../modules") }
 			].concat(pures).concat(polyfills).concat(modules)
-		})
+		}),
+		es3ify()
 	]
 };
