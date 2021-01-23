@@ -1,5 +1,4 @@
-// import "core-js/modules/es.array.from";
-// import "core-js/modules/es.set";
+
 export function intersection(arg1) {
 	if(arguments.length === 0) {
 		return new Array();

@@ -1,4 +1,4 @@
-export {create} from "../../impl-compat/Object/create";
-if(!Object.create){
-	Object.create=create;
+import { create as compat_create } from "../../impl-compat/Object/create";
+if(!Object.create) {
+	Object.create = compat_create;
 }

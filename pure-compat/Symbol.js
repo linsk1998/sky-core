@@ -1,2 +1,14 @@
 import { Symbol } from "../impl-compat/Symbol";
+Symbol.sham = true;
+Symbol.asyncIterator = "@@asyncIterator";
+Symbol.isConcatSpreadable = "@@isConcatSpreadable";
+Symbol.match = "@@match";
+Symbol.matchAll = "@@matchAll";
+Symbol.replace = "@@replace";
+Symbol.search = "@@search";
+Symbol.species = "@@species";
+Symbol.split = "@@split";
+Symbol.toPrimitive = "@@toPrimitive";
+Symbol.toStringTag = "@@toStringTag";
+Symbol.unscopables = "@@unscopables";
 export default Symbol;

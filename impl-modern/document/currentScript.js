@@ -49,7 +49,7 @@ export function getCurrentPathByStack() {
 	try {
 		throw new Error('get stack');
 	} catch(e) {
-		var arr = getLastStack(e[stackResult.name]).match(stackResult.pattern);
+		var arr = getLastStack(e[stackResultName]).match(stackResultPattern);
 		if(arr) {
 			if(arr[1] != location.href && arr[1] != location.origin + location.pathname + location.search) {
 				return arr[1];

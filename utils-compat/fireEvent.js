@@ -1,5 +1,4 @@
 
-//import "core-js/modules/es.object.assign";
 export function fireEvent(ele, evt, props) {
 	if(!props) {
 		return ele.fireEvent("on" + evt);

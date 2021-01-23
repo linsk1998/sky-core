@@ -1,4 +1,4 @@
-import Symbol from "sky-core/pure/Symbol";
+
 function StringIterator(str) {
 	this.string = str;
 	this.i = 0;

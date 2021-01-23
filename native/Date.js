@@ -1,1 +1,1 @@
-export var Date = globalThis.Date;
+export var Date = this.Date;

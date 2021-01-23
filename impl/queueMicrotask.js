@@ -7,9 +7,11 @@ export function initQueueMicrotask(fn) {
 export function next() {
 	if(ticks && ticks.length) {
 		for(var i = 0; i < ticks.length; i++) {
-			var fn = ticks[i];
+			var args = ticks[i];
+			var fn = args[0];
+			args = Array.prototype.slice.call(args, 1);
 			try {
-				fn();
+				fn.apply(this, args);
 			} catch(e) {
 				console.error(e);
 			}
@@ -17,10 +19,10 @@ export function next() {
 		ticks = null;
 	}
 }
-export function queueMicrotask(fn) {
+export function queueMicrotask() {
 	if(!ticks) {
 		ticks = new Array();
 		nextTick(next);
 	}
-	ticks.push(fn);
+	ticks.push(arguments);
 };

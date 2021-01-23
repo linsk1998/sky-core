@@ -1,5 +1,4 @@
-// import "core-js/modules/es.array.from";
-// import "core-js/modules/es.set";
+
 export function union() {
 	var set = new Set();
 	for(var i = 0; i < arguments.length; i++) {
