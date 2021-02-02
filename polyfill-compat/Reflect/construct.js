@@ -1,8 +1,7 @@
 
 import { construct } from "../../impl/Reflect/construct";
-if(!this.Reflect) {
-	this.Reflect = new Object();
-}
+import "../../polyfill/Reflect";
+
 if(!Reflect.construct) {
 	Reflect.construct = construct;
 }

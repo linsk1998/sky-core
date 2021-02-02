@@ -1,8 +1,7 @@
 
 import { set as compat_set } from "../impl-compat/Reflect/set";
-if(!this.Reflect) {
-	this.Reflect = new Object();
-}
+import "../../polyfill/Reflect";
+
 if(!Reflect.set) {
 	Reflect.set = compat_set;
 }

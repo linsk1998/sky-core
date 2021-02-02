@@ -32,7 +32,14 @@ import "sky-core/polyfill/Object/assign";
 import "sky-core/polyfill/Object/defineProperties";
 import "sky-core/polyfill/Object/is";
 
-import "sky-core/polyfill/Reflect";
+import "sky-core/polyfill/Reflect/apply";
+import "sky-core/polyfill/Reflect/construct";
+import "sky-core/polyfill/Reflect/defineProperty";
+import "sky-core/polyfill/Reflect/deleteProperty";
+import "sky-core/polyfill/Reflect/get";
+import "sky-core/polyfill/Reflect/getOwnPropertyDescriptor";
+import "sky-core/polyfill/Reflect/getPrototypeOf";
+import "sky-core/polyfill/Reflect/set";
 
 import "sky-core/polyfill/Array/prototype/indexOf";
 import "sky-core/polyfill/Array/prototype/lastIndexOf";

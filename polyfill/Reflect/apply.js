@@ -1,8 +1,7 @@
 
 import { apply } from "../../impl/Reflect/apply";
-if(!this.Reflect) {
-	this.Reflect = new Object();
-}
+import "../Reflect";
+
 if(!Reflect.apply) {
 	Reflect.apply = apply;
 }

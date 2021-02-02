@@ -1,8 +1,7 @@
 
 import getPrototypeOf from "sky-core/pure/Object/getPrototypeOf";
-if(!this.Reflect) {
-	this.Reflect = new Object();
-}
+import "../Reflect";
+
 if(!Reflect.getPrototypeOf) {
 	Reflect.getPrototypeOf = getPrototypeOf;
 }
