@@ -1,5 +1,5 @@
 
-import { set as compat_set } from "../impl-compat/Reflect/set";
+import { set as compat_set } from "../../impl-compat/Reflect/set";
 import "../../polyfill/Reflect";
 
 if(!Reflect.set) {

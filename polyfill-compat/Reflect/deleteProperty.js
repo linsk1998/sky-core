@@ -1,5 +1,5 @@
 
-import { deleteProperty as compat_deleteProperty } from "../impl-compat/Reflect/deleteProperty";
+import { deleteProperty as compat_deleteProperty } from "../../impl-compat/Reflect/deleteProperty";
 import "../../polyfill/Reflect";
 
 if(!Reflect.deleteProperty) {
