@@ -5,7 +5,9 @@ import { createSet } from "../impl-compat/Set";
 export default (function() {
 	if(Set) {
 		if(!Symbol || !Set.prototype[Symbol.iterator]) {
-			return fixSet();
+			var S = fixSet();
+			S.prototype[Symbol.iterator] = S.prototype.values;
+			return S;
 		}
 	} else {
 		return createSet();
