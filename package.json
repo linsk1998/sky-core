@@ -6,11 +6,15 @@
 	"deprecated": false,
 	"description": "Javascript toolkit core library",
 	"devDependencies": {
+		"@babel/core": "^7.13.14",
+		"@babel/preset-env": "^7.13.12",
 		"@rollup/plugin-alias": "^3.1.1",
+		"@rollup/plugin-babel": "^5.3.0",
 		"@rollup/plugin-inject": "^4.0.2",
 		"@rollup/plugin-node-resolve": "^7.1.1",
 		"rollup": "^1.31.1",
 		"rollup-plugin-es3ify": "0.0.1",
+		"rollup-plugin-import": "^1.0.1",
 		"rollup-plugin-polyfill-inject": "^1.0.0"
 	},
 	"license": "MIT",
@@ -18,8 +22,9 @@
 	"module": "utils.js",
 	"name": "sky-core",
 	"scripts": {
-		"build-polyfill": "npx rollup --config build/rollup.config.polyfill.cjs && npx rollup --config build/rollup.config.polyfill-compat.cjs && npx rollup --config build/rollup.config.polyfill-modern.cjs",
-		"build-sky": "npx rollup --config build/rollup.config.sky.js && npx rollup --config build/rollup.config.sky-compat.js && npx rollup --config build/rollup.config.sky-modern.js"
+		"build:polyfill": "npx rollup --config build/rollup.config.polyfill.cjs && npx rollup --config build/rollup.config.polyfill-compat.cjs && npx rollup --config build/rollup.config.polyfill-modern.cjs",
+		"build:sky": "npx rollup --config build/rollup.config.sky.js && npx rollup --config build/rollup.config.sky-compat.js && npx rollup --config build/rollup.config.sky-modern.js",
+		"test": "npx rollup --config qunit/rollup.config.impure-universal.js"
 	},
 	"type": "module",
 	"keywords": [

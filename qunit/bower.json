@@ -1,0 +1,10 @@
+{
+	"name": "sky-core-qunit",
+	"main": "qunit.js",
+	"homepage": "https://github.com/linsk1998/sky-core",
+	"authors": [
+		"linsk1998 <linsk@live.com>"
+	],
+	"description": "",
+	"license": "MIT"
+}

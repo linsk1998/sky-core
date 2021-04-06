@@ -1,4 +1,6 @@
-test/
-dist/
-node_modules/
+dist/*
+node_modules/*
+package-lock.json
+qunit/bower_components/*
+qunit/impure-universal/*.js
 *.zip
