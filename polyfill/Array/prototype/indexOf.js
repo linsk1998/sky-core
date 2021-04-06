@@ -1,9 +1,17 @@
-if(!Array.prototype.indexOf){
-	Array.prototype.indexOf=function(e,fromIndex){
-		fromIndex=isNaN(fromIndex)?0:fromIndex;
-		for(var i=fromIndex,j;i<this.length; i++){
-			j=this[i];
-			if(j===e){return i;}
+if(!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function(e) {
+		var fromIndex = 0;
+		if(arguments.length > 1) {
+			fromIndex = 0 + arguments[1];
+			if(fromIndex < 0) {
+				fromIndex += this.length;
+				if(fromIndex < 0) {
+					fromIndex = 0;
+				}
+			}
+		}
+		for(var i = fromIndex; i < this.length; i++) {
+			if(i in this && this[i] === e) { return i; }
 		}
 		return -1;
 	};
