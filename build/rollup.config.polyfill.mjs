@@ -1,4 +1,5 @@
 import alias from "@rollup/plugin-alias";
+import importPlugin from 'rollup-plugin-import';
 import inject from "@rollup/plugin-inject";
 import polyfill from "rollup-plugin-polyfill-inject";
 import es3ify from 'rollup-plugin-es3ify';
@@ -13,6 +14,10 @@ export default {
 	},
 	context: "this",
 	plugins: [
+		importPlugin({
+			libraryName: "sky-core",
+			libraryDirectory: "utils"
+		}),
 		inject({
 			"modules": {
 				"Object.defineProperties": "sky-core/pure/Object/defineProperties",

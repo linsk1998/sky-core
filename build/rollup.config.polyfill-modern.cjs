@@ -1,8 +1,9 @@
 
-var alias = require("@rollup/plugin-alias");
-var inject = require("@rollup/plugin-inject");
-var polyfill = require("rollup-plugin-polyfill-inject");
-var { modules, polyfills, pures } = require("./alias-modern.cjs");
+const alias = require("@rollup/plugin-alias");
+const importPlugin = require('rollup-plugin-import');
+const inject = require("@rollup/plugin-inject");
+const polyfill = require("rollup-plugin-polyfill-inject");
+const { modules, polyfills, pures, utils } = require("./alias-modern.cjs");
 module.exports = {
 	input: './polyfill.js',
 	output: {
@@ -12,6 +13,10 @@ module.exports = {
 	},
 	context: "this",
 	plugins: [
+		importPlugin({
+			libraryName: "sky-core",
+			libraryDirectory: "utils"
+		}),
 		inject({
 			"modules": {
 				"Symbol": "sky-core/pure/Symbol"
@@ -71,8 +76,7 @@ module.exports = {
 		}),
 		alias({
 			entries: [
-				//{ find: 'core-js/modules', replacement: path.resolve(__dirname, "../modules") }
-			].concat(pures).concat(polyfills).concat(modules)
+			].concat(pures).concat(polyfills).concat(utils).concat(modules)
 		})
 	]
 };

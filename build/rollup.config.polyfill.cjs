@@ -1,8 +1,9 @@
-var alias = require("@rollup/plugin-alias");
-var inject = require("@rollup/plugin-inject");
-var polyfill = require("rollup-plugin-polyfill-inject");
-var es3ify = require('rollup-plugin-es3ify');
-var path = require("path");
+const alias = require("@rollup/plugin-alias");
+const importPlugin = require('rollup-plugin-import');
+const inject = require("@rollup/plugin-inject");
+const polyfill = require("rollup-plugin-polyfill-inject");
+const es3ify = require('rollup-plugin-es3ify');
+const path = require("path");
 module.exports = {
 	input: './polyfill.js',
 	output: {
@@ -13,6 +14,10 @@ module.exports = {
 	},
 	context: "this",
 	plugins: [
+		importPlugin({
+			libraryName: "sky-core",
+			libraryDirectory: "utils"
+		}),
 		inject({
 			"modules": {
 				"Object.defineProperties": "sky-core/pure/Object/defineProperties",

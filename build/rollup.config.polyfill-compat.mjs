@@ -1,9 +1,10 @@
 
 import alias from "@rollup/plugin-alias";
+import importPlugin from 'rollup-plugin-import';
 import inject from "@rollup/plugin-inject";
 import polyfill from "rollup-plugin-polyfill-inject";
 import es3ify from 'rollup-plugin-es3ify';
-import { modules, polyfills, pures } from "./alias-compat.mjs";
+import { modules, polyfills, pures, utils } from "./alias-compat.mjs";
 export default {
 	input: './polyfill.js',
 	output: {
@@ -13,6 +14,10 @@ export default {
 	},
 	context: "this",
 	plugins: [
+		importPlugin({
+			libraryName: "sky-core",
+			libraryDirectory: "utils"
+		}),
 		inject({
 			"modules": {
 				"Object.defineProperties": "sky-core/pure/Object/defineProperties",
@@ -74,8 +79,7 @@ export default {
 		}),
 		alias({
 			entries: [
-				//{ find: 'core-js/modules', replacement: path.resolve(__dirname, "../modules") }
-			].concat(pures).concat(polyfills).concat(modules)
+			].concat(pures).concat(polyfills).concat(utils).concat(modules)
 		}),
 		es3ify()
 	]
