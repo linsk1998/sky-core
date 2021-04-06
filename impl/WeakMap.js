@@ -1,4 +1,4 @@
-
+var KEY_WM = "@@WeakMap";
 function WeakMap(iterable) {
 	this.symbol = Symbol("WeakMap");
 	if(iterable) {
@@ -14,18 +14,35 @@ function WeakMap(iterable) {
 	}
 }
 WeakMap.prototype.set = function(key, value) {
-	key[this.symbol] = value;
+	var map = key[KEY_WM];
+	if(!map) {
+		map = key[KEY_WM] = {};
+	}
+	map[this.symbol] = value;
 	return this;
 };
 WeakMap.prototype.get = function(key) {
-	return key[this.symbol];
+	var map = key[KEY_WM];
+	if(map) {
+		return map[this.symbol];
+	}
 };
 WeakMap.prototype.has = function(key) {
-	return this.symbol in key;
+	var map = key[KEY_WM];
+	if(map) {
+		return this.symbol in map;
+	}
+	return false;
 };
 WeakMap.prototype.delete = function(key) {
-	delete key[this.symbol];
-	return this;
+	var map = key[KEY_WM];
+	if(map) {
+		if(this.symbol in map) {
+			delete map[this.symbol];
+			return false;
+		}
+	}
+	return false;
 };
 
 
