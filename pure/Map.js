@@ -1,16 +1,22 @@
-
+import { Symbol } from "../native/Symbol";
+import iterator from "sky-core/pure/Symbol/iterator";
 import { Map } from "../native/Map";
-import { fixMap } from "../impl-modern/Map";
+import { fixMap, createSubMap } from "../impl-modern/Map";
 import { createMap } from "../impl-compat/Map";
+
 export default (function() {
-	if(Map) {
-		if(!Symbol || !Map.prototype[Symbol.iterator]) {
-			var M = fixMap();
-			M.prototype[Symbol.iterator] = M.prototype.entries;
-			return M;
+	if(!Symbol) {
+		if(Map && (Map.prototype.iterator || Map.prototype['@@iterator'])) {
+			return fixMap();
+		} else {
+			return createMap();
 		}
 	} else {
-		return createMap();
+		if(!Map.prototype[iterator]) {
+			var SubMap = createSubMap();
+			SubMap.prototype[iterator] = SubMap.prototype.entries;
+			return SubMap;
+		}
+		return Map;
 	}
-	return Map;
 })();

@@ -2,21 +2,18 @@
 import { Map as GMap } from "../native/Map";
 import { toES6Iterator } from "../utils-modern/toES6Iterator";
 
-function setEach(item) {
-	GMap.prototype.set.apply(this, item);
-}
-export function fixMap() {
+export function createSubMap() {
 	function Map(args) {
 		var map = new GMap(args);
 		Object.setPrototypeOf(map, Object.getPrototypeOf(this));
-		if(args && map.size === 0) {
-			args = Array.from(args);
-			args.forEach(setEach, map);
-		}
 		return map;
 	}
 	Object.setPrototypeOf(Map, GMap);
 	Map.prototype = Object.create(GMap.prototype);
+	return Map;
+}
+export function fixMap() {
+	var Map = SubMap();
 	var m = new GMap();
 	if(typeof m.size === "function") {
 		// firefox 18-
@@ -27,13 +24,7 @@ export function fixMap() {
 			enumerable: true
 		});
 	}
-	if(m !== m.set(1, 1)) {
-		// ie11
-		Map.prototype.set = function(key, value) {
-			GMap.prototype.set.call(this, key, value);
-			return this;
-		};
-	}
+	// ie11 not support iterator
 	if(Map.prototype.iterator) {
 		// firefox 17~26 iterator return firefox iterator
 		if(!Map.prototype.entries) {
@@ -68,34 +59,10 @@ export function fixMap() {
 			};
 		}
 	}
-	if(Map.prototype.forEach) {
-		// ie11
-		if(!Map.prototype.entries) {
-			Map.prototype.entries = function() {
-				var arr = [];
-				this.forEach(pushEach, arr);
-				return arrayToIterator(arr);
-			};
-		}
-		if(!Map.prototype.keys) {
-			Map.prototype.entries = function() {
-				var arr = [];
-				this.forEach(pushEach, arr);
-				return arrayToIterator(arr, getKey);
-			};
-		}
-		if(!Map.prototype.values) {
-			Map.prototype.entries = function() {
-				var arr = [];
-				this.forEach(pushEach, arr);
-				return arrayToIterator(arr, getValue);
-			};
-		}
+	if(!Map.prototype['@@iterator']) {
+		Map.prototype['@@iterator'] = Map.prototype.entries;
 	}
 	return Map;
-}
-function pushEach(value, key) {
-	this.push([key, value]);
 }
 
 function getKey(item) {

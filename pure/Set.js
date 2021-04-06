@@ -1,16 +1,22 @@
 
+import { Symbol } from "../native/Symbol";
+import iterator from "sky-core/pure/Symbol/iterator";
 import { Set } from "../native/Set";
-import { fixSet } from "../impl-modern/Set";
+import { fixSet, createSubSet } from "../impl-modern/Set";
 import { createSet } from "../impl-compat/Set";
 export default (function() {
-	if(Set) {
-		if(!Symbol || !Set.prototype[Symbol.iterator]) {
-			var S = fixSet();
-			S.prototype[Symbol.iterator] = S.prototype.values;
-			return S;
+	if(!Symbol) {
+		if(Set && (Set.prototype.iterator || Set.prototype['@@iterator'])) {
+			return fixSet();
+		} else {
+			return createSet();
 		}
 	} else {
-		return createSet();
+		if(!Set.prototype[iterator]) {
+			var SubSet = createSubSet();
+			SubSet.prototype[iterator] = SubSet.prototype.values;
+			return SubSet;
+		}
+		return Set;
 	}
-	return Set;
 })();

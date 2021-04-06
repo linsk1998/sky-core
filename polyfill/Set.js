@@ -3,10 +3,17 @@ import { Set } from "../native/Set";
 import { fixSet } from "../impl-modern/Set";
 import { createSet } from "../impl-compat/Set";
 
-if(Set) {
-	if(!Symbol || !Set.prototype[Symbol.iterator]) {
+if(!Symbol) {
+	if(Set && (Set.prototype.iterator || Set.prototype['@@iterator'])) {
 		this.Set = fixSet();
+	} else {
+		this.Set = createSet();
 	}
 } else {
-	this.Set = createSet();
+	if(!Symbol.iterator) {
+		Symbol.iterator = Symbol('iterator');
+	}
+	if(!Set.prototype[Symbol.iterator]) {
+		Set.prototype[Symbol.iterator] = Set.prototype.values;
+	}
 }

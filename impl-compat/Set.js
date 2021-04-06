@@ -1,9 +1,10 @@
-import "sky-core/polyfill/Array/prototype/indexOf";
+import { set } from "./Map";
+
 export function createSet() {
 	function Set(arr) {
 		this.items = new Array();
 		if(arr) {
-			var entries = arr[Symbol.iterator];
+			var entries = arr['@@iterator'];
 			if(entries) {
 				var it = entries.call(arr);
 				while(true) {
@@ -14,39 +15,18 @@ export function createSet() {
 			}
 		}
 		this.size = this.items.length;
-	};
-	Set.prototype.has = function(value) {
-		return this.items.indexOf(value) >= 0;
-	};
-	Set.prototype.add = function(value) {
-		if(!this.has(value)) {
-			this.items.push(value);
-			this.size = this.items.length;
-		}
-		return this;
-	};
-	Set.prototype.delete = function(value) {
-		var i = this.items.indexOf(value);
-		if(i >= 0) {
-			this.items.splice(i, 1);
-			this.size = this.items.length;
-			return true;
-		}
-		return false;
-	};
-	Set.prototype.clear = function() {
-		this.items.splice(0, this.items.length);
-		this.size = 0;
-	};
-	Set.prototype.forEach = function(callback, thisArg) {
-		for(var i = 0, j; i < this.size; i++) {
-			j = this.items[i];
-			callback.call(thisArg, j, j, this);
-		}
-	};
-	Set.prototype.values = function() {
-		return this.items[Symbol.iterator]();
-	};
-	Set.prototype[Symbol.iterator] = Set.prototype.values;
+	}
+	Set.prototype.has = has;
+	Set.prototype.add = add;
+	Set.prototype.delete = remove;
+	Set.prototype.clear = clear;
+	Set.prototype.forEach = forEach;
+	Set.prototype.entries = entries;
+	Set.prototype.values = values;
+	Set.prototype['@@iterator'] = values;
 	return Set;
 };
+export function add(value) {
+	set.call(this, value, value);
+};
+export { has, remove, clear, forEach, entries, values } from "./Map";

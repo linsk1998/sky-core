@@ -1,3 +1,3 @@
 
-import { Set } from "../impl-compat/Set";
-export default Set;
+import { createSet } from "../impl-compat/Set";
+export default createSet();

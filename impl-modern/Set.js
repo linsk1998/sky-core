@@ -1,27 +1,20 @@
-import { arrayToIterator } from "sky-core";
+
 import { Set as GSet } from "../native/Set";
 import { toES6Iterator } from "../utils-modern/toES6Iterator";
-
-export function fixSet() {
+export function createSubSet() {
 	function Set(args) {
 		var set = new GSet(args);
 		Object.setPrototypeOf(set, Object.getPrototypeOf(this));
-		if(args && set.size === 0) {
-			args = Array.from(args);
-			args.forEach(GSet.prototype.add, set);
-		}
 		return set;
 	}
 	Object.setPrototypeOf(Set, GSet);
 	Set.prototype = Object.create(GSet.prototype);
+	return Set;
+
+}
+export function fixSet() {
+	var Set = createSubMap();
 	var s = new GSet();
-	if(s !== s.add(1)) {
-		// ie11
-		Set.prototype.add = function(value) {
-			GSet.prototype.add.call(this, value);
-			return this;
-		};
-	}
 	if(typeof s.size === "function") {
 		// firefox 18-
 		Object.defineProperty(Set.prototype, 'size', {
@@ -31,6 +24,7 @@ export function fixSet() {
 			enumerable: true
 		});
 	}
+	// ie11 not support iterator
 	if(Set.prototype.iterator) {
 		// firefox 17~26 iterator return firefox iterator
 		if(!Set.prototype.values) {
@@ -60,29 +54,12 @@ export function fixSet() {
 			};
 		}
 	}
-	if(Set.prototype.forEach) {
-		// ie11
-		if(!Set.prototype.values) {
-			Set.prototype.values = function() {
-				var arr = [];
-				this.forEach(pushEach, arr);
-				return arrayToIterator(arr);
-			};
-		}
-		if(!Set.prototype.entries) {
-			Set.prototype.entries = function() {
-				var arr = [];
-				this.forEach(pushEach, arr);
-				return arrayToIterator(arr, getValueX2);
-			};
-		}
+	if(!Set.prototype['@@iterator']) {
+		Set.prototype['@@iterator'] = Set.prototype.values;
 	}
 	return Set;
 };
 
-function pushEach(item) {
-	this.push(item);
-}
 function getValueX2(item) {
 	return [item, item];
 }
