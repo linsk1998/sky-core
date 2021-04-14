@@ -1,3 +1,3 @@
 export function of() {
-	return Array.prototype.slice.call(arguments);
+	return Array.from.call(this, arguments);
 }

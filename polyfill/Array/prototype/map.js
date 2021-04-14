@@ -1,9 +1,10 @@
 
-if(!Array.prototype.map){
-	Array.prototype.map = function(fn, context) {
+if(!Array.prototype.map) {
+	Array.prototype.map = function(fn) {
+		var thisArg = arguments[1];
 		var arr = [];
-		for (var k = 0, length = this.length; k < length; k++) {
-			arr.push(fn.call(context, this[k], k, this));
+		for(var k = 0, length = this.length; k < length; k++) {
+			arr.push(fn.call(thisArg, this[k], k, this));
 		}
 		return arr;
 	};

@@ -1,9 +1,6 @@
-import "./findIndex";
-if(!Array.prototype.find){
-	Array.prototype.find = function(callback, thisArg) {
-		var i=this.findIndex(callback, thisArg);
-		if(i>=0){
-			return this[i];
-		}
+import { find } from "../../../impl/Array/find";
+if(!Array.prototype.find) {
+	Array.prototype.find = function(callback) {
+		return find(this, callback, arguments[1]);
 	};
 }

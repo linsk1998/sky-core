@@ -1,12 +1,6 @@
-if(!Array.prototype.findIndex){
-	Array.prototype.findIndex = function(callback, thisArg) {
-		for(var i=0,j; i<this.length; i++){
-			j=this[i];
-			var r=callback.call(thisArg,j,i,this);
-			if(r){
-				return i;
-			}
-		}
-		return -1;
+import { findIndex } from "../../../impl/Array/findIndex";
+if(!Array.prototype.findIndex) {
+	Array.prototype.findIndex = function(callback) {
+		return findIndex(this, callback, arguments[1]);
 	};
 }

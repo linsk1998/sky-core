@@ -29,14 +29,15 @@ export default {
 						"loose": true
 					}
 				]
+			],
+			plugins: [
+				// "@babel/plugin-transform-member-expression-literals",
+				// "@babel/plugin-transform-property-literals",
+				// "@babel/plugin-transform-reserved-words",
+				["@babel/plugin-transform-for-of", {
+					"loose": false
+				}]
 			]
-			// plugins: [
-			// 	"@babel/plugin-transform-member-expression-literals",
-			// 	"@babel/plugin-transform-property-literals",
-			// 	"@babel/plugin-transform-reserved-words",
-			// 	"@babel/plugin-transform-arrow-functions",
-			// 	"@babel/plugin-transform-destructuring"
-			// ]
 		}),
 		...impure,
 		alias({

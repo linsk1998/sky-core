@@ -1,6 +1,4 @@
-import { arrayToIterator } from "sky-core";
+import "./values";
 if(!Array.prototype[Symbol.iterator]) {
-	Array.prototype[Symbol.iterator] = function() {
-		return arrayToIterator(this);
-	};
+	Array.prototype[Symbol.iterator] = Array.prototype.values;
 }

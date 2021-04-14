@@ -1,10 +1,18 @@
 
-if(!Array.prototype.lastIndexOf){
-	Array.prototype.lastIndexOf = function(e, fromIndex) {
-		var i=isNaN(fromIndex)?this.length:fromIndex+1;
-		while(i--){
-			var j=this[i];
-			if(j===e){return i;}
+if(!Array.prototype.lastIndexOf) {
+	Array.prototype.lastIndexOf = function(e) {
+		var i = this.length;
+		if(arguments.length > 1) {
+			i = Math.min(1 + arguments[1], i);
+			if(i < 1) {
+				i += this.length;
+				if(i < 1) {
+					return -1;
+				}
+			}
+		}
+		while(i--) {
+			if(i in this && this[i] === e) { return i; }
 		}
 		return -1;
 	};

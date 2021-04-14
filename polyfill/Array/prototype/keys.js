@@ -1,5 +1,5 @@
-if(!Array.prototype.entries) {
-	Array.prototype.entries = function() {
+if(!Array.prototype.keys) {
+	Array.prototype.keys = function() {
 		var array = this;
 		var index = 0;
 		return {
@@ -7,7 +7,7 @@ if(!Array.prototype.entries) {
 				var value;
 				var done = array.length <= index;
 				if(!done) {
-					value = [index, array[index]];
+					value = index;
 					index++;
 				}
 				return {

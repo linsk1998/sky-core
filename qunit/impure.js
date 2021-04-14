@@ -5,16 +5,8 @@ export default [
 		"modules": {
 			"Symbol": "sky-core/polyfill/Symbol",
 		},
-		'include': [
-			"polyfill/**",
-			"polyfill-compat/**",
-			"polyfill-modern/**",
-			"impl/**",
-			"impl-compat/**",
-			"impl-modern/**",
-			"utils/**",
-			"utils-compat/**",
-			"utils-modern/**"
+		exclude: [
+			"polyfill/Symbol.js"
 		]
 	}),
 	polyfill({
@@ -144,9 +136,13 @@ export default [
 				"sky-core/polyfill/String/prototype/includes",
 			],
 			//ES6 Array
+			".copyWithin": "sky-core/polyfill/Array/prototype/copyWithin",
 			".fill": "sky-core/polyfill/Array/prototype/fill",
 			".find": "sky-core/polyfill/Array/prototype/find",
 			".findIndex": "sky-core/polyfill/Array/prototype/findIndex",
+			".entries": "sky-core/polyfill/Array/prototype/entries",
+			".keys": "sky-core/polyfill/Array/prototype/keys",
+			".values": "sky-core/polyfill/Array/prototype/values",
 			//ES2019 Array
 			".flat": "sky-core/polyfill/Array/prototype/flat",
 			".flatMap": "sky-core/polyfill/Array/prototype/flatMap",

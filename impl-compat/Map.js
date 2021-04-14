@@ -125,52 +125,52 @@ export function forEach(callbackfn, thisArg) {
 	} while(item);
 };
 export function entries() {
+	var current = this.head;
 	return {
-		current: this.head,
 		next: function() {
 			var done, value;
-			var cur = this.current;
+			var cur = current;
 			if(cur) {
 				done = false;
 				value = [cur.key, cur.value];
+				current = cur.next;
 			} else {
 				done = true;
 			}
-			this.current = cur.next;
 			return { done: done, value: value };
 		}
 	};
 };
 export function keys() {
+	var current = this.head;
 	return {
-		current: this.head,
 		next: function() {
 			var done, value;
-			var cur = this.current;
+			var cur = current;
 			if(cur) {
 				done = false;
 				value = cur.key;
+				current = cur.next;
 			} else {
 				done = true;
 			}
-			this.current = cur.next;
 			return { done: done, value: value };
 		}
 	};
 };
 export function values() {
+	var current = this.head;
 	return {
-		current: this.head,
 		next: function() {
 			var done, value;
-			var cur = this.current;
+			var cur = current;
 			if(cur) {
 				done = false;
 				value = cur.value;
+				current = cur.next;
 			} else {
 				done = true;
 			}
-			this.current = cur.next;
 			return { done: done, value: value };
 		}
 	};

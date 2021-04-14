@@ -1,11 +1,24 @@
-if (!Array.prototype.fill) {
-	Array.prototype.fill = function(target, start, end){
-		var len=this.length;
-		start=start>>0;
-		end=end===void 0?len:Math.min(end,len);
-		var i=end;
-		while(i>=start){
-			this[i]=target;
+if(!Array.prototype.fill) {
+	Array.prototype.fill = function(target) {
+		if(this.length <= 0) {
+			return this;
 		}
+		var len = this.length;
+		var start = arguments[1] || 0;
+		var end = arguments[2] || len;
+		if(start < 0) {
+			start += len;
+			if(start < 0) {
+				start = 0;
+			}
+		}
+		if(end < 0) {
+			end += len;
+		}
+		var i = Math.min(end, len);
+		while(i-- > start) {
+			this[i] = target;
+		}
+		return this;
 	};
 }
