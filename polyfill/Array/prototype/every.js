@@ -1,11 +1,4 @@
+import { every } from "../../../impl/Array/prototype/every";
 if(!Array.prototype.every) {
-	Array.prototype.every = function(fn) {
-		var thisArg = arguments[1];
-		var passed = true;
-		for(var k = 0, length = this.length; k < length; k++) {
-			if(passed === false) break;
-			passed = !!fn.call(thisArg, this[k], k, this);
-		}
-		return passed;
-	};
+	Array.prototype.every = every;
 }

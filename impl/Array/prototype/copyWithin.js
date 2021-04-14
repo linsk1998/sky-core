@@ -1,8 +1,6 @@
-export function copyWithin(array, target, start, end) {
-	if(array == null) {
-		throw new TypeError('this is null or not defined');
-	}
-	var len = array.length || 0;
+export function copyWithin(target, start/*, end*/) {
+	var end = arguments[2];
+	var len = this.length || 0;
 
 	if(target < 0) {
 		target += len;
@@ -31,11 +29,11 @@ export function copyWithin(array, target, start, end) {
 	}
 	var i;
 	for(i = start; i < end; i++) {
-		if(i in array) {
-			array[i - start + target] = array[i];
+		if(i in this) {
+			this[i - start + target] = this[i];
 		} else {
-			delete array[i];
+			delete this[i];
 		}
 	}
-	return array;
+	return this;
 }

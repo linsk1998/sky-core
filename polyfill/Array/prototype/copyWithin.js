@@ -1,6 +1,4 @@
-import { copyWithin } from "../../../impl/Array/copyWithin";
+import { copyWithin } from "../../../impl/Array/prototype/copyWithin";
 if(!Array.prototype.copyWithin) {
-	Array.prototype.copyWithin = function(target, start/*, end*/) {
-		return copyWithin(this, target, start, arguments[2]);
-	};
+	Array.prototype.copyWithin = copyWithin;
 }
