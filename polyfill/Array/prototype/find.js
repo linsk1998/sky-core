@@ -1,6 +1,4 @@
-import { find } from "../../../impl/Array/find";
+import { find } from "../../../impl/Array/prototype/find";
 if(!Array.prototype.find) {
-	Array.prototype.find = function(callback) {
-		return find(this, callback, arguments[1]);
-	};
+	Array.prototype.find = find;
 }
