@@ -1,7 +1,4 @@
-import { flat } from "../../../impl/Array/flat";
+import { flat } from "../../../impl/Array/prototype/flat";
 if(!Array.prototype.flat) {
-	Array.prototype.flat = function() {
-		var deep = arguments[0];
-		return flat(this, deep);
-	};
+	Array.prototype.flat = flat;
 }

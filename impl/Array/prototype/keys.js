@@ -1,4 +1,5 @@
-export function values() {
+
+export function keys() {
 	var array = this;
 	var index = 0;
 	return {
@@ -6,7 +7,7 @@ export function values() {
 			var value;
 			var done = array.length <= index;
 			if(!done) {
-				value = array[index];
+				value = index;
 				index++;
 			}
 			return {

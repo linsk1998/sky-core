@@ -1,5 +1,5 @@
 
-import "sky-core/polyfill/Array/prototype/includes";
+import includes from "sky-core/pure/Array/prototype/includes";
 export function pick(obj, keys) {
 	var rest = {};
 	if(obj) {
@@ -7,7 +7,7 @@ export function pick(obj, keys) {
 		var i = keys.length;
 		while(i--) {
 			var key = keys[i];
-			if(ownKeys.includes(key)) {
+			if(includes.call(ownKeys, key)) {
 				rest[key] = obj[key];
 			}
 		}

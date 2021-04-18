@@ -1,6 +1,4 @@
-import { flatMap } from "../../../impl/Array/flatMap";
+import { flatMap } from "../../../impl/Array/prototype/flatMap";
 if(!Array.prototype.flatMap) {
-	Array.prototype.flatMap = function(fn) {
-		return flatMap(this, fn, arguments[1]);
-	};
+	Array.prototype.flatMap = flatMap;
 }

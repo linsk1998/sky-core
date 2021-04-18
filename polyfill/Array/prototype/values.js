@@ -1,6 +1,4 @@
-import { values } from "../../../impl/Array/values";
+import { values } from "../../../impl/Array/prototype/values";
 if(!Array.prototype.values) {
-	Array.prototype.values = function() {
-		return values(this);
-	};
+	Array.prototype.values = values;
 }

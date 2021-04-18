@@ -1,9 +1,8 @@
 
-import "sky-core/polyfill/Array/prototype/map";
-import "sky-core/polyfill/Array/prototype/find";
-import "sky-core/polyfill/Array/prototype/filter";
-import "sky-core/polyfill/Array/prototype/forEach";
-import "sky-core/polyfill/Array/prototype/some";
+import map from "sky-core/prue/Array/prototype/map";
+import findIndex from "sky-core/prue/Array/prototype/findIndex";
+import forEach from "sky-core/prue/Array/prototype/forEach";
+import some from "sky-core/prue/Array/prototype/some";
 
 function URLSearchParams(paramsString) {
 	this._data = new Array();
@@ -32,50 +31,58 @@ URLSearchParams.prototype.append = function(key, value) {
 	this._data.push([value, key]);
 };
 URLSearchParams.prototype.get = function(key) {
-	var item = this._data.find(function(item) {
+	var index = findIndex.call(this._data, function(item) {
 		return item[1] == key;
 	});
-	if(item) return item[0];
-	return null;
+	if(index < 0) return null;
+	return this._datal[index][0];
 };
 URLSearchParams.prototype.getAll = function(key) {
-	return this._data.filter(function(item) {
-		return item[1] == key;
-	}).map(function(item) {
-		return item[0];
-	});
+	var data = this._data,
+		len = data.length;
+	var r = [];
+	for(var i = 0; i < len; i++) {
+		var item = data[i];
+		if(item[1] == key) {
+			r.push(item[0]);
+		}
+	}
+	return r;
 };
 URLSearchParams.prototype.set = function(key, value) {
-	var item = this._data.find(function(item) {
+	var index = findIndex.call(this._data, function(item) {
 		return item[1] == key;
 	});
-	if(item) {
-		item[0] = value;
-	} else {
-		this.append(key, value);
-	}
+	if(index < 0) this.append(key, value);
+	this._datal[index][0] = value;
 };
 URLSearchParams.prototype.delete = function(key) {
-	this._data = this._data.filter(function(item) {
-		return item[1] != key;
-	});
+	var data = this._data,
+		i = data.length;
+	while(i-- > 0) {
+		var item = data[i];
+		if(item[1] == key) {
+			data.splice(i, 1);
+		}
+	}
 };
 URLSearchParams.prototype.has = function(key) {
-	return this._data.some(function(item) {
+	return some.call(this._data, function(item) {
 		return item[1] == key;
 	});
 };
 URLSearchParams.prototype.toString = function() {
-	return this._data.map(function(item) {
+	map.call(this._data, function(item) {
 		return encodeURIComponent(item[1]) + "=" + encodeURIComponent(item[0]);
-	}).join("&");
+	});
+	return this._data.map().join("&");
 };
 URLSearchParams.prototype.sort = function() {
 	return this._data.sort(function(a, b) {
 		return a[1] > b[1];
 	});
 };
-URLSearchParams.prototype.forEach = function(fn, thisArg) {
-	this._data.forEach.apply(this._data, arguments);
+URLSearchParams.prototype.forEach = function(fn) {
+	forEach.apply(this._data, fn, arguments[1]);
 };
 export { URLSearchParams };

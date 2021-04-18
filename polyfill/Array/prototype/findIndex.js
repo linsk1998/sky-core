@@ -1,6 +1,4 @@
-import { findIndex } from "../../../impl/Array/findIndex";
+import { findIndex } from "../../../impl/Array/prototype/findIndex";
 if(!Array.prototype.findIndex) {
-	Array.prototype.findIndex = function(callback) {
-		return findIndex(this, callback, arguments[1]);
-	};
+	Array.prototype.findIndex = findIndex;
 }

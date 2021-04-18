@@ -1,5 +1,5 @@
 
-import "sky-core/polyfill/Array/prototype/forEach";
+import forEach from "sky-core/prue/Array/prototype/forEach";
 import { noop } from "../utils/noop";
 
 var PENDING = Symbol("pending");
@@ -17,7 +17,7 @@ function Promise(executor) {
 			if(me._state === PENDING) {
 				me._value = value;
 				me._state = RESOLVED;
-				me._resolveds.forEach(callAll, me);
+				forEach.call(me._resolveds, callAll, me);
 				me._resolveds = null;
 			}
 		});
@@ -27,7 +27,7 @@ function Promise(executor) {
 			if(me._state === PENDING) {
 				me._value = reason;
 				me._state = REJECTED;
-				me._rejecteds.forEach(callAll, me);
+				forEach.call(me._rejecteds, callAll, me);
 				me._rejecteds = null;
 			}
 		});
@@ -84,7 +84,7 @@ Promise.all = function(promises) {
 	return new Promise(function(resolve, reject) {
 		var result = new Array(promises.length);
 		var c = 0;
-		promises.forEach(function(one, index) {
+		forEach.call(promises, function(one, index) {
 			if(typeof one.then === "function") {
 				one.then(function(data) {
 					c++;
@@ -109,7 +109,7 @@ Promise.race = function(promises) {
 		throw new TypeError('You must pass an array to all.');
 	}
 	return new Promise(function(resolve, reject) {
-		promises.forEach(function(one) {
+		forEach.call(promises, function(one) {
 			one.then(function() {
 				resolve();
 			}, function() {
