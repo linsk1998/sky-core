@@ -137,3 +137,4 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 * 不支持伪装成Native函数，函数toString()不会返回“native code”。
 * 不支持function .prototype .name。
 * 不支持不可枚举
+* Symbol WellKnow 只支持hasInstance、iterator
