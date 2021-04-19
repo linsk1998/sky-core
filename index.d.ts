@@ -1,4 +1,4 @@
-declare module "sky-core/utils" {
+declare module "sky-core" {
 	export function overload(args: ArrayLike<any>, thisVal: any): any;
 	export function overload(checks: ((arg: any) => boolean)[], thisVal: any, target: Function): void;
 
@@ -56,17 +56,24 @@ declare module "sky-core/utils" {
 	export function getCurrentPath(): string;
 	export function getScript(src: string, func: Function, charset?: string): HTMLScriptElement;
 
-	export function attachEvent<K extends keyof DocumentEventMap>(ele: Document, evt: K, func: (this: Document, ev: DocumentEventMap[K]) => any, useCapture?: boolean): void;
-	export function attachEvent<K extends keyof WindowEventMap>(ele: Window, evt: K, func: (this: Window, ev: WindowEventMap[K]) => any, useCapture?: boolean): void;
-	export function attachEvent<K extends keyof HTMLElementEventMap>(ele: HTMLElement, evt: K, func: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture: boolean): void;
-	export function attachEvent<K extends keyof ElementEventMap>(ele: Element, evt: K, func: (this: Element, ev: ElementEventMap[K]) => any, useCapture: boolean): void;
-	export function attachEvent(ele: EventTarget, evt: string, func: Function): void;
-	export function detachEvent(ele: EventTarget, evt: string, func: Function, useCapture?: boolean): void;
-	export function fireEvent(ele: EventTarget, evt: string, props: {
-		[key: string]: any,
-		bubbles?: boolean,
-		cancelable?: boolean;
-	}): void;
+	export function getElementsByClassName(className: string, ancestor?: ParentNode | Element | Document): Element[];
+	export function getElementStyle(el: Element, prop: string): string;
+	export function hasClass(el: Element, className: string): boolean;
+	export function addClass(el: Element, className: string): void;
+	export function removeClass(el: Element, className: string): void;
+	export function toggleClass(el: Element, className: string): void;
+	export function getNextElement(el: Element): Element | null;
+	export function getPrevElement(el: Element): Element | null;
+	export function querySelector(selector: string, ancestor?: ParentNode | Element | Document): Element | null;
+	export function querySelectorAll(selector: string, ancestor?: ParentNode | Element | Document): Element[];
+
+	export function attachEvent<K extends keyof DocumentEventMap>(ele: Document, type: K, func: (this: Document, ev: DocumentEventMap[K]) => any, useCapture?: boolean): void;
+	export function attachEvent<K extends keyof WindowEventMap>(ele: Window, type: K, func: (this: Window, ev: WindowEventMap[K]) => any, useCapture?: boolean): void;
+	export function attachEvent<K extends keyof HTMLElementEventMap>(ele: HTMLElement, type: K, func: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture: boolean): void;
+	export function attachEvent<K extends keyof ElementEventMap>(ele: Element, type: K, func: (this: Element, ev: ElementEventMap[K]) => any, useCapture: boolean): void;
+	export function attachEvent(ele: EventTarget, type: string, func: Function): void;
+	export function detachEvent(ele: EventTarget, type: string, func: Function, useCapture?: boolean): void;
+	export function trigger(currentTarget: EventTarget, type: string, props: Record<string, any>): void;
 
 
 	export function getCookie(key: string, value: string): void;
