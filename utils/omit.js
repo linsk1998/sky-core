@@ -1,5 +1,5 @@
 
-import "sky-core/polyfill/Array/prototype/includes";
+import includes from "sky-core/pure/Array/prototype/includes";
 export function omit(obj, keys) {
 	var rest = {};
 	if(obj) {
@@ -7,7 +7,7 @@ export function omit(obj, keys) {
 		var i = ownKeys.length;
 		while(i--) {
 			var key = ownKeys[i];
-			if(!keys.includes(key)) {
+			if(!includes.call(keys, key)) {
 				rest[key] = obj[key];
 			}
 		}
