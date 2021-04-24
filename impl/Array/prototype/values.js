@@ -2,7 +2,7 @@ export function values() {
 	var array = this;
 	var index = 0;
 	return {
-		next() {
+		next: function() {
 			var value;
 			var done = array.length <= index;
 			if(!done) {
