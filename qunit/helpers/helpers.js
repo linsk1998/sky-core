@@ -2,7 +2,7 @@ export function createIterator(elements, methods) {
 	let index = 0;
 	const iterator = {
 		called: false,
-		next() {
+		next: function() {
 			iterator.called = true;
 			return {
 				value: elements[index++],
@@ -22,7 +22,7 @@ export function createIterable(elements, methods) {
 			iterable.received = true;
 			let index = 0;
 			const iterator = {
-				next() {
+				next: function() {
 					iterable.called = true;
 					return {
 						value: elements[index++],

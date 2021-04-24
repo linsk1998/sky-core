@@ -80,8 +80,9 @@ export default [
 			// "Promise.any": "sky-core/polyfill/Promise/any",
 			// "AggregateError":"sky-core/polyfill/AggregateError",
 			"queueMicrotask": "sky-core/polyfill/queueMicrotask",
-			//String.fromCodePoint
+			//ES2015.String
 			"String.fromCodePoint": "sky-core/polyfill/String/fromCodePoint",
+			"String.raw": "sky-core/polyfill/String/raw",
 			//ES2015.Collection
 			"Map": "sky-core/polyfill/Map",
 			"Set": "sky-core/polyfill/Set",
@@ -150,16 +151,21 @@ export default [
 			//toLocaleFormat 这个只有火狐支持，非标准
 			".toLocaleFormat": "sky-core/polyfill/Date/prototype/toLocaleFormat",
 			".toISOString": "sky-core/polyfill/Date/prototype/toISOString",
+			//ES5 String
+			".trim": "sky-core/polyfill/String/prototype/trim",
 			//ES6 String
-			".endsWith": "sky-core/polyfill/String/prototype/endsWith",
 			".startsWith": "sky-core/polyfill/String/prototype/startsWith",
+			".endsWith": "sky-core/polyfill/String/prototype/endsWith",
 			".repeat": "sky-core/polyfill/String/prototype/repeat",
+			".codePointAt": "sky-core/polyfill/String/prototype/codePointAt",
 			//ES2017.String
-			".padEnd": "sky-core/polyfill/String/prototype/padEnd",
 			".padStart": "sky-core/polyfill/String/prototype/padStart",
+			".padEnd": "sky-core/polyfill/String/prototype/padEnd",
 			//ES2019.String
-			".trimEnd": "sky-core/polyfill/String/prototype/trimEnd",
 			".trimStart": "sky-core/polyfill/String/prototype/trimStart",
+			".trimEnd": "sky-core/polyfill/String/prototype/trimEnd",
+			".trimLeft": "sky-core/polyfill/String/prototype/trimLeft",
+			".trimRight": "sky-core/polyfill/String/prototype/trimRight",
 			//ES2020.String
 			".matchAll": "sky-core/polyfill/String/prototype/matchAll",
 			//ESNext.String

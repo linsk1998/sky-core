@@ -1,7 +1,7 @@
 
 import path from "path";
 import alias from "@rollup/plugin-alias";
-import { babel } from '@rollup/plugin-babel';
+import babel from '@rollup/plugin-babel';
 import importPlugin from 'rollup-plugin-import';
 import es3ify from 'rollup-plugin-es3ify';
 import impure from "./impure";

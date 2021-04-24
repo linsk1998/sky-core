@@ -1,6 +1,4 @@
-
-if(!String.prototype.trim){
-	String.prototype.trim=function trim(){
-		return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,'');
-	};
+import { trim } from "../../../impl/String/prototype/trim";
+if(!String.prototype.trim) {
+	String.prototype.trim = trim;
 }

@@ -1,19 +1,12 @@
-
-function StringIterator(str) {
-	this.string = str;
-	this.i = 0;
-}
-StringIterator.prototype.next = function() {
-	var result = {}, i = this.i;
-	result.done = this.string.length <= i;
-	if(!result.done) {
-		result.value = this.string.charAt(i);
-		this.i = ++i;
+import { Symbol } from "../../../native/Symbol";
+import { iterator } from "../../../impl/String/prototype/@@iterator";
+import { toES6Iterator } from "../../../utils-modern/toES6Iterator";
+if(!Symbol) {
+	if(!String.prototype['@@iterator']) {
+		String.prototype['@@iterator'] = iterator;
+	} else if(String.prototype.iterator) {
+		String.prototype['@@iterator'] = function() {
+			return toES6Iterator(this.iterator());
+		};
 	}
-	return result;
-};
-if(!String.prototype[Symbol.iterator]) {
-	String.prototype[Symbol.iterator] = function() {
-		return new StringIterator(this);
-	};
 }

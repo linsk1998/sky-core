@@ -1,20 +1,29 @@
 
-
-function RegExpIterator(str, reg) {
-	this.string = str;
-	this.regExp = new RegExp(reg);
-}
-RegExpIterator.prototype.next = function() {
-	var r = {};
-	r.value = this.regExp.exec(string);
-	if(r.value) {
-		r.done = true;
-	} else {
-		r.done = false;
+function matchAll(regExp) {
+	var string = this;
+	if(typeof regExp === "string") {
+		regExp = new RegExp(regExp, 'g');
+	} else if(regExp && regExp.global === false) {
+		throw new TypeError();
 	}
-	return r;
-};
-RegExpIterator.prototype[Symbol.iterator] = function() {
-	return this;
-};
-export { RegExpIterator };
+	return {
+		next: function() {
+			var value = regExp.exec(string);
+			if(value) {
+				return {
+					value: value,
+					done: false
+				};
+			} else {
+				return {
+					value: undefined,
+					done: true
+				};
+			}
+		},
+		[Symbol.iterator]: function() {
+			return this;
+		}
+	};
+}
+export { matchAll };

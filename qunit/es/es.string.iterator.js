@@ -7,8 +7,8 @@ QUnit.test('String#@@iterator', assert => {
   let iterator = 'qwe'[Symbol.iterator]();
   assert.isIterator(iterator);
   assert.isIterable(iterator);
-  assert.strictEqual(iterator[Symbol.toStringTag], 'String Iterator');
-  assert.strictEqual(String(iterator), '[object String Iterator]');
+  //assert.strictEqual(iterator[Symbol.toStringTag], 'String Iterator');
+  //assert.strictEqual(String(iterator), '[object String Iterator]');
   assert.deepEqual(iterator.next(), {
     value: 'q',
     done: false,
