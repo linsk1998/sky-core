@@ -11,10 +11,10 @@
 		"@rollup/plugin-babel": "^5.3.0",
 		"@rollup/plugin-inject": "^4.0.2",
 		"@rollup/plugin-node-resolve": "^7.1.1",
-		"rollup": "^1.31.1",
+		"rollup": "^2.45.2",
 		"rollup-plugin-es3ify": "0.0.4",
 		"rollup-plugin-import": "^1.0.1",
-		"rollup-plugin-polyfill-inject": "^1.0.0"
+		"rollup-plugin-polyfill-inject": "^1.0.2"
 	},
 	"license": "MIT",
 	"main": "dist/sky.js",

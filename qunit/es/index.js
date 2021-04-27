@@ -37,3 +37,7 @@ import "./es.string.from-code-point";
 import "./es.string.raw";
 import "./es.string.match-all";
 import "./es.string.replace-all";
+
+import "./es.symbol";
+import "./es.symbol.description";
+import "./es.symbol.async-iterator";

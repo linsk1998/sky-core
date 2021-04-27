@@ -3,7 +3,6 @@ import path from "path";
 import alias from "@rollup/plugin-alias";
 import babel from '@rollup/plugin-babel';
 import importPlugin from 'rollup-plugin-import';
-import es3ify from 'rollup-plugin-es3ify';
 import impure from "./impure";
 export default {
 	input: 'qunit/es/index.js',
@@ -18,6 +17,7 @@ export default {
 			libraryName: "sky-core",
 			libraryDirectory: "utils"
 		}),
+		...impure,
 		babel({
 			babelHelpers: 'bundled',
 			babelrc: false,
@@ -39,7 +39,6 @@ export default {
 				}]
 			]
 		}),
-		...impure,
 		alias({
 			entries: {
 				'core-js/modules': path.resolve(__dirname, "../modules"),
@@ -47,7 +46,6 @@ export default {
 				'sky-core/polyfill': path.resolve(__dirname, "../polyfill"),
 				'sky-core/utils': path.resolve(__dirname, "../utils")
 			}
-		}),
-		es3ify()
+		})
 	]
 };
