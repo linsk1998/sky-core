@@ -1,1 +1,1 @@
-export default "@@hasInstance";
+export default '@@hasInstance';

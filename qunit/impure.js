@@ -2,14 +2,6 @@ import polyfill from "rollup-plugin-polyfill-inject";
 import inject from "@rollup/plugin-inject";
 export default [
 	polyfill({
-		"modules": {
-			"Symbol": "sky-core/polyfill/Symbol",
-		},
-		exclude: [
-			"polyfill/Symbol.js"
-		]
-	}),
-	polyfill({
 		'modules': {
 			'globalThis': "sky-core/polyfill/globalThis",
 			"Symbol.for": "sky-core/polyfill/Symbol/for",
@@ -18,6 +10,7 @@ export default [
 				"sky-core/polyfill/Array/prototype/@@iterator",
 				"sky-core/polyfill/String/prototype/@@iterator"
 			],
+			"Symbol": "sky-core/polyfill/Symbol",
 			"Array.from": [
 				"sky-core/polyfill/Array/from",
 				"sky-core/polyfill/Array/prototype/@@iterator",
@@ -101,14 +94,9 @@ export default [
 			"sessionStorage": "sky-core/polyfill/sessionStorage",
 			'Event': "sky-core/polyfill/Event",
 		},
-		'include': [
-			"impl/**",
-			"impl-compat/**",
-			"impl-modern/**",
-			"utils/**",
-			"utils-compat/**",
-			"utils-modern/**",
-			"qunit/**"
+		exclude: [
+			"polyfill/**/*",
+			"pure/**/*"
 		]
 	}),
 	//以下是prototype的修改
@@ -175,6 +163,10 @@ export default [
 		},
 		'include': [
 			"qunit/**"
+		],
+		exclude: [
+			"polyfill/**/*",
+			"pure/**/*"
 		]
 	}),
 	inject({
@@ -186,14 +178,9 @@ export default [
 			// 由于有比较多的库使用XMLHttpRequest来判断浏览器版本，污染全局变量会导致判断错误，因此建议只在需要用的地方注入
 			"XMLHttpRequest": "sky-core/pure/XMLHttpRequest"
 		},
-		'include': [
-			"impl/**",
-			"impl-compat/**",
-			"impl-modern/**",
-			"utils/**",
-			"utils-compat/**",
-			"utils-modern/**",
-			"qunit/**"
+		exclude: [
+			"polyfill/**/*",
+			"pure/**/*"
 		]
 	})
 ];

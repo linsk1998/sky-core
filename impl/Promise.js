@@ -1,5 +1,5 @@
 
-import forEach from "sky-core/prue/Array/prototype/forEach";
+import forEach from "sky-core/pure/Array/prototype/forEach";
 import { noop } from "../utils/noop";
 
 var PENDING = Symbol("pending");

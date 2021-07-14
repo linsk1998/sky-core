@@ -1,1 +1,1 @@
-export default "@@iterator";
+export default '@@iterator';

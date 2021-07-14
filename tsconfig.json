@@ -10,6 +10,7 @@
 			"ES2020",
 			"ESNext"
 		],
+		"allowJs": true,
 		"baseUrl": ".",
 		"paths": {
 			"sky-core/pure/*": [

@@ -1,4 +1,6 @@
 import "./values";
-if(!Array.prototype[Symbol.iterator]) {
-	Array.prototype[Symbol.iterator] = Array.prototype.values;
+import Symbol_iterator from "sky-core/pure/Symbol/iterator";
+
+if(!Array.prototype[Symbol_iterator]) {
+	Array.prototype[Symbol_iterator] = Array.prototype.values;
 }

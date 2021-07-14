@@ -1,1 +1,1 @@
-export var keys=Object.keys;
+export var keys = this.Object.keys;
