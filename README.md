@@ -125,13 +125,13 @@ export function get(url){
 
 ## 不可枚举成员表示
 
-本项目将使用“__”开头命名不可枚举成员。如果您使用在对象中使用“@@”开头的成员，在Object.keys等函数中将被跳过。
+本项目将使用“\_\_”开头命名不可枚举成员。如果您使用在对象中使用“\_\_”开头的成员，在Object.keys等函数中将被跳过。
 
 ## 不可在业务代码中使用defineProperty
 
 defineProperty无法polyfill，因此不允许在业务代码中使用defineProperty。在框架中可以根据浏览器兼容情况进行降级处理。
 
-# 不会支持的功能
+# 不支持的功能
 
 * 不支持IE11开发工具仿真IE8及以下版本（真机支持）。
 * 不支持伪装成Native函数，函数toString()不会返回“native code”。
