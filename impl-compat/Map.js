@@ -1,6 +1,7 @@
-
+import isNaN from "sky-core/pure/Number/isNaN";
 export function createMap() {
-	function Map(arr) {
+	function Map() {
+		var arr = arguments[0];
 		this.size = 0;
 		this.head = null;
 		this.tail = null;
@@ -35,7 +36,7 @@ export function has(key) {
 	var item = this.head;
 	do {
 		var value = item.value;
-		if(value[0] === key) {
+		if(item.key === key || isNaN(key) && isNaN(item.key)) {
 			return true;
 		}
 		item = item.next;
@@ -48,7 +49,7 @@ export function get(key) {
 	}
 	var item = this.head;
 	do {
-		if(item.key === key) {
+		if(item.key === key || isNaN(key) && isNaN(item.key)) {
 			return item.value;
 		}
 		item = item.next;
@@ -68,7 +69,7 @@ export function set(key, value) {
 	}
 	var item = this.head;
 	do {
-		if(item.key === key) {
+		if(item.key === key || isNaN(key) && isNaN(item.key)) {
 			item.value = value;
 			return this;
 		}
@@ -92,7 +93,7 @@ export function remove(key) {
 	}
 	var item = this.head;
 	do {
-		if(item.key === key) {
+		if(item.key === key || isNaN(key) && isNaN(item.key)) {
 			var prev = item.prev;
 			var next = item.next;
 			if(prev) {

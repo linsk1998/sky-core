@@ -4,7 +4,7 @@ import nonEnumerable from "../../support/nonEnumerable";
 export default (function() {
 	if(!Symbol) {
 		if(nonEnumerable) {
-			Object.defineProperty(Object.prototype, '@@hasInstance', { enumerable: false });
+			Object.defineProperty(Object.prototype, '@@hasInstance', { enumerable: false, configurable: false, writable: true });
 		}
 		return '@@hasInstance';
 	} else {

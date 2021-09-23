@@ -1,4 +1,2 @@
 import { isFinite } from "../../impl/Number/isFinite";
-if(!Number.isFinite) {
-	Number.isFinite = isFinite;
-}
+export default isFinite;

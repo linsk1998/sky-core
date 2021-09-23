@@ -37,7 +37,8 @@ export default {
 				["@babel/plugin-transform-for-of", {
 					"loose": false
 				}]
-			]
+			],
+			include: ["qunit/**/*"]
 		}),
 		alias({
 			entries: {

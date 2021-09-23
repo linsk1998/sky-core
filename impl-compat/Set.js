@@ -2,7 +2,8 @@ import { set, has, remove, clear, forEach, entries, values } from "./Map";
 export { has, remove, clear, forEach, entries, values } from "./Map";
 
 export function createSet() {
-	function Set(arr) {
+	function Set() {
+		var arr = arguments[0];
 		this.size = 0;
 		this.head = null;
 		this.tail = null;
