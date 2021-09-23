@@ -76,7 +76,7 @@ declare module "sky-core" {
 	export function trigger(currentTarget: EventTarget, type: string, props: Record<string, any>): void;
 
 
-	export function getCookie(key: string, value: string): void;
+	export function getCookie(key: string): string;
 	export function setCookie(key: string, value: string, timeout?: number, path?: string, domain?: string): void;
 
 
