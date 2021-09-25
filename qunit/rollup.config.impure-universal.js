@@ -17,7 +17,6 @@ export default {
 			libraryName: "sky-core",
 			libraryDirectory: "utils"
 		}),
-		...impure,
 		babel({
 			babelHelpers: 'bundled',
 			babelrc: false,
@@ -40,6 +39,7 @@ export default {
 			],
 			include: ["qunit/**/*"]
 		}),
+		...impure,
 		alias({
 			entries: {
 				'core-js/modules': path.resolve(__dirname, "../modules"),

@@ -12,7 +12,16 @@ export function createMap() {
 				while(true) {
 					var next = it.next();
 					if(next.done) break;
-					this.set(next.value[0], next.value[1]);
+					try {
+						this.set(next.value[0], next.value[1]);
+					} catch(e) {
+						if(it.return) {
+							try {
+								it.return();
+							} catch(e) { }
+						}
+						throw e;
+					}
 				}
 			}
 		}

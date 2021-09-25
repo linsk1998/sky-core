@@ -15,7 +15,16 @@ export function createSet() {
 				while(true) {
 					var next = it.next();
 					if(next.done) break;
-					this.add(next.value);
+					try {
+						this.add(next.value);
+					} catch(e) {
+						if(it.return) {
+							try {
+								it.return();
+							} catch(e) { }
+						}
+						throw e;
+					}
 				}
 			}
 		}
@@ -32,4 +41,5 @@ export function createSet() {
 };
 export function add(value) {
 	set.call(this, value, value);
+	return this;
 };
