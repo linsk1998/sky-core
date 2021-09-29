@@ -44,7 +44,6 @@ export function has(key) {
 	}
 	var item = this.head;
 	do {
-		var value = item.value;
 		if(item.key === key || isNaN(key) && isNaN(item.key)) {
 			return true;
 		}
@@ -66,15 +65,20 @@ export function get(key) {
 	return undefined;
 };
 export function set(key, value) {
+	if(key === 0) {
+		//-0 -> 0
+		key = 0;
+	}
 	if(this.size === 0) {
 		this.head = this.tail = {
 			key: key,
 			value: value,
 			prev: null,
-			next: null
+			next: null,
+			exist: true
 		};
 		this.size = 1;
-		return false;
+		return this;
 	}
 	var item = this.head;
 	do {
@@ -88,8 +92,9 @@ export function set(key, value) {
 	var newTail = {
 		key: key,
 		value: value,
-		prev: item,
-		next: null
+		prev: tail,
+		next: null,
+		exist: true
 	};
 	tail.next = newTail;
 	this.tail = newTail;
@@ -115,6 +120,7 @@ export function remove(key) {
 			} else {
 				this.tail = prev;
 			}
+			item.exist = false;
 			this.size--;
 			return true;
 		}
@@ -127,61 +133,86 @@ export function clear() {
 	this.head = null;
 	this.tail = null;
 };
-export function forEach(callbackfn, thisArg) {
+export function forEach(callbackfn) {
+	var thisArg = arguments[1];
 	var item = this.head;
 	do {
 		callbackfn.call(thisArg, item.value, item.key, this);
-		item = item.next;
+		var next = item.next;
+		if(item.exist || next && next.exist) {
+			item = next;
+		} else {
+			while(true) {
+				item = item.prev;
+				if(item) {
+					if(item.exist) {
+						item = item.next;
+						break;
+					}
+				} else {
+					item = this.head;
+					break;
+				}
+			}
+		}
 	} while(item);
 };
+
+function createIterable(that, getValue) {
+	var done = false;
+	var current;
+	return {
+		next: function() {
+			var value;
+			if(done) {
+				return { done: done, value: value };
+			}
+			if(!current) {
+				current = that.head;
+			} else {
+				var next = current.next;
+				if(current.exist || next && next.exist) {
+					current = next;
+				} else {
+					while(true) {
+						current = current.prev;
+						if(current) {
+							if(current.exist) {
+								current = current.next;
+								break;
+							}
+						} else {
+							current = that.head;
+							break;
+						}
+					}
+				}
+			}
+			if(current) {
+				done = false;
+				value = getValue(current);
+			} else {
+				done = true;
+			}
+			return { done: done, value: value };
+		}
+	};
+}
+function getKeyValue(item) {
+	return [item.key, item.value];
+}
 export function entries() {
-	var current = this.head;
-	return {
-		next: function() {
-			var done, value;
-			var cur = current;
-			if(cur) {
-				done = false;
-				value = [cur.key, cur.value];
-				current = cur.next;
-			} else {
-				done = true;
-			}
-			return { done: done, value: value };
-		}
-	};
+	return createIterable(this, getKeyValue);
 };
+function getKey(item) {
+	return item.key;
+}
 export function keys() {
-	var current = this.head;
-	return {
-		next: function() {
-			var done, value;
-			var cur = current;
-			if(cur) {
-				done = false;
-				value = cur.key;
-				current = cur.next;
-			} else {
-				done = true;
-			}
-			return { done: done, value: value };
-		}
-	};
+	return createIterable(this, getKey);
 };
+function getValue(item) {
+	return item.value;
+}
 export function values() {
-	var current = this.head;
-	return {
-		next: function() {
-			var done, value;
-			var cur = current;
-			if(cur) {
-				done = false;
-				value = cur.value;
-				current = cur.next;
-			} else {
-				done = true;
-			}
-			return { done: done, value: value };
-		}
-	};
+	return createIterable(this, getValue);
 };

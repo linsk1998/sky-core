@@ -7,7 +7,6 @@ export function createSet() {
 		this.size = 0;
 		this.head = null;
 		this.tail = null;
-		this.items = new Array();
 		if(arr) {
 			var entries = arr['@@iterator'];
 			if(entries) {
@@ -36,10 +35,15 @@ export function createSet() {
 	Set.prototype.forEach = forEach;
 	Set.prototype.entries = entries;
 	Set.prototype.values = values;
+	Set.prototype.keys = values;
 	Set.prototype['@@iterator'] = values;
 	return Set;
 };
 export function add(value) {
+	if(value === 0) {
+		//-0 -> 0
+		value = 0;
+	}
 	set.call(this, value, value);
 	return this;
 };

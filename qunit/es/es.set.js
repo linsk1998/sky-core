@@ -38,7 +38,7 @@ QUnit.test('Set', assert => {
   let done = false;
   const { add } = Set.prototype;
   // eslint-disable-next-line no-extend-native -- required for testing
-  Set.prototype.add = function () {
+  Set.prototype.add = function() {
     throw new Error();
   };
   try {
@@ -54,7 +54,7 @@ QUnit.test('Set', assert => {
   const array = [];
   done = false;
   array['@@iterator'] = undefined;
-  array[Symbol.iterator] = function () {
+  array[Symbol.iterator] = function() {
     done = true;
     return [][Symbol.iterator].call(this);
   };
@@ -62,16 +62,16 @@ QUnit.test('Set', assert => {
   assert.ok(done);
   const object = {};
   new Set().add(object);
-  if (DESCRIPTORS) {
+  if(DESCRIPTORS) {
     const results = [];
-    for (const key in results) keys.push(key);
+    for(const key in object) results.push(key);
     assert.arrayEqual(results, []);
     assert.arrayEqual(keys(object), []);
   }
   assert.arrayEqual(getOwnPropertyNames(object), []);
-  if (getOwnPropertySymbols) assert.arrayEqual(getOwnPropertySymbols(object), []);
-  if (ownKeys) assert.arrayEqual(ownKeys(object), []);
-  if (nativeSubclass) {
+  if(getOwnPropertySymbols) assert.arrayEqual(getOwnPropertySymbols(object), []);
+  if(ownKeys) assert.arrayEqual(ownKeys(object), []);
+  if(nativeSubclass) {
     const Subclass = nativeSubclass(Set);
     assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
     assert.ok(new Subclass() instanceof Set, 'correct subclassing with native classes #2');
@@ -143,7 +143,7 @@ QUnit.test('Set#clear', assert => {
 
 QUnit.test('Set#delete', assert => {
   assert.isFunction(Set.prototype.delete);
-  if (NATIVE) assert.name(Set.prototype.delete, 'delete');
+  if(NATIVE) assert.name(Set.prototype.delete, 'delete');
   assert.arity(Set.prototype.delete, 1);
   assert.looksNative(Set.prototype.delete);
   assert.nonEnumerable(Set.prototype, 'delete');
@@ -199,7 +199,7 @@ QUnit.test('Set#forEach', assert => {
   result = '';
   set.forEach(it => {
     result += it;
-    if (it === '2') {
+    if(it === '2') {
       set.delete('2');
       set.delete('3');
       set.delete('1');
@@ -212,7 +212,7 @@ QUnit.test('Set#forEach', assert => {
   result = '';
   set.forEach(it => {
     set.delete('0');
-    if (result !== '') throw new Error();
+    if(result !== '') throw new Error();
     result += it;
   });
   assert.strictEqual(result, '0');
@@ -252,7 +252,7 @@ QUnit.test('Set#size', assert => {
   const { size } = set;
   assert.strictEqual(typeof size, 'number', 'size is number');
   assert.strictEqual(size, 1, 'size is correct');
-  if (DESCRIPTORS) {
+  if(DESCRIPTORS) {
     const sizeDescriptor = getOwnPropertyDescriptor(Set.prototype, 'size');
     assert.ok(sizeDescriptor && sizeDescriptor.get, 'size is getter');
     assert.ok(sizeDescriptor && !sizeDescriptor.set, 'size isnt setter');
