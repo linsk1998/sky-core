@@ -1,5 +1,5 @@
 import { Symbol as native_Symbol } from "../native/Symbol";
-import { Symbol as compat_Symbol } from "../impl-compat/Symbol";
+import { Symbol as compat_Symbol } from "../impl/Symbol";
 import { Symbol as modern_Symbol } from "../impl-modern/Symbol";
 if(!native_Symbol) {
 	this.Symbol = compat_Symbol;
