@@ -56,6 +56,7 @@ export { getScript } from "./utils/getScript";
 
 export { attachEvent } from "./utils/attachEvent";
 export { detachEvent } from "./utils/detachEvent";
+export { fixEvent } from "./utils/fixEvent";
 
 export { getCookie } from "./utils/getCookie";
 export { setCookie } from "./utils/setCookie";

@@ -73,6 +73,8 @@ declare module "sky-core" {
 	export function attachEvent<K extends keyof ElementEventMap>(ele: Element, type: K, func: (this: Element, ev: ElementEventMap[K]) => any, useCapture: boolean): void;
 	export function attachEvent(ele: EventTarget, type: string, func: Function): void;
 	export function detachEvent(ele: EventTarget, type: string, func: Function, useCapture?: boolean): void;
+	export function fixEvent(ele: EventTarget, type: 'click' | 'mousedown' | 'mouseup' | 'mouseover' | 'mouseout', e: MouseEvent): MouseEvent;
+	export function fixEvent<T = Event>(ele: EventTarget, type: string, e: T): T;
 	export function trigger(currentTarget: EventTarget, type: string, props: Record<string, any>): void;
 
 
