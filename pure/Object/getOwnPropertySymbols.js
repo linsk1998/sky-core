@@ -1,4 +1,4 @@
 
-import { getOwnPropertySymbols } from "../../impl-compat/Symbol/constructor";
+import { getOwnPropertySymbols } from "../../impl/Symbol/constructor";
 
 export default Object.getOwnPropertySymbols || getOwnPropertySymbols;

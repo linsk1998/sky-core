@@ -1,4 +1,2 @@
 import { isInteger } from "../../impl/Number/isInteger";
-if(!Number.isInteger) {
-	Number.isInteger = isInteger;
-}
+export default isInteger;

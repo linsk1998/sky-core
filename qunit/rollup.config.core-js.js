@@ -1,23 +1,20 @@
 
-import path from "path";
-import alias from "@rollup/plugin-alias";
 import babel from '@rollup/plugin-babel';
-import importPlugin from 'rollup-plugin-import';
-import impure from "./impure";
+import nodeResolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import es3ify from 'rollup-plugin-es3ify';
 export default {
 	input: 'qunit/es/index.js',
 	output: {
 		strict: false,
-		file: 'qunit/impure-universal/universal.js',
+		file: 'qunit/core-js/index.js',
 		format: 'iife'
 	},
 	context: "window",
 	treeshake: false,
 	plugins: [
-		importPlugin({
-			libraryName: "sky-core",
-			libraryDirectory: "utils"
-		}),
+		nodeResolve(),
+		commonjs(),
 		babel({
 			babelHelpers: 'bundled',
 			babelrc: false,
@@ -26,7 +23,9 @@ export default {
 					"@babel/preset-env",
 					{
 						"modules": false,
-						"loose": true
+						"loose": true,
+						"useBuiltIns": "usage",
+						"corejs": "3.8"
 					}
 				]
 			],
@@ -40,14 +39,6 @@ export default {
 			],
 			include: ["qunit/**/*"]
 		}),
-		...impure,
-		alias({
-			entries: {
-				'core-js/modules': path.resolve(__dirname, "../modules"),
-				'sky-core/pure': path.resolve(__dirname, "../pure"),
-				'sky-core/polyfill': path.resolve(__dirname, "../polyfill"),
-				'sky-core/utils': path.resolve(__dirname, "../utils")
-			}
-		})
+		es3ify()
 	]
 };

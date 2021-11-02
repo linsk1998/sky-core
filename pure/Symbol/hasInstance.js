@@ -1,10 +1,11 @@
 import { Symbol } from "../../native/Symbol";
+import { defineProperty } from "../../native/Object/defineProperty";
 import nonEnumerable from "../../support/nonEnumerable";
 
 export default (function() {
 	if(!Symbol) {
 		if(nonEnumerable) {
-			Object.defineProperty(Object.prototype, '@@hasInstance', { enumerable: false });
+			defineProperty(Object.prototype, '@@hasInstance', { enumerable: false, configurable: false, writable: true });
 		}
 		return '@@hasInstance';
 	} else {

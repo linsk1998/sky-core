@@ -38,9 +38,9 @@ import "../helpers/qunit-helpers";
 // import "./es.string.match-all";
 // import "./es.string.replace-all";
 
-// import "./es.symbol";
-// import "./es.symbol.description";
-// import "./es.symbol.async-iterator";
+import "./es.symbol";
+import "./es.symbol.description";
+import "./es.symbol.async-iterator";
 
 
 // import "./es.object.assign.js";
@@ -58,5 +58,5 @@ import "../helpers/qunit-helpers";
 // import "./es.object.set-prototype-of";
 // import "./es.object.values";
 
-import "./es.set";
-import "./es.map";
+// import "./es.set";
+// import "./es.map";

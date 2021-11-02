@@ -1,5 +1,5 @@
 
-import { getOwnPropertySymbols as symbol_getOwnPropertySymbols } from "../../impl-compat/Symbol/constructor";
+import { getOwnPropertySymbols as symbol_getOwnPropertySymbols } from "../../impl/Symbol/constructor";
 if(!Object.getOwnPropertySymbols) {
 	Object.getOwnPropertySymbols = symbol_getOwnPropertySymbols;
 }

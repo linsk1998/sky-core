@@ -1,4 +1,2 @@
 import { isNaN } from "../../impl/Number/isNaN";
-if(!Number.isNaN) {
-	Number.isNaN = isNaN;
-}
+export default Number.isNaN || isNaN;
