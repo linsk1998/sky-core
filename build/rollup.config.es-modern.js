@@ -5,10 +5,10 @@ import inject from "@rollup/plugin-inject";
 import polyfill from "rollup-plugin-polyfill-inject";
 import { modules, polyfills, pures, utils } from "./alias-modern.mjs";
 export default {
-	input: './polyfill.js',
+	input: './es.js',
 	output: {
 		strict: false,
-		file: './dist/polyfill-modern.js',
+		file: './dist/es-modern.js',
 		format: 'iife'
 	},
 	context: "this",

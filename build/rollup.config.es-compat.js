@@ -6,10 +6,10 @@ import polyfill from "rollup-plugin-polyfill-inject";
 import es3ify from 'rollup-plugin-es3ify';
 import { modules, polyfills, pures, utils } from "./alias-compat.mjs";
 export default {
-	input: './polyfill.js',
+	input: './es.js',
 	output: {
 		strict: false,
-		file: './dist/polyfill-compat.js',
+		file: './dist/es-compat.js',
 		format: 'iife'
 	},
 	context: "this",
@@ -22,8 +22,7 @@ export default {
 			"modules": {
 				"Object.defineProperties": "sky-core/pure/Object/defineProperties",
 				"Object.defineProperty": "sky-core/pure/Object/defineProperty",
-				"Symbol": "sky-core/pure/Symbol",
-				"XMLHttpRequest": "sky-core/pure/XMLHttpRequest"
+				"Symbol": "sky-core/pure/Symbol"
 			},
 			"include": [
 				"impl/**",

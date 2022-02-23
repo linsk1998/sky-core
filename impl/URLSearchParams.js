@@ -72,10 +72,9 @@ URLSearchParams.prototype.has = function(key) {
 	});
 };
 URLSearchParams.prototype.toString = function() {
-	map.call(this._data, function(item) {
+	return this._data.map.call(this._data, function(item) {
 		return encodeURIComponent(item[1]) + "=" + encodeURIComponent(item[0]);
-	});
-	return this._data.map().join("&");
+	}).join("&");
 };
 URLSearchParams.prototype.sort = function() {
 	return this._data.sort(function(a, b) {
