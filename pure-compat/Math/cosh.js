@@ -1,0 +1,1 @@
+export { cosh } from "../../impl/Math/cosh";

@@ -1,0 +1,1 @@
+export { clz32 } from "../../impl/Math/clz32";

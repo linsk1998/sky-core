@@ -1,36 +1,60 @@
 
 import forEach from "sky-core/pure/Array/prototype/forEach";
 import { noop } from "../utils/noop";
+import { aFunction } from "../utils/aFunction";
+import { isFunction } from "../utils/isFunction";
+import { speciesConstructor } from "../impl/Symbol/species";
 
 var PENDING = Symbol("pending");
 var RESOLVED = Symbol("resolved");
 var REJECTED = Symbol("rejected");
 
 function Promise(executor) {
+	if(!executor) {
+		throw new TypeError("undefined is not a promise");
+	}
 	this._resolveds = [];
 	this._rejecteds = [];
 	this._state = PENDING;//resolved | rejected
 
 	var me = this;
 	function resolve(value) {
-		queueMicrotask(function() {
-			if(me._state === PENDING) {
-				me._value = value;
-				me._state = RESOLVED;
+		if(me._state === PENDING) {
+			if(value) {
+				try {
+					var then = value.then;
+					if(isFunction(then)) {
+						queueMicrotask(function() {
+							try {
+								value.then(resolve, reject);
+							} catch(e) {
+								reject(e);
+							}
+						});
+						return;
+					}
+				} catch(e) {
+					reject(e);
+					return;
+				}
+			}
+			me._value = value;
+			me._state = RESOLVED;
+			queueMicrotask(function() {
 				forEach.call(me._resolveds, callAll, me);
 				me._resolveds = null;
-			}
-		});
+			});
+		}
 	}
 	function reject(reason) {
-		queueMicrotask(function() {
-			if(me._state === PENDING) {
-				me._value = reason;
-				me._state = REJECTED;
+		if(me._state === PENDING) {
+			me._value = reason;
+			me._state = REJECTED;
+			queueMicrotask(function() {
 				forEach.call(me._rejecteds, callAll, me);
 				me._rejecteds = null;
-			}
-		});
+			});
+		}
 	}
 	try {
 		executor(resolve, reject);
@@ -55,7 +79,8 @@ function nextPromise(before, after, resolve, reject) {
 		}
 	};
 }
-Promise.prototype.then = function(onResolved, onRejected) {
+Promise.prototype.then = function then(onResolved, onRejected) {
+	// var Class = speciesConstructor(this, Promise);
 	var me = this;
 	onResolved = onResolved || noop;
 	onRejected = onRejected || noop;
@@ -76,62 +101,153 @@ Promise.prototype.then = function(onResolved, onRejected) {
 Promise.prototype.catch = function(onRejected) {
 	return this.then(undefined, onRejected);
 };
-Promise.all = function(promises) {
-	if(!Array.isArray(promises)) {
-		throw new TypeError('You must pass an array to all.');
-	}
-	if(promises.length == 0) return Promise.resolve();
-	return new Promise(function(resolve, reject) {
-		var result = new Array(promises.length);
-		var c = 0;
-		forEach.call(promises, function(one, index) {
-			if(typeof one.then === "function") {
-				one.then(function(data) {
-					c++;
-					result[index] = data;
-					if(c >= promises.length) {
-						resolve(result);
-					}
-				}, function(error) {
-					reject(error);
-				});
-			} else {
-				c++;
-				if(c >= promises.length) {
-					resolve();
-				}
-			}
-		});
-	});
-};
-Promise.race = function(promises) {
-	if(!Array.isArray(promises)) {
-		throw new TypeError('You must pass an array to all.');
-	}
-	return new Promise(function(resolve, reject) {
-		forEach.call(promises, function(one) {
-			one.then(function() {
-				resolve();
-			}, function() {
-				reject();
-			});
-		});
-	});
-};
+
 function ResolvePromise(value) {
 	this._value = value;
 	this._state = RESOLVED;
 }
 ResolvePromise.prototype = Promise.prototype;
-Promise.resolve = function(arg) {
-	return new ResolvePromise(arg);
-};
+
 function RejectPromise(value) {
 	this._value = value;
 	this._state = REJECTED;
 }
 RejectPromise.prototype = Promise.prototype;
-Promise.reject = function(arg) {
-	return new RejectPromise(arg);
+
+Promise.resolve = function resolve(value) {
+	if(value.constructor === this) {
+		return value;
+	}
+	if(!this) {
+		throw TypeError("Promise.resolve called on non-object");
+	}
+	if(typeof this !== "function") {
+		throw TypeError(this + " is not a constructor");
+	}
+	return new ResolvePromise(value);
+	// var Class = this;
+	// if(Class === Promise) {
+	// }
+	// var promiseCapability = new PromiseCapability(Class);
+	// var resolve = promiseCapability.resolve;
+	// resolve(value);
+	// return promiseCapability.promise;
+};
+Promise.reject = function reject(value) {
+	if(value.constructor === this) {
+		return value;
+	}
+	if(!this) {
+		throw TypeError("Promise.resolve called on non-object");
+	}
+	if(typeof this !== "function") {
+		throw TypeError(this + " is not a constructor");
+	}
+	return new RejectPromise(value);
+};
+
+Promise.all = function all(promises) {
+	if(!this) {
+		throw TypeError("Promise.all called on non-object");
+	}
+	if(typeof this !== "function") {
+		throw TypeError(this + " is not a constructor");
+	}
+	// var Promise = this;
+	if(promises) {
+		var entries = promises[Symbol.iterator];
+		if(entries) {
+			var it = entries.call(promises);
+			promises = [];
+			while(true) {
+				var next = it.next();
+				if(next.done) break;
+				var value = next.value;
+				try {
+					promises.push(Promise.resolve(value));
+				} catch(e) {
+					if(it.return) {
+						try {
+							it.return();
+						} catch(e) { }
+					}
+					throw e;
+				}
+			}
+			return new Promise(function(resolve, reject) {
+				var c = 0;
+				var result = new Array(promises.length);
+				forEach.call(promises, function(p, index) {
+					p.then(function(data) {
+						c++;
+						result[index] = data;
+						if(c >= promises.length) {
+							resolve(result);
+						}
+					}, function(error) {
+						reject(error);
+					});
+					c++;
+					if(c >= promises.length) {
+						resolve();
+					}
+				});
+			});
+		}
+	}
+	throw new TypeError(promises + 'is not iterable');
+};
+Promise.race = function race(promises) {
+	if(!this) {
+		throw TypeError("Promise.all called on non-object");
+	}
+	if(typeof this !== "function") {
+		throw TypeError(this + " is not a constructor");
+	}
+	// var Promise = this;
+	if(promises) {
+		var entries = promises[Symbol.iterator];
+		if(entries) {
+			var it = entries.call(promises);
+			promises = [];
+			while(true) {
+				var next = it.next();
+				if(next.done) break;
+				var value = next.value;
+				try {
+					promises.push(Promise.resolve(value));
+				} catch(e) {
+					if(it.return) {
+						try {
+							it.return();
+						} catch(e) { }
+					}
+					throw e;
+				}
+			}
+			return new Promise(function(resolve, reject) {
+				forEach.call(promises, function(one) {
+					one.then(function() {
+						resolve();
+					}, function() {
+						reject();
+					});
+				});
+			});
+		}
+	}
+	throw new TypeError(promises + 'is not iterable');
+};
+
+
+function PromiseCapability(Promise) {
+	var resolve, reject;
+	this.promise = new Promise(function($$resolve, $$reject) {
+		if(resolve !== undefined || reject !== undefined) throw TypeError('Bad Promise constructor');
+		resolve = $$resolve;
+		reject = $$reject;
+	});
+	this.resolve = aFunction(resolve);
+	this.reject = aFunction(reject);
 };
 export { Promise };

@@ -38,12 +38,12 @@ import "../helpers/qunit-helpers";
 // import "./es.string.match-all";
 // import "./es.string.replace-all";
 
-import "./es.symbol";
-import "./es.symbol.description";
-import "./es.symbol.async-iterator";
+// import "./es.symbol";
+// import "./es.symbol.description";
+// import "./es.symbol.async-iterator";
 
 
-// import "./es.object.assign.js";
+// import "./es.object.assign";
 // import "./es.object.create";
 // import "./es.object.define-properties";
 // import "./es.object.define-property";
@@ -58,5 +58,59 @@ import "./es.symbol.async-iterator";
 // import "./es.object.set-prototype-of";
 // import "./es.object.values";
 
+
+
+// import "./es.global-this";
+
+// import "./es.function.bind";
+// import "./es.function.name";
+// import "./es.function.has-instance";
+
+// import "./es.date.to-json";
+// import "./es.date.to-iso-string";
+// import "./es.date.to-string";
+
+// import "./es.number.epsilon";
+// import "./es.number.is-finite";
+// import "./es.number.is-integer";
+// import "./es.number.is-nan";
+// import "./es.number.is-safe-integer";
+// import "./es.number.max-safe-integer";
+// import "./es.number.min-safe-integer";
+// import "./es.number.parse-float";
+// import "./es.number.parse-int";
+// import "./es.number.to-fixed";
+// import "./es.number.to-precision";
+
+// import "./es.math.acosh";
+// import "./es.math.asinh";
+// import "./es.math.atanh";
+// import "./es.math.cbrt";
+// import "./es.math.clz32";
+// import "./es.math.cosh";
+// import "./es.math.expm1";
+// import "./es.math.fround";
+// import "./es.math.hypot";
+// import "./es.math.imul";
+// import "./es.math.log10";
+// import "./es.math.log1p";
+// import "./es.math.log2";
+// import "./es.math.sign";
+// import "./es.math.sinh";
+// import "./es.math.tanh";
+// import "./es.math.trunc";
+
+// import "./es.json.stringify";
+
+// import "./es.date.to-iso-string";
+// import "./es.date.to-json";
+// import "./es.date.to-string";
+
 // import "./es.set";
 // import "./es.map";
+
+// import "./es.promise";
+import "./es.promise.finally";
+// import "./es.promise.all-settled";
+// import "./es.promise.any";
+// import "./es.aggregate-error";

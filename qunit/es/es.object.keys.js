@@ -19,8 +19,8 @@ QUnit.test('Object.keys', assert => {
   assert.deepEqual(keys(new F2()), ['toString']);
   assert.ok(!includes(keys(Array.prototype), 'push'));
   const primitives = [42, 'foo', false];
-  for (const value of primitives) {
-    assert.notThrows(() => keys(value), `accept ${ typeof value }`);
+  for(const value of primitives) {
+    assert.notThrows(() => keys(value), `accept ${typeof value} 不支持`);
   }
   assert.throws(() => keys(null), TypeError, 'throws on null');
   assert.throws(() => keys(undefined), TypeError, 'throws on undefined');

@@ -2,10 +2,11 @@ import polyfill from "rollup-plugin-polyfill-inject";
 import inject from "@rollup/plugin-inject";
 export default [
 	polyfill({
-		'modules': {
+		modules: {
 			'globalThis': "sky-core/polyfill/globalThis",
 			"Symbol.for": "sky-core/polyfill/Symbol/for",
 			"Symbol.keyFor": "sky-core/polyfill/Symbol/keyFor",
+			"Symbol.hasInstance": "sky-core/polyfill/Function/prototype/@@hasInstance",
 			"Symbol.iterator": [
 				"sky-core/polyfill/Array/prototype/@@iterator",
 				"sky-core/polyfill/String/prototype/@@iterator"
@@ -21,6 +22,23 @@ export default [
 			"Date": "sky-core/polyfill/Date/constructor",
 			"Date.now": "sky-core/polyfill/Date/now",
 			"Date.parse": "sky-core/polyfill/Date/parse",
+			"Math.acosh": "sky-core/polyfill/Math/acosh",
+			"Math.asinh": "sky-core/polyfill/Math/asinh",
+			"Math.atanh": "sky-core/polyfill/Math/atanh",
+			"Math.cbrt": "sky-core/polyfill/Math/cbrt",
+			"Math.clz32": "sky-core/polyfill/Math/clz32",
+			"Math.cosh": "sky-core/polyfill/Math/cosh",
+			"Math.expm1": "sky-core/polyfill/Math/expm1",
+			"Math.fround": "sky-core/polyfill/Math/fround",
+			"Math.hypot": "sky-core/polyfill/Math/hypot",
+			"Math.imul": "sky-core/polyfill/Math/imul",
+			"Math.log1p": "sky-core/polyfill/Math/log1p",
+			"Math.log2": "sky-core/polyfill/Math/log2",
+			"Math.log10": "sky-core/polyfill/Math/log10",
+			"Math.sign": "sky-core/polyfill/Math/sign",
+			"Math.sinh": "sky-core/polyfill/Math/sinh",
+			"Math.tanh": "sky-core/polyfill/Math/tanh",
+			"Math.trunc": "sky-core/polyfill/Math/trunc",
 			//简易版的实现，仅适用于解析内容安全的json
 			"JSON": "sky-core/polyfill/JSON",
 			//如果，需要解析第三方或其他不安全的json，需要使用其他JSON解析库
@@ -48,6 +66,7 @@ export default [
 			//由于ES3不支持 accessor，我建议不要污染全局的Object，用于给一些库判断是否支持accessor，需要用到defineProperties的地方用@rollup/plugin-inject
 			//"Object.defineProperties":"sky-core/polyfill/Object/defineProperties",
 			"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
+			"Object.getOwnPropertyDescriptors": "sky-core/polyfill/Object/getOwnPropertyDescriptors",
 			"Object.getOwnPropertyNames": "sky-core/polyfill/Object/getOwnPropertyNames",
 			//Object 原型相关
 			"Object.create": "sky-core/polyfill/Object/create",
@@ -67,7 +86,7 @@ export default [
 			"Reflect.getPrototypeOf": "sky-core/polyfill/Reflect/getPrototypeOf",
 			//Promise
 			"Promise": "sky-core/polyfill/Promise",
-			"Promise.finally": "sky-core/polyfill/Promise/finally",
+			"Promise": "sky-core/polyfill/Promise/prototype/finally",
 			// ESNext.Promise
 			// "Promise.allSettled": "sky-core/polyfill/Promise/allSettled",
 			// "Promise.any": "sky-core/polyfill/Promise/any",
@@ -101,7 +120,7 @@ export default [
 	}),
 	//以下是prototype的修改
 	polyfill({
-		'modules': {
+		modules: {
 			//其他对象的自动转JSON
 			".toJSON": [
 				"sky-core/polyfill/Date/prototype/toJSON"
@@ -109,6 +128,9 @@ export default [
 			"JSON.stringify": [
 				"sky-core/polyfill/Date/prototype/toJSON"
 			],
+			//ES5 Function
+			".bind": "sky-core/polyfill/Function/prototype/bind",
+			".name": "sky-core/polyfill/Function/prototype/name",
 			//ES5 Array
 			".every": "sky-core/polyfill/Array/prototype/every",
 			".filter": "sky-core/polyfill/Array/prototype/filter",
@@ -158,10 +180,8 @@ export default [
 			".matchAll": "sky-core/polyfill/String/prototype/matchAll",
 			//ESNext.String
 			".replaceAll": "sky-core/polyfill/String/prototype/replaceAll",
-			//Function.prototype.bind
-			".bind": "sky-core/polyfill/Function/prototype/bind",
 		},
-		'include': [
+		include: [
 			"qunit/**"
 		],
 		exclude: [
@@ -170,7 +190,9 @@ export default [
 		]
 	}),
 	inject({
-		"modules": {
+		modules: {
+			// 由于ES3不支持 accessor，必须使用纯净版
+			"document.currentScript": ["sky-core/pure/document/currentScript"],
 			// 由于ES3不支持 accessor，不建议污染全局变量，建议判断时用Object.defineProperties，不涉及accessor的defineProperties操作，在需要用到的地方注入
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
 			// ES3不支持 setPrototypeOf，不建议污染全局变量，只在没有副作用的地方注入
@@ -181,6 +203,15 @@ export default [
 		exclude: [
 			"polyfill/**/*",
 			"pure/**/*"
+		]
+	}),
+	inject({
+		modules: {
+			// 由于ES3不支持 accessor，必须使用纯净版
+			"document.currentScript": ["sky-core/pure/document/currentScript", "currentScript"]
+		},
+		include: [
+			"qunit/**/*"
 		]
 	})
 ];

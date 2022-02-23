@@ -101,7 +101,7 @@ QUnit.assert.looksNative = function(fn, message) {
 QUnit.assert.name = function(fn, name, message) {
 	if(typeof fn == 'function' && 'name' in fn) {
 		this.pushResult({
-			result: fn.name === name,
+			result: fn.name === name || fn.name.indexOf(name + "$") == 0,
 			actual: fn.name,
 			expected: name,
 			message: message || `name is '${name}'`,

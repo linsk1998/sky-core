@@ -11,7 +11,7 @@ if(!this.Symbol) {
 	// Symbol.matchAll = "@@matchAll";
 	// Symbol.replace = "@@replace";
 	// Symbol.search = "@@search";
-	// Symbol.species = "@@species";
+	Symbol.species = "@@species";
 	// Symbol.split = "@@split";
 	// Symbol.toPrimitive = "@@toPrimitive";
 	// Symbol.toStringTag = "@@toStringTag";

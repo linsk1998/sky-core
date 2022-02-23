@@ -1,1 +1,1 @@
-export var proto = !!Object.setPrototypeOf || !!Object.prototype.__proto__;
+export var proto = !!Object.setPrototypeOf || ('__proto__' in Object.prototype);

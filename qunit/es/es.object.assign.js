@@ -19,7 +19,7 @@ QUnit.test('Object.assign', assert => {
   assert.strictEqual(String(string), 'qwe');
   assert.strictEqual(string.q, 1);
   assert.same(assign({}, { valueOf: 42 }).valueOf, 42, 'IE enum keys bug');
-  if (DESCRIPTORS) {
+  if(DESCRIPTORS) {
     object = { baz: 1 };
     assign(object, defineProperty({}, 'bar', {
       get() {
@@ -37,7 +37,7 @@ QUnit.test('Object.assign', assert => {
     assert.strictEqual(object2.a, 'a', 'a');
     assert.strictEqual(object2.b, undefined, 'b');
     assert.strictEqual(object2[c], 'c', 'c');
-    assert.strictEqual(object2[d], undefined, 'd');
+    assert.strictEqual(object2[d], undefined, 'defineProperty 不允许使用Symbol');
     try {
       assert.strictEqual(Function('assign', `
         return assign({ b: 1 }, { get a() {
@@ -58,7 +58,7 @@ QUnit.test('Object.assign', assert => {
   }
   string = 'abcdefghijklmnopqrst';
   const result = {};
-  for (let i = 0, { length } = string; i < length; ++i) {
+  for(let i = 0, { length } = string; i < length; ++i) {
     const char = string.charAt(i);
     result[char] = char;
   }

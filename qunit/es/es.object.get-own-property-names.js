@@ -27,8 +27,8 @@ QUnit.test('Object.getOwnPropertyNames', assert => {
   assert.ok(includes(getOwnPropertyNames(Object.prototype), 'toString'));
   assert.ok(includes(getOwnPropertyNames(Object.prototype), 'constructor'));
   const primitives = [42, 'foo', false];
-  for (const value of primitives) {
-    assert.notThrows(() => getOwnPropertyNames(value), `accept ${ typeof value }`);
+  for(const value of primitives) {
+    assert.notThrows(() => getOwnPropertyNames(value), `accept ${typeof value} 不支持`);
   }
   assert.throws(() => {
     getOwnPropertyNames(null);
@@ -36,7 +36,7 @@ QUnit.test('Object.getOwnPropertyNames', assert => {
   assert.throws(() => {
     getOwnPropertyNames(undefined);
   }, TypeError, 'throws on undefined');
-  if (GLOBAL.document) {
+  if(GLOBAL.document) {
     assert.notThrows(() => {
       const iframe = document.createElement('iframe');
       iframe.src = 'http://example.com';

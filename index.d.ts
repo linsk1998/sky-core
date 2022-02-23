@@ -78,6 +78,7 @@ declare module "sky-core" {
 
 	export function getCookie(key: string): string;
 	export function setCookie(key: string, value: string, timeout?: number, path?: string, domain?: string): void;
+	export function setCookie(key: string, value: string, path?: string, timeout?: number, domain?: string): void;
 	export function setCookie(key: string, value: string, path?: string, domain?: string): void;
 
 
