@@ -110,7 +110,9 @@ import "../helpers/qunit-helpers";
 // import "./es.map";
 
 // import "./es.promise";
-import "./es.promise.finally";
+// import "./es.promise.finally";
 // import "./es.promise.all-settled";
 // import "./es.promise.any";
 // import "./es.aggregate-error";
+
+import "./web.url";

@@ -6,9 +6,8 @@ QUnit.test('Promise.allSettled', assert => {
   assert.ok(Promise.allSettled([1, 2, 3]) instanceof Promise, 'returns a promise');
 });
 
-QUnit.test('Promise.allSettled, resolved', assert => {
-  assert.expect(1);
-  const async = assert.async();
+QUnit.asyncTest('Promise.allSettled, resolved', assert => {
+  expect(1);
   Promise.allSettled([
     Promise.resolve(1),
     Promise.reject(2),
@@ -19,15 +18,14 @@ QUnit.test('Promise.allSettled, resolved', assert => {
       { reason: 2, status: 'rejected' },
       { value: 3, status: 'fulfilled' },
     ], 'resolved with a correct value');
-    async();
+    start();
   });
 });
 
-QUnit.test('Promise.allSettled, rejected', assert => {
-  assert.expect(1);
-  const async = assert.async();
+QUnit.asyncTest('Promise.allSettled, rejected', assert => {
+  expect(1);
   Promise.allSettled().catch(() => {
     assert.ok(true, 'rejected as expected');
-    async();
+    start();
   });
 });

@@ -6,9 +6,8 @@ QUnit.test('Promise#finally', assert => {
   assert.ok(Promise.resolve(42).finally(() => { /* empty */ }) instanceof Promise, 'returns a promise');
 });
 
-QUnit.test('Promise#finally, resolved', assert => {
-  assert.expect(3);
-  const async = assert.async();
+QUnit.asyncTest('Promise#finally, resolved', assert => {
+  expect(3);
   let called = 0;
   let argument = null;
   Promise.resolve(42).finally(it => {
@@ -18,13 +17,12 @@ QUnit.test('Promise#finally, resolved', assert => {
     assert.same(it, 42, 'resolved with a correct value');
     assert.same(called, 1, 'onFinally function called one time');
     assert.same(argument, undefined, 'onFinally function called with a correct argument');
-    async();
+    start();
   });
 });
 
-QUnit.test('Promise#finally, rejected', assert => {
-  assert.expect(2);
-  const async = assert.async();
+QUnit.asyncTest('Promise#finally, rejected', assert => {
+  expect(2);
   let called = 0;
   let argument = null;
   Promise.reject(42).finally(it => {
@@ -33,7 +31,7 @@ QUnit.test('Promise#finally, rejected', assert => {
   }).catch(() => {
     assert.same(called, 1, 'onFinally function called one time');
     assert.same(argument, undefined, 'onFinally function called with a correct argument');
-    async();
+    start();
   });
 });
 
@@ -43,7 +41,7 @@ const promise = (() => {
   } catch { /* empty */ }
 })();
 
-if (promise && promise.constructor !== Promise) QUnit.test('Native Promise, patched', assert => {
+if(promise && promise.constructor !== Promise) QUnit.test('Native Promise, patched', assert => {
   assert.isFunction(promise.finally);
   assert.arity(promise.finally, 1);
   assert.looksNative(promise.finally);
