@@ -1,3 +1,4 @@
+import { Number } from "../../native/Number";
 import "../Number/MAX_SAFE_INTEGER";
 import "../Number/MIN_SAFE_INTEGER";
 

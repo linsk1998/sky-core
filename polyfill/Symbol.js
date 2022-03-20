@@ -1,8 +1,9 @@
-import { Symbol } from "../native/Symbol";
+import { Symbol as native_Symbol } from "../native/Symbol";
 import { Symbol as compat_Symbol } from "../impl/Symbol";
 import { Symbol as modern_Symbol } from "../impl-modern/Symbol";
-if(!Symbol) {
-	this.Symbol = compat_Symbol;
+var Symbol = native_Symbol;
+if(!native_Symbol) {
+	Symbol = this.Symbol = compat_Symbol;
 	Symbol.sham = true;
 	Symbol.iterator = "@@iterator";
 	Symbol.hasInstance = "@@hasInstance";
@@ -17,11 +18,11 @@ if(!Symbol) {
 	// Symbol.split = "@@split";
 	// Symbol.toPrimitive = "@@toPrimitive";
 	// Symbol.toStringTag = "@@toStringTag";
-	// Symbol.unscopables = "@@unscopables";
+	// compat_Symbol.unscopables = "@@unscopables";
 } else {
 	if(String(Symbol()) !== String(Symbol(""))) {
 		Object.setPrototypeOf(modern_Symbol, Symbol);
-		this.Symbol = modern_Symbol;
+		Symbol = this.Symbol = modern_Symbol;
 	}
 	if(!Symbol.iterator) { Symbol.iterator = Symbol("iterator"); }
 	if(!Symbol.hasInstance) { Symbol.hasInstance = Symbol("hasInstance"); }

@@ -20,6 +20,7 @@ export function from(arrayLike) {
 		thisArg = arguments[2];
 	}
 	var arr = new ArrayLike();
+	arr.length = 0;
 	var entries = arrayLike[Symbol.iterator];
 	if(!entries && isString(arrayLike)) {
 		entries = iterator;

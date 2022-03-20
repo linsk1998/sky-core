@@ -19,9 +19,9 @@ export default [
 			],
 			"Array.isArray": "sky-core/polyfill/Array/isArray",
 			"Array.of": "sky-core/polyfill/Array/of",
-			"Date": "sky-core/polyfill/Date/constructor",
+			// "Date": "sky-core/polyfill/Date/constructor",
 			"Date.now": "sky-core/polyfill/Date/now",
-			"Date.parse": "sky-core/polyfill/Date/parse",
+			// "Date.parse": "sky-core/polyfill/Date/parse",
 			"Math.acosh": "sky-core/polyfill/Math/acosh",
 			"Math.asinh": "sky-core/polyfill/Math/asinh",
 			"Math.atanh": "sky-core/polyfill/Math/atanh",
@@ -128,7 +128,6 @@ export default [
 			],
 			//ES5 Function
 			".bind": "sky-core/polyfill/Function/prototype/bind",
-			".name": "sky-core/polyfill/Function/prototype/name",
 			//ES5 Array
 			".every": "sky-core/polyfill/Array/prototype/every",
 			".filter": "sky-core/polyfill/Array/prototype/filter",

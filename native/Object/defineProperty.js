@@ -1,1 +1,2 @@
-export var defineProperty = this.Object.defineProperty;
+import { Object } from "../Object";
+export var defineProperty = Object.defineProperty;

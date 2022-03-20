@@ -88,16 +88,6 @@ QUnit.assert.isIterator = function(it, message) {
 	});
 };
 
-QUnit.assert.looksNative = function(fn, message) {
-	// this.pushResult({
-	// 	result: /native code/.test(Function.prototype.toString.call(fn)),
-	// 	actual: false,
-	// 	expected: true,
-	// 	message: message || 'looks native',
-	// });
-	this.ok(true, "no support looksNative");
-};
-
 QUnit.assert.name = function(fn, name, message) {
 	if(typeof fn == 'function' && 'name' in fn) {
 		this.pushResult({
@@ -132,25 +122,6 @@ QUnit.assert.enumerable = function(O, key, message) {
 			message: 'Enumerability is not applicable',
 		});
 	}
-};
-
-QUnit.assert.nonEnumerable = function(O, key, message) {
-	this.ok(true, "no support enumerable");
-	// if(DESCRIPTORS) {
-	// 	this.pushResult({
-	// 		result: !propertyIsEnumerable.call(O, key),
-	// 		actual: false,
-	// 		expected: true,
-	// 		message: message || `${typeof key === 'symbol' ? 'method' : `'${key}'`} is non-enumerable`,
-	// 	});
-	// } else {
-	// 	this.pushResult({
-	// 		result: true,
-	// 		actual: true,
-	// 		expected: true,
-	// 		message: 'Enumerability is not applicable',
-	// 	});
-	// }
 };
 
 QUnit.assert.notThrows = function(fn, message) {

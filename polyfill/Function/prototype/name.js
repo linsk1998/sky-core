@@ -1,4 +1,5 @@
-if(Object.defineProperty) {
+import { accessor } from "../../../support/accessor";
+if(accessor) {
 	if(!('name' in Function.prototype)) {
 		Object.defineProperty(Function.prototype, 'name', {
 			enumerable: false, configurable: true,
