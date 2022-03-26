@@ -234,100 +234,98 @@
 	  });
 	};
 
-	var Array$1 = window.Array;
-
-	function isArray(obj){
-		return Object.prototype.toString.call(obj)==='[object Array]';
+	function isRegExp(obj){
+		return Object.prototype.toString.call(obj)==='[object RegExp]';
 	}
 
-	if(!Array$1.isArray) {
-		Array$1.isArray = isArray;
+	var stringEscapes = {
+		'\\': '\\',
+		"'": "'",
+		'\n': 'n',
+		'\r': 'r',
+		'\u2028': 'u2028',
+		'\u2029': 'u2029'
+	};
+	var regexpEscapes = {
+		'0': 'x30', '1': 'x31', '2': 'x32', '3': 'x33', '4': 'x34',
+		'5': 'x35', '6': 'x36', '7': 'x37', '8': 'x38', '9': 'x39',
+		'A': 'x41', 'B': 'x42', 'C': 'x43', 'D': 'x44', 'E': 'x45', 'F': 'x46',
+		'a': 'x61', 'b': 'x62', 'c': 'x63', 'd': 'x64', 'e': 'x65', 'f': 'x66',
+		'n': 'x6e', 'r': 'x72', 't': 'x74', 'u': 'x75', 'v': 'x76', 'x': 'x78'
+	};
+	var reRegExpChars = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g;
+
+	function escapeRegExp(str){//from lodash
+		if(str){
+			reRegExpChars.lastIndex = 0;
+			return (reRegExpChars.test(str))
+				? str.replace(reRegExpChars, function(chr, leadingChar, whitespaceChar) {
+				if (leadingChar) {
+					chr = regexpEscapes[chr];
+				} else if (whitespaceChar) {
+					chr = stringEscapes[chr];
+				}
+				return '\\' + chr;
+			})
+				: str;
+		}
+		return "(?:)";
 	}
 
-	function flat() {
-		var deep = arguments[0];
-		if(deep == null) deep = 1;
-		var arr = [];
-		for(var i = 0; i < this.length; i++) {
-			var item = this[i];
-			if(Array.isArray(item) && deep > 0) {
-				arr = arr.concat(flat.call(item, deep - 1));
+	var replace = String.prototype.replace;
+	function replaceAll(searchValue, replaceValue) {
+		if(isRegExp(searchValue)) {
+			if(!searchValue.global) {
+				throw new TypeError("String.prototype.replaceAll called with a non-global RegExp argument");
 			} else {
-				arr.push(item);
+				return this.replace(searchValue, replaceValue);
 			}
 		}
-		return arr;
+		searchValue = new RegExp(escapeRegExp(String(searchValue)), "g");
+		return replace.call(this, searchValue, replaceValue);
 	}
 
-	function map$1(fn) {
-		var thisArg = arguments[1];
-		var arr = [];
-		for(var k = 0, length = this.length; k < length; k++) {
-			arr.push(fn.call(thisArg, this[k], k, this));
-		}
-		return arr;
+	if(!String.prototype.replaceAll) {
+		String.prototype.replaceAll = replaceAll;
 	}
 
-	var map = Array.prototype.map || map$1;
-
-	function flatMap(fn) {
-		return flat.call(map.call(this, fn, arguments[1]), 1);
-	}
-
-	if(!Array.prototype.flatMap) {
-		Array.prototype.flatMap = flatMap;
-	}
-
-	QUnit.test('Array#flatMap', function (assert) {
-	  var flatMap = Array.prototype.flatMap;
-	  assert.isFunction(flatMap);
-	  assert.name(flatMap, 'flatMap');
-	  assert.arity(flatMap, 1);
-	  assert.deepEqual([].flatMap(function (it) {
-	    return it;
-	  }), []);
-	  assert.deepEqual([1, 2, 3].flatMap(function (it) {
-	    return it;
-	  }), [1, 2, 3]);
-	  assert.deepEqual([1, 2, 3].flatMap(function (it) {
-	    return [it, it];
-	  }), [1, 1, 2, 2, 3, 3]);
-	  assert.deepEqual([1, 2, 3].flatMap(function (it) {
-	    return [[it], [it]];
-	  }), [[1], [1], [2], [2], [3], [3]]);
-	  assert.deepEqual([1, [2, 3]].flatMap(function () {
-	    return 1;
-	  }), [1, 1]);
-	  var array = [1];
-	  var context = {};
-	  array.flatMap(function (value, key, that) {
-	    assert.same(value, 1);
-	    assert.same(key, 0);
-	    assert.same(that, array);
-	    assert.same(this, context);
-	    return value;
-	  }, context);
+	QUnit.test('String#replaceAll', function (assert) {
+	  var replaceAll = String.prototype.replaceAll;
+	  assert.isFunction(replaceAll);
+	  assert.arity(replaceAll, 2);
+	  assert.name(replaceAll, 'replaceAll');
+	  assert.same('q=query+string+parameters'.replaceAll('+', ' '), 'q=query string parameters');
+	  assert.same('foo'.replaceAll('o', {}), 'f[object Object][object Object]');
+	  assert.same('[object Object]x[object Object]'.replaceAll({}, 'y'), 'yxy');
+	  assert.same(replaceAll.call({}, 'bject', 'lolo'), '[ololo Ololo]');
+	  assert.same('aba'.replaceAll('b', function (search, i, string) {
+	    assert.same(search, 'b', '`search` is `b`');
+	    assert.same(i, 1, '`i` is 1');
+	    assert.same(string, 'aba', '`string` is `aba`');
+	    return 'c';
+	  }), 'aca');
+	  assert.same('aba'.replaceAll('b'), 'aundefineda');
+	  assert.same('xxx'.replaceAll('', '_'), '_x_x_x_');
+	  assert.same('121314'.replaceAll('1', '$$'), '$2$3$4', '$$');
+	  assert.same('121314'.replaceAll('1', '$&'), '121314', '$&');
+	  assert.same('121314'.replaceAll('1', '$`'), '212312134', '$`');
+	  assert.same('121314'.replaceAll('1', '$\''), '213142314344', '$\'');
 
 	  if (STRICT) {
 	    assert["throws"](function () {
-	      return flatMap.call(null, function (it) {
-	        return it;
-	      });
+	      return replaceAll.call(null, 'a', 'b');
 	    }, TypeError);
 	    assert["throws"](function () {
-	      return flatMap.call(undefined, function (it) {
-	        return it;
-	      });
+	      return replaceAll.call(undefined, 'a', 'b');
 	    }, TypeError);
 	  }
 
-	  assert.notThrows(function () {
-	    return flatMap.call({
-	      length: -1
-	    }, function () {
-	      throw new Error();
-	    }).length === 0;
-	  }, 'uses ToLength');
+	  assert["throws"](function () {
+	    return 'b.b.b.b.b'.replaceAll(/\./, 'a');
+	  }, TypeError);
+	  assert.same('b.b.b.b.b'.replaceAll(/\./g, 'a'), 'babababab');
+	  var object = {};
+	  assert.same('[object Object]'.replaceAll(object, 'a'), 'a');
 	});
 
 }());

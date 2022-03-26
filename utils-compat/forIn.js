@@ -1,30 +1,30 @@
-import {dontEnums} from "./dontEnums";
-import {getPrototypeOf} from "../impl-compat/Object/getPrototypeOf";
-export function forIn(obj,fn,thisArg){
-	if(typeof obj!=="object"){
+import { dontEnums } from "./dontEnums";
+import { getPrototypeOf } from "../impl-compat/Object/getPrototypeOf";
+export function forIn(obj, fn, thisArg) {
+	if(typeof obj !== "object") {
 		return false;
 	}
-	var isJsObject=obj instanceof Object;
+	var isJsObject = obj instanceof Object;
 	for(var key in obj) {
-		if(!isJsObject){
-			if(key.startsWith("__") || key==="constructor"){
-				continue ;
+		if(!isJsObject) {
+			if(key.substring(0, 2) === "__" || key === "constructor") {
+				continue;
 			}
 		}
-		if(key.startsWith("@@")){
-			continue ;
+		if(key.substring(0, 2) === "@@") {
+			continue;
 		}
-		if(fn.call(thisArg,obj[key],key)===false){
+		if(fn.call(thisArg, obj[key], key) === false) {
 			return false;
 		}
 	}
-	var i=dontEnums.length;
-	var proto=getPrototypeOf(obj);
+	var i = dontEnums.length;
+	var proto = getPrototypeOf(obj);
 	//遍历nonEnumerableProps数组
-	while(i--){
-		var prop=dontEnums[i];
-		if(prop in obj && obj[prop]!==proto[prop]){
-			if(fn.call(thisArg,obj[prop],prop)===false){
+	while(i--) {
+		var prop = dontEnums[i];
+		if(prop in obj && obj[prop] !== proto[prop]) {
+			if(fn.call(thisArg, obj[prop], prop) === false) {
 				return false;
 			}
 		}

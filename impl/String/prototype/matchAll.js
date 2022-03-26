@@ -6,7 +6,7 @@ function matchAll(regExp) {
 	} else if(regExp && regExp.global === false) {
 		throw new TypeError();
 	}
-	return {
+	var it = {
 		next: function() {
 			var value = regExp.exec(string);
 			if(value) {
@@ -20,10 +20,11 @@ function matchAll(regExp) {
 					done: true
 				};
 			}
-		},
-		[Symbol.iterator]: function() {
-			return this;
 		}
 	};
+	it[Symbol.iterator] = function() {
+		return this;
+	};
+	return it;
 }
 export { matchAll };

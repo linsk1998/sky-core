@@ -18,7 +18,7 @@ Symbol.prototype.toJSON = function() {
 export function getOwnPropertySymbols(obj) {
 	var arr = [];
 	for(var key in obj) {
-		if(key.startsWith("@@")) {
+		if(key.substring(0, 2) === "@@") {
 			if(Object.prototype.hasOwnProperty.call(obj, key)) {
 				arr.push(all_symbol[key]);
 			}

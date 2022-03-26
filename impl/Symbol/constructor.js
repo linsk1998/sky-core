@@ -33,7 +33,7 @@ export function getOwnPropertySymbols(obj) {
 	var i = keys.length;
 	while(i-- > 0) {
 		var key = keys[i];
-		if(key.startsWith("@@")) {
+		if(key.substring(0, 2) === "@@") {
 			arr.push(all_symbol[key]);
 		}
 	}

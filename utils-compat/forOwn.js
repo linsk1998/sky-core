@@ -6,7 +6,7 @@ export function forOwn(obj, fn, thisArg) {
 		var proto = getPrototypeOf(obj);
 		if(proto) {
 			for(key in obj) {
-				if(!key.startsWith("@@") && !key.startsWith("__") && proto[key] !== obj[key]) {
+				if(!key.substring(0, 2) === "@@" && !key.substring(0, 2) === "__" && proto[key] !== obj[key]) {
 					if(fn.call(thisArg, obj[key], key) === false) {
 						return false;
 					}
@@ -16,7 +16,7 @@ export function forOwn(obj, fn, thisArg) {
 		}
 	}
 	for(key in obj) {
-		if(Object.prototype.hasOwnProperty.call(obj, key) && !key.startsWith("@@") && !key.startsWith("__")) {
+		if(Object.prototype.hasOwnProperty.call(obj, key) && !key.substring(0, 2) === "@@" && !key.substring(0, 2) === "__") {
 			if(fn.call(thisArg, obj[key], key) === false) {
 				return false;
 			}
