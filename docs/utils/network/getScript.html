@@ -1,0 +1,44 @@
+<!-- quirks -->
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="renderer" content="webkit" />
+	<title>getScript</title>
+	<link href="../../ting-quirks.css" rel="stylesheet" />
+	<script src="../../../dist/sky.js"></script>
+	<script src="../../demo.js"></script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h3>Sky.getScript</h3>
+		<p>获取JSONP数据</p>
+		<pre
+			class="code">Sky.getScript("http://pv.sohu.com/cityjson?ie=utf-8",function(){alert(returnCitySN.cname)});</pre>
+		<div class="btn-toolbar">
+			<a class="btn btn-primary" href="javascript:void 0;" onclick="run(this)">运行</a>
+		</div>
+		<p>响应网络错误</p>
+		<pre class="code">Sky.getScript("./404",function(){alert("成功")},function(e){alert(e.message)});</pre>
+		<div class="btn-toolbar">
+			<a class="btn btn-primary" href="javascript:void 0;" onclick="run(this)">运行</a>
+		</div>
+		<p>解析脚本错误</p>
+		<pre class="code">Sky.getScript("./getScript.html",function(){alert("成功")},function(e){alert(e.message)});</pre>
+		<div class="btn-toolbar">
+			<a class="btn btn-primary" href="javascript:void 0;" onclick="run(this)">运行</a>
+		</div>
+		<p>运行脚本错误</p>
+		<pre class="code">Sky.getScript("./throw.js",function(){alert("成功")},function(e){alert(e.message)});</pre>
+		<div class="btn-toolbar">
+			<a class="btn btn-primary" href="javascript:void 0;" onclick="run(this)">运行</a>
+		</div>
+	</div>
+</body>
+
+</html>
