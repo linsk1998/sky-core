@@ -1,3 +1,4 @@
+import { Object } from "../../native/Object";
 import { defineProperty } from "../../native/Object/defineProperty";
 import { getOwnPropertyDescriptors } from "../../impl-compat/Object/getOwnPropertyDescriptors";
 import { ff_getOwnPropertyDescriptors, ie_getOwnPropertyDescriptors } from "../../impl-modern/Object/getOwnPropertyDescriptors";

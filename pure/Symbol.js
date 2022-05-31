@@ -19,7 +19,7 @@ export default (function() {
 		Symbol.toStringTag = "@@toStringTag";
 		Symbol.unscopables = "@@unscopables";
 	} else {
-		if(String(Symbol()) !== String(Symbol(""))) {
+		if(String(native_Symbol()) !== String(native_Symbol(""))) {
 			Object.setPrototypeOf(modern_Symbol, native_Symbol);
 			Symbol = modern_Symbol;
 		} else {

@@ -1,4 +1,3 @@
-import "../../polyfill/String/prototype/startsWith";
 import { dontEnums } from "../../utils-compat/dontEnums";
 import { getPrototypeOf } from "./getPrototypeOf";
 

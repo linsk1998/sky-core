@@ -86,7 +86,7 @@ export default {
 	plugins: [
 		inject({
 			"modules": {
-				"XMLHttpRequest":"sky-core/polyfill/XMLHttpRequest"
+				"XMLHttpRequest":"sky-core/pure/XMLHttpRequest"
 			},
 			include:["**/ajax.js"]
 		})

@@ -1,5 +1,7 @@
-if(!Function.prototype[Symbol.hasInstance]) {
-	Function.prototype[Symbol.hasInstance] = function(instance) {
+
+import hasInstance from "sky-core/pure/Symbol/hasInstance";
+if(!Function.prototype[hasInstance]) {
+	Function.prototype[hasInstance] = function(instance) {
 		return instance instanceof this;
 	};
 }

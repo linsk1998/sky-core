@@ -38,7 +38,7 @@ import "../helpers/qunit-helpers";
 // import "./es.string.match-all";
 // import "./es.string.replace-all";
 
-// import "./es.symbol";
+import "./es.symbol";
 // import "./es.symbol.description";
 // import "./es.symbol.async-iterator";
 

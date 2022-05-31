@@ -1,3 +1,4 @@
+import { Object } from "../../native/Object";
 import { getPrototypeOf as compat_getPrototypeOf } from "../../impl-compat/Object/getPrototypeOf";
 import { getPrototypeOf as modern_getPrototypeOf } from "../../impl-modern/Object/getPrototypeOf";
 if(!Object.getPrototypeOf) {

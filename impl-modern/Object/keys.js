@@ -1,4 +1,3 @@
-import "../../polyfill/String/prototype/startsWith";
 import { Symbol } from "../../native/Symbol";
 import { keys as native_keys } from "../../native/Object/keys";
 export function ie_keys(obj) {

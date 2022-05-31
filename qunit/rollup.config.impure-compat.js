@@ -19,6 +19,7 @@ export default {
 			libraryName: "sky-core",
 			libraryDirectory: "utils"
 		}),
+		...impure,
 		babel({
 			babelHelpers: 'bundled',
 			babelrc: false,
@@ -27,21 +28,13 @@ export default {
 					"@babel/preset-env",
 					{
 						"modules": false,
-						"loose": true
+						"loose": true,
+						"targets": "ie <= 8"
 					}
 				]
 			],
-			plugins: [
-				"@babel/plugin-transform-member-expression-literals",
-				"@babel/plugin-transform-property-literals",
-				"@babel/plugin-transform-reserved-words",
-				["@babel/plugin-transform-for-of", {
-					"loose": false
-				}]
-			],
 			include: ["qunit/**/*"]
 		}),
-		...impure,
 		alias({
 			entries: [
 			].concat(pures).concat(polyfills).concat(utils)

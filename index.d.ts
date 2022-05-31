@@ -83,6 +83,9 @@ declare module "sky-core" {
 	export function setCookie(key: string, value: string, path?: string, timeout?: number, domain?: string): void;
 	export function setCookie(key: string, value: string, path?: string, domain?: string): void;
 
+	export function addClass(ele: any, cls: string): void;
+	export function hasClass(ele: any, cls: string): boolean;
+	export function removeClass(ele: any, cls: string): void;
 
 }
 declare module "sky-core/pure/Array/from" {
