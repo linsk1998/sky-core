@@ -1,4 +1,3 @@
-import "../polyfill/document/scripts";
 import { getScript as compat_getScript } from "../utils-compat/getScript";
 import { getScript as modern_getScript } from "../utils-modern/getScript";
 

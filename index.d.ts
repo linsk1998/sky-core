@@ -55,6 +55,8 @@ declare module "sky-core" {
 	export function getCurrentScript(): HTMLScriptElement;
 	export function getCurrentPath(): string;
 	export function getScript(src: string, func: Function, charset?: string): HTMLScriptElement;
+	export function loadCSS(href: string): Promise<void>;
+	export function loadScript(src: string, charset?: string): Promise<void>;
 
 	export function getElementsByClassName(className: string, ancestor?: ParentNode | Element | Document): Element[];
 	export function getElementStyle(el: Element, prop: string): string;
@@ -75,6 +77,8 @@ declare module "sky-core" {
 	export function detachEvent(ele: EventTarget, type: string, func: Function, useCapture?: boolean): void;
 	export function fixEvent(ele: EventTarget, type: 'click' | 'mousedown' | 'mouseup' | 'mouseover' | 'mouseout', e: MouseEvent): MouseEvent;
 	export function fixEvent<T = Event>(ele: EventTarget, type: string, e: T): T;
+	export function fireEvent(currentTarget: EventTarget, type: string, props: Record<string, any>): void;
+	/** @deprecated change to fireEvent */
 	export function trigger(currentTarget: EventTarget, type: string, props: Record<string, any>): void;
 
 

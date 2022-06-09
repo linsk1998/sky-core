@@ -57,10 +57,12 @@ export { inherits } from "./utils/inherits";
 export { getCurrentScript } from "./utils/getCurrentScript";
 export { getCurrentPath } from "./utils/getCurrentPath";
 export { getScript } from "./utils/getScript";
+export { loadCSS } from "./utils/loadCSS";
 
 export { attachEvent } from "./utils/attachEvent";
 export { detachEvent } from "./utils/detachEvent";
 export { fixEvent } from "./utils/fixEvent";
+export { fireEvent } from "./utils/fireEvent";
 
 export { getCookie } from "./utils/getCookie";
 export { setCookie } from "./utils/setCookie";
