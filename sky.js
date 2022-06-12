@@ -1,4 +1,5 @@
 
 import "./utils/Sky";
-import "./polyfill";
+import "./es";
+import "./web";
 export * from "./utils";

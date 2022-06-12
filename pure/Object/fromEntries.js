@@ -1,2 +1,2 @@
-import fromEntries from "sky-core/pure/Object/fromEntries";
+import { fromEntries } from "../../impl/Object/fromEntries";
 export default Object.fromEntries || fromEntries;

@@ -1,1 +1,4 @@
 qunit/
+test/
+.vscode/
+docs/

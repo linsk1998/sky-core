@@ -1,4 +1,4 @@
-declare module "sky-core/utils" {
+declare module "sky-core" {
 	export function overload(args: ArrayLike<any>, thisVal: any): any;
 	export function overload(checks: ((arg: any) => boolean)[], thisVal: any, target: Function): void;
 
@@ -55,23 +55,41 @@ declare module "sky-core/utils" {
 	export function getCurrentScript(): HTMLScriptElement;
 	export function getCurrentPath(): string;
 	export function getScript(src: string, func: Function, charset?: string): HTMLScriptElement;
+	export function loadCSS(href: string): Promise<void>;
+	export function loadScript(src: string, charset?: string): Promise<void>;
 
-	export function attachEvent<K extends keyof DocumentEventMap>(ele: Document, evt: K, func: (this: Document, ev: DocumentEventMap[K]) => any, useCapture?: boolean): void;
-	export function attachEvent<K extends keyof WindowEventMap>(ele: Window, evt: K, func: (this: Window, ev: WindowEventMap[K]) => any, useCapture?: boolean): void;
-	export function attachEvent<K extends keyof HTMLElementEventMap>(ele: HTMLElement, evt: K, func: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture: boolean): void;
-	export function attachEvent<K extends keyof ElementEventMap>(ele: Element, evt: K, func: (this: Element, ev: ElementEventMap[K]) => any, useCapture: boolean): void;
-	export function attachEvent(ele: EventTarget, evt: string, func: Function): void;
-	export function detachEvent(ele: EventTarget, evt: string, func: Function, useCapture?: boolean): void;
-	export function fireEvent(ele: EventTarget, evt: string, props: {
-		[key: string]: any,
-		bubbles?: boolean,
-		cancelable?: boolean;
-	}): void;
+	export function getElementsByClassName(className: string, ancestor?: ParentNode | Element | Document): Element[];
+	export function getElementStyle(el: Element, prop: string): string;
+	export function hasClass(el: Element, className: string): boolean;
+	export function addClass(el: Element, className: string): void;
+	export function removeClass(el: Element, className: string): void;
+	export function toggleClass(el: Element, className: string): void;
+	export function getNextElement(el: Element): Element | null;
+	export function getPrevElement(el: Element): Element | null;
+	export function querySelector(selector: string, ancestor?: ParentNode | Element | Document): Element | null;
+	export function querySelectorAll(selector: string, ancestor?: ParentNode | Element | Document): Element[];
+
+	export function attachEvent<K extends keyof DocumentEventMap>(ele: Document, type: K, func: (this: Document, ev: DocumentEventMap[K]) => any, useCapture?: boolean): void;
+	export function attachEvent<K extends keyof WindowEventMap>(ele: Window, type: K, func: (this: Window, ev: WindowEventMap[K]) => any, useCapture?: boolean): void;
+	export function attachEvent<K extends keyof HTMLElementEventMap>(ele: HTMLElement, type: K, func: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture: boolean): void;
+	export function attachEvent<K extends keyof ElementEventMap>(ele: Element, type: K, func: (this: Element, ev: ElementEventMap[K]) => any, useCapture: boolean): void;
+	export function attachEvent(ele: EventTarget, type: string, func: Function): void;
+	export function detachEvent(ele: EventTarget, type: string, func: Function, useCapture?: boolean): void;
+	export function fixEvent(ele: EventTarget, type: 'click' | 'mousedown' | 'mouseup' | 'mouseover' | 'mouseout', e: MouseEvent): MouseEvent;
+	export function fixEvent<T = Event>(ele: EventTarget, type: string, e: T): T;
+	export function fireEvent(currentTarget: EventTarget, type: string, props: Record<string, any>): void;
+	/** @deprecated change to fireEvent */
+	export function trigger(currentTarget: EventTarget, type: string, props: Record<string, any>): void;
 
 
-	export function getCookie(key: string, value: string): void;
+	export function getCookie(key: string): string;
 	export function setCookie(key: string, value: string, timeout?: number, path?: string, domain?: string): void;
+	export function setCookie(key: string, value: string, path?: string, timeout?: number, domain?: string): void;
+	export function setCookie(key: string, value: string, path?: string, domain?: string): void;
 
+	export function addClass(ele: any, cls: string): void;
+	export function hasClass(ele: any, cls: string): boolean;
+	export function removeClass(ele: any, cls: string): void;
 
 }
 declare module "sky-core/pure/Array/from" {

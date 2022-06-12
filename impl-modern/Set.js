@@ -2,7 +2,8 @@
 import { Set as GSet } from "../native/Set";
 import { toES6Iterator } from "../utils-modern/toES6Iterator";
 export function createSubSet() {
-	function Set(args) {
+	function Set() {
+		var args = arguments[0];
 		var set = new GSet(args);
 		Object.setPrototypeOf(set, Object.getPrototypeOf(this));
 		return set;
@@ -13,7 +14,7 @@ export function createSubSet() {
 
 }
 export function fixSet() {
-	var Set = createSubMap();
+	var Set = createSubSet();
 	var s = new GSet();
 	if(typeof s.size === "function") {
 		// firefox 18-

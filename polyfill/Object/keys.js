@@ -1,4 +1,5 @@
 import { Symbol } from "../../native/Symbol";
+import { Object } from "../../native/Object";
 import { keys as compat_keys } from "../../impl-compat/Object/keys";
 import { nie_keys, ie_keys } from "../../impl-modern/Object/keys";
 import { hasEnumBug } from "../../utils/hasEnumBug";

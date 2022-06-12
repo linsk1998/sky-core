@@ -1,5 +1,5 @@
 
-export function getOwnPropertyDescriptors(obj) {
+export function ff_getOwnPropertyDescriptors(obj) {
 	var ownKeys = Object.keys(obj);
 	var i = ownKeys.length;
 	var descs = {};
@@ -16,6 +16,16 @@ export function getOwnPropertyDescriptors(obj) {
 			desc.get = get;
 			descs[key] = desc;
 		}
+	}
+	return descs;
+}
+export function ie_getOwnPropertyDescriptors(obj) {
+	var ownKeys = Object.getOwnPropertyNames(obj);
+	var i = ownKeys.length;
+	var descs = {};
+	while(i-- > 0) {
+		var key = ownKeys[i];
+		descs[key] = Object.getOwnPropertyDescriptor(obj, key);
 	}
 	return descs;
 }

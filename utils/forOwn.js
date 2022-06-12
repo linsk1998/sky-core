@@ -1,15 +1,5 @@
+import { forOwn as compat_forOwn } from "../utils-compat/forOwn";
+import { forOwn as modern_forOwn } from "../utils-modern/forOwn";
+import { hasEnumBug } from "./hasEnumBug";
 
-export function forOwn(obj,fn,thisArg){
-	if(obj){
-		thisArg=thisArg || undefined;
-		var keys=Object.keys(obj);
-		for(var i=0;i<keys.length;i++){
-			var key=keys[i];
-			if(fn.call(thisArg,obj[key],key)===false){
-				return false;
-			}
-		}
-		return true;
-	}
-	return false;
-};
+export var forOwn = hasEnumBug ? compat_forOwn : modern_forOwn;

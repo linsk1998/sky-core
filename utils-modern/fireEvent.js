@@ -1,22 +1,36 @@
-import "sky-core/polyfill/Array/prototype/includes";
 var notCapture = ["load", "unload", "scroll", "resize", "blur", "focus", "mouseenter", "mouseleave", "input", "propertychange"];
-export function fireEvent(ele, evt, props) {
+export function fireEvent(ele, type, props) {
 	var e = document.createEvent('Event');
-	var bubbles = true;
+	switch(type) {
+		case "mouseenter":
+			if(!('onmouseenter' in document)) {
+				type = 'mouseover';
+				e.polyfill = true;
+			}
+			break;
+		case "mouseleave":
+			if(!('onmouseleave' in document)) {
+				type = 'mouseout';
+				e.polyfill = true;
+			}
+			break;
+	}
+	var bubbles = notCapture.indexOf(type) < 0;
 	var cancelable = true;
 	if(props) {
-		if('bubbles' in props) bubbles = props.bubbles;
-		if('cancelable' in props) cancelable = props.cancelable;
-		if(bubbles && notCapture.includes(evt)) {
-			bubbles = false;
+		for(var key in props) {
+			switch(key) {
+				case 'bubbles':
+					bubbles = props.bubbles;
+					break;
+				case 'cancelable':
+					cancelable = props.cancelable;
+					break;
+				default:
+					e[key] = props[key];
+			}
 		}
-		try {
-			delete props.type;
-			delete props.bubbles;
-			delete props.cancelable;
-		} catch(err) { }
-		Object.assign(e, props);
 	}
-	e.initEvent(evt, bubbles, cancelable);
+	e.initEvent(type, bubbles, cancelable);
 	return ele.dispatchEvent(e);
 };

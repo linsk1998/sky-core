@@ -1,0 +1,1 @@
+export { atanh } from "../../impl/Math/atanh";

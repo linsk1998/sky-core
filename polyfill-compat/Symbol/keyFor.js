@@ -1,5 +1,7 @@
 import "../Symbol";
-import { keyFor as compat_for } from "../../impl-compat/Symbol/keyFor";
+import { keyFor } from "../../impl-compat/Symbol/keyFor";
+
+var Symbol = this.Symbol;
 if(!Symbol.keyFor) {
-	Symbol.keyFor = compat_for;
+	Symbol.keyFor = keyFor;
 }

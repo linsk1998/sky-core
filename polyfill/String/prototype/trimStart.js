@@ -1,5 +1,4 @@
-if(!String.prototype.trimStart){
-	String.prototype.trimStart=function trimStart(){
-		return this.replace(/^[\s\uFEFF\xA0]+/g,'');
-	};
+import { trimStart } from "../../../impl/String/prototype/trimStart";
+if(!String.prototype.trimLeft) {
+	String.prototype.trimLeft = trimStart;
 }

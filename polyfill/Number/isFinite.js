@@ -1,5 +1,5 @@
-if(!Number.isFinite){
-	Number.isFinite=function(value){
-		return typeof value === 'number' && isFinite(value);
-	};
+import { Number } from "../../native/Number";
+import { isFinite } from "../../impl/Number/isFinite";
+if(!Number.isFinite) {
+	Number.isFinite = isFinite;
 }

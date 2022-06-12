@@ -1,3 +1,1 @@
-define(function() {
-	return document.scripts || { scripts: document.getElementsByTagName("SCRIPT") };
-});
+export default document.scripts ? document : { scripts: document.getElementsByTagName("SCRIPT") };

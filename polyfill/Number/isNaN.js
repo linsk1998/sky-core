@@ -1,5 +1,5 @@
-if(!Number.isNaN){
-	Number.isNaN=function(value){
-		return typeof value === "number" && isNaN(value);
-	};
+import { Number } from "../../native/Number";
+import { isNaN } from "../../impl/Number/isNaN";
+if(!Number.isNaN) {
+	Number.isNaN = isNaN;
 }

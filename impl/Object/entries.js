@@ -1,10 +1,9 @@
+import { forOwn } from "sky-core";
 
 export function entries(obj) {
-	var ownProps = Object.keys(obj),
-		i = ownProps.length,
-		resArray = new Array(i); // preallocate the Array
-	while(i--)
-		resArray[i] = [ownProps[i], obj[ownProps[i]]];
-
+	var resArray = new Array(); // preallocate the Array
+	forOwn(obj, function(value, key) {
+		resArray.push([key, value]);
+	});
 	return resArray;
 }

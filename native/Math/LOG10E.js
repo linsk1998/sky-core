@@ -1,0 +1,1 @@
+export var LOG10E = Math.LOG10E;

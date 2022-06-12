@@ -5,7 +5,7 @@ export function flat() {
 	for(var i = 0; i < this.length; i++) {
 		var item = this[i];
 		if(Array.isArray(item) && deep > 0) {
-			arr = arr.concat(flat.apply(item, deep - 1));
+			arr = arr.concat(flat.call(item, deep - 1));
 		} else {
 			arr.push(item);
 		}

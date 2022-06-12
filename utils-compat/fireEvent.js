@@ -1,17 +1,45 @@
 
-export function fireEvent(ele, evt, props) {
-	if(!props) {
-		return ele.fireEvent("on" + evt);
+export function fireEvent(ele, type, props) {
+	switch(type) {
+		case 'load':
+		case 'wheel':
+		case 'input':
+			break;
+		default:
+			if(!props) {
+				return ele.fireEvent("on" + type);
+			}
 	}
 	var e = document.createEventObject();
-	if('bubbles' in props) {
-		e.cancelBubble = !props.bubbles;
+	switch(type) {
+		case 'load':
+			if(ele.tagName == "SCRIPT") {
+				e.polyfill = true;
+				ele.fireEvent("onreadystatechange", e);
+				return;
+			}
+			break;
+		case 'wheel':
+			type = 'mousewheel';
+			break;
+		case "DOMContentLoaded":
+			if(ele === document) {
+				e.polyfill = true;
+				ele.fireEvent("onreadystatechange", e);
+				return;
+			}
+			break;
+		case 'input':
+			e.propertyName = 'value';
+			e.polyfill = true;
+			ele.fireEvent("onpropertychange", e);
+			return;
+		default:
 	}
-	try {
-		delete props.type;
-		delete props.bubbles;
-		delete props.returnValue;
-	} catch(err) { }
-	Object.assign(e, props);
-	ele.fireEvent("on" + evt, e);
+	if(props) {
+		for(var key in props) {
+			e[key] = props[key];
+		}
+	}
+	ele.fireEvent("on" + type, e);
 };

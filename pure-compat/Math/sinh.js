@@ -1,0 +1,1 @@
+export { sinh } from "../../impl/Math/sinh";

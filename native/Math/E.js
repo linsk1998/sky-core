@@ -1,0 +1,1 @@
+export var E = Math.E;

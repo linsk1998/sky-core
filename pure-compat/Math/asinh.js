@@ -1,0 +1,1 @@
+export { asinh } from "../../impl/Math/asinh";

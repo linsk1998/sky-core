@@ -1,0 +1,1 @@
+export { querySelectorAll } from "../impl-compat/document/querySelectorAll";

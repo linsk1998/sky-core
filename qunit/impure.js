@@ -2,22 +2,16 @@ import polyfill from "rollup-plugin-polyfill-inject";
 import inject from "@rollup/plugin-inject";
 export default [
 	polyfill({
-		"modules": {
-			"Symbol": "sky-core/polyfill/Symbol",
-		},
-		exclude: [
-			"polyfill/Symbol.js"
-		]
-	}),
-	polyfill({
-		'modules': {
+		modules: {
 			'globalThis': "sky-core/polyfill/globalThis",
 			"Symbol.for": "sky-core/polyfill/Symbol/for",
 			"Symbol.keyFor": "sky-core/polyfill/Symbol/keyFor",
+			"Symbol.hasInstance": "sky-core/polyfill/Function/prototype/@@hasInstance",
 			"Symbol.iterator": [
 				"sky-core/polyfill/Array/prototype/@@iterator",
 				"sky-core/polyfill/String/prototype/@@iterator"
 			],
+			"Symbol": "sky-core/polyfill/Symbol",
 			"Array.from": [
 				"sky-core/polyfill/Array/from",
 				"sky-core/polyfill/Array/prototype/@@iterator",
@@ -28,6 +22,23 @@ export default [
 			"Date": "sky-core/polyfill/Date/constructor",
 			"Date.now": "sky-core/polyfill/Date/now",
 			"Date.parse": "sky-core/polyfill/Date/parse",
+			"Math.acosh": "sky-core/polyfill/Math/acosh",
+			"Math.asinh": "sky-core/polyfill/Math/asinh",
+			"Math.atanh": "sky-core/polyfill/Math/atanh",
+			"Math.cbrt": "sky-core/polyfill/Math/cbrt",
+			"Math.clz32": "sky-core/polyfill/Math/clz32",
+			"Math.cosh": "sky-core/polyfill/Math/cosh",
+			"Math.expm1": "sky-core/polyfill/Math/expm1",
+			"Math.fround": "sky-core/polyfill/Math/fround",
+			"Math.hypot": "sky-core/polyfill/Math/hypot",
+			"Math.imul": "sky-core/polyfill/Math/imul",
+			"Math.log1p": "sky-core/polyfill/Math/log1p",
+			"Math.log2": "sky-core/polyfill/Math/log2",
+			"Math.log10": "sky-core/polyfill/Math/log10",
+			"Math.sign": "sky-core/polyfill/Math/sign",
+			"Math.sinh": "sky-core/polyfill/Math/sinh",
+			"Math.tanh": "sky-core/polyfill/Math/tanh",
+			"Math.trunc": "sky-core/polyfill/Math/trunc",
 			//简易版的实现，仅适用于解析内容安全的json
 			"JSON": "sky-core/polyfill/JSON",
 			//如果，需要解析第三方或其他不安全的json，需要使用其他JSON解析库
@@ -55,6 +66,7 @@ export default [
 			//由于ES3不支持 accessor，我建议不要污染全局的Object，用于给一些库判断是否支持accessor，需要用到defineProperties的地方用@rollup/plugin-inject
 			//"Object.defineProperties":"sky-core/polyfill/Object/defineProperties",
 			"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
+			"Object.getOwnPropertyDescriptors": "sky-core/polyfill/Object/getOwnPropertyDescriptors",
 			"Object.getOwnPropertyNames": "sky-core/polyfill/Object/getOwnPropertyNames",
 			//Object 原型相关
 			"Object.create": "sky-core/polyfill/Object/create",
@@ -62,7 +74,6 @@ export default [
 			//ES3不能真正实现setPrototypeOf，建议不要污染全局的Object，特殊需要用的地方用@rollup/plugin-inject
 			//"Object.setPrototypeOf","sky-core/polyfill/Object/setPrototypeOf",
 			"Object.is": "sky-core/polyfill/Object/is",
-			"Object.setPrototypeOf": "sky-core/polyfill/Object/setPrototypeOf",
 			//Reflect
 			"Reflect.apply": "sky-core/polyfill/Reflect/apply",
 			"Reflect.construct": "sky-core/polyfill/Reflect/construct",
@@ -74,14 +85,15 @@ export default [
 			"Reflect.getPrototypeOf": "sky-core/polyfill/Reflect/getPrototypeOf",
 			//Promise
 			"Promise": "sky-core/polyfill/Promise",
-			"Promise.finally": "sky-core/polyfill/Promise/finally",
+			"Promise": "sky-core/polyfill/Promise/prototype/finally",
 			// ESNext.Promise
 			// "Promise.allSettled": "sky-core/polyfill/Promise/allSettled",
 			// "Promise.any": "sky-core/polyfill/Promise/any",
 			// "AggregateError":"sky-core/polyfill/AggregateError",
 			"queueMicrotask": "sky-core/polyfill/queueMicrotask",
-			//String.fromCodePoint
+			//ES2015.String
 			"String.fromCodePoint": "sky-core/polyfill/String/fromCodePoint",
+			"String.raw": "sky-core/polyfill/String/raw",
 			//ES2015.Collection
 			"Map": "sky-core/polyfill/Map",
 			"Set": "sky-core/polyfill/Set",
@@ -100,19 +112,13 @@ export default [
 			"sessionStorage": "sky-core/polyfill/sessionStorage",
 			'Event': "sky-core/polyfill/Event",
 		},
-		'include': [
-			"impl/**",
-			"impl-compat/**",
-			"impl-modern/**",
-			"utils/**",
-			"utils-compat/**",
-			"utils-modern/**",
-			"qunit/**"
+		exclude: [
+			"qunit/helpers/*"
 		]
 	}),
 	//以下是prototype的修改
 	polyfill({
-		'modules': {
+		modules: {
 			//其他对象的自动转JSON
 			".toJSON": [
 				"sky-core/polyfill/Date/prototype/toJSON"
@@ -120,6 +126,9 @@ export default [
 			"JSON.stringify": [
 				"sky-core/polyfill/Date/prototype/toJSON"
 			],
+			//ES5 Function
+			".bind": "sky-core/polyfill/Function/prototype/bind",
+			".name": "sky-core/polyfill/Function/prototype/name",
 			//ES5 Array
 			".every": "sky-core/polyfill/Array/prototype/every",
 			".filter": "sky-core/polyfill/Array/prototype/filter",
@@ -150,29 +159,37 @@ export default [
 			//toLocaleFormat 这个只有火狐支持，非标准
 			".toLocaleFormat": "sky-core/polyfill/Date/prototype/toLocaleFormat",
 			".toISOString": "sky-core/polyfill/Date/prototype/toISOString",
+			//ES5 String
+			".trim": "sky-core/polyfill/String/prototype/trim",
 			//ES6 String
-			".endsWith": "sky-core/polyfill/String/prototype/endsWith",
 			".startsWith": "sky-core/polyfill/String/prototype/startsWith",
+			".endsWith": "sky-core/polyfill/String/prototype/endsWith",
 			".repeat": "sky-core/polyfill/String/prototype/repeat",
+			".codePointAt": "sky-core/polyfill/String/prototype/codePointAt",
 			//ES2017.String
-			".padEnd": "sky-core/polyfill/String/prototype/padEnd",
 			".padStart": "sky-core/polyfill/String/prototype/padStart",
+			".padEnd": "sky-core/polyfill/String/prototype/padEnd",
 			//ES2019.String
-			".trimEnd": "sky-core/polyfill/String/prototype/trimEnd",
 			".trimStart": "sky-core/polyfill/String/prototype/trimStart",
+			".trimEnd": "sky-core/polyfill/String/prototype/trimEnd",
+			".trimLeft": "sky-core/polyfill/String/prototype/trimLeft",
+			".trimRight": "sky-core/polyfill/String/prototype/trimRight",
 			//ES2020.String
 			".matchAll": "sky-core/polyfill/String/prototype/matchAll",
 			//ESNext.String
 			".replaceAll": "sky-core/polyfill/String/prototype/replaceAll",
-			//Function.prototype.bind
-			".bind": "sky-core/polyfill/Function/prototype/bind",
 		},
-		'include': [
+		include: [
 			"qunit/**"
+		],
+		exclude: [
+			"qunit/helpers/*"
 		]
 	}),
 	inject({
-		"modules": {
+		modules: {
+			// 由于ES3不支持 accessor，必须使用纯净版
+			"document.currentScript": ["sky-core/pure/document/currentScript"],
 			// 由于ES3不支持 accessor，不建议污染全局变量，建议判断时用Object.defineProperties，不涉及accessor的defineProperties操作，在需要用到的地方注入
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
 			// ES3不支持 setPrototypeOf，不建议污染全局变量，只在没有副作用的地方注入
@@ -180,14 +197,8 @@ export default [
 			// 由于有比较多的库使用XMLHttpRequest来判断浏览器版本，污染全局变量会导致判断错误，因此建议只在需要用的地方注入
 			"XMLHttpRequest": "sky-core/pure/XMLHttpRequest"
 		},
-		'include': [
-			"impl/**",
-			"impl-compat/**",
-			"impl-modern/**",
-			"utils/**",
-			"utils-compat/**",
-			"utils-modern/**",
-			"qunit/**"
+		exclude: [
+			"qunit/helpers/*"
 		]
 	})
 ];

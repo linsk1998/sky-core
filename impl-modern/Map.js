@@ -3,7 +3,8 @@ import { Map as GMap } from "../native/Map";
 import { toES6Iterator } from "../utils-modern/toES6Iterator";
 
 export function createSubMap() {
-	function Map(args) {
+	function Map() {
+		var args = arguments[0];
 		var map = new GMap(args);
 		Object.setPrototypeOf(map, Object.getPrototypeOf(this));
 		return map;
@@ -13,7 +14,7 @@ export function createSubMap() {
 	return Map;
 }
 export function fixMap() {
-	var Map = SubMap();
+	var Map = createSubMap();
 	var m = new GMap();
 	if(typeof m.size === "function") {
 		// firefox 18-

@@ -2,29 +2,35 @@
 	"author": {
 		"name": "linsk"
 	},
-	"dependencies": {},
 	"deprecated": false,
 	"description": "Javascript toolkit core library",
 	"devDependencies": {
 		"@babel/core": "^7.13.14",
-		"@babel/preset-env": "^7.13.12",
+		"@babel/plugin-transform-for-of": "^7.16.7",
+		"@babel/plugin-transform-member-expression-literals": "^7.16.7",
+		"@babel/plugin-transform-property-literals": "^7.16.7",
+		"@babel/plugin-transform-reserved-words": "^7.16.7",
+		"@babel/preset-env": "^7.16.11",
 		"@rollup/plugin-alias": "^3.1.1",
 		"@rollup/plugin-babel": "^5.3.0",
-		"@rollup/plugin-inject": "^4.0.2",
+		"@rollup/plugin-commonjs": "^21.0.0",
+		"@rollup/plugin-inject": "^4.0.4",
 		"@rollup/plugin-node-resolve": "^7.1.1",
-		"rollup": "^1.31.1",
+		"rollup": "^2.45.2",
 		"rollup-plugin-es3ify": "0.0.4",
-		"rollup-plugin-import": "^1.0.1",
-		"rollup-plugin-polyfill-inject": "^1.0.0"
+		"rollup-plugin-import": "^1.0.2",
+		"rollup-plugin-polyfill-inject": "^1.0.3"
 	},
 	"license": "MIT",
 	"main": "dist/sky.js",
-	"module": "utils.js",
+	"module": "dist/utils.esm.js",
 	"name": "sky-core",
 	"scripts": {
-		"build:polyfill": "npx rollup --config build/rollup.config.polyfill.cjs && npx rollup --config build/rollup.config.polyfill-compat.cjs && npx rollup --config build/rollup.config.polyfill-modern.cjs",
-		"build:sky": "npx rollup --config build/rollup.config.sky.js && npx rollup --config build/rollup.config.sky-compat.js && npx rollup --config build/rollup.config.sky-modern.js",
-		"test": "npx rollup --config qunit/rollup.config.impure-universal.js"
+		"build:utils": "rollup --config build/rollup.config.utils.js",
+		"build:es": "rollup --config build/rollup.config.es.js && rollup --config build/rollup.config.es-compat.js && rollup --config build/rollup.config.es-modern.js",
+		"build:web": "rollup --config build/rollup.config.web.js && rollup --config build/rollup.config.web-compat.js && rollup --config build/rollup.config.web-modern.js",
+		"build:sky": "rollup --config build/rollup.config.sky.js && rollup --config build/rollup.config.sky-compat.js && rollup --config build/rollup.config.sky-modern.js",
+		"test": "rollup --config qunit/rollup.config.impure-compat.js"
 	},
 	"type": "module",
 	"keywords": [
@@ -32,5 +38,5 @@
 		"core-js",
 		"shim"
 	],
-	"version": "0.2.0"
+	"version": "0.3.0"
 }

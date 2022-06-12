@@ -1,1 +1,2 @@
-export var keys=Object.keys;
+import { Object } from "../Object";
+export var keys = Object.keys;

@@ -1,8 +1,8 @@
 
-import map from "sky-core/prue/Array/prototype/map";
-import findIndex from "sky-core/prue/Array/prototype/findIndex";
-import forEach from "sky-core/prue/Array/prototype/forEach";
-import some from "sky-core/prue/Array/prototype/some";
+import map from "sky-core/pure/Array/prototype/map";
+import findIndex from "sky-core/pure/Array/prototype/findIndex";
+import forEach from "sky-core/pure/Array/prototype/forEach";
+import some from "sky-core/pure/Array/prototype/some";
 
 function URLSearchParams(paramsString) {
 	this._data = new Array();
@@ -72,10 +72,9 @@ URLSearchParams.prototype.has = function(key) {
 	});
 };
 URLSearchParams.prototype.toString = function() {
-	map.call(this._data, function(item) {
+	return this._data.map.call(this._data, function(item) {
 		return encodeURIComponent(item[1]) + "=" + encodeURIComponent(item[0]);
-	});
-	return this._data.map().join("&");
+	}).join("&");
 };
 URLSearchParams.prototype.sort = function() {
 	return this._data.sort(function(a, b) {

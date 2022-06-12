@@ -1,3 +1,4 @@
+import { document } from "../native/document";
 export function getCurrentScript() {
 	var node = document.currentScript;
 	if(node && node.readyState === "interactive") {

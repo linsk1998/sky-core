@@ -1,6 +1,7 @@
+import { JSON } from "../native/JSON";
 import { parse } from "../impl/JSON/parse";
 import { stringify } from "../impl/JSON/stringify";
-export default this.JSON ? JSON : {
+export default JSON ? JSON : {
 	parse: parse,
 	stringify: stringify
 };

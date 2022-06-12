@@ -2,11 +2,11 @@ import { set, has, remove, clear, forEach, entries, values } from "./Map";
 export { has, remove, clear, forEach, entries, values } from "./Map";
 
 export function createSet() {
-	function Set(arr) {
+	function Set() {
+		var arr = arguments[0];
 		this.size = 0;
 		this.head = null;
 		this.tail = null;
-		this.items = new Array();
 		if(arr) {
 			var entries = arr['@@iterator'];
 			if(entries) {
@@ -14,7 +14,16 @@ export function createSet() {
 				while(true) {
 					var next = it.next();
 					if(next.done) break;
-					this.add(next.value);
+					try {
+						this.add(next.value);
+					} catch(e) {
+						if(it.return) {
+							try {
+								it.return();
+							} catch(e) { }
+						}
+						throw e;
+					}
 				}
 			}
 		}
@@ -26,9 +35,15 @@ export function createSet() {
 	Set.prototype.forEach = forEach;
 	Set.prototype.entries = entries;
 	Set.prototype.values = values;
+	Set.prototype.keys = values;
 	Set.prototype['@@iterator'] = values;
 	return Set;
 };
 export function add(value) {
+	if(value === 0) {
+		//-0 -> 0
+		value = 0;
+	}
 	set.call(this, value, value);
+	return this;
 };

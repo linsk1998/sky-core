@@ -1,0 +1,1 @@
+export var String = this.String;

@@ -1,6 +1,6 @@
 export function includes(search) {
 	if(search instanceof RegExp) {
-		throw new TypeError("First argument to String.prototype.includes must not be a regular expression");
+		throw new TypeError("First argument must not be a regular expression");
 	}
 	var start = arguments[1];
 	if(typeof start !== 'number') {

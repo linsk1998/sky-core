@@ -1,11 +1,15 @@
 import { noop } from "../utils/noop";
+function log(data) {
+	if(window.Debug) {
+		Debug.writeln(data);
+	}
+}
 if(!this.console) {
-	this.console = {};
-	console.stack = [];
-	console.log = console.info = console.error = console.warn = function(data) {
-		if(window.Debug) {
-			Debug.writeln(data);
-		}
+	this.console = {
+		log: log,
+		info: log,
+		error: log,
+		warn: log,
+		clear: noop
 	};
-	console.clear = noop;
 }
