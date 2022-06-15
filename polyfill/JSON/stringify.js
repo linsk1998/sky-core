@@ -1,7 +1,8 @@
 
 import { stringify } from "../impl/JSON/stringify";
-if(!this.JSON) {
-	this.JSON = new Object();
+var JSON = this.JSON;
+if(!JSON) {
+	this.JSON = JSON = new Object();
 }
 if(!JSON.stringify) {
 	JSON.stringify = stringify;

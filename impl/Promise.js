@@ -3,7 +3,6 @@ import forEach from "sky-core/pure/Array/prototype/forEach";
 import { noop } from "../utils/noop";
 import { aFunction } from "../utils/aFunction";
 import { isFunction } from "../utils/isFunction";
-import { speciesConstructor } from "../impl/Symbol/species";
 
 var PENDING = Symbol("pending");
 var RESOLVED = Symbol("resolved");

@@ -1,6 +1,7 @@
-import {getPrototypeOf} from "../../impl-modern/Object/getPrototypeOf";
-if(!Object.getPrototypeOf){
-	if('__proto__' in Object.prototype){
-		Object.getPrototypeOf=getPrototypeOf;
+import { Object } from "../../native/Object";
+import { getPrototypeOf } from "../../impl-modern/Object/getPrototypeOf";
+if(!Object.getPrototypeOf) {
+	if('__proto__' in Object.prototype) {
+		Object.getPrototypeOf = getPrototypeOf;
 	}
 }

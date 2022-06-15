@@ -1,7 +1,8 @@
 
 import { parse } from "../impl/JSON/parse";
-if(!this.JSON) {
-	this.JSON = new Object();
+var JSON = this.JSON;
+if(!JSON) {
+	this.JSON = JSON = new Object();
 }
 if(!JSON.parse) {
 	JSON.parse = parse;
