@@ -30,8 +30,8 @@ function findPolyfillInEachDir(file) {
 	if(stat.isDirectory()) {
 		fs.readdirSync(resolvePath).forEach(findPolyfillInEachDir, id);
 	} else if(file.endsWith(".js")) {
-		var name = file.substring(0, file.length - 3);
-		polyfills.push({ find: 'sky-core/polyfill/' + name, replacement: resolvePath });
+		var name = id.substring(0, id.length - 3);
+		polyfills.push({ find: 'sky-core/polyfill' + name, replacement: resolvePath });
 	}
 }
 polyfills.push(
@@ -46,8 +46,8 @@ function findPureInEachDir(file) {
 	if(stat.isDirectory()) {
 		fs.readdirSync(resolvePath).forEach(findPureInEachDir, id);
 	} else if(file.endsWith(".js")) {
-		var name = file.substring(0, file.length - 3);
-		polyfills.push({ find: 'sky-core/pure/' + name, replacement: resolvePath });
+		var name = id.substring(0, id.length - 3);
+		polyfills.push({ find: 'sky-core/pure' + name, replacement: resolvePath });
 	}
 }
 polyfills.push(
