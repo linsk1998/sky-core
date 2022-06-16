@@ -26,8 +26,9 @@ export function setCookie(name, value) {
 		expires = new Date();
 		expires.setTime(expires.getTime() + seconds * 1000);
 	}
-	document.cookie = name + '=' + encodeURIComponent(value)
+	document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value)
 		+ (expires ? '; expires=' + expires.toGMTString() : '')
 		+ '; path=' + path
-		+ (domain ? '; domain=' + domain : '');
+		+ (domain ? '; domain=' + domain : '')
+		+ (location.protocol === 'https:' ? '; secure' : '');
 };

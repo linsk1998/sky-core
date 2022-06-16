@@ -1,4 +1,4 @@
-function loadScript(src, charset) {
+export function loadScript(src, charset) {
 	return new Promise(function(resolve, reject) {
 		var script = document.createElement('script');
 		script.charset = charset || "UTF-8";
