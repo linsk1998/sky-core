@@ -1,6 +1,7 @@
 var KEY_WM = "@@WeakMap";
+var weakSeq = 0;
 function WeakMap(iterable) {
-	this.symbol = Symbol("WeakMap");
+	this.symbol = weakSeq++;
 	if(iterable) {
 		var entries = iterable[Symbol.iterator];
 		if(entries) {

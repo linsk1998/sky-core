@@ -4,9 +4,9 @@ import { noop } from "../utils/noop";
 import { aFunction } from "../utils/aFunction";
 import { isFunction } from "../utils/isFunction";
 
-var PENDING = Symbol("pending");
-var RESOLVED = Symbol("resolved");
-var REJECTED = Symbol("rejected");
+var PENDING = 1;
+var RESOLVED = 2;
+var REJECTED = 3;
 
 function Promise(executor) {
 	if(!executor) {

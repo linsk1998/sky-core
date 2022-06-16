@@ -63,7 +63,7 @@ export function URL(relativePath, absolutePath) {
 			path = absInfo.pathname.replace(/[^\/]*$/, "") + relativePath.replace(/^\.\//, "");
 		}
 	} else {
-		throw new TypeError("SYNTAX_ERROR");
+		throw new TypeError("Invalid URL");
 	}
 	pattern = /^[^#]*/;
 	this.hash = path.replace(pattern, "");
