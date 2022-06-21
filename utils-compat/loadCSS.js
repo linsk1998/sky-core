@@ -4,7 +4,7 @@ export function loadCSS(href) {
 	if(p) {
 		return p;
 	}
-	p = new Promise((resolve, reject) => {
+	p = new Promise(function(resolve, reject) {
 		var link = document.createElement('LINK');
 		link.href = href;
 		link.rel = 'stylesheet';

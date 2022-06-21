@@ -145,108 +145,47 @@ Promise.reject = function reject(value) {
 	return new RejectPromise(value);
 };
 
-Promise.all = function all(promises) {
-	if(!this) {
-		throw TypeError("Promise.all called on non-object");
+Promise.all = function(promises) {
+	if(!Array.isArray(promises)) {
+		throw new TypeError('You must pass an array to all.');
 	}
-	if(typeof this !== "function") {
-		throw TypeError(this + " is not a constructor");
-	}
-	// var Promise = this;
-	if(promises) {
-		var entries = promises[Symbol.iterator];
-		if(entries) {
-			var it = entries.call(promises);
-			promises = [];
-			while(true) {
-				var next = it.next();
-				if(next.done) break;
-				var value = next.value;
-				try {
-					promises.push(Promise.resolve(value));
-				} catch(e) {
-					if(it.return) {
-						try {
-							it.return();
-						} catch(e) { }
-					}
-					throw e;
-				}
-			}
-			return new Promise(function(resolve, reject) {
-				var c = 0;
-				var result = new Array(promises.length);
-				forEach.call(promises, function(p, index) {
-					p.then(function(data) {
-						c++;
-						result[index] = data;
-						if(c >= promises.length) {
-							resolve(result);
-						}
-					}, function(error) {
-						reject(error);
-					});
+	if(promises.length == 0) return Promise.resolve();
+	return new Promise(function(resolve, reject) {
+		var result = new Array(promises.length);
+		var c = 0;
+		forEach.call(promises, function(one, index) {
+			if(typeof one.then === "function") {
+				one.then(function(data) {
 					c++;
+					result[index] = data;
 					if(c >= promises.length) {
-						resolve();
+						resolve(result);
 					}
+				}, function(error) {
+					reject(error);
 				});
-			});
-		}
-	}
-	throw new TypeError(promises + 'is not iterable');
-};
-Promise.race = function race(promises) {
-	if(!this) {
-		throw TypeError("Promise.all called on non-object");
-	}
-	if(typeof this !== "function") {
-		throw TypeError(this + " is not a constructor");
-	}
-	// var Promise = this;
-	if(promises) {
-		var entries = promises[Symbol.iterator];
-		if(entries) {
-			var it = entries.call(promises);
-			promises = [];
-			while(true) {
-				var next = it.next();
-				if(next.done) break;
-				var value = next.value;
-				try {
-					promises.push(Promise.resolve(value));
-				} catch(e) {
-					if(it.return) {
-						try {
-							it.return();
-						} catch(e) { }
-					}
-					throw e;
+			} else {
+				c++;
+				if(c >= promises.length) {
+					resolve();
 				}
 			}
-			return new Promise(function(resolve, reject) {
-				forEach.call(promises, function(one) {
-					one.then(function() {
-						resolve();
-					}, function() {
-						reject();
-					});
-				});
-			});
-		}
-	}
-	throw new TypeError(promises + 'is not iterable');
-};
-
-
-function PromiseCapability(Promise) {
-	var resolve, reject;
-	this.promise = new Promise(function($$resolve, $$reject) {
-		if(resolve !== undefined || reject !== undefined) throw TypeError('Bad Promise constructor');
-		resolve = $$resolve;
-		reject = $$reject;
+		});
 	});
-	this.resolve = aFunction(resolve);
-	this.reject = aFunction(reject);
 };
+Promise.race = function(promises) {
+	if(!Array.isArray(promises)) {
+		throw new TypeError('You must pass an array to all.');
+	}
+	return new Promise(function(resolve, reject) {
+		forEach.call(promises, function(one) {
+			one.then(function() {
+				resolve();
+			}, function() {
+				reject();
+			});
+		});
+	});
+};
+
 export { Promise };
