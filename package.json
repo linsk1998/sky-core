@@ -30,7 +30,7 @@
 		"build:es": "rollup --config build/rollup.config.es.js && rollup --config build/rollup.config.es-compat.js && rollup --config build/rollup.config.es-modern.js",
 		"build:web": "rollup --config build/rollup.config.web.js && rollup --config build/rollup.config.web-compat.js && rollup --config build/rollup.config.web-modern.js",
 		"build:sky": "rollup --config build/rollup.config.sky.js && rollup --config build/rollup.config.sky-compat.js && rollup --config build/rollup.config.sky-modern.js",
-		"test": "rollup --config qunit/rollup.config.impure-compat.js"
+		"test": "rollup --config qunit/rollup.config.recommend-compat.js"
 	},
 	"type": "module",
 	"keywords": [
@@ -38,5 +38,5 @@
 		"core-js",
 		"shim"
 	],
-	"version": "0.6.3"
+	"version": "0.6.4"
 }

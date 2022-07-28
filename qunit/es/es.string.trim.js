@@ -1,8 +1,8 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('String#trim', assert => {
-	const { trim } = String.prototype;
-	assert.isFunction(''.trim);
+	const trim = String.prototype.trim;
+	assert.isFunction(trim);
 	assert.arity(trim, 0);
 	assert.name(trim, 'trim');
 	assert.strictEqual(' \n  q w e \n  '.trim(), 'q w e', 'removes whitespaces at left & right side of string');

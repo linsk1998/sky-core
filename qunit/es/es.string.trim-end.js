@@ -1,12 +1,13 @@
 import { STRICT, WHITESPACES } from '../helpers/constants';
 
-QUnit.test('String#trimRight', assert => {
-	const { trimEnd, trimRight } = String.prototype;
-	assert.same(trimEnd, trimRight, 'same #trimRight');
-});
+// deprecated
+// QUnit.test('String#trimRight', assert => {
+// 	const { trimEnd, trimRight } = String.prototype;
+// 	assert.same(trimEnd, trimRight, 'same #trimRight');
+// });
 
 QUnit.test('String#trimEnd', assert => {
-	const { trimEnd, trimRight } = String.prototype;
+	const trimEnd = String.prototype.trimEnd;
 	assert.isFunction(trimEnd);
 	assert.arity(trimEnd, 0);
 	assert.name(trimEnd, 'trimEnd');

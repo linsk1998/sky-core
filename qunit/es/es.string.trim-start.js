@@ -1,12 +1,13 @@
 import { STRICT } from '../helpers/constants';
 
-QUnit.test('String#trimLeft', assert => {
-	const { trimStart, trimLeft } = String.prototype;
-	assert.same(trimStart, trimLeft, 'same #trimLeft');
-});
+// deprecated
+// QUnit.test('String#trimLeft', assert => {
+// 	const { trimStart, trimLeft } = String.prototype;
+// 	assert.same(trimStart, trimLeft, 'same #trimLeft');
+// });
 
 QUnit.test('String#trimStart', assert => {
-	const { trimStart } = String.prototype;
+	const trimStart = String.prototype.trimStart;
 	assert.isFunction(trimStart);
 	assert.arity(trimStart, 0);
 	assert.name(trimStart, 'trimStart');
