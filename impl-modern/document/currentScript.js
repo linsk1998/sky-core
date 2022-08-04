@@ -1,3 +1,14 @@
+export function ie_getCurrentScript() {
+	var nodes = document.scripts;
+	var i = nodes.length;
+	while(i--) {
+		node = nodes[i];
+		if(node.readyState === "interactive") {
+			return node;
+		}
+	}
+	return null;
+};
 
 var stackResultName, stackResultPattern, supportStack;
 export function getCurrentPathInit() {
