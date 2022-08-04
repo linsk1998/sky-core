@@ -22,7 +22,6 @@
 		"rollup-plugin-polyfill-inject": "^1.0.3"
 	},
 	"license": "MIT",
-	"main": "dist/sky.js",
 	"module": "dist/utils.esm.js",
 	"name": "sky-core",
 	"scripts": {
@@ -38,5 +37,5 @@
 		"core-js",
 		"shim"
 	],
-	"version": "0.7.1"
+	"version": "0.7.4"
 }
