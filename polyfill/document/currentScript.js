@@ -1,6 +1,6 @@
 
-import { getCurrentScript as ie_getCurrentScript } from "../utils-compat/getCurrentScript";
-import { getCurrentPathInit, getCurrentScriptByLast } from "../impl-modern/currentScript";
+import { getCurrentScript as ie_getCurrentScript } from "../../utils-compat/getCurrentScript";
+import { getCurrentPathInit, getCurrentScriptByLast } from "../../impl-modern/document/currentScript";
 var getCurrentScript;
 if(!('currentScript' in document)) {
 	if("readyState" in document.scripts[0]) {

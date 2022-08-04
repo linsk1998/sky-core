@@ -10,9 +10,9 @@ export function loadCSS(href) {
 		link.rel = 'stylesheet';
 		link.type = 'text/css';
 		link.onload = function() {
-			var sheet = this.sheet;
+			var sheet = this.styleSheet;
 			if(sheet) {
-				var cssRules = sheet.cssRules;
+				var cssRules = sheet.rules;
 				if(cssRules && cssRules.length) {
 					resolve();
 					return;
