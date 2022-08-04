@@ -1,3 +1,3 @@
 export function trimEnd() {
-	return this.replace(/[\s\uFEFF\xA0]+$/g, '');
+	return this.replace(/[\s\u3000\xA0]+$/g, '');
 }

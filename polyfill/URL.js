@@ -1,4 +1,5 @@
 import { accessor } from "../support/accessor";
+import { URL } from "../native/URL";
 import { URL as modern_URL, URLProperties, getSearchParams } from "../impl-modern/URL";
 import { URL as compat_URL, initURL } from "../impl-compat/URL";
 if(!this.URL) {

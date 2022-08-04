@@ -1,1 +1,1 @@
-import "../polyfill/Promise/finally";
+import "../polyfill/Promise/prototype/finally";

@@ -12,7 +12,7 @@ export default {
 		format: 'iife'
 	},
 	context: "window",
-	treeshake: false,
+	treeshake: true,
 	plugins: [
 		importPlugin({
 			libraryName: "sky-core",
@@ -31,9 +31,6 @@ export default {
 				]
 			],
 			plugins: [
-				// "@babel/plugin-transform-member-expression-literals",
-				// "@babel/plugin-transform-property-literals",
-				// "@babel/plugin-transform-reserved-words",
 				["@babel/plugin-transform-for-of", {
 					"loose": false
 				}]
@@ -43,7 +40,6 @@ export default {
 		...impure,
 		alias({
 			entries: {
-				'core-js/modules': path.resolve(__dirname, "../modules"),
 				'sky-core/pure': path.resolve(__dirname, "../pure"),
 				'sky-core/polyfill': path.resolve(__dirname, "../polyfill"),
 				'sky-core/utils': path.resolve(__dirname, "../utils")

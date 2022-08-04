@@ -1,6 +1,6 @@
 
 import { apply } from "../../impl/Reflect/apply";
-import "../../polyfill/Reflect";
+import { Reflect } from "../../polyfill/Reflect";
 
 if(!Reflect.apply) {
 	Reflect.apply = apply;

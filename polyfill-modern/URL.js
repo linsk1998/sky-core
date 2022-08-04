@@ -1,4 +1,4 @@
-
+import { URL } from "../native/URL";
 import { URL as modern_URL, URLProperties, getSearchParams } from "../impl-modern/URL";
 if(!this.URL) {
 	Object.defineProperties(modern_URL.prototype, URLProperties);

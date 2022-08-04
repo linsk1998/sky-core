@@ -1,6 +1,6 @@
 
 import { defineProperty } from "../../impl/Reflect/defineProperty";
-import "../../polyfill/Reflect";
+import { Reflect } from "../../polyfill/Reflect";
 
 if(!Reflect.defineProperty) {
 	Reflect.defineProperty = defineProperty;

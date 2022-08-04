@@ -1,7 +1,8 @@
-
+import { Symbol as native_Symbol } from "../native/Symbol";
 import { Symbol as compat_Symbol } from "../impl-compat/Symbol";
-if(!this.Symbol) {
-	this.Symbol = compat_Symbol;
+var Symbol = native_Symbol;
+if(!Symbol) {
+	this.Symbol = Symbol = compat_Symbol;
 	Symbol.sham = true;
 	Symbol.asyncIterator = "@@asyncIterator";
 	Symbol.hasInstance = "@@hasInstance";
@@ -17,3 +18,4 @@ if(!this.Symbol) {
 	// Symbol.toStringTag = "@@toStringTag";
 	// Symbol.unscopables = "@@unscopables";
 }
+export { Symbol };

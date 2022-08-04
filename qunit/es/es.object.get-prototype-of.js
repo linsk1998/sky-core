@@ -22,12 +22,12 @@ QUnit.test('Object.getPrototypeOf', assert => {
   Bar.prototype.constructor = Bar;
   assert.strictEqual(getPrototypeOf(Bar.prototype).foo, 'foo');
   const primitives = [42, 'foo', false];
-  for (const value of primitives) {
-    assert.notThrows(() => getPrototypeOf(value), `accept ${ typeof value }`);
+  for(const value of primitives) {
+    assert.notThrows(() => getPrototypeOf(value), `accept ${typeof value} 不支持`);
   }
   assert.throws(() => getPrototypeOf(null), TypeError, 'throws on null');
   assert.throws(() => getPrototypeOf(undefined), TypeError, 'throws on undefined');
-  assert.strictEqual(getPrototypeOf('foo'), String.prototype);
+  assert.strictEqual(getPrototypeOf(Object('foo')), String.prototype);
 });
 
 QUnit.test('Object.getPrototypeOf.sham flag', assert => {

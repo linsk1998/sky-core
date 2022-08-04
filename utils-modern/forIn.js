@@ -1,7 +1,7 @@
 import { Symbol } from "../native/Symbol";
 export function nosymbol_forIn(obj, fn, thisArg) {
 	for(var key in obj) {
-		if(key.startsWith("@@")) {
+		if(key.substring(0, 2) === "@@") {
 			continue;
 		}
 		if(fn.call(thisArg, obj[key], key) === false) {

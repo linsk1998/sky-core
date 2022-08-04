@@ -13,11 +13,12 @@
 		"baseUrl": ".",
 		"paths": {
 			"sky-core/pure/*": [
-				"./pure/*"
+				"pure/*"
 			],
 			"sky-core/polyfill/*": [
-				"./polyfill/*"
+				"polyfill/*"
 			]
-		}
+		},
+		"allowJs": true
 	}
 }

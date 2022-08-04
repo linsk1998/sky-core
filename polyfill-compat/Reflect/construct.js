@@ -1,6 +1,6 @@
 
 import { construct } from "../../impl/Reflect/construct";
-import "../../polyfill/Reflect";
+import { Reflect } from "../../polyfill/Reflect";
 
 if(!Reflect.construct) {
 	Reflect.construct = construct;

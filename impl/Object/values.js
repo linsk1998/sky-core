@@ -1,10 +1,8 @@
-
-export function values(target, varArgs) {
-	var ownProps = Object.keys(obj),
-		i = ownProps.length,
-		resArray = new Array(i); // preallocate the Array
-	while(i--)
-		resArray[i] = obj[ownProps[i]];
-
-	return resArray;
+import { forOwn } from "sky-core/utils/forOwn";
+export function values(obj) {
+	var r = [];
+	forOwn(obj, function(value, key) {
+		r.push(value);
+	});
+	return r;
 }

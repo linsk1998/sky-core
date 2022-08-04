@@ -1,0 +1,1 @@
+export { tanh } from "../../impl/Math/tanh";

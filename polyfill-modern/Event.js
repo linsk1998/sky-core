@@ -1,5 +1,5 @@
 
-if(typeof Event !== "function") {
+if(typeof this.Event !== "function") {
 	if(document.createEvent) {
 		this.Event = function(evt, init) {
 			var e = document.createEvent('Event');

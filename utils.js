@@ -10,12 +10,16 @@ export { isObject } from "./utils/isObject";
 export { isDefined } from "./utils/isDefined";
 export { isWindow } from "./utils/isWindow";
 export { isPlainObject } from "./utils/isPlainObject";
+export { isNotNullObject } from "./utils/isNotNullObject";
 export { isArrayLike } from "./utils/isArrayLike";
 export { isArrayLikeObject } from "./utils/isArrayLikeObject";
 export { isNumeric } from "./utils/isNumeric";
 export { isElement } from "./utils/isElement";
 export { isInput } from "./utils/isInput";
 export { isDocument } from "./utils/isDocument";
+
+export { anObject } from "./utils/anObject";
+export { aFunction } from "./utils/aFunction";
 
 export { noop } from "./utils/noop";
 export { times } from "./utils/times";
@@ -53,10 +57,12 @@ export { inherits } from "./utils/inherits";
 export { getCurrentScript } from "./utils/getCurrentScript";
 export { getCurrentPath } from "./utils/getCurrentPath";
 export { getScript } from "./utils/getScript";
+export { loadCSS } from "./utils/loadCSS";
 
 export { attachEvent } from "./utils/attachEvent";
 export { detachEvent } from "./utils/detachEvent";
 export { fixEvent } from "./utils/fixEvent";
+export { fireEvent } from "./utils/fireEvent";
 
 export { getCookie } from "./utils/getCookie";
 export { setCookie } from "./utils/setCookie";

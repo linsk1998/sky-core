@@ -1,4 +1,4 @@
-
+import { Object } from "../../native/Object";
 import { Symbol } from "../../native/Symbol";
 import { nie_keys, ie_keys } from "../../impl-modern/Object/keys";
 if(!Object.keys) {

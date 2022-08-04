@@ -161,7 +161,7 @@ export function forEach(callbackfn) {
 function createIterable(that, getValue) {
 	var done = false;
 	var current;
-	return {
+	var it = {
 		next: function() {
 			var value;
 			if(done) {
@@ -197,6 +197,10 @@ function createIterable(that, getValue) {
 			return { done: done, value: value };
 		}
 	};
+	it['@@iterator'] = function() {
+		return createIterable(that, getValue);
+	};
+	return it;
 }
 function getKeyValue(item) {
 	return [item.key, item.value];

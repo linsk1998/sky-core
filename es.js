@@ -74,6 +74,6 @@ import "sky-core/polyfill/Set";
 import "sky-core/polyfill/Map";
 
 import "sky-core/polyfill/Promise";
-import "sky-core/polyfill/Promise/finally";
 
 import "sky-core/polyfill/Error";
+import "sky-core/polyfill/Promise/prototype/finally";

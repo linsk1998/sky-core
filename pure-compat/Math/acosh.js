@@ -1,0 +1,1 @@
+export { acosh } from "../../impl/Math/acosh";

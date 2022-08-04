@@ -1,4 +1,3 @@
-import "sky-core/polyfill/document/head";
 if(this.HTMLElement) {
 	if(!('innerText' in document.head)) {
 		HTMLElement.prototype.__defineGetter__("innerText", function() {

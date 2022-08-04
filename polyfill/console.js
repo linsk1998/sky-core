@@ -1,4 +1,9 @@
 import { noop } from "../utils/noop";
+function log(data) {
+	if(window.Debug) {
+		Debug.writeln(data);
+	}
+}
 if(!this.console) {
 	this.console = {
 		log: log,
@@ -7,9 +12,4 @@ if(!this.console) {
 		warn: log,
 		clear: noop
 	};
-	function log(data) {
-		if(window.Debug) {
-			Debug.writeln(data);
-		}
-	}
 }

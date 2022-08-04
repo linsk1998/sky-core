@@ -7,7 +7,7 @@ export function Symbol(desc) {
 	this.__name__ = key;
 	if(nonEnumerable) {
 		defineProperty(Object.prototype, key, {
-			enumerable: false, configurable: true, writable: true,
+			enumerable: false, configurable: true,
 			set: function(value) {
 				defineProperty(this, key, {
 					enumerable: false, configurable: true, writable: true, value: value
@@ -29,11 +29,12 @@ Symbol.prototype.toJSON = function() {
 };
 export function getOwnPropertySymbols(obj) {
 	var arr = [];
-	for(var key in obj) {
-		if(key.startsWith("@@")) {
-			if(Object.prototype.hasOwnProperty.call(obj, key)) {
-				arr.push(all_symbol[key]);
-			}
+	var keys = Object.getOwnPropertyNames(obj);
+	var i = keys.length;
+	while(i-- > 0) {
+		var key = keys[i];
+		if(key.substring(0, 2) === "@@") {
+			arr.push(all_symbol[key]);
 		}
 	}
 	return arr;
