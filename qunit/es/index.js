@@ -38,25 +38,25 @@ import "../helpers/qunit-helpers";
 // import "./es.string.match-all";
 // import "./es.string.replace-all";
 
-import "./es.symbol";
-import "./es.symbol.description";
-import "./es.symbol.async-iterator";
+// import "./es.symbol";
+// import "./es.symbol.description";
+// import "./es.symbol.async-iterator";
 
 
-// import "./es.object.assign.js";
-// import "./es.object.create";
-// import "./es.object.define-properties";
-// import "./es.object.define-property";
-// import "./es.object.entries";
-// import "./es.object.from-entries";
-// import "./es.object.get-own-property-descriptor";
-// import "./es.object.get-own-property-descriptors";
-// import "./es.object.get-own-property-names";
-// import "./es.object.get-prototype-of";
-// import "./es.object.is";
-// import "./es.object.keys";
-// import "./es.object.set-prototype-of";
-// import "./es.object.values";
+import "./es.object.assign.js";
+import "./es.object.create";
+import "./es.object.define-properties";
+import "./es.object.define-property";
+import "./es.object.entries";
+import "./es.object.from-entries";
+import "./es.object.get-own-property-descriptor";
+import "./es.object.get-own-property-descriptors";
+import "./es.object.get-own-property-names";
+import "./es.object.get-prototype-of";
+import "./es.object.is";
+import "./es.object.keys";
+import "./es.object.set-prototype-of";
+import "./es.object.values";
 
 // import "./es.set";
 // import "./es.map";
