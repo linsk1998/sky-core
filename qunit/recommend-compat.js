@@ -59,7 +59,7 @@ export default [
 			"Object.values": "sky-core/polyfill/Object/values",
 			"Object.entries": "sky-core/polyfill/Object/entries",
 			"Object.fromEntries": "sky-core/polyfill/Object/fromEntries",
-			// "Object.getOwnPropertySymbols": "sky-core/polyfill/Object/getOwnPropertySymbols",
+			"Object.getOwnPropertySymbols": "sky-core/polyfill/Object/getOwnPropertySymbols",
 			// Object property
 			//由于ES3不支持 accessor，但是许多工具会生成defineProperty，且defineProperty不能判断是否支持支持accessor，可以污染全局的Object
 			"Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
@@ -201,7 +201,6 @@ export default [
 			"XMLHttpRequest": "sky-core/pure/XMLHttpRequest"
 		},
 		exclude: [
-			"qunit/helpers/*"
 		]
 	})
 ];

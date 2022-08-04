@@ -1,8 +1,8 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('String#matchAll', assert => {
-	const { matchAll } = String.prototype;
-	const { assign } = Object;
+	const matchAll = String.prototype.matchAll;
+	const assign = Object.assign;
 	assert.isFunction(matchAll);
 	assert.arity(matchAll, 1);
 	assert.name(matchAll, 'matchAll');

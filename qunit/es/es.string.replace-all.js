@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('String#replaceAll', assert => {
-	const { replaceAll } = String.prototype;
+	const replaceAll = String.prototype.replaceAll;
 	assert.isFunction(replaceAll);
 	assert.arity(replaceAll, 2);
 	assert.name(replaceAll, 'replaceAll');
@@ -12,7 +12,7 @@ QUnit.test('String#replaceAll', assert => {
 	assert.same('aba'.replaceAll('b', (search, i, string) => {
 		assert.same(search, 'b', '`search` is `b`');
 		assert.same(i, 1, '`i` is 1');
-		assert.same(string, 'aba', '`string` is `aba`');
+		assert.same(String(string), 'aba', '`string` is `aba`');
 		return 'c';
 	}), 'aca');
 	assert.same('aba'.replaceAll('b'), 'aundefineda');

@@ -1,5 +1,5 @@
 QUnit.test('String.fromCodePoint', assert => {
-	const { fromCodePoint } = String;
+	const fromCodePoint = String.fromCodePoint;
 	assert.isFunction(fromCodePoint);
 	assert.arity(fromCodePoint, 1);
 	assert.name(fromCodePoint, 'fromCodePoint');

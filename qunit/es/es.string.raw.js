@@ -1,5 +1,5 @@
 QUnit.test('String.raw', assert => {
-	const { raw } = String;
+	const raw = String.raw;
 	assert.isFunction(raw);
 	assert.arity(raw, 1);
 	assert.name(raw, 'raw');
