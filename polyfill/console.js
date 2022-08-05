@@ -1,12 +1,19 @@
 
 if(!this.console) {
-	this.console = {
-		log: function(data) {
+	this.console = (function() {
+		function log(data) {
 			if(window.Debug) {
 				Debug.writeln(data);
 			}
-		},
-		clear: function() { }
-	};
-	console.info = console.error = console.warn = console.log;
+		}
+		function clear() {
+		}
+		return {
+			log: log,
+			info: log,
+			error: log,
+			warn: log,
+			clear: clear
+		};
+	})();
 }
