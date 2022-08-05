@@ -1,7 +1,5 @@
 
 import forEach from "sky-core/pure/Array/prototype/forEach";
-import { noop } from "../utils/noop";
-import { aFunction } from "../utils/aFunction";
 import { isFunction } from "../utils/isFunction";
 
 var PENDING = 1;
@@ -78,11 +76,14 @@ function nextPromise(before, after, resolve, reject) {
 		}
 	};
 }
+function returnArg1(arg1) {
+	return arg1;
+}
 Promise.prototype.then = function then(onResolved, onRejected) {
 	// var Class = speciesConstructor(this, Promise);
 	var me = this;
-	onResolved = onResolved || noop;
-	onRejected = onRejected || noop;
+	onResolved = onResolved || returnArg1;
+	onRejected = onRejected || returnArg1;
 	return new Promise(function(resolve, reject) {
 		switch(me._state) {
 			case RESOLVED:
