@@ -1,4 +1,2 @@
 
-export function parse(str) {
-	return eval('(' + str + ')');
-}
+export var parse = new Function("json", "return eval('(' + json + ')')");
