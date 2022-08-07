@@ -155,7 +155,7 @@ Promise.all = function(promises) {
 		var result = new Array(promises.length);
 		var c = 0;
 		forEach.call(promises, function(one, index) {
-			if(typeof one.then === "function") {
+			if(one && typeof one.then === "function") {
 				one.then(function(data) {
 					c++;
 					result[index] = data;
