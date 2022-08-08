@@ -116,7 +116,7 @@ function RejectPromise(value) {
 RejectPromise.prototype = Promise.prototype;
 
 Promise.resolve = function resolve(value) {
-	if(value && isObject(value) && value.constructor === this) {
+	if(value && typeof value === "object" && value.constructor === this) {
 		return value;
 	}
 	if(!this) {
@@ -135,7 +135,7 @@ Promise.resolve = function resolve(value) {
 	// return promiseCapability.promise;
 };
 Promise.reject = function reject(value) {
-	if(value && isObject(value) && value.constructor === this) {
+	if(value && typeof value === "object" && value.constructor === this) {
 		return value;
 	}
 	if(!this) {
