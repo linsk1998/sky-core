@@ -1,4 +1,5 @@
 
+import { isObject } from "../utils/isObject";
 import forEach from "sky-core/pure/Array/prototype/forEach";
 import { isFunction } from "../utils/isFunction";
 
@@ -115,7 +116,7 @@ function RejectPromise(value) {
 RejectPromise.prototype = Promise.prototype;
 
 Promise.resolve = function resolve(value) {
-	if(value.constructor === this) {
+	if(value && isObject(value) && value.constructor === this) {
 		return value;
 	}
 	if(!this) {
@@ -134,7 +135,7 @@ Promise.resolve = function resolve(value) {
 	// return promiseCapability.promise;
 };
 Promise.reject = function reject(value) {
-	if(value.constructor === this) {
+	if(value && isObject(value) && value.constructor === this) {
 		return value;
 	}
 	if(!this) {
