@@ -19,3 +19,4 @@ import "sky-core/polyfill/sessionStorage";
 import "sky-core/polyfill/console";
 
 import "sky-core/polyfill/Event";
+import "sky-core/polyfill/Error";

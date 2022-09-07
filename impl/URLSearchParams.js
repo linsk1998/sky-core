@@ -35,7 +35,7 @@ URLSearchParams.prototype.get = function(key) {
 		return item[1] == key;
 	});
 	if(index < 0) return null;
-	return this._datal[index][0];
+	return this._data[index][0];
 };
 URLSearchParams.prototype.getAll = function(key) {
 	var data = this._data,
@@ -53,8 +53,11 @@ URLSearchParams.prototype.set = function(key, value) {
 	var index = findIndex.call(this._data, function(item) {
 		return item[1] == key;
 	});
-	if(index < 0) this.append(key, value);
-	this._datal[index][0] = value;
+	if(index < 0) {
+		this.append(key, value);
+	} else {
+		this._data[index][0] = value;
+	}
 };
 URLSearchParams.prototype.delete = function(key) {
 	var data = this._data,
