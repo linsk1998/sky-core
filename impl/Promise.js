@@ -1,7 +1,6 @@
 
+import { isObject } from "../utils/isObject";
 import forEach from "sky-core/pure/Array/prototype/forEach";
-import { noop } from "../utils/noop";
-import { aFunction } from "../utils/aFunction";
 import { isFunction } from "../utils/isFunction";
 
 var PENDING = 1;
@@ -78,11 +77,14 @@ function nextPromise(before, after, resolve, reject) {
 		}
 	};
 }
+function returnArg1(arg1) {
+	return arg1;
+}
 Promise.prototype.then = function then(onResolved, onRejected) {
 	// var Class = speciesConstructor(this, Promise);
 	var me = this;
-	onResolved = onResolved || noop;
-	onRejected = onRejected || noop;
+	onResolved = onResolved || returnArg1;
+	onRejected = onRejected || returnArg1;
 	return new Promise(function(resolve, reject) {
 		switch(me._state) {
 			case RESOLVED:
@@ -114,7 +116,7 @@ function RejectPromise(value) {
 RejectPromise.prototype = Promise.prototype;
 
 Promise.resolve = function resolve(value) {
-	if(value.constructor === this) {
+	if(value && typeof value === "object" && value.constructor === this) {
 		return value;
 	}
 	if(!this) {
@@ -133,7 +135,7 @@ Promise.resolve = function resolve(value) {
 	// return promiseCapability.promise;
 };
 Promise.reject = function reject(value) {
-	if(value.constructor === this) {
+	if(value && typeof value === "object" && value.constructor === this) {
 		return value;
 	}
 	if(!this) {
@@ -154,7 +156,7 @@ Promise.all = function(promises) {
 		var result = new Array(promises.length);
 		var c = 0;
 		forEach.call(promises, function(one, index) {
-			if(typeof one.then === "function") {
+			if(one && typeof one.then === "function") {
 				one.then(function(data) {
 					c++;
 					result[index] = data;

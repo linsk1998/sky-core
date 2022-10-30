@@ -4,12 +4,12 @@ export function ie_keys(obj) {
 	return native_keys.call(Object, obj).filter(checkSymbolKey);
 }
 function checkSymbolKey(key) {
-	return !key.substring(0, 2) === "@@";
+	return key.substring(0, 2) !== "@@";
 }
 export function nie_keys(obj) {
 	var result = [];
 	for(var key in obj) {
-		if(!key.substring(0, 2) === "@@" && Object.prototype.hasOwnProperty.call(obj, key)) {
+		if(key.substring(0, 2) !== "@@" && Object.prototype.hasOwnProperty.call(obj, key)) {
 			result.push(key);
 		}
 	}

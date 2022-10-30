@@ -43,12 +43,12 @@ export function has(key) {
 		return false;
 	}
 	var item = this.head;
-	do {
+	while(item) {
 		if(item.key === key || isNaN(key) && isNaN(item.key)) {
 			return true;
 		}
 		item = item.next;
-	} while(item);
+	}
 	return false;
 };
 export function get(key) {
@@ -56,12 +56,12 @@ export function get(key) {
 		return undefined;
 	}
 	var item = this.head;
-	do {
+	while(item) {
 		if(item.key === key || isNaN(key) && isNaN(item.key)) {
 			return item.value;
 		}
 		item = item.next;
-	} while(item);
+	}
 	return undefined;
 };
 export function set(key, value) {
@@ -81,13 +81,13 @@ export function set(key, value) {
 		return this;
 	}
 	var item = this.head;
-	do {
+	while(item) {
 		if(item.key === key || isNaN(key) && isNaN(item.key)) {
 			item.value = value;
 			return this;
 		}
 		item = item.next;
-	} while(item);
+	}
 	var tail = this.tail;
 	var newTail = {
 		key: key,
@@ -106,7 +106,7 @@ export function remove(key) {
 		return false;
 	}
 	var item = this.head;
-	do {
+	while(item) {
 		if(item.key === key || isNaN(key) && isNaN(item.key)) {
 			var prev = item.prev;
 			var next = item.next;
@@ -125,7 +125,7 @@ export function remove(key) {
 			return true;
 		}
 		item = item.next;
-	} while(item);
+	}
 	return false;
 };
 export function clear() {
@@ -136,7 +136,7 @@ export function clear() {
 export function forEach(callbackfn) {
 	var thisArg = arguments[1];
 	var item = this.head;
-	do {
+	while(item) {
 		callbackfn.call(thisArg, item.value, item.key, this);
 		var next = item.next;
 		if(item.exist || next && next.exist) {
@@ -155,7 +155,7 @@ export function forEach(callbackfn) {
 				}
 			}
 		}
-	} while(item);
+	}
 };
 
 function createIterable(that, getValue) {

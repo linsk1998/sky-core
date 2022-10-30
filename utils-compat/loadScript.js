@@ -5,8 +5,8 @@ export function loadScript(src, charset) {
 		script.src = src;
 		script.async = true;
 		var success = true;
-		window.attachEvent('onerror', function(message, fileName, lineNumber) {
-			window.detachEvent('onerror', arguments.callee);
+		function onError(message, fileName, lineNumber) {
+			window.detachEvent('onerror', onError);
 			if(script.readyState === "interactive") {
 				success = false;
 				var error = new Error(lineNumber, message);
@@ -15,22 +15,26 @@ export function loadScript(src, charset) {
 				reject(error);
 				return false;
 			}
-		});
+		}
+		window.attachEvent('onerror', onError);
 		var levent = 'onreadystatechange';
-		script.attachEvent(levent, function() {
+		function onReadyStateChange() {
 			if(script.readyState === 'loaded') {
 				document.currentScript = script;
 				document.head.appendChild(script);
 				document.currentScript = undefined;
 			} else if(script.readyState === 'loading') {
-				script.detachEvent(levent, arguments.callee);
+				script.detachEvent(levent, onReadyStateChange);
+				window.detachEvent('onerror', onError);
 				reject(new URIError("Fail to loading: " + src));
 				script = null;
 			} else if(script.readyState === 'complete') {
-				script.detachEvent(levent, arguments.callee);
+				script.detachEvent(levent, onReadyStateChange);
+				window.detachEvent('onerror', onError);
 				if(success) resolve(window.event);
 				script = null;
 			}
-		});
+		}
+		script.attachEvent(levent, onReadyStateChange);
 	});
 }

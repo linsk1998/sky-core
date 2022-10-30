@@ -8,7 +8,7 @@ export function keys(obj) {
 		var proto = getPrototypeOf(obj);
 		if(proto) {
 			for(key in obj) {
-				if(!key.substring(0, 2) === "@@" && !key.substring(0, 2) === "__" && proto[key] !== obj[key]) {
+				if(key.substring(0, 2) !== "@@" && key.substring(0, 2) !== "__" && proto[key] !== obj[key]) {
 					result.push(key);
 				}
 			}
@@ -16,7 +16,7 @@ export function keys(obj) {
 		}
 	}
 	for(key in obj) {
-		if(Object.prototype.hasOwnProperty.call(obj, key) && !key.substring(0, 2) === "@@" && !key.substring(0, 2) === "__") {
+		if(Object.prototype.hasOwnProperty.call(obj, key) && key.substring(0, 2) !== "@@" && key.substring(0, 2) !== "__") {
 			result.push(key);
 		}
 	}
