@@ -1,3 +1,6 @@
+import "../mediaDevices";
+import { navigator } from "../../../native/navigator";
+
 if(!navigator.mediaDevices.getUserMedia) {
 	navigator.mediaDevices.getUserMedia = function(constraints) {
 		var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
