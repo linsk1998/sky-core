@@ -1,34 +1,32 @@
 import { DESCRIPTORS } from '../helpers/constants';
 
 QUnit.test('Object.create', assert => {
-  const { create, getPrototypeOf, getOwnPropertyNames } = Object;
   function getPropertyNames(object) {
     let result = [];
     do {
-      result = result.concat(getOwnPropertyNames(object));
-    } while (object = getPrototypeOf(object));
+      result = result.concat(Object.getOwnPropertyNames(object));
+    } while(object = Object.getPrototypeOf(object));
     return result;
   }
-  assert.isFunction(create);
-  assert.arity(create, 2);
-  assert.name(create, 'create');
-  assert.looksNative(create);
-  assert.nonEnumerable(Object, 'create');
+  assert.isFunction(Object.create);
+  assert.arity(Object.create, 2);
+  assert.name(Object.create, 'create');
   let object = { q: 1 };
-  assert.ok({}.isPrototypeOf.call(object, create(object)));
-  assert.ok(create(object).q === 1);
+  assert.ok({}.isPrototypeOf.call(object, Object.create(object)));
+  assert.ok(Object.create(object).q === 1);
   function F() {
     return this.a = 1;
   }
-  assert.ok(create(new F()) instanceof F);
-  assert.ok(F.prototype === getPrototypeOf(getPrototypeOf(create(new F()))));
-  assert.ok(create(new F()).a === 1);
-  assert.ok(create({}, { a: { value: 42 } }).a === 42);
-  object = create(null, { w: { value: 2 } });
+  assert.ok(Object.create(new F()) instanceof F, "Object.create(new F())");
+  assert.ok(F.prototype === Object.getPrototypeOf(Object.getPrototypeOf(Object.create(new F()))));
+  assert.ok(Object.create(new F()).a === 1);
+  assert.ok(Object.create({}, { a: { value: 42 } }).a === 42);
+  object = Object.create(null, { w: { value: 2 } });
   assert.same(object, Object(object));
-  assert.ok(!('toString' in object));
+  assert.ok(!('toString' in object), "toString");
   assert.ok(object.w === 2);
-  assert.deepEqual(getPropertyNames(create(null)), []);
+  assert.throws(() => String(object), "throws String({__proto__:null})");
+  assert.deepEqual(getPropertyNames(Object.create(null)), []);
 });
 
 QUnit.test('Object.create.sham flag', assert => {

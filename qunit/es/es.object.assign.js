@@ -1,27 +1,24 @@
 import { DESCRIPTORS } from '../helpers/constants';
 
 QUnit.test('Object.assign', assert => {
-  const { assign, keys, defineProperty } = Object;
-  assert.isFunction(assign);
-  assert.arity(assign, 2);
-  assert.name(assign, 'assign');
-  assert.looksNative(assign);
-  assert.nonEnumerable(Object, 'assign');
+  assert.isFunction(Object.assign);
+  assert.arity(Object.assign, 2);
+  assert.name(Object.assign, 'assign');
   let object = { q: 1 };
-  assert.strictEqual(object, assign(object, { bar: 2 }), 'assign return target');
+  assert.strictEqual(object, Object.assign(object, { bar: 2 }), 'assign return target');
   assert.strictEqual(object.bar, 2, 'assign define properties');
-  assert.deepEqual(assign({}, { q: 1 }, { w: 2 }), { q: 1, w: 2 });
-  assert.deepEqual(assign({}, 'qwe'), { 0: 'q', 1: 'w', 2: 'e' });
-  assert.throws(() => assign(null, { q: 1 }), TypeError);
-  assert.throws(() => assign(undefined, { q: 1 }), TypeError);
-  let string = assign('qwe', { q: 1 });
+  assert.deepEqual(Object.assign({}, { q: 1 }, { w: 2 }), { q: 1, w: 2 });
+  assert.deepEqual(Object.assign({}, 'qwe'), { 0: 'q', 1: 'w', 2: 'e' });
+  assert.throws(() => Object.assign(null, { q: 1 }), TypeError);
+  assert.throws(() => Object.assign(undefined, { q: 1 }), TypeError);
+  let string = Object.assign('qwe', { q: 1 });
   assert.strictEqual(typeof string, 'object');
   assert.strictEqual(String(string), 'qwe');
   assert.strictEqual(string.q, 1);
-  assert.same(assign({}, { valueOf: 42 }).valueOf, 42, 'IE enum keys bug');
+  assert.same(Object.assign({}, { valueOf: 42 }).valueOf, 42, 'IE enum keys bug');
   if(DESCRIPTORS) {
     object = { baz: 1 };
-    assign(object, defineProperty({}, 'bar', {
+    Object.assign(object, Object.defineProperty({}, 'bar', {
       get() {
         return this.baz + 1;
       },
@@ -31,9 +28,9 @@ QUnit.test('Object.assign', assert => {
     const c = Symbol('c');
     const d = Symbol('d');
     object[c] = 'c';
-    defineProperty(object, 'b', { value: 'b' });
-    defineProperty(object, d, { value: 'd' });
-    const object2 = assign({}, object);
+    Object.defineProperty(object, 'b', { value: 'b' });
+    Object.defineProperty(object, d, { value: 'd' });
+    const object2 = Object.assign({}, object);
     assert.strictEqual(object2.a, 'a', 'a');
     assert.strictEqual(object2.b, undefined, 'b');
     assert.strictEqual(object2[c], 'c', 'c');
@@ -43,7 +40,7 @@ QUnit.test('Object.assign', assert => {
         return assign({ b: 1 }, { get a() {
           delete this.b;
         }, b: 2 });
-      `)(assign).b, 1);
+      `)(Object.assign).b, 1);
     } catch { /* empty */ }
     try {
       assert.strictEqual(Function('assign', `
@@ -53,7 +50,7 @@ QUnit.test('Object.assign', assert => {
             enumerable: false
           });
         }, b: 2 });
-      `)(assign).b, 1);
+      `)(Object.assign).b, 1);
     } catch { /* empty */ }
   }
   string = 'abcdefghijklmnopqrst';
@@ -62,6 +59,6 @@ QUnit.test('Object.assign', assert => {
     const char = string.charAt(i);
     result[char] = char;
   }
-  assert.strictEqual(keys(assign({}, result)).join(''), string);
+  assert.strictEqual(Object.keys(Object.assign({}, result)).join(''), string);
 });
 

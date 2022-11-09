@@ -4,8 +4,8 @@ export default [
 	polyfill({
 		modules: {
 			'globalThis': "sky-core/polyfill/globalThis",
-			// "Symbol.for": "sky-core/polyfill/Symbol/for",
-			// "Symbol.keyFor": "sky-core/polyfill/Symbol/keyFor",
+			"Symbol.for": "sky-core/polyfill/Symbol/for",
+			"Symbol.keyFor": "sky-core/polyfill/Symbol/keyFor",
 			"Symbol.hasInstance": "sky-core/polyfill/Function/prototype/@@hasInstance",
 			"Symbol.iterator": [
 				"sky-core/polyfill/Array/prototype/@@iterator",
@@ -179,10 +179,9 @@ export default [
 			//ESNext.String
 			".replaceAll": "sky-core/polyfill/String/prototype/replaceAll",
 		},
-		include: [
-			"qunit/**"
-		],
 		exclude: [
+			"polyfill/**/*",
+			"polyfill-*/**/*",
 			"qunit/helpers/*"
 		]
 	}),

@@ -1,3 +1,4 @@
-if(typeof globalThis==="undefined"){
-	this.globalThis=this;
+import { globalThis } from "../native/globalThis";
+if(!globalThis) {
+	this.globalThis = this;
 }

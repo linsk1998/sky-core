@@ -2,6 +2,9 @@ export function getPrototypeOf(obj) {
 	if(typeof obj !== "object") {
 		obj = Object(obj);
 	}
+	if('__proto__' in obj) {
+		return obj.__proto__;
+	}
 	if(!('constructor' in obj)) {
 		return null;
 	}

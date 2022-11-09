@@ -6,4 +6,5 @@ export function defineProperties(obj, properties) {
 		var key = ownKeys[i];
 		Object.defineProperty(obj, key, properties[key]);
 	}
+	return obj;
 };

@@ -25,6 +25,10 @@ export function defineProperty(obj, prop, descriptor) {
 };
 
 export function compat_defineProperty(obj, prop, descriptor) {
+	if(typeof obj !== "object") {
+		throw new TypeError("Object.defineProperty called on non-object");
+	}
+	prop = String(prop);
 	if('value' in descriptor) {
 		obj[prop] = descriptor.value;
 	} else {
