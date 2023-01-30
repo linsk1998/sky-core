@@ -62,9 +62,10 @@ export default [
 			"Object.getOwnPropertySymbols": "sky-core/polyfill/Object/getOwnPropertySymbols",
 			// Object property
 			//由于ES3不支持 accessor，但是许多工具会生成defineProperty，且defineProperty不能判断是否支持支持accessor，可以污染全局的Object
+			// 使用前应使用sham判断
 			"Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
-			//由于ES3不支持 accessor，我建议不要污染全局的Object，用于给一些库判断是否支持accessor，需要用到defineProperties的地方用@rollup/plugin-inject
-			//"Object.defineProperties":"sky-core/polyfill/Object/defineProperties",
+			// 使用前应使用sham判断
+			"Object.defineProperties": "sky-core/polyfill/Object/defineProperties",
 			"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
 			"Object.getOwnPropertyDescriptors": "sky-core/polyfill/Object/getOwnPropertyDescriptors",
 			"Object.getOwnPropertyNames": "sky-core/polyfill/Object/getOwnPropertyNames",
@@ -190,10 +191,6 @@ export default [
 			"Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
 			"Symbol.iterator": "sky-core/pure/Symbol/iterator",
 			"Symbol": "sky-core/pure/Symbol",
-			// 由于ES3不支持 accessor，必须使用纯净版
-			// "document.currentScript": ["sky-core/pure/document/currentScript"],
-			// 由于ES3不支持 accessor，不建议污染全局变量，建议判断时用Object.defineProperties，不涉及accessor的defineProperties操作，在需要用到的地方注入
-			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
 			// ES3不支持 setPrototypeOf，不建议污染全局变量，只在没有副作用的地方注入
 			// "Object.setPrototypeOf": "sky-core/pure/Object/setPrototypeOf",
 			// 由于有比较多的库使用XMLHttpRequest来判断浏览器版本，污染全局变量会导致判断错误，因此建议只在需要用的地方注入

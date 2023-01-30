@@ -1,29 +1,22 @@
-import indexOf from "sky-core/pure/Array/prototype/indexOf";
-import { keys as compat_keys } from "./keys";
 export function getOwnPropertyDescriptors(obj) {
+	var keys = Object.getOwnPropertyNames(obj);
+	keys = keys.concat(Object.getOwnPropertySymbols(obj));
 	var o = {};
-	var keys = [];
-	for(var key in obj) {
-		if(key.substring(0, 8) === "@@desc:") {
-			if(Object.prototype.hasOwnProperty.call(obj, key)) {
-				var prop = key.substring(7);
-				o[prop] = obj[key];
-				keys.push(prop);
-			}
-		}
-	}
-	var ks = compat_keys(obj);
-	var i = ks.length;
-	while(i-- > 0) {
-		var k = ks[i];
-		if(indexOf.call(keys, k) < 0) {
-			var desc = new Object();
-			desc.value = obj[k];
-			desc.writable = true;
-			desc.enumerable = true;
-			desc.configurable = true;
-			o[k] = desc;
+	var i, key;
+	for(i = 0; i < keys.length; i++) {
+		key = keys[i];
+		var desc = obj["@@desc:" + key];
+		if(desc) {
+			o[key] = desc;
+		} else {
+			o[key] = {
+				value: obj[key],
+				writable: true,
+				enumerable: String(key).substring(0, 2) !== "__",
+				configurable: true
+			};
 		}
 	}
 	return o;
 };
+getOwnPropertyDescriptors.sham = true;

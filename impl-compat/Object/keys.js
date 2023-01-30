@@ -1,14 +1,24 @@
+import { isJsObject } from "../../utils-compat/isJsObject";
 import { dontEnums } from "../../utils-compat/dontEnums";
+import { hasEnumBug } from "../../utils/hasEnumBug";
 import { getPrototypeOf } from "./getPrototypeOf";
 
 export function keys(obj) {
+	if(obj == null) {
+		throw new TypeError("Cannot convert undefined or null to object");
+	}
 	var result = [], key;
-	var isJsObject = obj instanceof Object;
-	if(!isJsObject) {
+	var jsObject = isJsObject(obj);
+	if(!jsObject) {
 		var proto = getPrototypeOf(obj);
 		if(proto) {
 			for(key in obj) {
-				if(key.substring(0, 2) !== "@@" && key.substring(0, 2) !== "__" && proto[key] !== obj[key]) {
+				switch(key.substring(0, 2)) {
+					case "__":
+					case "@@":
+						continue;
+				}
+				if(proto[key] !== obj[key]) {
 					result.push(key);
 				}
 			}
@@ -16,15 +26,25 @@ export function keys(obj) {
 		}
 	}
 	for(key in obj) {
-		if(Object.prototype.hasOwnProperty.call(obj, key) && key.substring(0, 2) !== "@@" && key.substring(0, 2) !== "__") {
-			result.push(key);
+		switch(key.substring(0, 2)) {
+			case "__":
+			case "@@":
+				continue;
+		}
+		if(Object.prototype.hasOwnProperty.call(obj, key)) {
+			var desc = obj["@@desc:" + key];
+			if(!desc || desc.enumerable) {
+				result.push(key);
+			}
 		}
 	}
-	var i = dontEnums.length;
-	while(i-- > 0) {
-		key = dontEnums[i];
-		if(Object.prototype.hasOwnProperty.call(obj, key)) {
-			result.push(key);
+	if(hasEnumBug) {
+		var i = dontEnums.length;
+		while(i-- > 0) {
+			key = dontEnums[i];
+			if(Object.prototype.hasOwnProperty.call(obj, key)) {
+				result.push(key);
+			}
 		}
 	}
 	return result;

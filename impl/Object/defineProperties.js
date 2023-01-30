@@ -8,3 +8,4 @@ export function defineProperties(obj, properties) {
 	}
 	return obj;
 };
+defineProperties.sham = true;

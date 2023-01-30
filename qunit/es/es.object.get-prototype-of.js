@@ -1,33 +1,32 @@
 import { CORRECT_PROTOTYPE_GETTER } from '../helpers/constants';
 
 QUnit.test('Object.getPrototypeOf', assert => {
-  const { create, getPrototypeOf } = Object;
-  assert.isFunction(getPrototypeOf);
-  assert.arity(getPrototypeOf, 1);
-  assert.name(getPrototypeOf, 'getPrototypeOf');
-  assert.looksNative(getPrototypeOf);
+  assert.isFunction(Object.getPrototypeOf);
+  assert.arity(Object.getPrototypeOf, 1);
+  assert.name(Object.getPrototypeOf, 'getPrototypeOf');
+  assert.looksNative(Object.getPrototypeOf);
   assert.nonEnumerable(Object, 'getPrototypeOf');
-  assert.ok(getPrototypeOf({}) === Object.prototype);
-  assert.ok(getPrototypeOf([]) === Array.prototype);
+  assert.ok(Object.getPrototypeOf({}) === Object.prototype);
+  assert.ok(Object.getPrototypeOf([]) === Array.prototype);
   function F() { /* empty */ }
-  assert.ok(getPrototypeOf(new F()) === F.prototype);
+  assert.ok(Object.getPrototypeOf(new F()) === F.prototype);
   const object = { q: 1 };
-  assert.ok(getPrototypeOf(create(object)) === object);
-  assert.ok(getPrototypeOf(create(null)) === null);
-  assert.ok(getPrototypeOf(getPrototypeOf({})) === null);
+  assert.ok(Object.getPrototypeOf(Object.create(object)) === object);
+  assert.ok(Object.getPrototypeOf(Object.create(null)) === null);
+  assert.ok(Object.getPrototypeOf(Object.getPrototypeOf({})) === null);
   function Foo() { /* empty */ }
   Foo.prototype.foo = 'foo';
   function Bar() { /* empty */ }
-  Bar.prototype = create(Foo.prototype);
+  Bar.prototype = Object.create(Foo.prototype);
   Bar.prototype.constructor = Bar;
-  assert.strictEqual(getPrototypeOf(Bar.prototype).foo, 'foo');
+  assert.strictEqual(Object.getPrototypeOf(Bar.prototype).foo, 'foo');
   const primitives = [42, 'foo', false];
   for(const value of primitives) {
-    assert.notThrows(() => getPrototypeOf(value), `accept ${typeof value} 不支持`);
+    assert.notThrows(() => Object.getPrototypeOf(value), `accept ${typeof value} 不支持`);
   }
-  assert.throws(() => getPrototypeOf(null), TypeError, 'throws on null');
-  assert.throws(() => getPrototypeOf(undefined), TypeError, 'throws on undefined');
-  assert.strictEqual(getPrototypeOf(Object('foo')), String.prototype);
+  assert.throws(() => Object.getPrototypeOf(null), TypeError, 'throws on null');
+  assert.throws(() => Object.getPrototypeOf(undefined), TypeError, 'throws on undefined');
+  assert.strictEqual(Object.getPrototypeOf(Object('foo')), String.prototype);
 });
 
 QUnit.test('Object.getPrototypeOf.sham flag', assert => {

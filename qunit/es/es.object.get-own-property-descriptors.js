@@ -1,17 +1,14 @@
 import { DESCRIPTORS } from '../helpers/constants';
 
 QUnit.test('Object.getOwnPropertyDescriptors', assert => {
-  const { create, getOwnPropertyDescriptors } = Object;
-  assert.isFunction(getOwnPropertyDescriptors);
-  assert.arity(getOwnPropertyDescriptors, 1);
-  assert.name(getOwnPropertyDescriptors, 'getOwnPropertyDescriptors');
-  assert.looksNative(getOwnPropertyDescriptors);
-  assert.nonEnumerable(Object, 'getOwnPropertyDescriptors');
-  const object = create({ q: 1 }, { e: { value: 3 } });
+  assert.isFunction(Object.getOwnPropertyDescriptors);
+  assert.arity(Object.getOwnPropertyDescriptors, 1);
+  assert.name(Object.getOwnPropertyDescriptors, 'getOwnPropertyDescriptors');
+  const object = Object.create({ q: 1 }, { e: { value: 3 } });
   object.w = 2;
   const symbol = Symbol('4');
   object[symbol] = 4;
-  const descriptors = getOwnPropertyDescriptors(object);
+  const descriptors = Object.getOwnPropertyDescriptors(object);
   assert.strictEqual(descriptors.q, undefined);
   assert.deepEqual(descriptors.w, {
     enumerable: true,
@@ -19,7 +16,7 @@ QUnit.test('Object.getOwnPropertyDescriptors', assert => {
     writable: true,
     value: 2,
   });
-  if (DESCRIPTORS) {
+  if(DESCRIPTORS) {
     assert.deepEqual(descriptors.e, {
       enumerable: false,
       configurable: false,

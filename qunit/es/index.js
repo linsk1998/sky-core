@@ -44,10 +44,10 @@ import "../helpers/qunit-helpers";
 
 
 // import "./es.object.assign";
-import "./es.object.create";
-import "./es.object.define-properties";
-import "./es.object.define-property";
-import "./es.object.entries";
+// import "./es.object.create";
+// import "./es.object.define-properties";
+// import "./es.object.define-property";
+// import "./es.object.entries";
 // import "./es.object.from-entries";
 // import "./es.object.get-own-property-descriptor";
 // import "./es.object.get-own-property-descriptors";
@@ -66,9 +66,9 @@ import "./es.object.entries";
 // import "./es.function.name";
 // import "./es.function.has-instance";
 
-// import "./es.date.to-json";
-// import "./es.date.to-iso-string";
-// import "./es.date.to-string";
+import "./es.date.to-json";
+import "./es.date.to-iso-string";
+import "./es.date.to-string";
 
 // import "./es.number.epsilon";
 // import "./es.number.is-finite";

@@ -6,11 +6,12 @@
 	"description": "Javascript toolkit core library",
 	"devDependencies": {
 		"@babel/core": "^7.13.14",
-		"@babel/plugin-transform-for-of": "^7.16.7",
 		"@babel/plugin-transform-member-expression-literals": "^7.16.7",
 		"@babel/plugin-transform-property-literals": "^7.16.7",
 		"@babel/plugin-transform-reserved-words": "^7.16.7",
+		"@babel/plugin-transform-runtime": "^7.19.6",
 		"@babel/preset-env": "^7.16.11",
+		"@babel/runtime": "^7.20.1",
 		"@rollup/plugin-alias": "^3.1.1",
 		"@rollup/plugin-babel": "^5.3.0",
 		"@rollup/plugin-commonjs": "^21.0.0",

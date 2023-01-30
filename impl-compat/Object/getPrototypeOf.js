@@ -1,4 +1,7 @@
 export function getPrototypeOf(obj) {
+	if(obj == null) {
+		throw new TypeError("Cannot convert undefined or null to object");
+	}
 	if(typeof obj !== "object") {
 		obj = Object(obj);
 	}
@@ -19,3 +22,4 @@ export function getPrototypeOf(obj) {
 	}
 	return obj.constructor.prototype;
 };
+getPrototypeOf.sham = true;

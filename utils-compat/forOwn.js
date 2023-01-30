@@ -1,33 +1,48 @@
+import { hasEnumBug } from "../utils/hasEnumBug";
 import { dontEnums } from "./dontEnums";
+import { isJsObject } from "./isJsObject";
 export function forOwn(obj, fn, thisArg) {
 	var key;
-	var isJsObject = obj instanceof Object;
-	if(!isJsObject) {
+	var jsObject = isJsObject(obj);
+	if(!jsObject) {
 		var proto = getPrototypeOf(obj);
 		if(proto) {
 			for(key in obj) {
-				if(key.substring(0, 2) !== "@@" && key.substring(0, 2) !== "__" && proto[key] !== obj[key]) {
-					if(fn.call(thisArg, obj[key], key) === false) {
-						return false;
-					}
+				switch(key.substring(0, 2)) {
+					case "__":
+					case "@@":
+						continue;
+				}
+				if(proto[key] === obj[key]) {
+					continue;
+				}
+				if(fn.call(thisArg, obj[key], key) === false) {
+					return false;
 				}
 			}
 			return true;
 		}
 	}
 	for(key in obj) {
-		if(Object.prototype.hasOwnProperty.call(obj, key) && key.substring(0, 2) !== "@@" && !key.substring(0, 2) !== "__") {
+		switch(key.substring(0, 2)) {
+			case "__":
+			case "@@":
+				continue;
+		}
+		if(Object.prototype.hasOwnProperty.call(obj, key)) {
 			if(fn.call(thisArg, obj[key], key) === false) {
 				return false;
 			}
 		}
 	}
-	var i = dontEnums.length;
-	while(i-- > 0) {
-		key = dontEnums[i];
-		if(Object.prototype.hasOwnProperty.call(obj, key)) {
-			if(fn.call(thisArg, obj[key], key) === false) {
-				return false;
+	if(hasEnumBug) {
+		var i = dontEnums.length;
+		while(i-- > 0) {
+			key = dontEnums[i];
+			if(Object.prototype.hasOwnProperty.call(obj, key)) {
+				if(fn.call(thisArg, obj[key], key) === false) {
+					return false;
+				}
 			}
 		}
 	}

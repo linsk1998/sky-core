@@ -3,6 +3,7 @@ import path from "path";
 import alias from "@rollup/plugin-alias";
 import babel from '@rollup/plugin-babel';
 import importPlugin from 'rollup-plugin-import';
+import nodeResolve from '@rollup/plugin-node-resolve';
 import { polyfills, pures, utils } from "../build/alias-compat";
 import recommend from "./recommend-compat";
 export default {
@@ -13,15 +14,18 @@ export default {
 		format: 'iife'
 	},
 	context: "window",
+	treeshake: false,
 	plugins: [
+		nodeResolve(),
 		importPlugin({
 			libraryName: "sky-core",
 			libraryDirectory: "utils"
 		}),
 		...recommend,
 		babel({
-			babelHelpers: 'bundled',
+			babelHelpers: 'runtime',
 			babelrc: false,
+			compact: false,
 			presets: [
 				[
 					"@babel/preset-env",
@@ -32,7 +36,16 @@ export default {
 					}
 				]
 			],
-			include: ["qunit/**/*"]
+			plugins: [
+				["@babel/plugin-transform-runtime", {
+					absoluteRuntime: false,
+					corejs: false,
+					helpers: true,
+					regenerator: true,
+					useESModules: true,
+					version: "7.20.1"
+				}],
+			]
 		}),
 		alias({
 			entries: [
