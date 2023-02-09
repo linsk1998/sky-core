@@ -3,6 +3,10 @@ import { prefixIntrger3 } from "../../../utils/prefixIntrger3";
 
 if(!Date.prototype.toISOString) {
 	Date.prototype.toISOString = function() {
+		var time = this.getTime();
+		if(isNaN(time)) {
+			throw new RangeError("Invalid time value");
+		}
 		return this.getUTCFullYear() +
 			'-' + prefixIntrger2(this.getUTCMonth() + 1) +
 			'-' + prefixIntrger2(this.getUTCDate()) +

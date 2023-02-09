@@ -1,6 +1,6 @@
 QUnit.test('Number.isSafeInteger', assert => {
-  const { isSafeInteger } = Number;
-  const { create } = Object;
+  const isSafeInteger = Number.isSafeInteger;
+  const create = Object.create;
   assert.isFunction(isSafeInteger);
   assert.name(isSafeInteger, 'isSafeInteger');
   assert.arity(isSafeInteger, 1);
@@ -19,8 +19,8 @@ QUnit.test('Number.isSafeInteger', assert => {
     9007199254740991,
     -9007199254740991,
   ];
-  for (const value of safeIntegers) {
-    assert.ok(isSafeInteger(value), `isSafeInteger ${ typeof value } ${ value }`);
+  for(const value of safeIntegers) {
+    assert.ok(isSafeInteger(value), `isSafeInteger ${typeof value} ${value}`);
   }
   const notSafeIntegers = [
     9007199254740992,
@@ -38,10 +38,10 @@ QUnit.test('Number.isSafeInteger', assert => {
     undefined,
     null,
     {},
-    function () { /* empty */ },
+    function() { /* empty */ },
   ];
-  for (const value of notSafeIntegers) {
-    assert.ok(!isSafeInteger(value), `not isSafeInteger ${ typeof value } ${ value }`);
+  for(const value of notSafeIntegers) {
+    assert.ok(!isSafeInteger(value), `not isSafeInteger ${typeof value} ${value}`);
   }
   assert.ok(!isSafeInteger(create(null)), 'Number.isSafeInteger(Object.create(null)) -> false');
 });

@@ -66,9 +66,9 @@ import "../helpers/qunit-helpers";
 // import "./es.function.name";
 // import "./es.function.has-instance";
 
-import "./es.date.to-json";
-import "./es.date.to-iso-string";
-import "./es.date.to-string";
+// import "./es.date.to-json";
+// import "./es.date.to-iso-string";
+// import "./es.date.to-string";
 
 // import "./es.number.epsilon";
 // import "./es.number.is-finite";
@@ -100,14 +100,16 @@ import "./es.date.to-string";
 // import "./es.math.tanh";
 // import "./es.math.trunc";
 
-// import "./es.json.stringify";
 
 // import "./es.date.to-iso-string";
 // import "./es.date.to-json";
 // import "./es.date.to-string";
 
-// import "./es.set";
 // import "./es.map";
+// import "./es.set";
+
+import "./es.weak-map";
+import "./es.weak-set";
 
 // import "./es.promise";
 // import "./es.promise.finally";

@@ -3,6 +3,17 @@ import inject from "@rollup/plugin-inject";
 export default [
 	polyfill({
 		modules: {
+			// breaking change
+			'parseInt': "sky-core/polyfill/parseInt",
+
+			"JSON.stringify": "sky-core/polyfill/Date/prototype/toJSON",
+			//简易版的实现，仅适用于解析内容安全的json
+			"JSON": "sky-core/polyfill/JSON",
+			// Date
+			"Date.now": "sky-core/polyfill/Date/now",
+			// "Date": "sky-core/polyfill/Date/constructor",
+			// "Date.parse": "sky-core/polyfill/Date/parse",
+
 			'globalThis': "sky-core/polyfill/globalThis",
 			"Symbol.for": "sky-core/polyfill/Symbol/for",
 			"Symbol.keyFor": "sky-core/polyfill/Symbol/keyFor",
@@ -19,9 +30,7 @@ export default [
 			],
 			"Array.isArray": "sky-core/polyfill/Array/isArray",
 			"Array.of": "sky-core/polyfill/Array/of",
-			"Date": "sky-core/polyfill/Date/constructor",
-			"Date.now": "sky-core/polyfill/Date/now",
-			"Date.parse": "sky-core/polyfill/Date/parse",
+			// Math
 			"Math.acosh": "sky-core/polyfill/Math/acosh",
 			"Math.asinh": "sky-core/polyfill/Math/asinh",
 			"Math.atanh": "sky-core/polyfill/Math/atanh",
@@ -39,8 +48,6 @@ export default [
 			"Math.sinh": "sky-core/polyfill/Math/sinh",
 			"Math.tanh": "sky-core/polyfill/Math/tanh",
 			"Math.trunc": "sky-core/polyfill/Math/trunc",
-			//简易版的实现，仅适用于解析内容安全的json
-			"JSON": "sky-core/polyfill/JSON",
 			//如果，需要解析第三方或其他不安全的json，需要使用其他JSON解析库
 			//"JSON": "JSON",
 			//ES2015.Core Number
@@ -74,6 +81,13 @@ export default [
 			"Object.getPrototypeOf": "sky-core/polyfill/Object/getPrototypeOf",
 			//ES3不能真正实现setPrototypeOf，建议不要污染全局的Object，特殊需要用的地方用@rollup/plugin-inject
 			//"Object.setPrototypeOf","sky-core/polyfill/Object/setPrototypeOf",
+			//Object 动态相关
+			"Object.preventExtensions": "sky-core/polyfill/Object/preventExtensions",
+			"Object.seal": "sky-core/polyfill/Object/seal",
+			"Object.freeze": "sky-core/polyfill/Object/freeze",
+			"Object.isExtensible": "sky-core/polyfill/Object/isExtensible",
+			"Object.isSealed": "sky-core/polyfill/Object/isSealed",
+			"Object.isFrozen": "sky-core/polyfill/Object/isFrozen",
 			"Object.is": "sky-core/polyfill/Object/is",
 			//Reflect
 			"Reflect.apply": "sky-core/polyfill/Reflect/apply",
@@ -120,13 +134,13 @@ export default [
 	//以下是prototype的修改
 	polyfill({
 		modules: {
-			//其他对象的自动转JSON
-			".toJSON": [
-				"sky-core/polyfill/Date/prototype/toJSON"
-			],
-			"JSON.stringify": [
-				"sky-core/polyfill/Date/prototype/toJSON"
-			],
+			// breaking change
+			'.toFixed': "sky-core/polyfill/Number/prototype/toFixed",
+			//Date
+			//toLocaleFormat 这个只有火狐支持，非标准
+			".toLocaleFormat": "sky-core/polyfill/Date/prototype/toLocaleFormat",
+			".toISOString": "sky-core/polyfill/Date/prototype/toISOString",
+			".toJSON": "sky-core/polyfill/Date/prototype/toJSON",
 			//ES5 Function
 			".bind": "sky-core/polyfill/Function/prototype/bind",
 			// ".name": "sky-core/polyfill/Function/prototype/name",
@@ -156,10 +170,6 @@ export default [
 			//ES2019 Array
 			".flat": "sky-core/polyfill/Array/prototype/flat",
 			".flatMap": "sky-core/polyfill/Array/prototype/flatMap",
-			//Date
-			//toLocaleFormat 这个只有火狐支持，非标准
-			".toLocaleFormat": "sky-core/polyfill/Date/prototype/toLocaleFormat",
-			".toISOString": "sky-core/polyfill/Date/prototype/toISOString",
 			//ES5 String
 			".trim": "sky-core/polyfill/String/prototype/trim",
 			//ES6 String

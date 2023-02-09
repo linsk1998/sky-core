@@ -20,7 +20,9 @@ export function getOwnPropertySymbols(obj) {
 	for(var key in obj) {
 		if(key.substring(0, 2) === "@@") {
 			if(Object.prototype.hasOwnProperty.call(obj, key)) {
-				arr.push(all_symbol[key]);
+				if(key in all_symbol) {
+					arr.push(all_symbol[key]);
+				}
 			}
 		}
 	}

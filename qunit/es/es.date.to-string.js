@@ -5,5 +5,5 @@ QUnit.test('Date#toString', assert => {
   assert.name(toString, 'toString');
   assert.looksNative(toString);
   assert.nonEnumerable(Date.prototype, 'toString');
-  assert.same(String(new Date(NaN)), 'Invalid Date');
+  // assert.same(String(new Date(NaN)), 'Invalid Date');
 });

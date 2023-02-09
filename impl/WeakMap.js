@@ -1,20 +1,33 @@
 var KEY_WM = "@@WeakMap";
 var weakSeq = 0;
-function WeakMap(iterable) {
+function WeakMap() {
 	this.symbol = weakSeq++;
-	if(iterable) {
+	if(arguments.length) {
+		var iterable = arguments[0];
 		var entries = iterable[Symbol.iterator];
 		if(entries) {
 			var it = entries.call(iterable);
 			while(true) {
 				var next = it.next();
 				if(next.done) break;
-				this.set(next.value[0], next.value[1]);
+				try {
+					this.set(next.value[0], next.value[1]);
+				} catch(e) {
+					if(it.return) {
+						try {
+							it.return();
+						} catch(e) { }
+					}
+					throw e;
+				}
 			}
 		}
 	}
 }
 WeakMap.prototype.set = function(key, value) {
+	if(typeof key !== "object") {
+		throw new TypeError("Invalid value used in weak");
+	}
 	var map = key[KEY_WM];
 	if(!map) {
 		map = key[KEY_WM] = {};
@@ -36,6 +49,9 @@ WeakMap.prototype.has = function(key) {
 	return false;
 };
 WeakMap.prototype.delete = function(key) {
+	if(typeof key !== "object") {
+		return false;
+	}
 	var map = key[KEY_WM];
 	if(map) {
 		if(this.symbol in map) {

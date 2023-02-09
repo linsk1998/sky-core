@@ -1,6 +1,6 @@
 QUnit.test('Number.isFinite', assert => {
-  const { isFinite } = Number;
-  const { create } = Object;
+  const isFinite = Number.isFinite;
+  const create = Object.create;
   assert.isFunction(isFinite);
   assert.name(isFinite, 'isFinite');
   assert.arity(isFinite, 1);
@@ -18,8 +18,8 @@ QUnit.test('Number.isFinite', assert => {
     2 ** 32 - 1,
     -0,
   ];
-  for (const value of finite) {
-    assert.ok(isFinite(value), `isFinite ${ typeof value } ${ value }`);
+  for(const value of finite) {
+    assert.ok(isFinite(value), `isFinite ${typeof value} ${value}`);
   }
   const notFinite = [
     NaN,
@@ -34,10 +34,10 @@ QUnit.test('Number.isFinite', assert => {
     undefined,
     null,
     {},
-    function () { /* empty */ },
+    function() { /* empty */ },
   ];
-  for (const value of notFinite) {
-    assert.ok(!isFinite(value), `not isFinite ${ typeof value } ${ value }`);
+  for(const value of notFinite) {
+    assert.ok(!isFinite(value), `not isFinite ${typeof value} ${value}`);
   }
   assert.ok(!isFinite(create(null)), 'Number.isFinite(Object.create(null)) -> false');
 });

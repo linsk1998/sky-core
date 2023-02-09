@@ -1,6 +1,6 @@
 QUnit.test('Number.isNaN', assert => {
-  const { isNaN } = Number;
-  const { create } = Object;
+  const isNaN = Number.isNaN;
+  const create = Object.create;
   assert.isFunction(isNaN);
   assert.name(isNaN, 'isNaN');
   assert.arity(isNaN, 1);
@@ -29,10 +29,10 @@ QUnit.test('Number.isNaN', assert => {
     undefined,
     null,
     {},
-    function () { /* empty */ },
+    function() { /* empty */ },
   ];
-  for (const value of notNaNs) {
-    assert.ok(!isNaN(value), `not Number.isNaN ${ typeof value } ${ value }`);
+  for(const value of notNaNs) {
+    assert.ok(!isNaN(value), `not Number.isNaN ${typeof value} ${value}`);
   }
   assert.ok(!isNaN(create(null)), 'Number.isNaN(Object.create(null)) -> false');
 });
