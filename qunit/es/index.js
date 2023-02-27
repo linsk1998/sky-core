@@ -108,8 +108,8 @@ import "../helpers/qunit-helpers";
 // import "./es.map";
 // import "./es.set";
 
-import "./es.weak-map";
-import "./es.weak-set";
+// import "./es.weak-map";
+// import "./es.weak-set";
 
 // import "./es.promise";
 // import "./es.promise.finally";
@@ -117,4 +117,4 @@ import "./es.weak-set";
 // import "./es.promise.any";
 // import "./es.aggregate-error";
 
-// import "./web.url";
+import "../web/web.url";

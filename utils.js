@@ -58,6 +58,7 @@ export { getCurrentScript } from "./utils/getCurrentScript";
 export { getCurrentPath } from "./utils/getCurrentPath";
 export { getScript } from "./utils/getScript";
 export { loadCSS } from "./utils/loadCSS";
+export { loadScript } from "./utils/loadScript";
 
 export { attachEvent } from "./utils/attachEvent";
 export { detachEvent } from "./utils/detachEvent";
