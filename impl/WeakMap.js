@@ -25,7 +25,7 @@ function WeakMap() {
 	}
 }
 WeakMap.prototype.set = function(key, value) {
-	if(typeof key !== "object") {
+	if(typeof key !== "object" && typeof key !== "function") {
 		throw new TypeError("Invalid value used in weak");
 	}
 	var map = key[KEY_WM];
@@ -49,7 +49,7 @@ WeakMap.prototype.has = function(key) {
 	return false;
 };
 WeakMap.prototype.delete = function(key) {
-	if(typeof key !== "object") {
+	if(typeof key !== "object" && typeof key !== "function") {
 		return false;
 	}
 	var map = key[KEY_WM];
