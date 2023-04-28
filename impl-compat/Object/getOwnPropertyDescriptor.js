@@ -5,7 +5,7 @@ export function getOwnPropertyDescriptor(obj, prop) {
 	if(obj == null) {
 		throw new TypeError("Cannot convert undefined or null to object");
 	}
-	if(typeof obj !== "object") {
+	if(typeof obj !== "object" && typeof obj !== "function") {
 		return;
 	}
 	var key = '@@desc:' + prop;
@@ -33,7 +33,7 @@ export function ie8_getOwnPropertyDescriptor(obj, prop) {
 		if(obj == null) {
 			throw new TypeError("Cannot convert undefined or null to object");
 		}
-		if(typeof obj !== "object") {
+		if(typeof obj !== "object" && typeof obj !== "function") {
 			return;
 		}
 		return native_getOwnPropertyDescriptor.apply(Object, arguments);

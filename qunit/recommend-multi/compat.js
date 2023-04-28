@@ -2,7 +2,7 @@
 
 	var $inject_Symbol_iterator = '@@iterator';
 
-	function values() {
+	function values$2() {
 	  var array = this;
 	  var index = 0;
 	  return {
@@ -26,7 +26,7 @@
 	}
 
 	if (!Array.prototype.values) {
-	  Array.prototype.values = values;
+	  Array.prototype.values = values$2;
 	}
 
 	if (!Array.prototype[$inject_Symbol_iterator]) {
@@ -144,7 +144,7 @@
 
 	var symbol_sqe = 0;
 	var all_symbol = {};
-	function _Symbol$1(desc) {
+	function _Symbol$6(desc) {
 	  this.__name__ = "@@" + desc + ":" + symbol_sqe;
 	  if (desc !== undefined) {
 	    this.description = String(desc);
@@ -153,10 +153,10 @@
 	  all_symbol[this.__name__] = this;
 	}
 	;
-	_Symbol$1.prototype.toString = function () {
+	_Symbol$6.prototype.toString = function () {
 	  return this.__name__;
 	};
-	_Symbol$1.prototype.toJSON = function () {
+	_Symbol$6.prototype.toJSON = function () {
 	  return undefined;
 	};
 	function getOwnPropertySymbols(obj) {
@@ -174,32 +174,32 @@
 	}
 	;
 
-	function _Symbol(desc) {
-	  return new _Symbol$1(desc);
+	function _Symbol$5(desc) {
+	  return new _Symbol$6(desc);
 	}
 	;
-	_Symbol.sham = true;
+	_Symbol$5.sham = true;
 
-	_Symbol.sham = true;
-	_Symbol.asyncIterator = "@@asyncIterator";
-	_Symbol.isConcatSpreadable = "@@isConcatSpreadable";
-	_Symbol.match = "@@match";
-	_Symbol.matchAll = "@@matchAll";
-	_Symbol.replace = "@@replace";
-	_Symbol.search = "@@search";
-	_Symbol.species = "@@species";
-	_Symbol.split = "@@split";
-	_Symbol.toPrimitive = "@@toPrimitive";
-	_Symbol.toStringTag = "@@toStringTag";
-	_Symbol.unscopables = "@@unscopables";
+	_Symbol$5.sham = true;
+	_Symbol$5.asyncIterator = "@@asyncIterator";
+	_Symbol$5.isConcatSpreadable = "@@isConcatSpreadable";
+	_Symbol$5.match = "@@match";
+	_Symbol$5.matchAll = "@@matchAll";
+	_Symbol$5.replace = "@@replace";
+	_Symbol$5.search = "@@search";
+	_Symbol$5.species = "@@species";
+	_Symbol$5.split = "@@split";
+	_Symbol$5.toPrimitive = "@@toPrimitive";
+	_Symbol$5.toStringTag = "@@toStringTag";
+	_Symbol$5.unscopables = "@@unscopables";
 
 	function _typeof(obj) {
 	  "@babel/helpers - typeof";
 
-	  return _typeof = "function" == typeof _Symbol && "symbol" == typeof $inject_Symbol_iterator ? function (obj) {
+	  return _typeof = "function" == typeof _Symbol$5 && "symbol" == typeof $inject_Symbol_iterator ? function (obj) {
 	    return typeof obj;
 	  } : function (obj) {
-	    return obj && "function" == typeof _Symbol && obj.constructor === _Symbol && obj !== _Symbol.prototype ? "symbol" : typeof obj;
+	    return obj && "function" == typeof _Symbol$5 && obj.constructor === _Symbol$5 && obj !== _Symbol$5.prototype ? "symbol" : typeof obj;
 	  }, _typeof(obj);
 	}
 
@@ -382,7 +382,7 @@
 	}
 
 	function _createForOfIteratorHelperLoose(o, allowArrayLike) {
-	  var it = typeof _Symbol !== "undefined" && o[$inject_Symbol_iterator] || o["@@iterator"];
+	  var it = typeof _Symbol$5 !== "undefined" && o[$inject_Symbol_iterator] || o["@@iterator"];
 	  if (it) return (it = it.call(o)).next.bind(it);
 	  if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
 	    if (it) o = it;
@@ -415,7 +415,7 @@
 	  if (methods) for (var key in methods) iterator[key] = methods[key];
 	  return iterator;
 	}
-	function createIterable(elements, methods) {
+	function createIterable$1(elements, methods) {
 	  var _iterable;
 	  var iterable = (_iterable = {
 	    called: false,
@@ -437,14 +437,14 @@
 	  }, _iterable);
 	  return iterable;
 	}
-	function includes(target, wanted) {
+	function includes$2(target, wanted) {
 	  for (var _iterator = _createForOfIteratorHelperLoose(target), _step; !(_step = _iterator()).done;) {
 	    var element = _step.value;
 	    if (wanted === element) return true;
 	  }
 	  return false;
 	}
-	function is(a, b) {
+	function is$1(a, b) {
 	  // eslint-disable-next-line no-self-compare -- NaN check
 	  return a === b ? a !== 0 || 1 / a === 1 / b : a != a && b != b;
 	}
@@ -508,7 +508,7 @@
 	    result = false;
 	  } else {
 	    for (var i = 0, length = a.length; i < length; ++i) {
-	      if (!is(a[i], b[i])) {
+	      if (!is$1(a[i], b[i])) {
 	        result = false;
 	        break;
 	      }
@@ -641,7 +641,7 @@
 	};
 	QUnit.assert.same = function (a, b, message) {
 	  this.pushResult({
-	    result: is(a, b),
+	    result: is$1(a, b),
 	    actual: a,
 	    expected: b,
 	    message: message
@@ -671,18 +671,829 @@
 	  Array.prototype.indexOf = indexOf;
 	}
 
-	function startsWith(search) {
-	  if (search instanceof RegExp) {
-	    throw new TypeError("First argument must not be a regular expression");
+	QUnit.test('Array#indexOf', function (assert) {
+	  var indexOf = Array.prototype.indexOf;
+	  assert.isFunction(indexOf);
+	  assert.arity(indexOf, 1);
+	  assert.name(indexOf, 'indexOf');
+	  assert.same(0, [1, 1, 1].indexOf(1));
+	  assert.same(-1, [1, 2, 3].indexOf(1, 1));
+	  assert.same(1, [1, 2, 3].indexOf(2, 1));
+	  assert.same(-1, [1, 2, 3].indexOf(2, -1));
+	  assert.same(1, [1, 2, 3].indexOf(2, -2));
+	  assert.same(-1, [NaN].indexOf(NaN));
+	  assert.same(3, Array(2).concat([1, 2, 3]).indexOf(2));
+	  assert.same(-1, Array(1).indexOf(undefined));
+	  assert.same(0, [1].indexOf(1, -0), "shouldn't return negative zero");
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return indexOf.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return indexOf.call(undefined, 0);
+	    }, TypeError);
 	  }
-	  var pos = arguments[1];
-	  pos = isNaN(pos) ? 0 : pos < 0 ? 0 : +pos;
-	  search = String(search);
-	  return this.substring(pos, pos + search.length) === search;
+	});
+
+	function lastIndexOf(e) {
+	  var i = this.length;
+	  if (arguments.length > 1) {
+	    i = Math.min(1 + arguments[1], i);
+	    if (i < 1) {
+	      i += this.length;
+	      if (i < 1) {
+	        return -1;
+	      }
+	    }
+	  }
+	  while (i--) {
+	    if (i in this && this[i] === e) {
+	      return i;
+	    }
+	  }
+	  return -1;
 	}
 
-	if (!String.prototype.startsWith) {
-	  String.prototype.startsWith = startsWith;
+	if (!Array.prototype.lastIndexOf) {
+	  Array.prototype.lastIndexOf = lastIndexOf;
+	}
+
+	QUnit.test('Array#lastIndexOf', function (assert) {
+	  var lastIndexOf = Array.prototype.lastIndexOf;
+	  assert.isFunction(lastIndexOf);
+	  assert.arity(lastIndexOf, 1);
+	  assert.name(lastIndexOf, 'lastIndexOf');
+	  assert.same(2, [1, 1, 1].lastIndexOf(1));
+	  assert.same(-1, [1, 2, 3].lastIndexOf(3, 1));
+	  assert.same(1, [1, 2, 3].lastIndexOf(2, 1));
+	  assert.same(-1, [1, 2, 3].lastIndexOf(2, -3));
+	  assert.same(-1, [1, 2, 3].lastIndexOf(1, -4));
+	  assert.same(1, [1, 2, 3].lastIndexOf(2, -2));
+	  assert.same(-1, [NaN].lastIndexOf(NaN));
+	  assert.same(1, [1, 2, 3].concat(Array(2)).lastIndexOf(2));
+	  assert.same(0, [1].lastIndexOf(1, -0), "shouldn't return negative zero");
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return lastIndexOf.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return lastIndexOf.call(undefined, 0);
+	    }, TypeError);
+	  }
+	});
+
+	function forEach$2(callback) {
+	  var thisArg = arguments[1];
+	  for (var i = 0; i < this.length; i++) {
+	    if (i in this) {
+	      callback.call(thisArg, this[i], i, this);
+	    }
+	  }
+	}
+
+	if (!Array.prototype.forEach) {
+	  Array.prototype.forEach = forEach$2;
+	}
+
+	QUnit.test('Array#forEach', function (assert) {
+	  var forEach = Array.prototype.forEach;
+	  assert.isFunction(forEach);
+	  assert.arity(forEach, 1);
+	  assert.name(forEach, 'forEach');
+	  var array = [1];
+	  var context = {};
+	  array.forEach(function (value, key, that) {
+	    assert.same(arguments.length, 3, 'correct number of callback arguments');
+	    assert.same(value, 1, 'correct value in callback');
+	    assert.same(key, 0, 'correct index in callback');
+	    assert.same(that, array, 'correct link to array in callback');
+	    assert.same(this, context, 'correct callback context');
+	  }, context);
+	  var result = '';
+	  [1, 2, 3].forEach(function (value) {
+	    result += value;
+	  });
+	  assert.ok(result === '123');
+	  result = '';
+	  [1, 2, 3].forEach(function (value, key) {
+	    result += key;
+	  });
+	  assert.ok(result === '012');
+	  result = '';
+	  [1, 2, 3].forEach(function (value, key, that) {
+	    result += that;
+	  });
+	  assert.ok(result === '1,2,31,2,31,2,3');
+	  result = '';
+	  [1, 2, 3].forEach(function () {
+	    result += this;
+	  }, 1);
+	  assert.ok(result === '111');
+	  result = '';
+	  array = [];
+	  array[5] = '';
+	  array.forEach(function (value, key) {
+	    result += key;
+	  });
+	  assert.ok(result === '5');
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      forEach.call(null, function () {/* empty */});
+	    }, TypeError);
+	    assert["throws"](function () {
+	      forEach.call(undefined, function () {/* empty */});
+	    }, TypeError);
+	  }
+	});
+
+	function filter(fn) {
+	  var thisArg = arguments[1];
+	  var arr = [];
+	  for (var k = 0, length = this.length; k < length; k++) {
+	    fn.call(thisArg, this[k], k, this) && arr.push(this[k]);
+	  }
+	  return arr;
+	}
+
+	if (!Array.prototype.filter) {
+	  Array.prototype.filter = filter;
+	}
+
+	QUnit.test('Array#filter', function (assert) {
+	  var filter = Array.prototype.filter;
+	  assert.isFunction(filter);
+	  assert.arity(filter, 1);
+	  assert.name(filter, 'filter');
+	  var array = [1];
+	  var context = {};
+	  array.filter(function (value, key, that) {
+	    assert.same(arguments.length, 3, 'correct number of callback arguments');
+	    assert.same(value, 1, 'correct value in callback');
+	    assert.same(key, 0, 'correct index in callback');
+	    assert.same(that, array, 'correct link to array in callback');
+	    assert.same(this, context, 'correct callback context');
+	  }, context);
+	  assert.deepEqual([1, 2, 3, 4, 5], [1, 2, 3, 'q', {}, 4, true, 5].filter(function (it) {
+	    return typeof it === 'number';
+	  }));
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return filter.call(null, function () {/* empty */});
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return filter.call(undefined, function () {/* empty */});
+	    }, TypeError);
+	  }
+	});
+
+	function map$1(fn) {
+	  var thisArg = arguments[1];
+	  var arr = [];
+	  for (var k = 0, length = this.length; k < length; k++) {
+	    arr.push(fn.call(thisArg, this[k], k, this));
+	  }
+	  return arr;
+	}
+
+	if (!Array.prototype.map) {
+	  Array.prototype.map = map$1;
+	}
+
+	QUnit.test('Array#map', function (assert) {
+	  var map = Array.prototype.map;
+	  assert.isFunction(map);
+	  assert.arity(map, 1);
+	  assert.name(map, 'map');
+	  var array = [1];
+	  var context = {};
+	  array.map(function (value, key, that) {
+	    assert.same(arguments.length, 3, 'correct number of callback arguments');
+	    assert.same(value, 1, 'correct value in callback');
+	    assert.same(key, 0, 'correct index in callback');
+	    assert.same(that, array, 'correct link to array in callback');
+	    assert.same(this, context, 'correct callback context');
+	  }, context);
+	  assert.deepEqual([2, 3, 4], [1, 2, 3].map(function (value) {
+	    return value + 1;
+	  }));
+	  assert.deepEqual([1, 3, 5], [1, 2, 3].map(function (value, key) {
+	    return value + key;
+	  }));
+	  assert.deepEqual([2, 2, 2], [1, 2, 3].map(function () {
+	    return +this;
+	  }, 2));
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return map.call(null, function () {/* empty */});
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return map.call(undefined, function () {/* empty */});
+	    }, TypeError);
+	  }
+	});
+
+	function reduce(callback) {
+	  var i, value;
+	  if (arguments.length >= 2) {
+	    value = arguments[1];
+	    i = 0;
+	  } else if (this.length > 0) {
+	    value = this[0];
+	    i = 1;
+	  } else {
+	    throw new Error("Reduce of empty array with no initial value");
+	  }
+	  while (i < this.length) {
+	    if (i in this) {
+	      value = callback(value, this[i], i, this);
+	    }
+	    i++;
+	  }
+	  return value;
+	}
+
+	if (!Array.prototype.reduce) {
+	  Array.prototype.reduce = reduce;
+	}
+
+	QUnit.test('Array#reduce', function (assert) {
+	  var reduce = Array.prototype.reduce;
+	  assert.isFunction(reduce);
+	  assert.arity(reduce, 1);
+	  assert.name(reduce, 'reduce');
+	  var array = [1];
+	  var accumulator = {};
+	  array.reduce(function (memo, value, key, that) {
+	    assert.same(arguments.length, 4, 'correct number of callback arguments');
+	    assert.same(memo, accumulator, 'correct callback accumulator');
+	    assert.same(value, 1, 'correct value in callback');
+	    assert.same(key, 0, 'correct index in callback');
+	    assert.same(that, array, 'correct link to array in callback');
+	  }, accumulator);
+	  assert.same([1, 2, 3].reduce(function (a, b) {
+	    return a + b;
+	  }, 1), 7, 'works with initial accumulator');
+	  [1, 2].reduce(function (memo, value, key) {
+	    assert.same(memo, 1, 'correct default accumulator');
+	    assert.same(value, 2, 'correct start value without initial accumulator');
+	    assert.same(key, 1, 'correct start index without initial accumulator');
+	  });
+	  assert.same([1, 2, 3].reduce(function (a, b) {
+	    return a + b;
+	  }), 6, 'works without initial accumulator');
+	  var values = '';
+	  var keys = '';
+	  [1, 2, 3].reduce(function (memo, value, key) {
+	    values += value;
+	    keys += key;
+	  }, 0);
+	  assert.same(values, '123', 'correct order #1');
+	  assert.same(keys, '012', 'correct order #2');
+	  assert.same(reduce.call({
+	    0: 1,
+	    1: 2,
+	    length: 2
+	  }, function (a, b) {
+	    return a + b;
+	  }), 3, 'generic');
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return reduce.call(null, function () {/* empty */}, 1);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return reduce.call(undefined, function () {/* empty */}, 1);
+	    }, TypeError);
+	  }
+	});
+
+	function reduceRight(callback) {
+	  var i = this.length,
+	    value;
+	  if (arguments.length >= 2) {
+	    value = arguments[1];
+	  } else if (this.length > 0) {
+	    value = this[--i];
+	  } else {
+	    throw new Error("Reduce of empty array with no initial value");
+	  }
+	  while (i-- > 0) {
+	    if (i in this) {
+	      value = callback(value, this[i], i, this);
+	    }
+	  }
+	  return value;
+	}
+
+	if (!Array.prototype.reduceRight) {
+	  Array.prototype.reduceRight = reduceRight;
+	}
+
+	QUnit.test('Array#reduceRight', function (assert) {
+	  var reduceRight = Array.prototype.reduceRight;
+	  assert.isFunction(reduceRight);
+	  assert.arity(reduceRight, 1);
+	  assert.name(reduceRight, 'reduceRight');
+	  var array = [1];
+	  var accumulator = {};
+	  array.reduceRight(function (memo, value, key, that) {
+	    assert.same(arguments.length, 4, 'correct number of callback arguments');
+	    assert.same(memo, accumulator, 'correct callback accumulator');
+	    assert.same(value, 1, 'correct value in callback');
+	    assert.same(key, 0, 'correct index in callback');
+	    assert.same(that, array, 'correct link to array in callback');
+	  }, accumulator);
+	  assert.same([1, 2, 3].reduceRight(function (a, b) {
+	    return a + b;
+	  }, 1), 7, 'works with initial accumulator');
+	  [1, 2].reduceRight(function (memo, value, key) {
+	    assert.same(memo, 2, 'correct default accumulator');
+	    assert.same(value, 1, 'correct start value without initial accumulator');
+	    assert.same(key, 0, 'correct start index without initial accumulator');
+	  });
+	  assert.same([1, 2, 3].reduceRight(function (a, b) {
+	    return a + b;
+	  }), 6, 'works without initial accumulator');
+	  var values = '';
+	  var keys = '';
+	  [1, 2, 3].reduceRight(function (memo, value, key) {
+	    values += value;
+	    keys += key;
+	  }, 0);
+	  assert.same(values, '321', 'correct order #1');
+	  assert.same(keys, '210', 'correct order #2');
+	  assert.same(reduceRight.call({
+	    0: 1,
+	    1: 2,
+	    length: 2
+	  }, function (a, b) {
+	    return a + b;
+	  }), 3, 'generic');
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return reduceRight.call(null, function () {/* empty */}, 1);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return reduceRight.call(undefined, function () {/* empty */}, 1);
+	    }, TypeError);
+	  }
+	});
+
+	function some(fn) {
+	  var thisArg = arguments[1];
+	  var passed = false;
+	  for (var k = 0, length = this.length; k < length; k++) {
+	    if (passed === true) break;
+	    passed = !!fn.call(thisArg, this[k], k, this);
+	  }
+	  return passed;
+	}
+
+	if (!Array.prototype.some) {
+	  Array.prototype.some = some;
+	}
+
+	QUnit.test('Array#some', function (assert) {
+	  var some = Array.prototype.some;
+	  assert.isFunction(some);
+	  assert.arity(some, 1);
+	  assert.name(some, 'some');
+	  var array = [1];
+	  var context = {};
+	  array.some(function (value, key, that) {
+	    assert.same(arguments.length, 3, 'correct number of callback arguments');
+	    assert.same(value, 1, 'correct value in callback');
+	    assert.same(key, 0, 'correct index in callback');
+	    assert.same(that, array, 'correct link to array in callback');
+	    assert.same(this, context, 'correct callback context');
+	  }, context);
+	  assert.ok([1, '2', 3].some(function (value) {
+	    return typeof value === 'number';
+	  }));
+	  assert.ok([1, 2, 3].some(function (value) {
+	    return value < 3;
+	  }));
+	  assert.ok(![1, 2, 3].some(function (value) {
+	    return value < 0;
+	  }));
+	  assert.ok(![1, 2, 3].some(function (value) {
+	    return typeof value === 'string';
+	  }));
+	  assert.ok(![1, 2, 3].some(function () {
+	    return +this !== 1;
+	  }, 1));
+	  var result = '';
+	  [1, 2, 3].some(function (value, key) {
+	    result += key;
+	    return false;
+	  });
+	  assert.ok(result === '012');
+	  array = [1, 2, 3];
+	  assert.ok(!array.some(function (value, key, that) {
+	    return that !== array;
+	  }));
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return some.call(null, function () {/* empty */});
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return some.call(undefined, function () {/* empty */});
+	    }, TypeError);
+	  }
+	});
+
+	function every(fn) {
+	  var thisArg = arguments[1];
+	  var passed = true;
+	  for (var k = 0, length = this.length; k < length; k++) {
+	    if (passed === false) break;
+	    passed = !!fn.call(thisArg, this[k], k, this);
+	  }
+	  return passed;
+	}
+
+	if (!Array.prototype.every) {
+	  Array.prototype.every = every;
+	}
+
+	QUnit.test('Array#every', function (assert) {
+	  var every = Array.prototype.every;
+	  assert.isFunction(every);
+	  assert.arity(every, 1);
+	  assert.name(every, 'every');
+	  var array = [1];
+	  var context = {};
+	  array.every(function (value, key, that) {
+	    assert.same(arguments.length, 3, 'correct number of callback arguments');
+	    assert.same(value, 1, 'correct value in callback');
+	    assert.same(key, 0, 'correct index in callback');
+	    assert.same(that, array, 'correct link to array in callback');
+	    assert.same(this, context, 'correct callback context');
+	  }, context);
+	  assert.ok([1, 2, 3].every(function (it) {
+	    return typeof it === 'number';
+	  }));
+	  assert.ok([1, 2, 3].every(function (it) {
+	    return it < 4;
+	  }));
+	  assert.ok(![1, 2, 3].every(function (it) {
+	    return it < 3;
+	  }));
+	  assert.ok(![1, 2, 3].every(function (it) {
+	    return typeof it === 'string';
+	  }));
+	  assert.ok([1, 2, 3].every(function () {
+	    return +this === 1;
+	  }, 1));
+	  var result = '';
+	  [1, 2, 3].every(function (value, key) {
+	    return result += key;
+	  });
+	  assert.ok(result === '012');
+	  array = [1, 2, 3];
+	  assert.ok(array.every(function (value, key, that) {
+	    return that === array;
+	  }));
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return every.call(null, function () {/* empty */});
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return every.call(undefined, function () {/* empty */});
+	    }, TypeError);
+	  }
+	});
+
+	QUnit.test('Array.isArray', function (assert) {
+	  var isArray = Array.isArray;
+	  assert.isFunction(isArray);
+	  assert.arity(isArray, 1);
+	  assert.name(isArray, 'isArray');
+	  assert.ok(!isArray({}));
+	  assert.ok(!isArray(function () {
+	    return arguments;
+	  }()));
+	  assert.ok(isArray([]));
+	});
+
+	QUnit.test('Array.from', function (assert) {
+	  var _Symbol = GLOBAL.Symbol || {};
+	  var from = Array.from;
+	  var defineProperty = Object.defineProperty;
+	  assert.isFunction(from);
+	  assert.arity(from, 1);
+	  assert.name(from, 'from');
+	  var types = {
+	    'array-like': {
+	      length: '3',
+	      0: '1',
+	      1: '2',
+	      2: '3'
+	    },
+	    arguments: function () {
+	      return arguments;
+	    }('1', '2', '3'),
+	    array: ['1', '2', '3'],
+	    iterable: createIterable$1(['1', '2', '3']),
+	    string: '123'
+	  };
+	  for (var type in types) {
+	    var data = types[type];
+	    assert.arrayEqual(from(data), ['1', '2', '3'], "Works with " + type);
+	    assert.arrayEqual(from(data, function (it) {
+	      return Math.pow(it, 2);
+	    }), [1, 4, 9], "Works with " + type + " + mapFn");
+	  }
+	  types = {
+	    'array-like': {
+	      length: 1,
+	      0: 1
+	    },
+	    arguments: function () {
+	      return arguments;
+	    }(1),
+	    array: [1],
+	    iterable: createIterable$1([1]),
+	    string: '1'
+	  };
+	  var _loop = function (type) {
+	    var data = types[type];
+	    var context = {};
+	    assert.arrayEqual(from(data, function (value, key) {
+	      assert.same(this, context, "Works with " + type + ", correct callback context");
+	      assert.same(value, type === 'string' ? '1' : 1, "Works with " + type + ", correct callback key");
+	      assert.same(key, 0, "Works with " + type + ", correct callback value");
+	      assert.same(arguments.length, 2, "Works with " + type + ", correct callback arguments number");
+	      return 42;
+	    }, context), [42], "Works with " + type + ", correct result");
+	  };
+	  for (var _type in types) {
+	    _loop(_type);
+	  }
+	  var primitives = [false, true, 0];
+	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
+	    var primitive = _primitives[_i];
+	    assert.arrayEqual(from(primitive), [], "Works with " + primitive);
+	  }
+	  assert["throws"](function () {
+	    return from(null);
+	  }, TypeError, 'Throws on null');
+	  assert["throws"](function () {
+	    return from(undefined);
+	  }, TypeError, 'Throws on undefined');
+	  assert.arrayEqual(from('𠮷𠮷𠮷'), ['𠮷', '𠮷', '𠮷'], 'Uses correct string iterator');
+	  var done = true;
+	  from(createIterable$1([1, 2, 3], {
+	    "return": function () {
+	      return done = false;
+	    }
+	  }), function () {
+	    return false;
+	  });
+	  assert.ok(done, '.return #default');
+	  done = false;
+	  try {
+	    from(createIterable$1([1, 2, 3], {
+	      "return": function () {
+	        return done = true;
+	      }
+	    }), function () {
+	      throw new Error();
+	    });
+	  } catch (_unused) {/* empty */}
+	  assert.ok(done, '.return #throw');
+	  var C = function () {
+	    function C() {}
+	    return C;
+	  }();
+	  var instance = from.call(C, createIterable$1([1, 2]));
+	  assert.ok(instance instanceof C, 'generic, iterable case, instanceof');
+	  assert.arrayEqual(instance, [1, 2], 'generic, iterable case, elements');
+	  instance = from.call(C, {
+	    0: 1,
+	    1: 2,
+	    length: 2
+	  });
+	  assert.ok(instance instanceof C, 'generic, array-like case, instanceof');
+	  assert.arrayEqual(instance, [1, 2], 'generic, array-like case, elements');
+	  var array = [1, 2, 3];
+	  done = false;
+	  array['@@iterator'] = undefined;
+	  array[_Symbol.iterator] = function () {
+	    done = true;
+	    return [][_Symbol.iterator].call(this);
+	  };
+	  assert.arrayEqual(from(array), [1, 2, 3], 'Array with custom iterator, elements');
+	  assert.ok(done, 'call @@iterator in Array with custom iterator');
+	  array = [1, 2, 3];
+	  delete array[1];
+	  assert.arrayEqual(from(array, String), ['1', 'undefined', '3'], 'Ignores holes');
+	  assert.notThrows(function () {
+	    return from({
+	      length: -1,
+	      0: 1
+	    }, function () {
+	      throw new Error();
+	    }).length === 0;
+	  }, 'Uses ToLength');
+	  assert.arrayEqual(from([], undefined), [], 'Works with undefined as asecond argument');
+	  assert["throws"](function () {
+	    return from([], null);
+	  }, TypeError, 'Throws with null as second argument');
+	  assert["throws"](function () {
+	    return from([], 0);
+	  }, TypeError, 'Throws with 0 as second argument');
+	  assert["throws"](function () {
+	    return from([], '');
+	  }, TypeError, 'Throws with "" as second argument');
+	  assert["throws"](function () {
+	    return from([], false);
+	  }, TypeError, 'Throws with false as second argument');
+	  assert["throws"](function () {
+	    return from([], {});
+	  }, TypeError, 'Throws with {} as second argument');
+	  if (DESCRIPTORS) {
+	    var called = false;
+	    defineProperty(C.prototype, 0, {
+	      set: function () {
+	        called = true;
+	      }
+	    });
+	    from.call(C, [1, 2, 3]);
+	    assert.ok(!called, 'Should not call prototype accessors');
+	  }
+	});
+
+	function of() {
+	  return Array.from.call(this, arguments);
+	}
+
+	if (!Array$1.of) {
+	  Array$1.of = of;
+	}
+
+	QUnit.test('Array.of', function (assert) {
+	  var defineProperty = Object.defineProperty;
+	  assert.isFunction(Array.of);
+	  assert.arity(Array.of, 0);
+	  assert.name(Array.of, 'of');
+	  assert.deepEqual(Array.of(1), [1]);
+	  assert.deepEqual(Array.of(1, 2, 3), [1, 2, 3]);
+	  var C = function () {
+	    function C() {}
+	    return C;
+	  }();
+	  var instance = Array.of.call(C, 1, 2);
+	  assert.ok(instance instanceof C);
+	  assert.strictEqual(instance[0], 1);
+	  assert.strictEqual(instance[1], 2);
+	  assert.strictEqual(instance.length, 2);
+	  if (DESCRIPTORS) {
+	    var called = false;
+	    defineProperty(C.prototype, 0, {
+	      set: function () {
+	        called = true;
+	      }
+	    });
+	    Array.of.call(C, 1, 2, 3);
+	    assert.ok(!called, 'Should not call prototype accessors');
+	  }
+	});
+
+	function findIndex(callback) {
+	  var thisArg = arguments[1];
+	  if (this.length > 0) {
+	    for (var i = 0, j; i < this.length; i++) {
+	      j = this[i];
+	      var r = callback.call(thisArg, j, i, this);
+	      if (r) {
+	        return i;
+	      }
+	    }
+	  }
+	  return -1;
+	}
+
+	if (!Array.prototype.findIndex) {
+	  Array.prototype.findIndex = findIndex;
+	}
+
+	QUnit.test('Array#findIndex', function (assert) {
+	  var findIndex = Array.prototype.findIndex;
+	  assert.isFunction(findIndex);
+	  assert.arity(findIndex, 1);
+	  assert.name(findIndex, 'findIndex');
+	  var array = [1];
+	  var context = {};
+	  array.findIndex(function (value, key, that) {
+	    assert.same(arguments.length, 3, 'correct number of callback arguments');
+	    assert.same(value, 1, 'correct value in callback');
+	    assert.same(key, 0, 'correct index in callback');
+	    assert.same(that, array, 'correct link to array in callback');
+	    assert.same(this, context, 'correct callback context');
+	  }, context);
+	  // eslint-disable-next-line unicorn/prefer-array-index-of -- ignore
+	  assert.same([1, 3, NaN, 42, {}].findIndex(function (it) {
+	    return it === 42;
+	  }), 3);
+	  // eslint-disable-next-line unicorn/prefer-array-index-of -- ignore
+	  assert.same([1, 3, NaN, 42, {}].findIndex(function (it) {
+	    return it === 43;
+	  }), -1);
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return findIndex.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return findIndex.call(undefined, 0);
+	    }, TypeError);
+	  }
+	  assert.notThrows(function () {
+	    return findIndex.call({
+	      length: -1,
+	      0: 1
+	    }, function () {
+	      throw new Error();
+	    }) === -1;
+	  }, 'uses ToLength');
+	});
+
+	function find(callback) {
+	  var thisArg = arguments[1];
+	  var i = findIndex.call(this, callback, thisArg);
+	  if (i >= 0) {
+	    return this[i];
+	  }
+	}
+	;
+
+	if (!Array.prototype.find) {
+	  Array.prototype.find = find;
+	}
+
+	QUnit.test('Array#find', function (assert) {
+	  var find = Array.prototype.find;
+	  assert.isFunction(find);
+	  assert.arity(find, 1);
+	  assert.name(find, 'find');
+	  var array = [1];
+	  var context = {};
+	  array.find(function (value, key, that) {
+	    assert.same(arguments.length, 3, 'correct number of callback arguments');
+	    assert.same(value, 1, 'correct value in callback');
+	    assert.same(key, 0, 'correct index in callback');
+	    assert.same(that, array, 'correct link to array in callback');
+	    assert.same(this, context, 'correct callback context');
+	  }, context);
+	  assert.same([1, 3, NaN, 42, {}].find(function (it) {
+	    return it === 42;
+	  }), 42);
+	  assert.same([1, 3, NaN, 42, {}].find(function (it) {
+	    return it === 43;
+	  }), undefined);
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return find.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return find.call(undefined, 0);
+	    }, TypeError);
+	  }
+	  assert.notThrows(function () {
+	    return find.call({
+	      length: -1,
+	      0: 1
+	    }, function () {
+	      throw new Error();
+	    }) === undefined;
+	  }, 'uses ToLength');
+	});
+
+	function fill(target) {
+	  if (this.length <= 0) {
+	    return this;
+	  }
+	  var len = this.length;
+	  var start = arguments[1] || 0;
+	  var end = arguments[2] || len;
+	  if (start < 0) {
+	    start += len;
+	    if (start < 0) {
+	      start = 0;
+	    }
+	  }
+	  if (end < 0) {
+	    end += len;
+	  }
+	  var i = Math.min(end, len);
+	  while (i-- > start) {
+	    this[i] = target;
+	  }
+	  return this;
+	}
+	;
+
+	if (!Array.prototype.fill) {
+	  Array.prototype.fill = fill;
 	}
 
 	var Object$1 = window.Object;
@@ -769,7 +1580,7 @@
 	}
 	;
 	function compat_defineProperty(obj, prop, description) {
-	  if (_typeof(obj) !== "object") {
+	  if (_typeof(obj) !== "object" && typeof obj !== "function") {
 	    throw new TypeError("Object.defineProperty called on non-object");
 	  }
 	  prop = String(prop);
@@ -798,9 +1609,115 @@
 	}
 	Object$1.defineProperty.sham = true;
 
-	var defineProperties$1 = Object$1.defineProperties;
+	QUnit.test('Array#fill', function (assert) {
+	  var fill = Array.prototype.fill;
+	  assert.isFunction(fill);
+	  assert.arity(fill, 1);
+	  assert.name(fill, 'fill');
+	  var array = new Array(5);
+	  assert.strictEqual(array.fill(5), array);
+	  assert.deepEqual(Array(5).fill(5), [5, 5, 5, 5, 5]);
+	  assert.deepEqual(Array(5).fill(5, 1), [undefined, 5, 5, 5, 5]);
+	  assert.deepEqual(Array(5).fill(5, 1, 4), [undefined, 5, 5, 5, undefined]);
+	  assert.deepEqual(Array(5).fill(5, 6, 1), [undefined, undefined, undefined, undefined, undefined]);
+	  assert.deepEqual(Array(5).fill(5, -3, 4), [undefined, undefined, 5, 5, undefined]);
+	  assert.arrayEqual(fill.call({
+	    length: 5
+	  }, 5), [5, 5, 5, 5, 5]);
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return fill.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return fill.call(undefined, 0);
+	    }, TypeError);
+	  }
+	  if (NATIVE && DESCRIPTORS) {
+	    assert.notThrows(function () {
+	      return fill.call(Object.defineProperty({
+	        length: -1
+	      }, 0, {
+	        set: function () {
+	          throw Error();
+	        }
+	      }));
+	    }, 'uses ToLength');
+	  }
+	});
 
-	function keys$1() {
+	function copyWithin(target, start /*, end*/) {
+	  var end = arguments[2];
+	  var len = this.length || 0;
+	  if (target < 0) {
+	    target += len;
+	    if (target < 0) {
+	      target = 0;
+	    }
+	  }
+	  start = start || 0;
+	  if (start < 0) {
+	    start += len;
+	    if (start < 0) {
+	      start = 0;
+	    }
+	  }
+	  if (end === undefined) {
+	    end = len;
+	  }
+	  if (end < 0) {
+	    end += len;
+	    if (end < 0) {
+	      end = 0;
+	    }
+	  } else if (end - start + target > len) {
+	    end = len - target + start;
+	  }
+	  var i;
+	  for (i = start; i < end; i++) {
+	    if (i in this) {
+	      this[i - start + target] = this[i];
+	    } else {
+	      delete this[i];
+	    }
+	  }
+	  return this;
+	}
+
+	if (!Array.prototype.copyWithin) {
+	  Array.prototype.copyWithin = copyWithin;
+	}
+
+	QUnit.test('Array#copyWithin', function (assert) {
+	  var copyWithin = Array.prototype.copyWithin;
+	  assert.isFunction(copyWithin);
+	  assert.arity(copyWithin, 2);
+	  assert.name(copyWithin, 'copyWithin');
+	  var array = [1];
+	  assert.strictEqual(array.copyWithin(0), array);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(-2), [1, 2, 3, 1, 2]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(0, 3), [4, 5, 3, 4, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(1, 3), [1, 4, 5, 4, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(1, 2), [1, 3, 4, 5, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(2, 2), [1, 2, 3, 4, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(0, 3, 4), [4, 2, 3, 4, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(1, 3, 4), [1, 4, 3, 4, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(1, 2, 4), [1, 3, 4, 4, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(0, -2), [4, 5, 3, 4, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(0, -2, -1), [4, 2, 3, 4, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(-4, -3, -2), [1, 3, 3, 4, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(-4, -3, -1), [1, 3, 4, 4, 5]);
+	  assert.deepEqual([1, 2, 3, 4, 5].copyWithin(-4, -3), [1, 3, 4, 5, 5]);
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return copyWithin.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return copyWithin.call(undefined, 0);
+	    }, TypeError);
+	  }
+	});
+
+	function keys$3() {
 	  var array = this;
 	  var index = 0;
 	  return {
@@ -824,8 +1741,1100 @@
 	}
 
 	if (!Array.prototype.keys) {
-	  Array.prototype.keys = keys$1;
+	  Array.prototype.keys = keys$3;
 	}
+
+	function entries$2() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = [index, array[index]];
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	if (!Array.prototype.entries) {
+	  Array.prototype.entries = entries$2;
+	}
+
+	var _Symbol$4 = window.Symbol;
+
+	var _Symbol$3 = _Symbol$4;
+	if (!_Symbol$3) {
+	  window.Symbol = _Symbol$3 = _Symbol$5;
+	  _Symbol$3.sham = true;
+	  _Symbol$3.asyncIterator = "@@asyncIterator";
+	  _Symbol$3.hasInstance = "@@hasInstance";
+	  // Symbol.isConcatSpreadable = "@@isConcatSpreadable";
+	  _Symbol$3.iterator = "@@iterator";
+	  // Symbol.match = "@@match";
+	  // Symbol.matchAll = "@@matchAll";
+	  // Symbol.replace = "@@replace";
+	  // Symbol.search = "@@search";
+	  // Symbol.species = "@@species";
+	  // Symbol.split = "@@split";
+	  // Symbol.toPrimitive = "@@toPrimitive";
+	  // Symbol.toStringTag = "@@toStringTag";
+	  // Symbol.unscopables = "@@unscopables";
+	}
+
+	QUnit.test('Array#keys', function (assert) {
+	  var keys = Array.prototype.keys;
+	  assert.isFunction(keys);
+	  assert.arity(keys, 0);
+	  assert.name(keys, 'keys');
+	  var iterator = ['q', 'w', 'e'].keys();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  assert.deepEqual(iterator.next(), {
+	    value: 0,
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 1,
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 2,
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	  assert.deepEqual(keys.call({
+	    length: -1
+	  }).next(), {
+	    value: undefined,
+	    done: true
+	  }, 'uses ToLength');
+	});
+	QUnit.test('Array#values', function (assert) {
+	  var values = Array.prototype.values;
+	  assert.isFunction(values);
+	  assert.arity(values, 0);
+	  assert.name(values, 'values');
+	  var iterator = ['q', 'w', 'e'].values();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  assert.deepEqual(iterator.next(), {
+	    value: 'q',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'w',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'e',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	  assert.deepEqual(values.call({
+	    length: -1
+	  }).next(), {
+	    value: undefined,
+	    done: true
+	  }, 'uses ToLength');
+	});
+	QUnit.test('Array#entries', function (assert) {
+	  var entries = Array.prototype.entries;
+	  assert.isFunction(entries);
+	  assert.arity(entries, 0);
+	  assert.name(entries, 'entries');
+	  var iterator = ['q', 'w', 'e'].entries();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  assert.deepEqual(iterator.next(), {
+	    value: [0, 'q'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: [1, 'w'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: [2, 'e'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	  assert.deepEqual(entries.call({
+	    length: -1
+	  }).next(), {
+	    value: undefined,
+	    done: true
+	  }, 'uses ToLength');
+	});
+	QUnit.test('Array#@@iterator', function (assert) {
+	  assert.isIterable(Array.prototype);
+	  assert.arity(Array.prototype[$inject_Symbol_iterator], 0);
+	  assert.name(Array.prototype[$inject_Symbol_iterator], 'values');
+	  assert.strictEqual(Array.prototype[$inject_Symbol_iterator], Array.prototype.values);
+	  var iterator = ['q', 'w', 'e'][$inject_Symbol_iterator]();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  assert.deepEqual(iterator.next(), {
+	    value: 'q',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'w',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'e',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	  assert.deepEqual(Array.prototype[$inject_Symbol_iterator].call({
+	    length: -1
+	  }).next(), {
+	    value: undefined,
+	    done: true
+	  }, 'uses ToLength');
+	});
+
+	var isNaN$2 = window.isNaN;
+
+	function isNaN$1(value) {
+	  return typeof value === "number" && isNaN$2(value);
+	}
+
+	function includes$1(search) {
+	  var i = this.length;
+	  while (i-- > 0) {
+	    var value = this[i];
+	    if (value === search || isNaN$1(value) && isNaN$1(search)) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+
+	if (!Array.prototype.includes) {
+	  Array.prototype.includes = includes$1;
+	}
+
+	function includes(search) {
+	  if (search instanceof RegExp) {
+	    throw new TypeError("First argument must not be a regular expression");
+	  }
+	  var start = arguments[1];
+	  if (typeof start !== 'number') {
+	    start = 0;
+	  }
+	  return this.indexOf(search, start) !== -1;
+	}
+
+	if (!String.prototype.includes) {
+	  String.prototype.includes = includes;
+	}
+
+	QUnit.test('Array#includes', function (assert) {
+	  var includes = Array.prototype.includes;
+	  assert.isFunction(includes);
+	  assert.name(includes, 'includes');
+	  assert.arity(includes, 1);
+	  var object = {};
+	  var array = [1, 2, 3, -0, object];
+	  assert.ok(array.includes(1));
+	  assert.ok(array.includes(-0));
+	  assert.ok(array.includes(0));
+	  assert.ok(array.includes(object));
+	  assert.ok(!array.includes(4));
+	  assert.ok(!array.includes(-0.5));
+	  assert.ok(!array.includes({}));
+	  assert.ok(Array(1).includes(undefined));
+	  assert.ok([NaN].includes(NaN));
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return includes.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return includes.call(undefined, 0);
+	    }, TypeError);
+	  }
+	});
+
+	function flat() {
+	  var deep = arguments[0];
+	  if (deep == null) deep = 1;
+	  var arr = [];
+	  for (var i = 0; i < this.length; i++) {
+	    var item = this[i];
+	    if (Array.isArray(item) && deep > 0) {
+	      arr = arr.concat(flat.call(item, deep - 1));
+	    } else {
+	      arr.push(item);
+	    }
+	  }
+	  return arr;
+	}
+
+	if (!Array.prototype.flat) {
+	  Array.prototype.flat = flat;
+	}
+
+	QUnit.test('Array#flat', function (assert) {
+	  var flat = Array.prototype.flat;
+	  var defineProperty = Object.defineProperty;
+	  assert.isFunction(flat);
+	  assert.name(flat, 'flat');
+	  assert.arity(flat, 0);
+	  assert.deepEqual([].flat(), []);
+	  var array = [1, [2, 3], [4, [5, 6]]];
+	  assert.deepEqual(array.flat(0), array);
+	  assert.deepEqual(array.flat(1), [1, 2, 3, 4, [5, 6]]);
+	  assert.deepEqual(array.flat(), [1, 2, 3, 4, [5, 6]]);
+	  assert.deepEqual(array.flat(2), [1, 2, 3, 4, 5, 6]);
+	  assert.deepEqual(array.flat(3), [1, 2, 3, 4, 5, 6]);
+	  assert.deepEqual(array.flat(-1), array);
+	  assert.deepEqual(array.flat(Infinity), [1, 2, 3, 4, 5, 6]);
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return flat.call(null);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return flat.call(undefined);
+	    }, TypeError);
+	  }
+	  if (DESCRIPTORS) {
+	    assert.notThrows(function () {
+	      return flat.call(defineProperty({
+	        length: -1
+	      }, 0, {
+	        enumerable: true,
+	        get: function () {
+	          throw new Error();
+	        }
+	      })).length === 0;
+	    }, 'uses ToLength');
+	  }
+	});
+
+	var map = Array.prototype.map || map$1;
+
+	function flatMap(fn) {
+	  return flat.call(map.call(this, fn, arguments[1]), 1);
+	}
+
+	if (!Array.prototype.flatMap) {
+	  Array.prototype.flatMap = flatMap;
+	}
+
+	QUnit.test('Array#flatMap', function (assert) {
+	  var flatMap = Array.prototype.flatMap;
+	  assert.isFunction(flatMap);
+	  assert.name(flatMap, 'flatMap');
+	  assert.arity(flatMap, 1);
+	  assert.deepEqual([].flatMap(function (it) {
+	    return it;
+	  }), []);
+	  assert.deepEqual([1, 2, 3].flatMap(function (it) {
+	    return it;
+	  }), [1, 2, 3]);
+	  assert.deepEqual([1, 2, 3].flatMap(function (it) {
+	    return [it, it];
+	  }), [1, 1, 2, 2, 3, 3]);
+	  assert.deepEqual([1, 2, 3].flatMap(function (it) {
+	    return [[it], [it]];
+	  }), [[1], [1], [2], [2], [3], [3]]);
+	  assert.deepEqual([1, [2, 3]].flatMap(function () {
+	    return 1;
+	  }), [1, 1]);
+	  var array = [1];
+	  var context = {};
+	  array.flatMap(function (value, key, that) {
+	    assert.same(value, 1);
+	    assert.same(key, 0);
+	    assert.same(that, array);
+	    assert.same(this, context);
+	    return value;
+	  }, context);
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return flatMap.call(null, function (it) {
+	        return it;
+	      });
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return flatMap.call(undefined, function (it) {
+	        return it;
+	      });
+	    }, TypeError);
+	  }
+	  assert.notThrows(function () {
+	    return flatMap.call({
+	      length: -1
+	    }, function () {
+	      throw new Error();
+	    }).length === 0;
+	  }, 'uses ToLength');
+	});
+
+	QUnit.test('String#includes', function (assert) {
+	  var includes = String.prototype.includes;
+	  assert.isFunction(includes);
+	  assert.arity(includes, 1);
+	  assert.name(includes, 'includes');
+	  assert.ok(!'abc'.includes());
+	  assert.ok('aundefinedb'.includes());
+	  assert.ok('abcd'.includes('b', 1));
+	  assert.ok(!'abcd'.includes('b', 2));
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return includes.call(null, '.');
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return includes.call(undefined, '.');
+	    }, TypeError);
+	  }
+	  var regexp = /./;
+	  assert["throws"](function () {
+	    return '/./'.includes(regexp);
+	  }, TypeError);
+	  var object = {};
+	  assert.notThrows(function () {
+	    return '[object Object]'.includes(object);
+	  });
+	});
+
+	function startsWith(search) {
+	  if (search instanceof RegExp) {
+	    throw new TypeError("First argument must not be a regular expression");
+	  }
+	  var pos = arguments[1];
+	  pos = isNaN(pos) ? 0 : pos < 0 ? 0 : +pos;
+	  search = String(search);
+	  return this.substring(pos, pos + search.length) === search;
+	}
+
+	if (!String.prototype.startsWith) {
+	  String.prototype.startsWith = startsWith;
+	}
+
+	var _Symbol$2 = GLOBAL.Symbol || {};
+	QUnit.test('String#startsWith', function (assert) {
+	  var startsWith = String.prototype.startsWith;
+	  assert.isFunction(startsWith);
+	  assert.arity(startsWith, 1);
+	  assert.name(startsWith, 'startsWith');
+	  assert.ok('undefined'.startsWith());
+	  assert.ok(!'undefined'.startsWith(null));
+	  assert.ok('abc'.startsWith(''));
+	  assert.ok('abc'.startsWith('a'));
+	  assert.ok('abc'.startsWith('ab'));
+	  assert.ok(!'abc'.startsWith('bc'));
+	  assert.ok('abc'.startsWith('', NaN));
+	  assert.ok('abc'.startsWith('a', -1));
+	  assert.ok(!'abc'.startsWith('a', 1));
+	  assert.ok(!'abc'.startsWith('a', Infinity));
+	  assert.ok('abc'.startsWith('b', true));
+	  assert.ok('abc'.startsWith('a', 'x'));
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return startsWith.call(null, '.');
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return startsWith.call(undefined, '.');
+	    }, TypeError);
+	  }
+	  var regexp = /./;
+	  assert["throws"](function () {
+	    return '/./'.startsWith(regexp);
+	  }, TypeError);
+	  var object = {};
+	  assert.notThrows(function () {
+	    return '[object Object]'.startsWith(object);
+	  });
+	});
+
+	function endsWith(search) {
+	  if (search instanceof RegExp) {
+	    throw new TypeError("First argument must not be a regular expression");
+	  }
+	  var len = this.length;
+	  var pos = arguments[1];
+	  if (pos == null) {
+	    pos = len;
+	  } else if (isNaN(pos)) {
+	    pos = 0;
+	  } else {
+	    pos = pos > len ? len : +pos;
+	  }
+	  search = String(search);
+	  return this.substring(pos - search.length, pos) === search;
+	}
+
+	if (!String.prototype.endsWith) {
+	  String.prototype.endsWith = endsWith;
+	}
+
+	var _Symbol$1 = GLOBAL.Symbol || {};
+	QUnit.test('String#endsWith', function (assert) {
+	  var endsWith = String.prototype.endsWith;
+	  assert.isFunction(endsWith);
+	  assert.arity(endsWith, 1);
+	  assert.name(endsWith, 'endsWith');
+	  assert.ok('undefined'.endsWith());
+	  assert.ok(!'undefined'.endsWith(null));
+	  assert.ok('abc'.endsWith(''));
+	  assert.ok('abc'.endsWith('c'));
+	  assert.ok('abc'.endsWith('bc'));
+	  assert.ok(!'abc'.endsWith('ab'));
+	  assert.ok('abc'.endsWith('', NaN));
+	  assert.ok(!'abc'.endsWith('c', -1));
+	  assert.ok('abc'.endsWith('a', 1));
+	  assert.ok('abc'.endsWith('c', Infinity));
+	  assert.ok('abc'.endsWith('a', true));
+	  assert.ok(!'abc'.endsWith('c', 'x'));
+	  assert.ok(!'abc'.endsWith('a', 'x'));
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return endsWith.call(null, '.');
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return endsWith.call(undefined, '.');
+	    }, TypeError);
+	  }
+	  var regexp = /./;
+	  assert["throws"](function () {
+	    return '/./'.endsWith(regexp);
+	  }, TypeError);
+	  var object = {};
+	  assert.notThrows(function () {
+	    return '[object Object]'.endsWith(object);
+	  });
+	});
+
+	function trim() {
+	  return this.replace(/^[\s\u3000\xA0]+|[\s\u3000\xA0]+$/g, '');
+	}
+
+	if (!String.prototype.trim) {
+	  String.prototype.trim = trim;
+	}
+
+	QUnit.test('String#trim', function (assert) {
+	  var trim = String.prototype.trim;
+	  assert.isFunction(trim);
+	  assert.arity(trim, 0);
+	  assert.name(trim, 'trim');
+	  assert.strictEqual(' \n  q w e \n  '.trim(), 'q w e', 'removes whitespaces at left & right side of string');
+	  assert.strictEqual("\t".trim(), '', "\\u0009");
+	  assert.strictEqual("\n".trim(), '', "\\u000A");
+	  assert.strictEqual("\x0B".trim(), '', "\\u000B");
+	  assert.strictEqual("\f".trim(), '', "\\u000C");
+	  assert.strictEqual("\r".trim(), '', "\\u000D");
+	  assert.strictEqual(" ".trim(), '', "\\u0020");
+	  // assert.strictEqual("\u0085".trim(), '\u0085', "\\u0085 shouldn't remove");
+	  assert.strictEqual("\xA0".trim(), '', "\\u00A0");
+	  // assert.strictEqual("\u1680".trim(), '', '\\u1680');
+	  // assert.strictEqual("\u2000".trim(), '', '\\u2000');
+	  // assert.strictEqual("\u2001".trim(), '', '\\u2001');
+	  // assert.strictEqual("\u2002".trim(), '', '\\u2002');
+	  // assert.strictEqual("\u2003".trim(), '', '\\u2003');
+	  // assert.strictEqual("\u2004".trim(), '', '\\u2004');
+	  // assert.strictEqual("\u2005".trim(), '', '\\u2005');
+	  // assert.strictEqual("\u2006".trim(), '', '\\u2006');
+	  // assert.strictEqual("\u2007".trim(), '', '\\u2007');
+	  // assert.strictEqual("\u2008".trim(), '', '\\u2008');
+	  // assert.strictEqual("\u2009".trim(), '', '\\u2009');
+	  // assert.strictEqual("\u200A".trim(), '', '\\u200A');
+	  // assert.strictEqual("\u200B".trim(), '\u200B', "\\u200B shouldn't remove");
+	  // assert.strictEqual("\u2028".trim(), '', '\\u2028');
+	  // assert.strictEqual("\u2029".trim(), '', '\\u2029');
+	  // assert.strictEqual("\u202F".trim(), '', '\\u202F');
+	  // assert.strictEqual("\u205F".trim(), '', '\\u205F');
+	  assert.strictEqual("\u3000".trim(), '', "\\u3000");
+	  // assert.strictEqual("\uFEFF".trim(), '', '\\uFEFF');
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return trim.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return trim.call(undefined, 0);
+	    }, TypeError);
+	  }
+	});
+
+	function trimStart() {
+	  return this.replace(/^[\s\u2006\u3000\xA0]+/g, '');
+	}
+
+	if (!String.prototype.trimStart) {
+	  String.prototype.trimStart = trimStart;
+	}
+
+	// deprecated
+	// QUnit.test('String#trimLeft', assert => {
+	// 	const { trimStart, trimLeft } = String.prototype;
+	// 	assert.same(trimStart, trimLeft, 'same #trimLeft');
+	// });
+
+	QUnit.test('String#trimStart', function (assert) {
+	  var trimStart = String.prototype.trimStart;
+	  assert.isFunction(trimStart);
+	  assert.arity(trimStart, 0);
+	  assert.name(trimStart, 'trimStart');
+	  assert.strictEqual(' \n  q w e \n  '.trimStart(), 'q w e \n  ', 'removes whitespaces at left & right side of string');
+	  assert.strictEqual("\t".trimStart(), '', "\\u0009");
+	  assert.strictEqual("\n".trimStart(), '', "\\u000A");
+	  assert.strictEqual("\x0B".trimStart(), '', "\\u000B");
+	  assert.strictEqual("\f".trimStart(), '', "\\u000C");
+	  assert.strictEqual("\r".trimStart(), '', "\\u000D");
+	  assert.strictEqual(" ".trimStart(), '', "\\u0020");
+	  // assert.strictEqual("\u0085".trimStart(), '\u0085', "\\u0085 shouldn't remove");
+	  assert.strictEqual("\xA0".trimStart(), '', "\\u00A0");
+	  // assert.strictEqual("\u1680".trimStart(), '', '\\u1680');
+	  // assert.strictEqual("\u2000".trimStart(), '', '\\u2000');
+	  // assert.strictEqual("\u2001".trimStart(), '', '\\u2001');
+	  // assert.strictEqual("\u2002".trimStart(), '', '\\u2002');
+	  // assert.strictEqual("\u2003".trimStart(), '', '\\u2003');
+	  // assert.strictEqual("\u2004".trimStart(), '', '\\u2004');
+	  // assert.strictEqual("\u2005".trimStart(), '', '\\u2005');
+	  // assert.strictEqual("\u2006".trimStart(), '', '\\u2006');
+	  // assert.strictEqual("\u2007".trimStart(), '', '\\u2007');
+	  // assert.strictEqual("\u2008".trimStart(), '', '\\u2008');
+	  // assert.strictEqual("\u2009".trimStart(), '', '\\u2009');
+	  // assert.strictEqual("\u200A".trimStart(), '', '\\u200A');
+	  // assert.strictEqual("\u200B".trimStart(), '\u200B', "\\u200B shouldn't remove");
+	  // assert.strictEqual("\u2028".trimStart(), '', '\\u2028');
+	  // assert.strictEqual("\u2029".trimStart(), '', '\\u2029');
+	  // assert.strictEqual("\u202F".trimStart(), '', '\\u202F');
+	  // assert.strictEqual("\u205F".trimStart(), '', '\\u205F');
+	  assert.strictEqual("\u3000".trimStart(), '', "\\u3000");
+	  // assert.strictEqual("\uFEFF".trimStart(), '', '\\uFEFF');
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return trimStart.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return trimStart.call(undefined, 0);
+	    }, TypeError);
+	  }
+	});
+
+	function trimEnd() {
+	  return this.replace(/[\s\u2006\u3000\xA0]+$/g, '');
+	}
+
+	if (!String.prototype.trimEnd) {
+	  String.prototype.trimEnd = trimEnd;
+	}
+
+	// deprecated
+	// QUnit.test('String#trimRight', assert => {
+	// 	const { trimEnd, trimRight } = String.prototype;
+	// 	assert.same(trimEnd, trimRight, 'same #trimRight');
+	// });
+
+	QUnit.test('String#trimEnd', function (assert) {
+	  var trimEnd = String.prototype.trimEnd;
+	  assert.isFunction(trimEnd);
+	  assert.arity(trimEnd, 0);
+	  assert.name(trimEnd, 'trimEnd');
+	  assert.strictEqual(' \n  q w e \n  '.trimEnd(), ' \n  q w e', 'removes whitespaces at left & right side of string');
+	  assert.strictEqual("\t".trimEnd(), '', "\\u0009");
+	  assert.strictEqual("\n".trimEnd(), '', "\\u000A");
+	  assert.strictEqual("\x0B".trimEnd(), '', "\\u000B");
+	  assert.strictEqual("\f".trimEnd(), '', "\\u000C");
+	  assert.strictEqual("\r".trimEnd(), '', "\\u000D");
+	  assert.strictEqual(" ".trimEnd(), '', "\\u0020");
+	  // assert.strictEqual("\u0085".trimEnd(), '\u0085', "\\u0085 shouldn't remove");
+	  assert.strictEqual("\xA0".trimEnd(), '', "\\u00A0");
+	  // assert.strictEqual("\u1680".trimEnd(), '', '\\u1680');
+	  // assert.strictEqual("\u2000".trimEnd(), '', '\\u2000');
+	  // assert.strictEqual("\u2001".trimEnd(), '', '\\u2001');
+	  // assert.strictEqual("\u2002".trimEnd(), '', '\\u2002');
+	  // assert.strictEqual("\u2003".trimEnd(), '', '\\u2003');
+	  // assert.strictEqual("\u2004".trimEnd(), '', '\\u2004');
+	  // assert.strictEqual("\u2005".trimEnd(), '', '\\u2005');
+	  // assert.strictEqual("\u2006".trimEnd(), '', '\\u2006');
+	  // assert.strictEqual("\u2007".trimEnd(), '', '\\u2007');
+	  // assert.strictEqual("\u2008".trimEnd(), '', '\\u2008');
+	  // assert.strictEqual("\u2009".trimEnd(), '', '\\u2009');
+	  // assert.strictEqual("\u200A".trimEnd(), '', '\\u200A');
+	  // assert.strictEqual("\u200B".trimEnd(), '\u200B', "\\u200B shouldn't remove");
+	  // assert.strictEqual("\u2028".trimEnd(), '', '\\u2028');
+	  // assert.strictEqual("\u2029".trimEnd(), '', '\\u2029');
+	  // assert.strictEqual("\u202F".trimEnd(), '', '\\u202F');
+	  // assert.strictEqual("\u205F".trimEnd(), '', '\\u205F');
+	  assert.strictEqual("\u3000".trimEnd(), '', "\\u3000");
+	  // assert.strictEqual("\uFEFF".trimEnd(), '', '\\uFEFF');
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return trimEnd.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return trimEnd.call(undefined, 0);
+	    }, TypeError);
+	  }
+	});
+
+	QUnit.test('String#@@iterator', function (assert) {
+	  assert.isIterable(String.prototype);
+	  var iterator = 'qwe'[$inject_Symbol_iterator]();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  assert.deepEqual(iterator.next(), {
+	    value: 'q',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'w',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'e',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	  assert.strictEqual(Array.from('𠮷𠮷𠮷').length, 3);
+	  iterator = '𠮷𠮷𠮷'[$inject_Symbol_iterator]();
+	  assert.deepEqual(iterator.next(), {
+	    value: '𠮷',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: '𠮷',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: '𠮷',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	});
+
+	var parseInt$1 = window.parseInt;
+
+	if (parseInt$1("010") === 8) {
+	  window.parseInt = function (number, radix) {
+	    if (!radix && typeof number === 'string') {
+	      number = trimStart.call(number);
+	      if (number.charCodeAt(0) === 48 && number.charCodeAt(1) !== 120) {
+	        return parseInt$1(number, 10);
+	      }
+	    }
+	    return parseInt$1(number, radix);
+	  };
+	}
+
+	function repeat$1(count) {
+	  if (count < 0) {
+	    throw new RangeError("RangeError repeat count must be non-negative");
+	  }
+	  if (count == Number.POSITIVE_INFINITY) {
+	    throw new RangeError("RangeError repeat count must be less than infinity");
+	  }
+	  return new Array(parseInt(count + 1)).join(this);
+	}
+
+	if (!String.prototype.repeat) {
+	  String.prototype.repeat = repeat$1;
+	}
+
+	QUnit.test('String#repeat', function (assert) {
+	  var repeat = String.prototype.repeat;
+	  assert.isFunction(repeat);
+	  assert.arity(repeat, 1);
+	  assert.name(repeat, 'repeat');
+	  assert.strictEqual('qwe'.repeat(3), 'qweqweqwe');
+	  assert.strictEqual('qwe'.repeat(2.5), 'qweqwe');
+	  assert["throws"](function () {
+	    return 'qwe'.repeat(-1);
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return 'qwe'.repeat(Infinity);
+	  }, RangeError);
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return repeat.call(null, 1);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return repeat.call(undefined, 1);
+	    }, TypeError);
+	  }
+	});
+
+	var repeat = String.prototype.repeat || repeat$1;
+
+	function padStart(targetLength) {
+	  var x = targetLength - this.length;
+	  if (x > 0) {
+	    var padString = arguments[1];
+	    if (padString == null) {
+	      padString = " ";
+	    }
+	    var len = padString.length;
+	    if (len) {
+	      return repeat.call(padString, Math.ceil(x / len)).substr(0, x) + this;
+	    }
+	  }
+	  return String(this);
+	}
+
+	if (!String.prototype.padStart) {
+	  String.prototype.padStart = padStart;
+	}
+
+	QUnit.test('String#padStart', function (assert) {
+	  var padStart = String.prototype.padStart;
+	  assert.isFunction(padStart);
+	  assert.arity(padStart, 1);
+	  assert.name(padStart, 'padStart');
+	  assert.strictEqual('abc'.padStart(5), '  abc');
+	  assert.strictEqual('abc'.padStart(4, 'de'), 'dabc');
+	  assert.strictEqual('abc'.padStart(), 'abc');
+	  assert.strictEqual('abc'.padStart(5, '_'), '__abc');
+	  assert.strictEqual(''.padStart(0), '');
+	  assert.strictEqual('foo'.padStart(1), 'foo');
+	  assert.strictEqual('foo'.padStart(5, ''), 'foo');
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return padStart.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return padStart.call(undefined, 0);
+	    }, TypeError);
+	  }
+	});
+
+	function padEnd(targetLength) {
+	  var x = targetLength - this.length;
+	  if (x > 0) {
+	    var padString = arguments[1];
+	    if (padString == null) {
+	      padString = " ";
+	    }
+	    var len = padString.length;
+	    if (len) {
+	      return this + repeat.call(padString, Math.ceil(x / len)).substr(0, x);
+	    }
+	  }
+	  return String(this);
+	}
+
+	if (!String.prototype.padEnd) {
+	  String.prototype.padEnd = padEnd;
+	}
+
+	QUnit.test('String#padEnd', function (assert) {
+	  var padEnd = String.prototype.padEnd;
+	  assert.isFunction(padEnd);
+	  assert.arity(padEnd, 1);
+	  assert.name(padEnd, 'padEnd');
+	  assert.strictEqual('abc'.padEnd(5), 'abc  ');
+	  assert.strictEqual('abc'.padEnd(4, 'de'), 'abcd');
+	  assert.strictEqual('abc'.padEnd(), 'abc');
+	  assert.strictEqual('abc'.padEnd(5, '_'), 'abc__');
+	  assert.strictEqual(''.padEnd(0), '');
+	  assert.strictEqual('foo'.padEnd(1), 'foo');
+	  assert.strictEqual('foo'.padEnd(5, ''), 'foo');
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return padEnd.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return padEnd.call(undefined, 0);
+	    }, TypeError);
+	  }
+	});
+
+	/*! http://mths.be/codepointat v0.1.0 by @mathias */
+	function codePointAt(position) {
+	  if (this == null) {
+	    throw TypeError();
+	  }
+	  var string = String(this);
+	  var size = string.length;
+	  // 变成整数
+	  var index = position ? Number(position) : 0;
+	  if (index != index) {
+	    // better `isNaN`
+	    index = 0;
+	  }
+	  // 边界
+	  if (index < 0 || index >= size) {
+	    return undefined;
+	  }
+	  // 第一个编码单元
+	  var first = string.charCodeAt(index);
+	  var second;
+	  if (
+	  // 检查是否开始 surrogate pair
+	  first >= 0xD800 && first <= 0xDBFF &&
+	  // high surrogate
+	  size > index + 1 // 下一个编码单元
+	  ) {
+	    second = string.charCodeAt(index + 1);
+	    if (second >= 0xDC00 && second <= 0xDFFF) {
+	      // low surrogate
+	      // http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+	      return (first - 0xD800) * 0x400 + second - 0xDC00 + 0x10000;
+	    }
+	  }
+	  return first;
+	}
+
+	if (!String.prototype.codePointAt) {
+	  String.prototype.codePointAt = codePointAt;
+	}
+
+	QUnit.test('String#codePointAt', function (assert) {
+	  var codePointAt = String.prototype.codePointAt;
+	  assert.isFunction(codePointAt);
+	  assert.arity(codePointAt, 1);
+	  assert.name(codePointAt, 'codePointAt');
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(''), 0x61);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt('_'), 0x61);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(), 0x61);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(-Infinity), undefined);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(-1), undefined);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(-0), 0x61);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(0), 0x61);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(3), 0x1D306);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(4), 0xDF06);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(5), 0x64);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(42), undefined);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(Infinity), undefined);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(Infinity), undefined);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(NaN), 0x61);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(false), 0x61);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(null), 0x61);
+	  assert.strictEqual("abc\uD834\uDF06def".codePointAt(undefined), 0x61);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt(''), 0x1D306);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt('1'), 0xDF06);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt('_'), 0x1D306);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt(), 0x1D306);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt(-1), undefined);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt(-0), 0x1D306);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt(0), 0x1D306);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt(1), 0xDF06);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt(42), undefined);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt(false), 0x1D306);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt(null), 0x1D306);
+	  assert.strictEqual("\uD834\uDF06def".codePointAt(undefined), 0x1D306);
+	  assert.strictEqual("\uD834abc".codePointAt(''), 0xD834);
+	  assert.strictEqual("\uD834abc".codePointAt('_'), 0xD834);
+	  assert.strictEqual("\uD834abc".codePointAt(), 0xD834);
+	  assert.strictEqual("\uD834abc".codePointAt(-1), undefined);
+	  assert.strictEqual("\uD834abc".codePointAt(-0), 0xD834);
+	  assert.strictEqual("\uD834abc".codePointAt(0), 0xD834);
+	  assert.strictEqual("\uD834abc".codePointAt(false), 0xD834);
+	  assert.strictEqual("\uD834abc".codePointAt(NaN), 0xD834);
+	  assert.strictEqual("\uD834abc".codePointAt(null), 0xD834);
+	  assert.strictEqual("\uD834abc".codePointAt(undefined), 0xD834);
+	  assert.strictEqual("\uDF06abc".codePointAt(''), 0xDF06);
+	  assert.strictEqual("\uDF06abc".codePointAt('_'), 0xDF06);
+	  assert.strictEqual("\uDF06abc".codePointAt(), 0xDF06);
+	  assert.strictEqual("\uDF06abc".codePointAt(-1), undefined);
+	  assert.strictEqual("\uDF06abc".codePointAt(-0), 0xDF06);
+	  assert.strictEqual("\uDF06abc".codePointAt(0), 0xDF06);
+	  assert.strictEqual("\uDF06abc".codePointAt(false), 0xDF06);
+	  assert.strictEqual("\uDF06abc".codePointAt(NaN), 0xDF06);
+	  assert.strictEqual("\uDF06abc".codePointAt(null), 0xDF06);
+	  assert.strictEqual("\uDF06abc".codePointAt(undefined), 0xDF06);
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return codePointAt.call(null, 0);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return codePointAt.call(undefined, 0);
+	    }, TypeError);
+	  }
+	});
+
+	var String$1 = window.String;
+
+	var stringFromCharCode = String.fromCharCode;
+	function fromCodePoint(_) {
+	  var codeUnits = [],
+	    codeLen = 0,
+	    result = "";
+	  for (var index = 0, len = arguments.length; index !== len; ++index) {
+	    var codePoint = +arguments[index];
+	    // correctly handles all cases including `NaN`, `-Infinity`, `+Infinity`
+	    // The surrounding `!(...)` is required to correctly handle `NaN` cases
+	    // The (codePoint>>>0) === codePoint clause handles decimals and negatives
+	    if (!(codePoint < 0x10FFFF && codePoint >>> 0 === codePoint)) throw RangeError("Invalid code point: " + codePoint);
+	    if (codePoint <= 0xFFFF) {
+	      // BMP code point
+	      codeLen = codeUnits.push(codePoint);
+	    } else {
+	      // Astral code point; split in surrogate halves
+	      // https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+	      codePoint -= 0x10000;
+	      codeLen = codeUnits.push((codePoint >> 10) + 0xD800,
+	      // highSurrogate
+	      codePoint % 0x400 + 0xDC00 // lowSurrogate
+	      );
+	    }
+
+	    if (codeLen >= 0x3fff) {
+	      result += stringFromCharCode.apply(null, codeUnits);
+	      codeUnits.length = 0;
+	    }
+	  }
+	  return result + stringFromCharCode.apply(null, codeUnits);
+	}
+
+	if (!String$1.fromCodePoint) {
+	  String$1.fromCodePoint = fromCodePoint;
+	}
+
+	QUnit.test('String.fromCodePoint', function (assert) {
+	  var fromCodePoint = String.fromCodePoint;
+	  assert.isFunction(fromCodePoint);
+	  assert.arity(fromCodePoint, 1);
+	  assert.name(fromCodePoint, 'fromCodePoint');
+	  assert.strictEqual(fromCodePoint(''), '\0');
+	  assert.strictEqual(fromCodePoint(), '');
+	  assert.strictEqual(fromCodePoint(-0), '\0');
+	  assert.strictEqual(fromCodePoint(0), '\0');
+	  assert.strictEqual(fromCodePoint(0x1D306), "\uD834\uDF06");
+	  assert.strictEqual(fromCodePoint(0x1D306, 0x61, 0x1D307), "\uD834\uDF06a\uD834\uDF07");
+	  assert.strictEqual(fromCodePoint(0x61, 0x62, 0x1D307), "ab\uD834\uDF07");
+	  assert.strictEqual(fromCodePoint(false), '\0');
+	  assert.strictEqual(fromCodePoint(null), '\0');
+	  assert["throws"](function () {
+	    return fromCodePoint('_');
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint('+Infinity');
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint('-Infinity');
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint(-1);
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint(0x10FFFF + 1);
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint(3.14);
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint(3e-2);
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint(-Infinity);
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint(Infinity);
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint(NaN);
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint(undefined);
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint({});
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return fromCodePoint(/./);
+	  }, RangeError);
+	  var number = 0x60;
+	  assert.strictEqual(fromCodePoint({
+	    valueOf: function () {
+	      return ++number;
+	    }
+	  }), 'a');
+	  assert.strictEqual(number, 0x61);
+	  // one code unit per symbol
+	  var counter = Math.pow(2, 15) * 3 / 2;
+	  var result = [];
+	  while (--counter >= 0) result.push(0);
+	  // should not throw
+	  fromCodePoint.apply(null, result);
+	  counter = Math.pow(2, 15) * 3 / 2;
+	  result = [];
+	  while (--counter >= 0) result.push(0xFFFF + 1);
+	  // should not throw
+	  fromCodePoint.apply(null, result);
+	});
+
+	function raw(callSite) {
+	  var raw = callSite.raw;
+	  if (!raw) {
+	    throw new TypeError();
+	  }
+	  var args = arguments;
+	  return Array.from(raw, function (str, i) {
+	    if (i > 0 && i < args.length) {
+	      return args[i] + str;
+	    }
+	    return str;
+	  }).join('');
+	}
+
+	if (!String$1.raw) {
+	  String$1.raw = raw;
+	}
+
+	QUnit.test('String.raw', function (assert) {
+	  var raw = String.raw;
+	  assert.isFunction(raw);
+	  assert.arity(raw, 1);
+	  assert.name(raw, 'raw');
+	  assert.strictEqual(raw({
+	    raw: ['Hi\\n', '!']
+	  }, 'Bob'), 'Hi\\nBob!', 'raw is array');
+	  assert.strictEqual(raw({
+	    raw: 'test'
+	  }, 0, 1, 2), 't0e1s2t', 'raw is string');
+	  assert.strictEqual(raw({
+	    raw: 'test'
+	  }, 0), 't0est', 'lacks substituting');
+	  assert["throws"](function () {
+	    return raw({});
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return raw({
+	      raw: null
+	    });
+	  }, TypeError);
+	});
+
+	if (!Object$1.getOwnPropertySymbols) {
+	  Object$1.getOwnPropertySymbols = getOwnPropertySymbols;
+	}
+
+	var hasEnumBug = !{
+	  toString: null
+	}.propertyIsEnumerable('toString');
 
 	function isJsObject(o) {
 	  if (_typeof(o) !== "object") {
@@ -840,15 +2849,389 @@
 	  return false;
 	}
 
-	var hasEnumBug = !{
-	  toString: null
-	}.propertyIsEnumerable('toString');
+	function forOwn(obj, fn, thisArg) {
+	  var key;
+	  var jsObject = isJsObject(obj);
+	  if (!jsObject) {
+	    var proto = getPrototypeOf(obj);
+	    if (proto) {
+	      for (key in obj) {
+	        switch (key.substring(0, 2)) {
+	          case "__":
+	          case "@@":
+	            continue;
+	        }
+	        if (proto[key] === obj[key]) {
+	          continue;
+	        }
+	        if (fn.call(thisArg, obj[key], key) === false) {
+	          return false;
+	        }
+	      }
+	      return true;
+	    }
+	  }
+	  for (key in obj) {
+	    switch (key.substring(0, 2)) {
+	      case "__":
+	      case "@@":
+	        continue;
+	    }
+	    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	      if (fn.call(thisArg, obj[key], key) === false) {
+	        return false;
+	      }
+	    }
+	  }
+	  if (hasEnumBug) {
+	    var i = dontEnums.length;
+	    while (i-- > 0) {
+	      key = dontEnums[i];
+	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	        if (fn.call(thisArg, obj[key], key) === false) {
+	          return false;
+	        }
+	      }
+	    }
+	  }
+	  return true;
+	}
+	;
 
-	function getPrototypeOf(obj) {
+	function assign(target, varArgs) {
+	  if (target == null) {
+	    throw new TypeError('Cannot convert undefined or null to object');
+	  }
+	  var to = Object(target);
+	  for (var i = 1; i < arguments.length; i++) {
+	    var obj = arguments[i];
+	    if (obj != null) {
+	      var j;
+	      if (isString(obj)) {
+	        for (j = 0; j < obj.length; j++) {
+	          to[j] = obj.charAt(j);
+	        }
+	      } else {
+	        forOwn(obj, function (value, key) {
+	          to[key] = value;
+	        });
+	        var ownKeys = Object.getOwnPropertySymbols(obj);
+	        for (j = 0; j < ownKeys.length; j++) {
+	          var key = ownKeys[j];
+	          to[key] = obj[key];
+	        }
+	      }
+	    }
+	  }
+	  return to;
+	}
+
+	if (!Object$1.assign) {
+	  Object$1.assign = assign;
+	}
+
+	QUnit.test('String#matchAll', function (assert) {
+	  var matchAll = String.prototype.matchAll;
+	  var assign = Object.assign;
+	  assert.isFunction(matchAll);
+	  assert.arity(matchAll, 1);
+	  assert.name(matchAll, 'matchAll');
+	  var data = ['aabc', {
+	    toString: function () {
+	      return 'aabc';
+	    }
+	  }];
+	  for (var _i = 0, _data = data; _i < _data.length; _i++) {
+	    var target = _data[_i];
+	    var _iterator = matchAll.call(target, /[ac]/g);
+	    assert.isIterator(_iterator);
+	    assert.isIterable(_iterator);
+	    assert.deepEqual(_iterator.next(), {
+	      value: assign(['a'], {
+	        input: 'aabc',
+	        index: 0
+	      }),
+	      done: false
+	    });
+	    assert.deepEqual(_iterator.next(), {
+	      value: assign(['a'], {
+	        input: 'aabc',
+	        index: 1
+	      }),
+	      done: false
+	    });
+	    assert.deepEqual(_iterator.next(), {
+	      value: assign(['c'], {
+	        input: 'aabc',
+	        index: 3
+	      }),
+	      done: false
+	    });
+	    assert.deepEqual(_iterator.next(), {
+	      value: undefined,
+	      done: true
+	    });
+	  }
+	  var iterator = '1111a2b3cccc'.matchAll(/(\d)(\D)/g);
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  assert.deepEqual(iterator.next(), {
+	    value: assign(['1a', '1', 'a'], {
+	      input: '1111a2b3cccc',
+	      index: 3
+	    }),
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: assign(['2b', '2', 'b'], {
+	      input: '1111a2b3cccc',
+	      index: 5
+	    }),
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: assign(['3c', '3', 'c'], {
+	      input: '1111a2b3cccc',
+	      index: 7
+	    }),
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	  assert["throws"](function () {
+	    return '1111a2b3cccc'.matchAll(/(\d)(\D)/);
+	  }, TypeError);
+	  iterator = '1111a2b3cccc'.matchAll('(\\d)(\\D)');
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  assert.deepEqual(iterator.next(), {
+	    value: assign(['1a', '1', 'a'], {
+	      input: '1111a2b3cccc',
+	      index: 3
+	    }),
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: assign(['2b', '2', 'b'], {
+	      input: '1111a2b3cccc',
+	      index: 5
+	    }),
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: assign(['3c', '3', 'c'], {
+	      input: '1111a2b3cccc',
+	      index: 7
+	    }),
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	  /* IE8- issue
+	  iterator = 'abc'.matchAll(/\B/g);
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  assert.deepEqual(iterator.next(), {
+	    value: assign([''], {
+	  	input: 'abc',
+	  	index: 1,
+	    }),
+	    done: false,
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: assign([''], {
+	  	input: 'abc',
+	  	index: 2,
+	    }),
+	    done: false,
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true,
+	  });
+	  */
+	  data = [null, undefined, NaN, 42, {}, []];
+	  var _loop = function (target) {
+	    assert.notThrows(function () {
+	      return ''.matchAll(target);
+	    }, "Not throws on " + target + " as the first argument");
+	  };
+	  for (var _i2 = 0, _data2 = data; _i2 < _data2.length; _i2++) {
+	    var _target = _data2[_i2];
+	    _loop(_target);
+	  }
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return matchAll.call(null, /./g);
+	    }, TypeError, 'Throws on null as `this`');
+	    assert["throws"](function () {
+	      return matchAll.call(undefined, /./g);
+	    }, TypeError, 'Throws on undefined as `this`');
+	  }
+	});
+
+	function isRegExp(obj) {
+	  return Object.prototype.toString.call(obj) === '[object RegExp]';
+	}
+	;
+
+	var stringEscapes = {
+	  '\\': '\\',
+	  "'": "'",
+	  '\n': 'n',
+	  '\r': 'r',
+	  "\u2028": 'u2028',
+	  "\u2029": 'u2029'
+	};
+	var regexpEscapes = {
+	  '0': 'x30',
+	  '1': 'x31',
+	  '2': 'x32',
+	  '3': 'x33',
+	  '4': 'x34',
+	  '5': 'x35',
+	  '6': 'x36',
+	  '7': 'x37',
+	  '8': 'x38',
+	  '9': 'x39',
+	  'A': 'x41',
+	  'B': 'x42',
+	  'C': 'x43',
+	  'D': 'x44',
+	  'E': 'x45',
+	  'F': 'x46',
+	  'a': 'x61',
+	  'b': 'x62',
+	  'c': 'x63',
+	  'd': 'x64',
+	  'e': 'x65',
+	  'f': 'x66',
+	  'n': 'x6e',
+	  'r': 'x72',
+	  't': 'x74',
+	  'u': 'x75',
+	  'v': 'x76',
+	  'x': 'x78'
+	};
+	var reRegExpChars = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g;
+	function escapeRegExp(str) {
+	  //from lodash
+	  if (str) {
+	    reRegExpChars.lastIndex = 0;
+	    return reRegExpChars.test(str) ? str.replace(reRegExpChars, function (chr, leadingChar, whitespaceChar) {
+	      if (leadingChar) {
+	        chr = regexpEscapes[chr];
+	      } else if (whitespaceChar) {
+	        chr = stringEscapes[chr];
+	      }
+	      return '\\' + chr;
+	    }) : str;
+	  }
+	  return "(?:)";
+	}
+	;
+
+	var replace = String.prototype.replace;
+	function replaceAll(searchValue, replaceValue) {
+	  if (isRegExp(searchValue)) {
+	    if (!searchValue.global) {
+	      throw new TypeError("String.prototype.replaceAll called with a non-global RegExp argument");
+	    } else {
+	      return this.replace(searchValue, replaceValue);
+	    }
+	  }
+	  searchValue = new RegExp(escapeRegExp(String(searchValue)), "g");
+	  return replace.call(this, searchValue, replaceValue);
+	}
+	;
+
+	if (!String.prototype.replaceAll) {
+	  String.prototype.replaceAll = replaceAll;
+	}
+
+	QUnit.test('String#replaceAll', function (assert) {
+	  var replaceAll = String.prototype.replaceAll;
+	  assert.isFunction(replaceAll);
+	  assert.arity(replaceAll, 2);
+	  assert.name(replaceAll, 'replaceAll');
+	  assert.same('q=query+string+parameters'.replaceAll('+', ' '), 'q=query string parameters');
+	  assert.same('foo'.replaceAll('o', {}), 'f[object Object][object Object]');
+	  assert.same('[object Object]x[object Object]'.replaceAll({}, 'y'), 'yxy');
+	  assert.same(replaceAll.call({}, 'bject', 'lolo'), '[ololo Ololo]');
+	  assert.same('aba'.replaceAll('b', function (search, i, string) {
+	    assert.same(search, 'b', '`search` is `b`');
+	    assert.same(i, 1, '`i` is 1');
+	    assert.same(String(string), 'aba', '`string` is `aba`');
+	    return 'c';
+	  }), 'aca');
+	  assert.same('aba'.replaceAll('b'), 'aundefineda');
+	  assert.same('xxx'.replaceAll('', '_'), '_x_x_x_');
+	  assert.same('121314'.replaceAll('1', '$$'), '$2$3$4', '$$');
+	  assert.same('121314'.replaceAll('1', '$&'), '121314', '$&');
+	  assert.same('121314'.replaceAll('1', '$`'), '212312134', '$`');
+	  assert.same('121314'.replaceAll('1', '$\''), '213142314344', '$\'');
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return replaceAll.call(null, 'a', 'b');
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return replaceAll.call(undefined, 'a', 'b');
+	    }, TypeError);
+	  }
+	  assert["throws"](function () {
+	    return 'b.b.b.b.b'.replaceAll(/\./, 'a');
+	  }, TypeError);
+	  assert.same('b.b.b.b.b'.replaceAll(/\./g, 'a'), 'babababab');
+	  var object = {};
+	  assert.same('[object Object]'.replaceAll(object, 'a'), 'a');
+	});
+
+	var $inject_Symbol_hasInstance = '@@hasInstance';
+
+	if (!Function.prototype[$inject_Symbol_hasInstance]) {
+	  Function.prototype[$inject_Symbol_hasInstance] = function (instance) {
+	    return instance instanceof this;
+	  };
+	}
+
+	var symbol_cache = {};
+	function compat_for (desc) {
+	  if (Object.prototype.hasOwnProperty.call(symbol_cache, desc)) {
+	    return symbol_cache[desc];
+	  }
+	  var s = _Symbol$5(desc);
+	  s.__key__ = desc;
+	  symbol_cache[desc] = s;
+	  return s;
+	}
+	;
+
+	if (!('for' in _Symbol$3)) {
+	  _Symbol$3['for'] = compat_for;
+	}
+
+	function keyFor(symbol) {
+	  var s = String(symbol);
+	  if (s.indexOf("@@") !== 0) {
+	    throw new TypeError(s + " is not a symbol");
+	  }
+	  return symbol.__key__;
+	}
+	;
+
+	if (!_Symbol$3.keyFor) {
+	  _Symbol$3.keyFor = keyFor;
+	}
+
+	function getPrototypeOf$1(obj) {
 	  if (obj == null) {
 	    throw new TypeError("Cannot convert undefined or null to object");
 	  }
-	  if (_typeof(obj) !== "object") {
+	  if (_typeof(obj) !== "object" && typeof obj !== "function") {
 	    obj = Object(obj);
 	  }
 	  if ('__proto__' in obj) {
@@ -869,9 +3252,69 @@
 	  return obj.constructor.prototype;
 	}
 	;
-	getPrototypeOf.sham = true;
+	getPrototypeOf$1.sham = true;
 
-	function keys(obj) {
+	function getOwnPropertyNames(obj) {
+	  if (obj == null) {
+	    throw new TypeError("Cannot convert undefined or null to object");
+	  }
+	  var result = [],
+	    key;
+	  if (isString(obj) || isArray(obj)) {
+	    for (key = 0; key < obj.length; key++) {
+	      result.push(String(key));
+	    }
+	    result.push("length");
+	    return result;
+	  }
+	  var jsObject = isJsObject(obj);
+	  if (!jsObject) {
+	    var proto = getPrototypeOf$1(obj);
+	    if (proto) {
+	      for (key in obj) {
+	        switch (key.substring(0, 2)) {
+	          case "__":
+	          case "@@":
+	            continue;
+	        }
+	        if (proto[key] !== obj[key]) {
+	          result.push(key);
+	        }
+	      }
+	      return result;
+	    }
+	  }
+	  for (key in obj) {
+	    if (key === "__proto__") {
+	      continue;
+	    }
+	    if (key.substring(0, 2) === "@@") {
+	      continue;
+	    }
+	    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	      result.push(key);
+	    }
+	  }
+	  if (hasEnumBug) {
+	    var i = dontEnums.length;
+	    while (i-- > 0) {
+	      key = dontEnums[i];
+	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	        result.push(key);
+	      }
+	    }
+	  }
+	  return result;
+	}
+	;
+
+	if (!Object$1.getOwnPropertyNames) {
+	  Object$1.getOwnPropertyNames = getOwnPropertyNames;
+	}
+
+	var defineProperties$1 = Object$1.defineProperties;
+
+	function keys$2(obj) {
 	  if (obj == null) {
 	    throw new TypeError("Cannot convert undefined or null to object");
 	  }
@@ -879,7 +3322,7 @@
 	    key;
 	  var jsObject = isJsObject(obj);
 	  if (!jsObject) {
-	    var proto = getPrototypeOf(obj);
+	    var proto = getPrototypeOf$1(obj);
 	    if (proto) {
 	      for (key in obj) {
 	        switch (key.substring(0, 2)) {
@@ -920,7 +3363,7 @@
 	}
 
 	if (!Object$1.keys) {
-	  Object$1.keys = keys;
+	  Object$1.keys = keys$2;
 	}
 
 	function defineProperties(obj, properties) {
@@ -941,7 +3384,7 @@
 
 	function F() {/* empty */}
 	;
-	function create(proto, properties) {
+	function create$2(proto, properties) {
 	  var o;
 	  if (proto !== null) {
 	    F.prototype = proto;
@@ -957,371 +3400,92 @@
 	  return o;
 	}
 	;
-	create.sham = true;
+	create$2.sham = true;
 
 	if (!Object$1.create) {
-	  Object$1.create = create;
+	  Object$1.create = create$2;
 	}
 
-	function map$1(fn) {
-	  var thisArg = arguments[1];
-	  var arr = [];
-	  for (var k = 0, length = this.length; k < length; k++) {
-	    arr.push(fn.call(thisArg, this[k], k, this));
+	var JSON$1 = window.JSON;
+
+	function isSymbol(obj) {
+	  if (_typeof(obj) === "symbol") {
+	    return true;
 	  }
-	  return arr;
-	}
-
-	if (!Array.prototype.map) {
-	  Array.prototype.map = map$1;
-	}
-
-	function forEach$1(callback) {
-	  var thisArg = arguments[1];
-	  for (var i = 0; i < this.length; i++) {
-	    if (i in this) {
-	      callback.call(thisArg, this[i], i, this);
-	    }
+	  if (typeof obj.toString === "function" && obj.toString().indexOf("@@") === 0) {
+	    return true; //symbol polyfill
 	  }
-	}
 
-	if (!Array.prototype.forEach) {
-	  Array.prototype.forEach = forEach$1;
-	}
-
-	var map = Array.prototype.map || map$1;
-
-	function findIndex$1(callback) {
-	  var thisArg = arguments[1];
-	  if (this.length > 0) {
-	    for (var i = 0, j; i < this.length; i++) {
-	      j = this[i];
-	      var r = callback.call(thisArg, j, i, this);
-	      if (r) {
-	        return i;
-	      }
-	    }
-	  }
-	  return -1;
-	}
-
-	if (!Array.prototype.findIndex) {
-	  Array.prototype.findIndex = findIndex$1;
-	}
-
-	var findIndex = Array.prototype.findIndex || findIndex$1;
-
-	var forEach = Array.prototype.forEach || forEach$1;
-
-	function some$1(fn) {
-	  var thisArg = arguments[1];
-	  var passed = false;
-	  for (var k = 0, length = this.length; k < length; k++) {
-	    if (passed === true) break;
-	    passed = !!fn.call(thisArg, this[k], k, this);
-	  }
-	  return passed;
-	}
-
-	if (!Array.prototype.some) {
-	  Array.prototype.some = some$1;
-	}
-
-	var some = Array.prototype.some || some$1;
-
-	function URLSearchParams$1(paramsString) {
-	  this._data = new Array();
-	  if (paramsString) {
-	    var i, pair;
-	    if (Array.isArray(paramsString)) {
-	      i = this._data.length = paramsString.length;
-	      while (i-- > 0) {
-	        pair = paramsString[i];
-	        this._data[i] = new Array(pairs[1], pairs[0]);
-	      }
-	    } else {
-	      var pairs = paramsString.split("&");
-	      i = this._data.length = pairs.length;
-	      while (i-- > 0) {
-	        pair = pairs[i];
-	        if (pair) {
-	          var id = pair.indexOf("=");
-	          this._data[i] = new Array(decodeURIComponent(pair.substring(id + 1, pair.length)), decodeURIComponent(pair.substring(0, id)));
-	        }
-	      }
-	    }
-	  }
+	  return false;
 	}
 	;
-	URLSearchParams$1.prototype.append = function (key, value) {
-	  this._data.push([value, key]);
-	};
-	URLSearchParams$1.prototype.get = function (key) {
-	  var index = findIndex.call(this._data, function (item) {
-	    return item[1] == key;
-	  });
-	  if (index < 0) return null;
-	  return this._data[index][0];
-	};
-	URLSearchParams$1.prototype.getAll = function (key) {
-	  var data = this._data,
-	    len = data.length;
-	  var r = [];
-	  for (var i = 0; i < len; i++) {
-	    var item = data[i];
-	    if (item[1] == key) {
-	      r.push(item[0]);
-	    }
-	  }
-	  return r;
-	};
-	URLSearchParams$1.prototype.set = function (key, value) {
-	  var index = findIndex.call(this._data, function (item) {
-	    return item[1] == key;
-	  });
-	  if (index < 0) {
-	    this.append(key, value);
-	  } else {
-	    this._data[index][0] = value;
-	  }
-	};
-	URLSearchParams$1.prototype["delete"] = function (key) {
-	  var data = this._data,
-	    i = data.length;
-	  while (i-- > 0) {
-	    var item = data[i];
-	    if (item[1] == key) {
-	      data.splice(i, 1);
-	    }
-	  }
-	};
-	URLSearchParams$1.prototype.has = function (key) {
-	  return some.call(this._data, function (item) {
-	    return item[1] == key;
-	  });
-	};
-	URLSearchParams$1.prototype.toString = function () {
-	  return this._data.map.call(this._data, function (item) {
-	    return encodeURIComponent(item[1]) + "=" + encodeURIComponent(item[0]);
-	  }).join("&");
-	};
-	URLSearchParams$1.prototype.sort = function () {
-	  return this._data.sort(function (a, b) {
-	    return a[1] > b[1];
-	  });
-	};
-	URLSearchParams$1.prototype.forEach = function (fn) {
-	  forEach.apply(this._data, fn, arguments[1]);
-	};
 
-	if (!window.URLSearchParams) {
-	  window.URLSearchParams = URLSearchParams$1;
-	}
-
-	function SearchParams(url) {
-	  this.url = url;
+	function isFunction(obj) {
+	  return typeof obj === 'function';
 	}
 	;
-	SearchParams.prototype = Object.create(URLSearchParams.prototype);
-	forEach.call(["append", "set", "delete"], function (method) {
-	  this[method] = function (key, value) {
-	    var searchParams = new URLSearchParams(this.url.search.replace(/^\?/, ""));
-	    searchParams[method].apply(searchParams, arguments);
-	    this.url.search = "?" + searchParams.toString();
-	  };
-	}, SearchParams.prototype);
-	forEach.call(["getAll", "get", "has", "toString", "forEach"], function (method) {
-	  this[method] = function (key, value) {
-	    var searchParams = new URLSearchParams(this.url.search.replace(/^\?/, ""));
-	    return searchParams[method].apply(searchParams, arguments);
-	  };
-	}, SearchParams.prototype);
 
-	function URL$2(relativePath, absolutePath) {
-	  var path, arr;
-	  this.port = this.search = this.hash = this.username = this.password = "";
-	  this.searchParams = new SearchParams(this);
-	  var pattern = /^[a-zA-Z]+:/;
-	  if (arr = relativePath.match(pattern)) {
-	    this.protocol = arr[0];
-	    path = relativePath.replace(pattern, "");
-	    pattern = /^\/*([^\/]+)/;
-	    var host = path.match(pattern)[1];
-	    path = path.replace(pattern, "");
-	    arr = host.split("@");
-	    if (arr.length > 1) {
-	      this.host = arr[1];
-	      arr = arr[0].split(":");
-	      if (arr.length > 1) {
-	        this.username = arr[0];
-	        this.password = arr[1];
-	      } else {
-	        this.username = arr[0];
-	      }
-	    } else {
-	      this.host = host;
-	    }
-	  } else if (absolutePath) {
-	    var absInfo = absolutePath.indexOf ? new URL$2(absolutePath) : absolutePath;
-	    if (absInfo.hostname) {
-	      this.hostname = absInfo.hostname;
-	      this.port = absInfo.port;
-	    } else {
-	      this.host = absInfo.host;
-	    }
-	    this.protocol = absInfo.protocol;
-	    if (absInfo.username) this.username = absInfo.username;
-	    if (absInfo.password) this.password = absInfo.password;
-	    this.pathname = absInfo.pathname;
-	    if (relativePath.startsWith("#")) {
-	      this.search = absInfo.search;
-	      this.hash = relativePath;
-	      return this;
-	    } else if (relativePath.startsWith("?")) {
-	      var a = relativePath.indexOf("#");
-	      if (a < 0) {
-	        this.search = relativePath;
-	        this.hash = "";
-	      } else {
-	        this.search = relativePath.substr(0, a);
-	        this.hash = relativePath.substring(a, relativePath.length);
-	      }
-	      return this;
-	    } else if (relativePath.startsWith("/")) {
-	      path = relativePath;
-	    } else if (relativePath.startsWith("../")) {
-	      path = absInfo.pathname.replace(/\/[^\/]*$/, "/") + relativePath;
-	      pattern = /[^\/]+\/\.\.\//;
-	      while (pattern.test(path)) {
-	        path = path.replace(pattern, "");
-	      }
-	      path = path.replace(/^(\/\.\.)+/, "");
-	    } else {
-	      path = absInfo.pathname.replace(/[^\/]*$/, "") + relativePath.replace(/^\.\//, "");
-	    }
-	  } else {
-	    throw new TypeError("Invalid URL");
-	  }
-	  pattern = /^[^#]*/;
-	  this.hash = path.replace(pattern, "");
-	  arr = path.match(pattern);
-	  path = arr[0];
-	  pattern = /^[^\?]*/;
-	  this.search = path.replace(pattern, "");
-	  arr = path.match(pattern);
-	  this.pathname = arr[0];
-	  return this;
-	}
-	;
-	var URLProperties = {
-	  host: {
-	    enumerable: true,
-	    get: function () {
-	      if (this.port) {
-	        return this.hostname + ":" + this.port;
-	      }
-	      return this.hostname;
-	    },
-	    set: function (value) {
-	      var pattern = /(.*):(\d+)$/;
-	      var arr = value.match(pattern);
-	      this.port = "";
-	      if (arr) {
-	        this.hostname = arr[1];
-	        this.port = arr[2];
-	      } else {
-	        this.hostname = value;
-	      }
-	    }
-	  },
-	  origin: {
-	    enumerable: true,
-	    get: function () {
-	      return this.protocol + "//" + this.host;
-	    }
-	  },
-	  href: {
-	    enumerable: true,
-	    get: function () {
-	      var user = this.username;
-	      if (user) {
-	        if (this.password) {
-	          user += ":" + this.password;
-	        }
-	        user += "@";
-	      }
-	      return this.protocol + "//" + user + this.host + this.pathname + this.search + this.hash;
-	    },
-	    set: function (value) {
-	      var url = new URL$2(value);
-	      if (url.hostname) {
-	        this.hostname = url.hostname;
-	        this.port = url.port;
-	      } else {
-	        this.host = url.host;
-	      }
-	      this.protocol = url.protocol;
-	      this.pathname = url.pathname;
-	      this.search = url.search;
-	      this.hash = url.hash;
-	      this.username = url.username;
-	      this.password = url.password;
-	    }
-	  }
-	};
-	function getSearchParams() {
-	  var searchParams = new SearchParams(this);
-	  Object.defineProperty(this, "searchParams", {
-	    enumerable: true,
-	    value: searchParams
-	  });
-	  return searchParams;
-	}
-
-	function initURL() {
-	  try {
-	    window.execScript("var VBURLProperties;", "JScript");
-	    window.execScript([
-	    //'Dim VBURLProperties',
-	    'Class VBURL', '	Public [constructor]', '	Public [protocol]', '	Public [hostname]', '	Public [port]', '	Public [pathname]', '	Public [search]', '	Public [searchParams]', '	Public [hash]', '	Public [username]', '	Public [password]', '	Public Property Let [host](var)', '		Call VBURLProperties.host.set.call(Me,var)', '	End Property', '	Public Property Get [host]', '		[host]=VBURLProperties.host.get.call(Me)', '	End Property', '	Public Property Get [origin]', '		[origin]=VBURLProperties.origin.get.call(Me)', '	End Property', '	Public Property Let [href](var)', '		Call VBURLProperties.href.set.call(Me,var)', '	End Property', '	Public Property Get [href]', '		[href]=VBURLProperties.href.get.call(Me)', '	End Property', 'End Class', 'Function VBUrlFactory(url)', '	Set VBUrlFactory = New VBURL', 'End Function'].join('\n'), 'VBScript');
-	    window.VBURLProperties = URLProperties;
-	  } catch (e) {
-	    window.VBUrlFactory = function (url) {
-	      if (url.host) {
-	        URLProperties.host.set.call(url, url.host);
-	      } else {
-	        url.host = URLProperties.host.get.call(url);
-	      }
-	      url.href = URLProperties.href.get.call(url);
-	      url.origin = URLProperties.origin.get.call(url);
-	      return url;
+	var rx_escapable = /[\\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
+	function escapeString(str) {
+	  //from lodash
+	  rx_escapable.lastIndex = 0;
+	  return rx_escapable.test(str) ? str.replace(rx_escapable, function (a) {
+	    var meta = {
+	      "\b": "\\b",
+	      "\t": "\\t",
+	      "\n": "\\n",
+	      "\f": "\\f",
+	      "\r": "\\r",
+	      "\"": "\\\"",
+	      "\\": "\\\\"
 	    };
-	  }
+	    var c = meta[a];
+	    return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+	  }) : str;
 	}
-	function URL$1(relativePath, absolutePath) {
-	  var url = new URL$2(relativePath, absolutePath);
-	  var o = VBUrlFactory(url);
-	  if (url.host) {
-	    o.host = url.host;
-	  } else {
-	    o.hostname = url.hostname;
-	    o.port = url.port;
+	;
+	function stringify(obj) {
+	  switch (obj) {
+	    case undefined:
+	    case null:
+	      return "null";
+	    case false:
+	    case true:
+	      return obj;
+	    default:
+	      var type = Object.prototype.toString.call(obj);
+	      switch (type) {
+	        case '[object String]':
+	          return '"' + escapeString(obj) + '"';
+	        case '[object Number]':
+	          return isNaN(obj) ? "null" : obj.toString();
+	        case '[object Array]':
+	          return "[" + obj.map(stringify).join(",") + "]";
+	        default:
+	          if (obj.toJSON && isFunction(obj.toJSON)) {
+	            return stringify(obj.toJSON());
+	          }
+	          var items = [];
+	          var ownKeys = Object.keys(obj);
+	          for (var i = 0; i < ownKeys.length; i++) {
+	            var key = ownKeys[i];
+	            var value = obj[key];
+	            if (value !== void 0) {
+	              if (!isFunction(value) && !isSymbol(value)) {
+	                items.push('"' + escapeString(key) + '":' + stringify(value));
+	              }
+	            }
+	          }
+	          return "{" + items.join(",") + "}";
+	      }
 	  }
-	  o.protocol = url.protocol;
-	  o.pathname = url.pathname;
-	  o.search = url.search;
-	  o.hash = url.hash;
-	  o.username = url.username;
-	  o.password = url.password;
-	  o.searchParams = url.searchParams;
-	  o.searchParams.url = o;
-	  o.constructor = URL$1;
-	  return o;
 	}
 
-	if (!window.URL) {
-	  initURL();
-	  window.URL = URL$1;
+	if (!JSON$1) {
+	  window.JSON = {
+	    stringify: stringify,
+	    parse: new Function("json", "return eval('(' + json + ')')")
+	  };
 	}
 
 	var getOwnPropertyDescriptor$1 = Object$1.getOwnPropertyDescriptor;
@@ -1330,7 +3494,7 @@
 	  if (obj == null) {
 	    throw new TypeError("Cannot convert undefined or null to object");
 	  }
-	  if (_typeof(obj) !== "object") {
+	  if (_typeof(obj) !== "object" && typeof obj !== "function") {
 	    return;
 	  }
 	  var key = '@@desc:' + prop;
@@ -1359,7 +3523,7 @@
 	    if (obj == null) {
 	      throw new TypeError("Cannot convert undefined or null to object");
 	    }
-	    if (_typeof(obj) !== "object") {
+	    if (_typeof(obj) !== "object" && typeof obj !== "function") {
 	      return;
 	    }
 	    return getOwnPropertyDescriptor$1.apply(Object, arguments);
@@ -1374,8380 +3538,4417 @@
 	  Object$1.getOwnPropertyDescriptor = getOwnPropertyDescriptor;
 	}
 
-	/* eslint-disable no-script-url -- required for testing */
-	var urlTestData = ['# Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/script-tests/segments.js', {
-	  input: 'http://example\t.\norg',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://user:pass@foo:21/bar;par?b#c',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://user:pass@foo:21/bar;par?b#c',
-	  origin: 'http://foo:21',
-	  protocol: 'http:',
-	  username: 'user',
-	  password: 'pass',
-	  host: 'foo:21',
-	  hostname: 'foo',
-	  port: '21',
-	  pathname: '/bar;par',
-	  search: '?b',
-	  hash: '#c'
-	}, {
-	  input: 'https://test:@test',
-	  base: 'about:blank',
-	  href: 'https://test@test/',
-	  origin: 'https://test',
-	  protocol: 'https:',
-	  username: 'test',
-	  password: '',
-	  host: 'test',
-	  hostname: 'test',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'https://:@test',
-	  base: 'about:blank',
-	  href: 'https://test/',
-	  origin: 'https://test',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'test',
-	  hostname: 'test',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'non-special://test:@test/x',
-	  base: 'about:blank',
-	  href: 'non-special://test@test/x',
-	  origin: 'null',
-	  protocol: 'non-special:',
-	  username: 'test',
-	  password: '',
-	  host: 'test',
-	  hostname: 'test',
-	  port: '',
-	  pathname: '/x',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'non-special://:@test/x',
-	  base: 'about:blank',
-	  href: 'non-special://test/x',
-	  origin: 'null',
-	  protocol: 'non-special:',
-	  username: '',
-	  password: '',
-	  host: 'test',
-	  hostname: 'test',
-	  port: '',
-	  pathname: '/x',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:foo.com',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/foo.com',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/foo.com',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '\t   :foo.com   \n',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/:foo.com',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/:foo.com',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: ' foo.com  ',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/foo.com',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/foo.com',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'a:\t foo.com',
-	  base: 'http://example.org/foo/bar',
-	  href: 'a: foo.com',
-	  origin: 'null',
-	  protocol: 'a:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: ' foo.com',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://f:21/ b ? d # e ',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://f:21/%20b%20?%20d%20#%20e',
-	  origin: 'http://f:21',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'f:21',
-	  hostname: 'f',
-	  port: '21',
-	  pathname: '/%20b%20',
-	  search: '?%20d%20',
-	  hash: '#%20e'
-	}, {
-	  input: 'lolscheme:x x#x x',
-	  base: 'about:blank',
-	  href: 'lolscheme:x x#x%20x',
-	  protocol: 'lolscheme:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'x x',
-	  search: '',
-	  hash: '#x%20x'
-	}, {
-	  input: 'http://f:/c',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://f/c',
-	  origin: 'http://f',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'f',
-	  hostname: 'f',
-	  port: '',
-	  pathname: '/c',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://f:0/c',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://f:0/c',
-	  origin: 'http://f:0',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'f:0',
-	  hostname: 'f',
-	  port: '0',
-	  pathname: '/c',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://f:00000000000000/c',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://f:0/c',
-	  origin: 'http://f:0',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'f:0',
-	  hostname: 'f',
-	  port: '0',
-	  pathname: '/c',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://f:00000000000000000000080/c',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://f/c',
-	  origin: 'http://f',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'f',
-	  hostname: 'f',
-	  port: '',
-	  pathname: '/c',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://f:b/c',
-	  base: 'http://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: 'http://f: /c',
-	  base: 'http://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: 'http://f:\n/c',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://f/c',
-	  origin: 'http://f',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'f',
-	  hostname: 'f',
-	  port: '',
-	  pathname: '/c',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://f:fifty-two/c',
-	  base: 'http://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: 'http://f:999999/c',
-	  base: 'http://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: 'non-special://f:999999/c',
-	  base: 'http://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: 'http://f: 21 / b ? d # e ',
-	  base: 'http://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: '',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '  \t',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: ':foo.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/:foo.com/',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/:foo.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: ':foo.com\\',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/:foo.com/',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/:foo.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: ':',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/:',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/:',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: ':a',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/:a',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/:a',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: ':/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/:/',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: ':\\',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/:/',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: ':#',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/:#',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/:',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '#',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar#',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '#/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar#/',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '',
-	  hash: '#/'
-	}, {
-	  input: '#\\',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar#\\',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '',
-	  hash: '#\\'
-	}, {
-	  input: '#;?',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar#;?',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '',
-	  hash: '#;?'
-	}, {
-	  input: '?',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar?',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: ':23',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/:23',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/:23',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/:23',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/:23',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/:23',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '::',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/::',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/::',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '::23',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/::23',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/::23',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'foo://',
-	  base: 'http://example.org/foo/bar',
-	  href: 'foo://',
-	  origin: 'null',
-	  protocol: 'foo:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://a:b@c:29/d',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://a:b@c:29/d',
-	  origin: 'http://c:29',
-	  protocol: 'http:',
-	  username: 'a',
-	  password: 'b',
-	  host: 'c:29',
-	  hostname: 'c',
-	  port: '29',
-	  pathname: '/d',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http::@c:29',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/:@c:29',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/:@c:29',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://&a:foo(b]c@d:2/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://&a:foo(b%5Dc@d:2/',
-	  origin: 'http://d:2',
-	  protocol: 'http:',
-	  username: '&a',
-	  password: 'foo(b%5Dc',
-	  host: 'd:2',
-	  hostname: 'd',
-	  port: '2',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://::@c@d:2',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://:%3A%40c@d:2/',
-	  origin: 'http://d:2',
-	  protocol: 'http:',
-	  username: '',
-	  password: '%3A%40c',
-	  host: 'd:2',
-	  hostname: 'd',
-	  port: '2',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://foo.com:b@d/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://foo.com:b@d/',
-	  origin: 'http://d',
-	  protocol: 'http:',
-	  username: 'foo.com',
-	  password: 'b',
-	  host: 'd',
-	  hostname: 'd',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://foo.com/\\@',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://foo.com//@',
-	  origin: 'http://foo.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo.com',
-	  hostname: 'foo.com',
-	  port: '',
-	  pathname: '//@',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:\\\\foo.com\\',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://foo.com/',
-	  origin: 'http://foo.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo.com',
-	  hostname: 'foo.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:\\\\a\\b:c\\d@foo.com\\',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://a/b:c/d@foo.com/',
-	  origin: 'http://a',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'a',
-	  hostname: 'a',
-	  port: '',
-	  pathname: '/b:c/d@foo.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'foo:/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'foo:/',
-	  origin: 'null',
-	  protocol: 'foo:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'foo:/bar.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'foo:/bar.com/',
-	  origin: 'null',
-	  protocol: 'foo:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/bar.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'foo://///////',
-	  base: 'http://example.org/foo/bar',
-	  href: 'foo://///////',
-	  origin: 'null',
-	  protocol: 'foo:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '///////',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'foo://///////bar.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'foo://///////bar.com/',
-	  origin: 'null',
-	  protocol: 'foo:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '///////bar.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'foo:////://///',
-	  base: 'http://example.org/foo/bar',
-	  href: 'foo:////://///',
-	  origin: 'null',
-	  protocol: 'foo:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '//://///',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'c:/foo',
-	  base: 'http://example.org/foo/bar',
-	  href: 'c:/foo',
-	  origin: 'null',
-	  protocol: 'c:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/foo',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '//foo/bar',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://foo/bar',
-	  origin: 'http://foo',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo',
-	  hostname: 'foo',
-	  port: '',
-	  pathname: '/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://foo/path;a??e#f#g',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://foo/path;a??e#f#g',
-	  origin: 'http://foo',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo',
-	  hostname: 'foo',
-	  port: '',
-	  pathname: '/path;a',
-	  search: '??e',
-	  hash: '#f#g'
-	}, {
-	  input: 'http://foo/abcd?efgh?ijkl',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://foo/abcd?efgh?ijkl',
-	  origin: 'http://foo',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo',
-	  hostname: 'foo',
-	  port: '',
-	  pathname: '/abcd',
-	  search: '?efgh?ijkl',
-	  hash: ''
-	}, {
-	  input: 'http://foo/abcd#foo?bar',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://foo/abcd#foo?bar',
-	  origin: 'http://foo',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo',
-	  hostname: 'foo',
-	  port: '',
-	  pathname: '/abcd',
-	  search: '',
-	  hash: '#foo?bar'
-	}, {
-	  input: '[61:24:74]:98',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/[61:24:74]:98',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/[61:24:74]:98',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:[61:27]/:foo',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/[61:27]/:foo',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/[61:27]/:foo',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://[1::2]:3:4',
-	  base: 'http://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: 'http://2001::1',
-	  base: 'http://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: 'http://2001::1]',
-	  base: 'http://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: 'http://2001::1]:80',
-	  base: 'http://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: 'http://[2001::1]',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://[2001::1]/',
-	  origin: 'http://[2001::1]',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '[2001::1]',
-	  hostname: '[2001::1]',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://[::127.0.0.1]',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://[::7f00:1]/',
-	  origin: 'http://[::7f00:1]',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '[::7f00:1]',
-	  hostname: '[::7f00:1]',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://[0:0:0:0:0:0:13.1.68.3]',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://[::d01:4403]/',
-	  origin: 'http://[::d01:4403]',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '[::d01:4403]',
-	  hostname: '[::d01:4403]',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://[2001::1]:80',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://[2001::1]/',
-	  origin: 'http://[2001::1]',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '[2001::1]',
-	  hostname: '[2001::1]',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/example.com/',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ftp:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'ftp://example.com/',
-	  origin: 'ftp://example.com',
-	  protocol: 'ftp:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'https:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'https://example.com/',
-	  origin: 'https://example.com',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'madeupscheme:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'madeupscheme:/example.com/',
-	  origin: 'null',
-	  protocol: 'madeupscheme:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'file:///example.com/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://example:1/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'file://example:test/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'file://example%/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'file://[example]/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'ftps:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'ftps:/example.com/',
-	  origin: 'null',
-	  protocol: 'ftps:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ws:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'ws://example.com/',
-	  origin: 'ws://example.com',
-	  protocol: 'ws:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'wss:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'wss://example.com/',
-	  origin: 'wss://example.com',
-	  protocol: 'wss:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'data:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'data:/example.com/',
-	  origin: 'null',
-	  protocol: 'data:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'javascript:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'javascript:/example.com/',
-	  origin: 'null',
-	  protocol: 'javascript:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'mailto:/example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'mailto:/example.com/',
-	  origin: 'null',
-	  protocol: 'mailto:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/example.com/',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ftp:example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'ftp://example.com/',
-	  origin: 'ftp://example.com',
-	  protocol: 'ftp:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'https:example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'https://example.com/',
-	  origin: 'https://example.com',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'madeupscheme:example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'madeupscheme:example.com/',
-	  origin: 'null',
-	  protocol: 'madeupscheme:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ftps:example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'ftps:example.com/',
-	  origin: 'null',
-	  protocol: 'ftps:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ws:example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'ws://example.com/',
-	  origin: 'ws://example.com',
-	  protocol: 'ws:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'wss:example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'wss://example.com/',
-	  origin: 'wss://example.com',
-	  protocol: 'wss:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'data:example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'data:example.com/',
-	  origin: 'null',
-	  protocol: 'data:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'javascript:example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'javascript:example.com/',
-	  origin: 'null',
-	  protocol: 'javascript:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'mailto:example.com/',
-	  base: 'http://example.org/foo/bar',
-	  href: 'mailto:example.com/',
-	  origin: 'null',
-	  protocol: 'mailto:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/a/b/c',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/a/b/c',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/a/b/c',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/a/ /c',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/a/%20/c',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/a/%20/c',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/a%2fc',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/a%2fc',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/a%2fc',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/a/%2f/c',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/a/%2f/c',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/a/%2f/c',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '#β',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar#%CE%B2',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '',
-	  hash: '#%CE%B2'
-	}, {
-	  input: 'data:text/html,test#test',
-	  base: 'http://example.org/foo/bar',
-	  href: 'data:text/html,test#test',
-	  origin: 'null',
-	  protocol: 'data:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'text/html,test',
-	  search: '',
-	  hash: '#test'
-	}, {
-	  input: 'tel:1234567890',
-	  base: 'http://example.org/foo/bar',
-	  href: 'tel:1234567890',
-	  origin: 'null',
-	  protocol: 'tel:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '1234567890',
-	  search: '',
-	  hash: ''
-	}, '# Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/file.html', {
-	  input: 'file:c:\\foo\\bar.html',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///c:/foo/bar.html',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/c:/foo/bar.html',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '  File:c|////foo\\bar.html',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///c:////foo/bar.html',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/c:////foo/bar.html',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'C|/foo/bar',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///C:/foo/bar',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/C|\\foo\\bar',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///C:/foo/bar',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '//C|/foo/bar',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///C:/foo/bar',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '//server/file',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file://server/file',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: 'server',
-	  hostname: 'server',
-	  port: '',
-	  pathname: '/file',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '\\\\server\\file',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file://server/file',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: 'server',
-	  hostname: 'server',
-	  port: '',
-	  pathname: '/file',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/\\server/file',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file://server/file',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: 'server',
-	  hostname: 'server',
-	  port: '',
-	  pathname: '/file',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:///foo/bar.txt',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///foo/bar.txt',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/foo/bar.txt',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:///home/me',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///home/me',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/home/me',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '//',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '///',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '///test',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///test',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://test',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file://test/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: 'test',
-	  hostname: 'test',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://localhost',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://localhost/',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://localhost/test',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///test',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'test',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///tmp/mock/test',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/tmp/mock/test',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:test',
-	  base: 'file:///tmp/mock/path',
-	  href: 'file:///tmp/mock/test',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/tmp/mock/test',
-	  search: '',
-	  hash: ''
-	}, '# Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/script-tests/path.js', {
-	  input: 'http://example.com/././foo',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/./.foo',
-	  base: 'about:blank',
-	  href: 'http://example.com/.foo',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/.foo',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/.',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/./',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/bar/..',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/bar/../',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/..bar',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo/..bar',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo/..bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/bar/../ton',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo/ton',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo/ton',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/bar/../ton/../../a',
-	  base: 'about:blank',
-	  href: 'http://example.com/a',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/a',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/../../..',
-	  base: 'about:blank',
-	  href: 'http://example.com/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/../../../ton',
-	  base: 'about:blank',
-	  href: 'http://example.com/ton',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/ton',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/%2e',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/%2e%2',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo/%2e%2',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo/%2e%2',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar',
-	  base: 'about:blank',
-	  href: 'http://example.com/%2e.bar',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/%2e.bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com////../..',
-	  base: 'about:blank',
-	  href: 'http://example.com//',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '//',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/bar//../..',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo/bar//..',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo/bar/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo/bar/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/%20foo',
-	  base: 'about:blank',
-	  href: 'http://example.com/%20foo',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/%20foo',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo%',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo%',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo%',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo%2',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo%2',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo%2',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo%2zbar',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo%2zbar',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo%2zbar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo%2Â©zbar',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo%2%C3%82%C2%A9zbar',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo%2%C3%82%C2%A9zbar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo%41%7a',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo%41%7a',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo%41%7a',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: "http://example.com/foo\t\x91%91",
-	  base: 'about:blank',
-	  href: 'http://example.com/foo%C2%91%91',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo%C2%91%91',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo%00%51',
-	  base: 'about:blank',
-	  href: 'http://example.com/foo%00%51',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foo%00%51',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/(%28:%3A%29)',
-	  base: 'about:blank',
-	  href: 'http://example.com/(%28:%3A%29)',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/(%28:%3A%29)',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/%3A%3a%3C%3c',
-	  base: 'about:blank',
-	  href: 'http://example.com/%3A%3a%3C%3c',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/%3A%3a%3C%3c',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/foo\tbar',
-	  base: 'about:blank',
-	  href: 'http://example.com/foobar',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/foobar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com\\\\foo\\\\bar',
-	  base: 'about:blank',
-	  href: 'http://example.com//foo//bar',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '//foo//bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/%7Ffp3%3Eju%3Dduvgw%3Dd',
-	  base: 'about:blank',
-	  href: 'http://example.com/%7Ffp3%3Eju%3Dduvgw%3Dd',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/%7Ffp3%3Eju%3Dduvgw%3Dd',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/@asdf%40',
-	  base: 'about:blank',
-	  href: 'http://example.com/@asdf%40',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/@asdf%40',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/你好你好',
-	  base: 'about:blank',
-	  href: 'http://example.com/%E4%BD%A0%E5%A5%BD%E4%BD%A0%E5%A5%BD',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/%E4%BD%A0%E5%A5%BD%E4%BD%A0%E5%A5%BD',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/‥/foo',
-	  base: 'about:blank',
-	  href: 'http://example.com/%E2%80%A5/foo',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/%E2%80%A5/foo',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/﻿/foo',
-	  base: 'about:blank',
-	  href: 'http://example.com/%EF%BB%BF/foo',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/%EF%BB%BF/foo',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example.com/‮/foo/‭/bar',
-	  base: 'about:blank',
-	  href: 'http://example.com/%E2%80%AE/foo/%E2%80%AD/bar',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/%E2%80%AE/foo/%E2%80%AD/bar',
-	  search: '',
-	  hash: ''
-	}, '# Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/script-tests/relative.js', {
-	  input: 'http://www.google.com/foo?bar=baz#',
-	  base: 'about:blank',
-	  href: 'http://www.google.com/foo?bar=baz#',
-	  origin: 'http://www.google.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.google.com',
-	  hostname: 'www.google.com',
-	  port: '',
-	  pathname: '/foo',
-	  search: '?bar=baz',
-	  hash: ''
-	}, {
-	  input: 'http://www.google.com/foo?bar=baz# »',
-	  base: 'about:blank',
-	  href: 'http://www.google.com/foo?bar=baz#%20%C2%BB',
-	  origin: 'http://www.google.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.google.com',
-	  hostname: 'www.google.com',
-	  port: '',
-	  pathname: '/foo',
-	  search: '?bar=baz',
-	  hash: '#%20%C2%BB'
-	}, {
-	  input: 'data:test# »',
-	  base: 'about:blank',
-	  href: 'data:test#%20%C2%BB',
-	  origin: 'null',
-	  protocol: 'data:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'test',
-	  search: '',
-	  hash: '#%20%C2%BB'
-	}, {
-	  input: 'http://www.google.com',
-	  base: 'about:blank',
-	  href: 'http://www.google.com/',
-	  origin: 'http://www.google.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.google.com',
-	  hostname: 'www.google.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://192.0x00A80001',
-	  base: 'about:blank',
-	  href: 'http://192.168.0.1/',
-	  origin: 'http://192.168.0.1',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '192.168.0.1',
-	  hostname: '192.168.0.1',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://www/foo%2Ehtml',
-	  base: 'about:blank',
-	  href: 'http://www/foo%2Ehtml',
-	  origin: 'http://www',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www',
-	  hostname: 'www',
-	  port: '',
-	  pathname: '/foo%2Ehtml',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://www/foo/%2E/html',
-	  base: 'about:blank',
-	  href: 'http://www/foo/html',
-	  origin: 'http://www',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www',
-	  hostname: 'www',
-	  port: '',
-	  pathname: '/foo/html',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://user:pass@/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http://%25DOMAIN:foobar@foodomain.com/',
-	  base: 'about:blank',
-	  href: 'http://%25DOMAIN:foobar@foodomain.com/',
-	  origin: 'http://foodomain.com',
-	  protocol: 'http:',
-	  username: '%25DOMAIN',
-	  password: 'foobar',
-	  host: 'foodomain.com',
-	  hostname: 'foodomain.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:\\\\www.google.com\\foo',
-	  base: 'about:blank',
-	  href: 'http://www.google.com/foo',
-	  origin: 'http://www.google.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.google.com',
-	  hostname: 'www.google.com',
-	  port: '',
-	  pathname: '/foo',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://foo:80/',
-	  base: 'about:blank',
-	  href: 'http://foo/',
-	  origin: 'http://foo',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo',
-	  hostname: 'foo',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://foo:81/',
-	  base: 'about:blank',
-	  href: 'http://foo:81/',
-	  origin: 'http://foo:81',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo:81',
-	  hostname: 'foo',
-	  port: '81',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'httpa://foo:80/',
-	  base: 'about:blank',
-	  href: 'httpa://foo:80/',
-	  origin: 'null',
-	  protocol: 'httpa:',
-	  username: '',
-	  password: '',
-	  host: 'foo:80',
-	  hostname: 'foo',
-	  port: '80',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://foo:-80/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://foo:443/',
-	  base: 'about:blank',
-	  href: 'https://foo/',
-	  origin: 'https://foo',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'foo',
-	  hostname: 'foo',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'https://foo:80/',
-	  base: 'about:blank',
-	  href: 'https://foo:80/',
-	  origin: 'https://foo:80',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'foo:80',
-	  hostname: 'foo',
-	  port: '80',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ftp://foo:21/',
-	  base: 'about:blank',
-	  href: 'ftp://foo/',
-	  origin: 'ftp://foo',
-	  protocol: 'ftp:',
-	  username: '',
-	  password: '',
-	  host: 'foo',
-	  hostname: 'foo',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ftp://foo:80/',
-	  base: 'about:blank',
-	  href: 'ftp://foo:80/',
-	  origin: 'ftp://foo:80',
-	  protocol: 'ftp:',
-	  username: '',
-	  password: '',
-	  host: 'foo:80',
-	  hostname: 'foo',
-	  port: '80',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ws://foo:80/',
-	  base: 'about:blank',
-	  href: 'ws://foo/',
-	  origin: 'ws://foo',
-	  protocol: 'ws:',
-	  username: '',
-	  password: '',
-	  host: 'foo',
-	  hostname: 'foo',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ws://foo:81/',
-	  base: 'about:blank',
-	  href: 'ws://foo:81/',
-	  origin: 'ws://foo:81',
-	  protocol: 'ws:',
-	  username: '',
-	  password: '',
-	  host: 'foo:81',
-	  hostname: 'foo',
-	  port: '81',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ws://foo:443/',
-	  base: 'about:blank',
-	  href: 'ws://foo:443/',
-	  origin: 'ws://foo:443',
-	  protocol: 'ws:',
-	  username: '',
-	  password: '',
-	  host: 'foo:443',
-	  hostname: 'foo',
-	  port: '443',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ws://foo:815/',
-	  base: 'about:blank',
-	  href: 'ws://foo:815/',
-	  origin: 'ws://foo:815',
-	  protocol: 'ws:',
-	  username: '',
-	  password: '',
-	  host: 'foo:815',
-	  hostname: 'foo',
-	  port: '815',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'wss://foo:80/',
-	  base: 'about:blank',
-	  href: 'wss://foo:80/',
-	  origin: 'wss://foo:80',
-	  protocol: 'wss:',
-	  username: '',
-	  password: '',
-	  host: 'foo:80',
-	  hostname: 'foo',
-	  port: '80',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'wss://foo:81/',
-	  base: 'about:blank',
-	  href: 'wss://foo:81/',
-	  origin: 'wss://foo:81',
-	  protocol: 'wss:',
-	  username: '',
-	  password: '',
-	  host: 'foo:81',
-	  hostname: 'foo',
-	  port: '81',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'wss://foo:443/',
-	  base: 'about:blank',
-	  href: 'wss://foo/',
-	  origin: 'wss://foo',
-	  protocol: 'wss:',
-	  username: '',
-	  password: '',
-	  host: 'foo',
-	  hostname: 'foo',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'wss://foo:815/',
-	  base: 'about:blank',
-	  href: 'wss://foo:815/',
-	  origin: 'wss://foo:815',
-	  protocol: 'wss:',
-	  username: '',
-	  password: '',
-	  host: 'foo:815',
-	  hostname: 'foo',
-	  port: '815',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:/example.com/',
-	  base: 'about:blank',
-	  href: 'http://example.com/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ftp:/example.com/',
-	  base: 'about:blank',
-	  href: 'ftp://example.com/',
-	  origin: 'ftp://example.com',
-	  protocol: 'ftp:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'https:/example.com/',
-	  base: 'about:blank',
-	  href: 'https://example.com/',
-	  origin: 'https://example.com',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'madeupscheme:/example.com/',
-	  base: 'about:blank',
-	  href: 'madeupscheme:/example.com/',
-	  origin: 'null',
-	  protocol: 'madeupscheme:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:/example.com/',
-	  base: 'about:blank',
-	  href: 'file:///example.com/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ftps:/example.com/',
-	  base: 'about:blank',
-	  href: 'ftps:/example.com/',
-	  origin: 'null',
-	  protocol: 'ftps:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ws:/example.com/',
-	  base: 'about:blank',
-	  href: 'ws://example.com/',
-	  origin: 'ws://example.com',
-	  protocol: 'ws:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'wss:/example.com/',
-	  base: 'about:blank',
-	  href: 'wss://example.com/',
-	  origin: 'wss://example.com',
-	  protocol: 'wss:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'data:/example.com/',
-	  base: 'about:blank',
-	  href: 'data:/example.com/',
-	  origin: 'null',
-	  protocol: 'data:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'javascript:/example.com/',
-	  base: 'about:blank',
-	  href: 'javascript:/example.com/',
-	  origin: 'null',
-	  protocol: 'javascript:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'mailto:/example.com/',
-	  base: 'about:blank',
-	  href: 'mailto:/example.com/',
-	  origin: 'null',
-	  protocol: 'mailto:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:example.com/',
-	  base: 'about:blank',
-	  href: 'http://example.com/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ftp:example.com/',
-	  base: 'about:blank',
-	  href: 'ftp://example.com/',
-	  origin: 'ftp://example.com',
-	  protocol: 'ftp:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'https:example.com/',
-	  base: 'about:blank',
-	  href: 'https://example.com/',
-	  origin: 'https://example.com',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'madeupscheme:example.com/',
-	  base: 'about:blank',
-	  href: 'madeupscheme:example.com/',
-	  origin: 'null',
-	  protocol: 'madeupscheme:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ftps:example.com/',
-	  base: 'about:blank',
-	  href: 'ftps:example.com/',
-	  origin: 'null',
-	  protocol: 'ftps:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ws:example.com/',
-	  base: 'about:blank',
-	  href: 'ws://example.com/',
-	  origin: 'ws://example.com',
-	  protocol: 'ws:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'wss:example.com/',
-	  base: 'about:blank',
-	  href: 'wss://example.com/',
-	  origin: 'wss://example.com',
-	  protocol: 'wss:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'data:example.com/',
-	  base: 'about:blank',
-	  href: 'data:example.com/',
-	  origin: 'null',
-	  protocol: 'data:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'javascript:example.com/',
-	  base: 'about:blank',
-	  href: 'javascript:example.com/',
-	  origin: 'null',
-	  protocol: 'javascript:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'example.com/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'mailto:example.com/',
-	  base: 'about:blank',
-	  href: 'mailto:example.com/',
-	  origin: 'null',
-	  protocol: 'mailto:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'example.com/',
-	  search: '',
-	  hash: ''
-	}, '# Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/segments-userinfo-vs-host.html', {
-	  input: 'http:@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:/@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:a:b@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://a:b@www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: 'a',
-	  password: 'b',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:/a:b@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://a:b@www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: 'a',
-	  password: 'b',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://a:b@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://a:b@www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: 'a',
-	  password: 'b',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://@pple.com',
-	  base: 'about:blank',
-	  href: 'http://pple.com/',
-	  origin: 'http://pple.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'pple.com',
-	  hostname: 'pple.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http::b@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://:b@www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: 'b',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:/:b@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://:b@www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: 'b',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://:b@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://:b@www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: 'b',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:/:@/www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http://user@/www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http:@/www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http:/@/www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http://@/www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https:@/www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http:a:b@/www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http:/a:b@/www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http://a:b@/www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http::@/www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http:a:@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://a@www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: 'a',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:/a:@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://a@www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: 'a',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://a:@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://a@www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: 'a',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://www.@pple.com',
-	  base: 'about:blank',
-	  href: 'http://www.@pple.com/',
-	  origin: 'http://pple.com',
-	  protocol: 'http:',
-	  username: 'www.',
-	  password: '',
-	  host: 'pple.com',
-	  hostname: 'pple.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http:@:www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http:/@:www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http://@:www.example.com',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http://:@www.example.com',
-	  base: 'about:blank',
-	  href: 'http://www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, '# Others', {
-	  input: '/',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/test.txt',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example.com/test.txt',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/test.txt',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '.',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '..',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example.com/',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'test.txt',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example.com/test.txt',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/test.txt',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: './test.txt',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example.com/test.txt',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/test.txt',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '../test.txt',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example.com/test.txt',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/test.txt',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '../aaa/test.txt',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example.com/aaa/test.txt',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/aaa/test.txt',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '../../test.txt',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example.com/test.txt',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/test.txt',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '中/test.txt',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example.com/%E4%B8%AD/test.txt',
-	  origin: 'http://www.example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example.com',
-	  hostname: 'www.example.com',
-	  port: '',
-	  pathname: '/%E4%B8%AD/test.txt',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://www.example2.com',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example2.com/',
-	  origin: 'http://www.example2.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example2.com',
-	  hostname: 'www.example2.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '//www.example2.com',
-	  base: 'http://www.example.com/test',
-	  href: 'http://www.example2.com/',
-	  origin: 'http://www.example2.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.example2.com',
-	  hostname: 'www.example2.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:...',
-	  base: 'http://www.example.com/test',
-	  href: 'file:///...',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/...',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:..',
-	  base: 'http://www.example.com/test',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:a',
-	  base: 'http://www.example.com/test',
-	  href: 'file:///a',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/a',
-	  search: '',
-	  hash: ''
-	}, '# Based on http://trac.webkit.org/browser/trunk/LayoutTests/fast/url/host.html', 'Basic canonicalization, uppercase should be converted to lowercase', {
-	  input: 'http://ExAmPlE.CoM',
-	  base: 'http://other.com/',
-	  href: 'http://example.com/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://example example.com',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://Goo%20 goo%7C|.com',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://[]',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://[:]',
-	  base: 'http://other.com/',
-	  failure: true
-	}, 'U+3000 is mapped to U+0020 (space) which is disallowed', {
-	  input: "http://GOO\xA0\u3000goo.com",
-	  base: 'http://other.com/',
-	  failure: true
-	}, 'Other types of space (no-break, zero-width, zero-width-no-break) are name-prepped away to nothing. U+200B, U+2060, and U+FEFF, are ignored', {
-	  input: "http://GOO\u200B\u2060\uFEFFgoo.com",
-	  base: 'http://other.com/',
-	  href: 'http://googoo.com/',
-	  origin: 'http://googoo.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'googoo.com',
-	  hostname: 'googoo.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'Leading and trailing C0 control or space', {
-	  input: "\0\x1B\x04\x12 http://example.com/\x1F \r ",
-	  base: 'about:blank',
-	  href: 'http://example.com/',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'Ideographic full stop (full-width period for Chinese, etc.) should be treated as a dot. U+3002 is mapped to U+002E (dot)', {
-	  input: 'http://www.foo。bar.com',
-	  base: 'http://other.com/',
-	  href: 'http://www.foo.bar.com/',
-	  origin: 'http://www.foo.bar.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'www.foo.bar.com',
-	  hostname: 'www.foo.bar.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'Invalid unicode characters should fail... U+FDD0 is disallowed; %ef%b7%90 is U+FDD0', {
-	  input: "http://\uFDD0zyx.com",
-	  base: 'http://other.com/',
-	  failure: true
-	}, 'This is the same as previous but escaped', {
-	  input: 'http://%ef%b7%90zyx.com',
-	  base: 'http://other.com/',
-	  failure: true
-	}, 'U+FFFD', {
-	  input: "https://\uFFFD",
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://%EF%BF%BD',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: "https://x/\uFFFD?\uFFFD#\uFFFD",
-	  base: 'about:blank',
-	  href: 'https://x/%EF%BF%BD?%EF%BF%BD#%EF%BF%BD',
-	  origin: 'https://x',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'x',
-	  hostname: 'x',
-	  port: '',
-	  pathname: '/%EF%BF%BD',
-	  search: '?%EF%BF%BD',
-	  hash: '#%EF%BF%BD'
-	}, "Test name prepping, fullwidth input should be converted to ASCII and NOT IDN-ized. This is 'Go' in fullwidth UTF-8/UTF-16.", {
-	  input: 'http://Ｇｏ.com',
-	  base: 'http://other.com/',
-	  href: 'http://go.com/',
-	  origin: 'http://go.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'go.com',
-	  hostname: 'go.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'URL spec forbids the following. https://www.w3.org/Bugs/Public/show_bug.cgi?id=24257', {
-	  input: 'http://％４１.com',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://%ef%bc%85%ef%bc%94%ef%bc%91.com',
-	  base: 'http://other.com/',
-	  failure: true
-	}, '...%00 in fullwidth should fail (also as escaped UTF-8 input)', {
-	  input: 'http://％００.com',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://%ef%bc%85%ef%bc%90%ef%bc%90.com',
-	  base: 'http://other.com/',
-	  failure: true
-	}, 'Basic IDN support, UTF-8 and UTF-16 input should be converted to IDN', {
-	  input: 'http://你好你好',
-	  base: 'http://other.com/',
-	  href: 'http://xn--6qqa088eba/',
-	  origin: 'http://xn--6qqa088eba',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'xn--6qqa088eba',
-	  hostname: 'xn--6qqa088eba',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'https://faß.ExAmPlE/',
-	  base: 'about:blank',
-	  href: 'https://xn--fa-hia.example/',
-	  origin: 'https://xn--fa-hia.example',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'xn--fa-hia.example',
-	  hostname: 'xn--fa-hia.example',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'sc://faß.ExAmPlE/',
-	  base: 'about:blank',
-	  href: 'sc://fa%C3%9F.ExAmPlE/',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: 'fa%C3%9F.ExAmPlE',
-	  hostname: 'fa%C3%9F.ExAmPlE',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'Invalid escaped characters should fail and the percents should be escaped. https://www.w3.org/Bugs/Public/show_bug.cgi?id=24191', {
-	  input: 'http://%zz%66%a.com',
-	  base: 'http://other.com/',
-	  failure: true
-	}, 'If we get an invalid character that has been escaped.', {
-	  input: 'http://%25',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://hello%00',
-	  base: 'http://other.com/',
-	  failure: true
-	}, 'Escaped numbers should be treated like IP addresses if they are.',
-	/*
-	{
-	  input: 'http://%30%78%63%30%2e%30%32%35%30.01',
-	  base: 'http://other.com/',
-	  href: 'http://192.168.0.1/',
-	  origin: 'http://192.168.0.1',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '192.168.0.1',
-	  hostname: '192.168.0.1',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: '',
-	},
-	{
-	  input: 'http://%30%78%63%30%2e%30%32%35%30.01%2e',
-	  base: 'http://other.com/',
-	  href: 'http://192.168.0.1/',
-	  origin: 'http://192.168.0.1',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '192.168.0.1',
-	  hostname: '192.168.0.1',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: '',
-	},
-	*/
-	{
-	  input: 'http://192.168.0.257',
-	  base: 'http://other.com/',
-	  failure: true
-	}, 'Invalid escaping in hosts causes failure', {
-	  input: 'http://%3g%78%63%30%2e%30%32%35%30%2E.01',
-	  base: 'http://other.com/',
-	  failure: true
-	}, 'A space in a host causes failure', {
-	  input: 'http://192.168.0.1 hello',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'https://x x:12',
-	  base: 'about:blank',
-	  failure: true
-	}, 'Fullwidth and escaped UTF-8 fullwidth should still be treated as IP', {
-	  input: 'http://０Ｘｃ０．０２５０．０１',
-	  base: 'http://other.com/',
-	  href: 'http://192.168.0.1/',
-	  origin: 'http://192.168.0.1',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '192.168.0.1',
-	  hostname: '192.168.0.1',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'Domains with empty labels', {
-	  input: 'http://./',
-	  base: 'about:blank',
-	  href: 'http://./',
-	  origin: 'http://.',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '.',
-	  hostname: '.',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://../',
-	  base: 'about:blank',
-	  href: 'http://../',
-	  origin: 'http://..',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '..',
-	  hostname: '..',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://0..0x300/',
-	  base: 'about:blank',
-	  href: 'http://0..0x300/',
-	  origin: 'http://0..0x300',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '0..0x300',
-	  hostname: '0..0x300',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'Broken IPv6', {
-	  input: 'http://[www.google.com]/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http://[google.com]',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://[::1.2.3.4x]',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://[::1.2.3.]',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://[::1.2.]',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://[::1.]',
-	  base: 'http://other.com/',
-	  failure: true
-	}, 'Misc Unicode', {
-	  input: 'http://foo:💩@example.com/bar',
-	  base: 'http://other.com/',
-	  href: 'http://foo:%F0%9F%92%A9@example.com/bar',
-	  origin: 'http://example.com',
-	  protocol: 'http:',
-	  username: 'foo',
-	  password: '%F0%9F%92%A9',
-	  host: 'example.com',
-	  hostname: 'example.com',
-	  port: '',
-	  pathname: '/bar',
-	  search: '',
-	  hash: ''
-	}, '# resolving a fragment against any scheme succeeds', {
-	  input: '#',
-	  base: 'test:test',
-	  href: 'test:test#',
-	  origin: 'null',
-	  protocol: 'test:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'test',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '#x',
-	  base: 'mailto:x@x.com',
-	  href: 'mailto:x@x.com#x',
-	  origin: 'null',
-	  protocol: 'mailto:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'x@x.com',
-	  search: '',
-	  hash: '#x'
-	}, {
-	  input: '#x',
-	  base: 'data:,',
-	  href: 'data:,#x',
-	  origin: 'null',
-	  protocol: 'data:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: ',',
-	  search: '',
-	  hash: '#x'
-	}, {
-	  input: '#x',
-	  base: 'about:blank',
-	  href: 'about:blank#x',
-	  origin: 'null',
-	  protocol: 'about:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'blank',
-	  search: '',
-	  hash: '#x'
-	}, {
-	  input: '#',
-	  base: 'test:test?test',
-	  href: 'test:test?test#',
-	  origin: 'null',
-	  protocol: 'test:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'test',
-	  search: '?test',
-	  hash: ''
-	}, '# multiple @ in authority state', {
-	  input: 'https://@test@test@example:800/',
-	  base: 'http://doesnotmatter/',
-	  href: 'https://%40test%40test@example:800/',
-	  origin: 'https://example:800',
-	  protocol: 'https:',
-	  username: '%40test%40test',
-	  password: '',
-	  host: 'example:800',
-	  hostname: 'example',
-	  port: '800',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'https://@@@example',
-	  base: 'http://doesnotmatter/',
-	  href: 'https://%40%40@example/',
-	  origin: 'https://example',
-	  protocol: 'https:',
-	  username: '%40%40',
-	  password: '',
-	  host: 'example',
-	  hostname: 'example',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'non-az-09 characters', {
-	  input: 'http://`{}:`{}@h/`{}?`{}',
-	  base: 'http://doesnotmatter/',
-	  href: 'http://%60%7B%7D:%60%7B%7D@h/%60%7B%7D?`{}',
-	  origin: 'http://h',
-	  protocol: 'http:',
-	  username: '%60%7B%7D',
-	  password: '%60%7B%7D',
-	  host: 'h',
-	  hostname: 'h',
-	  port: '',
-	  pathname: '/%60%7B%7D',
-	  search: '?`{}',
-	  hash: ''
-	}, "byte is ' and url is special", {
-	  input: "http://host/?'",
-	  base: 'about:blank',
-	  href: 'http://host/?%27',
-	  origin: 'http://host',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'host',
-	  hostname: 'host',
-	  port: '',
-	  pathname: '/',
-	  search: '?%27',
-	  hash: ''
-	}, {
-	  input: "notspecial://host/?'",
-	  base: 'about:blank',
-	  href: "notspecial://host/?'",
-	  origin: 'null',
-	  protocol: 'notspecial:',
-	  username: '',
-	  password: '',
-	  host: 'host',
-	  hostname: 'host',
-	  port: '',
-	  pathname: '/',
-	  search: "?'",
-	  hash: ''
-	}, '# Credentials in base', {
-	  input: '/some/path',
-	  base: 'http://user@example.org/smth',
-	  href: 'http://user@example.org/some/path',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: 'user',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/some/path',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '',
-	  base: 'http://user:pass@example.org:21/smth',
-	  href: 'http://user:pass@example.org:21/smth',
-	  origin: 'http://example.org:21',
-	  protocol: 'http:',
-	  username: 'user',
-	  password: 'pass',
-	  host: 'example.org:21',
-	  hostname: 'example.org',
-	  port: '21',
-	  pathname: '/smth',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/some/path',
-	  base: 'http://user:pass@example.org:21/smth',
-	  href: 'http://user:pass@example.org:21/some/path',
-	  origin: 'http://example.org:21',
-	  protocol: 'http:',
-	  username: 'user',
-	  password: 'pass',
-	  host: 'example.org:21',
-	  hostname: 'example.org',
-	  port: '21',
-	  pathname: '/some/path',
-	  search: '',
-	  hash: ''
-	}, '# a set of tests designed by zcorpan for relative URLs with unknown schemes', {
-	  input: 'i',
-	  base: 'sc:sd',
-	  failure: true
-	}, {
-	  input: 'i',
-	  base: 'sc:sd/sd',
-	  failure: true
-	}, {
-	  input: 'i',
-	  base: 'sc:/pa/pa',
-	  href: 'sc:/pa/i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/pa/i',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'i',
-	  base: 'sc://ho/pa',
-	  href: 'sc://ho/i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: 'ho',
-	  hostname: 'ho',
-	  port: '',
-	  pathname: '/i',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'i',
-	  base: 'sc:///pa/pa',
-	  href: 'sc:///pa/i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/pa/i',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '../i',
-	  base: 'sc:sd',
-	  failure: true
-	}, {
-	  input: '../i',
-	  base: 'sc:sd/sd',
-	  failure: true
-	}, {
-	  input: '../i',
-	  base: 'sc:/pa/pa',
-	  href: 'sc:/i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/i',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '../i',
-	  base: 'sc://ho/pa',
-	  href: 'sc://ho/i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: 'ho',
-	  hostname: 'ho',
-	  port: '',
-	  pathname: '/i',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '../i',
-	  base: 'sc:///pa/pa',
-	  href: 'sc:///i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/i',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/i',
-	  base: 'sc:sd',
-	  failure: true
-	}, {
-	  input: '/i',
-	  base: 'sc:sd/sd',
-	  failure: true
-	}, {
-	  input: '/i',
-	  base: 'sc:/pa/pa',
-	  href: 'sc:/i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/i',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/i',
-	  base: 'sc://ho/pa',
-	  href: 'sc://ho/i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: 'ho',
-	  hostname: 'ho',
-	  port: '',
-	  pathname: '/i',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/i',
-	  base: 'sc:///pa/pa',
-	  href: 'sc:///i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/i',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '?i',
-	  base: 'sc:sd',
-	  failure: true
-	}, {
-	  input: '?i',
-	  base: 'sc:sd/sd',
-	  failure: true
-	}, {
-	  input: '?i',
-	  base: 'sc:/pa/pa',
-	  href: 'sc:/pa/pa?i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/pa/pa',
-	  search: '?i',
-	  hash: ''
-	}, {
-	  input: '?i',
-	  base: 'sc://ho/pa',
-	  href: 'sc://ho/pa?i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: 'ho',
-	  hostname: 'ho',
-	  port: '',
-	  pathname: '/pa',
-	  search: '?i',
-	  hash: ''
-	}, {
-	  input: '?i',
-	  base: 'sc:///pa/pa',
-	  href: 'sc:///pa/pa?i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/pa/pa',
-	  search: '?i',
-	  hash: ''
-	}, {
-	  input: '#i',
-	  base: 'sc:sd',
-	  href: 'sc:sd#i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'sd',
-	  search: '',
-	  hash: '#i'
-	}, {
-	  input: '#i',
-	  base: 'sc:sd/sd',
-	  href: 'sc:sd/sd#i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'sd/sd',
-	  search: '',
-	  hash: '#i'
-	}, {
-	  input: '#i',
-	  base: 'sc:/pa/pa',
-	  href: 'sc:/pa/pa#i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/pa/pa',
-	  search: '',
-	  hash: '#i'
-	}, {
-	  input: '#i',
-	  base: 'sc://ho/pa',
-	  href: 'sc://ho/pa#i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: 'ho',
-	  hostname: 'ho',
-	  port: '',
-	  pathname: '/pa',
-	  search: '',
-	  hash: '#i'
-	}, {
-	  input: '#i',
-	  base: 'sc:///pa/pa',
-	  href: 'sc:///pa/pa#i',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/pa/pa',
-	  search: '',
-	  hash: '#i'
-	}, '# make sure that relative URL logic works on known typically non-relative schemes too', {
-	  input: 'about:/../',
-	  base: 'about:blank',
-	  href: 'about:/',
-	  origin: 'null',
-	  protocol: 'about:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'data:/../',
-	  base: 'about:blank',
-	  href: 'data:/',
-	  origin: 'null',
-	  protocol: 'data:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'javascript:/../',
-	  base: 'about:blank',
-	  href: 'javascript:/',
-	  origin: 'null',
-	  protocol: 'javascript:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'mailto:/../',
-	  base: 'about:blank',
-	  href: 'mailto:/',
-	  origin: 'null',
-	  protocol: 'mailto:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, '# unknown schemes and their hosts', {
-	  input: 'sc://ñ.test/',
-	  base: 'about:blank',
-	  href: 'sc://%C3%B1.test/',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '%C3%B1.test',
-	  hostname: '%C3%B1.test',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: "sc://\x1F!\"$&'()*+,-.;<=>^_`{|}~/",
-	  base: 'about:blank',
-	  href: "sc://%1F!\"$&'()*+,-.;<=>^_`{|}~/",
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: "%1F!\"$&'()*+,-.;<=>^_`{|}~",
-	  hostname: "%1F!\"$&'()*+,-.;<=>^_`{|}~",
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: "sc://\0/",
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'sc:// /',
-	  base: 'about:blank',
-	  failure: true
-	},
-	/*
-	{
-	  input: 'sc://%/',
-	  base: 'about:blank',
-	  href: 'sc://%/',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '%',
-	  hostname: '%',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: '',
-	},
-	*/
-	{
-	  input: 'sc://@/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'sc://te@s:t@/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'sc://:/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'sc://:12/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'sc://[/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'sc://\\/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'sc://]/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'x',
-	  base: 'sc://ñ',
-	  href: 'sc://%C3%B1/x',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '%C3%B1',
-	  hostname: '%C3%B1',
-	  port: '',
-	  pathname: '/x',
-	  search: '',
-	  hash: ''
-	}, '# unknown schemes and backslashes', {
-	  input: 'sc:\\../',
-	  base: 'about:blank',
-	  href: 'sc:\\../',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '\\../',
-	  search: '',
-	  hash: ''
-	}, '# unknown scheme with path looking like a password', {
-	  input: 'sc::a@example.net',
-	  base: 'about:blank',
-	  href: 'sc::a@example.net',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: ':a@example.net',
-	  search: '',
-	  hash: ''
-	}, '# unknown scheme with bogus percent-encoding', {
-	  input: 'wow:%NBD',
-	  base: 'about:blank',
-	  href: 'wow:%NBD',
-	  origin: 'null',
-	  protocol: 'wow:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '%NBD',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'wow:%1G',
-	  base: 'about:blank',
-	  href: 'wow:%1G',
-	  origin: 'null',
-	  protocol: 'wow:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '%1G',
-	  search: '',
-	  hash: ''
-	}, '# Hosts and percent-encoding', {
-	  input: 'ftp://example.com%80/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'ftp://example.com%A0/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://example.com%80/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://example.com%A0/',
-	  base: 'about:blank',
-	  failure: true
-	},
-	/*
-	{
-	  input: 'ftp://%e2%98%83',
-	  base: 'about:blank',
-	  href: 'ftp://xn--n3h/',
-	  origin: 'ftp://xn--n3h',
-	  protocol: 'ftp:',
-	  username: '',
-	  password: '',
-	  host: 'xn--n3h',
-	  hostname: 'xn--n3h',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: '',
-	},
-	{
-	  input: 'https://%e2%98%83',
-	  base: 'about:blank',
-	  href: 'https://xn--n3h/',
-	  origin: 'https://xn--n3h',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'xn--n3h',
-	  hostname: 'xn--n3h',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: '',
-	},
-	*/
-	'# tests from jsdom/whatwg-url designed for code coverage', {
-	  input: 'http://127.0.0.1:10100/relative_import.html',
-	  base: 'about:blank',
-	  href: 'http://127.0.0.1:10100/relative_import.html',
-	  origin: 'http://127.0.0.1:10100',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '127.0.0.1:10100',
-	  hostname: '127.0.0.1',
-	  port: '10100',
-	  pathname: '/relative_import.html',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://facebook.com/?foo=%7B%22abc%22',
-	  base: 'about:blank',
-	  href: 'http://facebook.com/?foo=%7B%22abc%22',
-	  origin: 'http://facebook.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'facebook.com',
-	  hostname: 'facebook.com',
-	  port: '',
-	  pathname: '/',
-	  search: '?foo=%7B%22abc%22',
-	  hash: ''
-	}, {
-	  input: 'https://localhost:3000/jqueryui@1.2.3',
-	  base: 'about:blank',
-	  href: 'https://localhost:3000/jqueryui@1.2.3',
-	  origin: 'https://localhost:3000',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: 'localhost:3000',
-	  hostname: 'localhost',
-	  port: '3000',
-	  pathname: '/jqueryui@1.2.3',
-	  search: '',
-	  hash: ''
-	}, '# tab/LF/CR', {
-	  input: 'h\tt\nt\rp://h\to\ns\rt:9\t0\n0\r0/p\ta\nt\rh?q\tu\ne\rry#f\tr\na\rg',
-	  base: 'about:blank',
-	  href: 'http://host:9000/path?query#frag',
-	  origin: 'http://host:9000',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'host:9000',
-	  hostname: 'host',
-	  port: '9000',
-	  pathname: '/path',
-	  search: '?query',
-	  hash: '#frag'
-	}, '# Stringification of URL.searchParams', {
-	  input: '?a=b&c=d',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar?a=b&c=d',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '?a=b&c=d',
-	  searchParams: 'a=b&c=d',
-	  hash: ''
-	}, {
-	  input: '??a=b&c=d',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar??a=b&c=d',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '??a=b&c=d',
-	  searchParams: '%3Fa=b&c=d',
-	  hash: ''
-	}, '# Scheme only', {
-	  input: 'http:',
-	  base: 'http://example.org/foo/bar',
-	  href: 'http://example.org/foo/bar',
-	  origin: 'http://example.org',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '',
-	  searchParams: '',
-	  hash: ''
-	}, {
-	  input: 'http:',
-	  base: 'https://example.org/foo/bar',
-	  failure: true
-	}, {
-	  input: 'sc:',
-	  base: 'https://example.org/foo/bar',
-	  href: 'sc:',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '',
-	  search: '',
-	  searchParams: '',
-	  hash: ''
-	}, '# Percent encoding of fragments', {
-	  input: 'http://foo.bar/baz?qux#foo\bbar',
-	  base: 'about:blank',
-	  href: 'http://foo.bar/baz?qux#foo%08bar',
-	  origin: 'http://foo.bar',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo.bar',
-	  hostname: 'foo.bar',
-	  port: '',
-	  pathname: '/baz',
-	  search: '?qux',
-	  searchParams: 'qux=',
-	  hash: '#foo%08bar'
-	}, {
-	  input: 'http://foo.bar/baz?qux#foo"bar',
-	  base: 'about:blank',
-	  href: 'http://foo.bar/baz?qux#foo%22bar',
-	  origin: 'http://foo.bar',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo.bar',
-	  hostname: 'foo.bar',
-	  port: '',
-	  pathname: '/baz',
-	  search: '?qux',
-	  searchParams: 'qux=',
-	  hash: '#foo%22bar'
-	}, {
-	  input: 'http://foo.bar/baz?qux#foo<bar',
-	  base: 'about:blank',
-	  href: 'http://foo.bar/baz?qux#foo%3Cbar',
-	  origin: 'http://foo.bar',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo.bar',
-	  hostname: 'foo.bar',
-	  port: '',
-	  pathname: '/baz',
-	  search: '?qux',
-	  searchParams: 'qux=',
-	  hash: '#foo%3Cbar'
-	}, {
-	  input: 'http://foo.bar/baz?qux#foo>bar',
-	  base: 'about:blank',
-	  href: 'http://foo.bar/baz?qux#foo%3Ebar',
-	  origin: 'http://foo.bar',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo.bar',
-	  hostname: 'foo.bar',
-	  port: '',
-	  pathname: '/baz',
-	  search: '?qux',
-	  searchParams: 'qux=',
-	  hash: '#foo%3Ebar'
-	}, {
-	  input: 'http://foo.bar/baz?qux#foo`bar',
-	  base: 'about:blank',
-	  href: 'http://foo.bar/baz?qux#foo%60bar',
-	  origin: 'http://foo.bar',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'foo.bar',
-	  hostname: 'foo.bar',
-	  port: '',
-	  pathname: '/baz',
-	  search: '?qux',
-	  searchParams: 'qux=',
-	  hash: '#foo%60bar'
-	}, '# IPv4 parsing (via https://github.com/nodejs/node/pull/10317)', {
-	  input: 'http://192.168.257',
-	  base: 'http://other.com/',
-	  href: 'http://192.168.1.1/',
-	  origin: 'http://192.168.1.1',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '192.168.1.1',
-	  hostname: '192.168.1.1',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://192.168.257.com',
-	  base: 'http://other.com/',
-	  href: 'http://192.168.257.com/',
-	  origin: 'http://192.168.257.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '192.168.257.com',
-	  hostname: '192.168.257.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://256',
-	  base: 'http://other.com/',
-	  href: 'http://0.0.1.0/',
-	  origin: 'http://0.0.1.0',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '0.0.1.0',
-	  hostname: '0.0.1.0',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://256.com',
-	  base: 'http://other.com/',
-	  href: 'http://256.com/',
-	  origin: 'http://256.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '256.com',
-	  hostname: '256.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://999999999',
-	  base: 'http://other.com/',
-	  href: 'http://59.154.201.255/',
-	  origin: 'http://59.154.201.255',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '59.154.201.255',
-	  hostname: '59.154.201.255',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://999999999.com',
-	  base: 'http://other.com/',
-	  href: 'http://999999999.com/',
-	  origin: 'http://999999999.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '999999999.com',
-	  hostname: '999999999.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://10000000000',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://10000000000.com',
-	  base: 'http://other.com/',
-	  href: 'http://10000000000.com/',
-	  origin: 'http://10000000000.com',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '10000000000.com',
-	  hostname: '10000000000.com',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://4294967295',
-	  base: 'http://other.com/',
-	  href: 'http://255.255.255.255/',
-	  origin: 'http://255.255.255.255',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '255.255.255.255',
-	  hostname: '255.255.255.255',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://4294967296',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://0xffffffff',
-	  base: 'http://other.com/',
-	  href: 'http://255.255.255.255/',
-	  origin: 'http://255.255.255.255',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '255.255.255.255',
-	  hostname: '255.255.255.255',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://0xffffffff1',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://256.256.256.256',
-	  base: 'http://other.com/',
-	  failure: true
-	}, {
-	  input: 'http://256.256.256.256.256',
-	  base: 'http://other.com/',
-	  href: 'http://256.256.256.256.256/',
-	  origin: 'http://256.256.256.256.256',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '256.256.256.256.256',
-	  hostname: '256.256.256.256.256',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'https://0x.0x.0',
-	  base: 'about:blank',
-	  href: 'https://0.0.0.0/',
-	  origin: 'https://0.0.0.0',
-	  protocol: 'https:',
-	  username: '',
-	  password: '',
-	  host: '0.0.0.0',
-	  hostname: '0.0.0.0',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'More IPv4 parsing (via https://github.com/jsdom/whatwg-url/issues/92)', {
-	  input: 'https://0x100000000/test',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://256.0.0.1/test',
-	  base: 'about:blank',
-	  failure: true
-	}, "# file URLs containing percent-encoded Windows drive letters (shouldn't work)", {
-	  input: 'file:///C%3A/',
-	  base: 'about:blank',
-	  href: 'file:///C%3A/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C%3A/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:///C%7C/',
-	  base: 'about:blank',
-	  href: 'file:///C%7C/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C%7C/',
-	  search: '',
-	  hash: ''
-	}, '# file URLs relative to other file URLs (via https://github.com/jsdom/whatwg-url/pull/60)', {
-	  input: 'pix/submit.gif',
-	  base: 'file:///C:/Users/Domenic/Dropbox/GitHub/tmpvar/jsdom/test/level2/html/files/anchor.html',
-	  href: 'file:///C:/Users/Domenic/Dropbox/GitHub/tmpvar/jsdom/test/level2/html/files/pix/submit.gif',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/Users/Domenic/Dropbox/GitHub/tmpvar/jsdom/test/level2/html/files/pix/submit.gif',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '..',
-	  base: 'file:///C:/',
-	  href: 'file:///C:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '..',
-	  base: 'file:///',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, '# More file URL tests by zcorpan and annevk', {
-	  input: '/',
-	  base: 'file:///C:/a/b',
-	  href: 'file:///C:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '//d:',
-	  base: 'file:///C:/a/b',
-	  href: 'file:///d:',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/d:',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '//d:/..',
-	  base: 'file:///C:/a/b',
-	  href: 'file:///d:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/d:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '..',
-	  base: 'file:///ab:/',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '..',
-	  base: 'file:///1:/',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '',
-	  base: 'file:///test?test#test',
-	  href: 'file:///test?test',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test',
-	  search: '?test',
-	  hash: ''
-	}, {
-	  input: 'file:',
-	  base: 'file:///test?test#test',
-	  href: 'file:///test?test',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test',
-	  search: '?test',
-	  hash: ''
-	}, {
-	  input: '?x',
-	  base: 'file:///test?test#test',
-	  href: 'file:///test?x',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test',
-	  search: '?x',
-	  hash: ''
-	}, {
-	  input: 'file:?x',
-	  base: 'file:///test?test#test',
-	  href: 'file:///test?x',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test',
-	  search: '?x',
-	  hash: ''
-	}, {
-	  input: '#x',
-	  base: 'file:///test?test#test',
-	  href: 'file:///test?test#x',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test',
-	  search: '?test',
-	  hash: '#x'
-	}, {
-	  input: 'file:#x',
-	  base: 'file:///test?test#test',
-	  href: 'file:///test?test#x',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test',
-	  search: '?test',
-	  hash: '#x'
-	}, '# File URLs and many (back)slashes', {
-	  input: 'file:\\\\//',
-	  base: 'about:blank',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:\\\\\\\\',
-	  base: 'about:blank',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:\\\\\\\\?fox',
-	  base: 'about:blank',
-	  href: 'file:///?fox',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '?fox',
-	  hash: ''
-	}, {
-	  input: 'file:\\\\\\\\#guppy',
-	  base: 'about:blank',
-	  href: 'file:///#guppy',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: '#guppy'
-	}, {
-	  input: 'file://spider///',
-	  base: 'about:blank',
-	  href: 'file://spider/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: 'spider',
-	  hostname: 'spider',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:\\\\localhost//',
-	  base: 'about:blank',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:///localhost//cat',
-	  base: 'about:blank',
-	  href: 'file:///localhost//cat',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/localhost//cat',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://\\/localhost//cat',
-	  base: 'about:blank',
-	  href: 'file:///localhost//cat',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/localhost//cat',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://localhost//a//../..//',
-	  base: 'about:blank',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/////mouse',
-	  base: 'file:///elephant',
-	  href: 'file:///mouse',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/mouse',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '\\//pig',
-	  base: 'file://lion/',
-	  href: 'file:///pig',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/pig',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '\\/localhost//pig',
-	  base: 'file://lion/',
-	  href: 'file:///pig',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/pig',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '//localhost//pig',
-	  base: 'file://lion/',
-	  href: 'file:///pig',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/pig',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/..//localhost//pig',
-	  base: 'file://lion/',
-	  href: 'file://lion/localhost//pig',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: 'lion',
-	  hostname: 'lion',
-	  port: '',
-	  pathname: '/localhost//pig',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://',
-	  base: 'file://ape/',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, '# File URLs with non-empty hosts', {
-	  input: '/rooibos',
-	  base: 'file://tea/',
-	  href: 'file://tea/rooibos',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: 'tea',
-	  hostname: 'tea',
-	  port: '',
-	  pathname: '/rooibos',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/?chai',
-	  base: 'file://tea/',
-	  href: 'file://tea/?chai',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: 'tea',
-	  hostname: 'tea',
-	  port: '',
-	  pathname: '/',
-	  search: '?chai',
-	  hash: ''
-	}, "# Windows drive letter handling with the 'file:' base URL", {
-	  input: 'C|',
-	  base: 'file://host/dir/file',
-	  href: 'file:///C:',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'C|#',
-	  base: 'file://host/dir/file',
-	  href: 'file:///C:#',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'C|?',
-	  base: 'file://host/dir/file',
-	  href: 'file:///C:?',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'C|/',
-	  base: 'file://host/dir/file',
-	  href: 'file:///C:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'C|\n/',
-	  base: 'file://host/dir/file',
-	  href: 'file:///C:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'C|\\',
-	  base: 'file://host/dir/file',
-	  href: 'file:///C:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'C',
-	  base: 'file://host/dir/file',
-	  href: 'file://host/dir/C',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: 'host',
-	  hostname: 'host',
-	  port: '',
-	  pathname: '/dir/C',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'C|a',
-	  base: 'file://host/dir/file',
-	  href: 'file://host/dir/C|a',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: 'host',
-	  hostname: 'host',
-	  port: '',
-	  pathname: '/dir/C|a',
-	  search: '',
-	  hash: ''
-	}, '# Windows drive letter quirk in the file slash state', {
-	  input: '/c:/foo/bar',
-	  base: 'file:///c:/baz/qux',
-	  href: 'file:///c:/foo/bar',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/c:/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/c|/foo/bar',
-	  base: 'file:///c:/baz/qux',
-	  href: 'file:///c:/foo/bar',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/c:/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:\\c:\\foo\\bar',
-	  base: 'file:///c:/baz/qux',
-	  href: 'file:///c:/foo/bar',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/c:/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '/c:/foo/bar',
-	  base: 'file://host/path',
-	  href: 'file:///c:/foo/bar',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/c:/foo/bar',
-	  search: '',
-	  hash: ''
-	}, '# Windows drive letter quirk with not empty host', {
-	  input: 'file://example.net/C:/',
-	  base: 'about:blank',
-	  href: 'file:///C:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://1.2.3.4/C:/',
-	  base: 'about:blank',
-	  href: 'file:///C:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://[1::8]/C:/',
-	  base: 'about:blank',
-	  href: 'file:///C:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/',
-	  search: '',
-	  hash: ''
-	}, '# Windows drive letter quirk (no host)', {
-	  input: 'file:/C|/',
-	  base: 'about:blank',
-	  href: 'file:///C:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file://C|/',
-	  base: 'about:blank',
-	  href: 'file:///C:/',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/C:/',
-	  search: '',
-	  hash: ''
-	}, '# file URLs without base URL by Rimas Misevičius', {
-	  input: 'file:',
-	  base: 'about:blank',
-	  href: 'file:///',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'file:?q=v',
-	  base: 'about:blank',
-	  href: 'file:///?q=v',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '?q=v',
-	  hash: ''
-	}, {
-	  input: 'file:#frag',
-	  base: 'about:blank',
-	  href: 'file:///#frag',
-	  protocol: 'file:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: '#frag'
-	}, '# IPv6 tests', {
-	  input: 'http://[1:0::]',
-	  base: 'http://example.net/',
-	  href: 'http://[1::]/',
-	  origin: 'http://[1::]',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '[1::]',
-	  hostname: '[1::]',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://[0:1:2:3:4:5:6:7:8]',
-	  base: 'http://example.net/',
-	  failure: true
-	}, {
-	  input: 'https://[0::0::0]',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://[0:.0]',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://[0:0:]',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://[0:1:2:3:4:5:6:7.0.0.0.1]',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://[0:1.00.0.0.0]',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://[0:1.290.0.0.0]',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'https://[0:1.23.23]',
-	  base: 'about:blank',
-	  failure: true
-	}, '# Empty host', {
-	  input: 'http://?',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'http://#',
-	  base: 'about:blank',
-	  failure: true
-	}, 'Port overflow (2^32 + 81)', {
-	  input: 'http://f:4294967377/c',
-	  base: 'http://example.org/',
-	  failure: true
-	}, 'Port overflow (2^64 + 81)', {
-	  input: 'http://f:18446744073709551697/c',
-	  base: 'http://example.org/',
-	  failure: true
-	}, 'Port overflow (2^128 + 81)', {
-	  input: 'http://f:340282366920938463463374607431768211537/c',
-	  base: 'http://example.org/',
-	  failure: true
-	}, '# Non-special-URL path tests', {
-	  input: 'sc://ñ',
-	  base: 'about:blank',
-	  href: 'sc://%C3%B1',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '%C3%B1',
-	  hostname: '%C3%B1',
-	  port: '',
-	  pathname: '',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'sc://ñ?x',
-	  base: 'about:blank',
-	  href: 'sc://%C3%B1?x',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '%C3%B1',
-	  hostname: '%C3%B1',
-	  port: '',
-	  pathname: '',
-	  search: '?x',
-	  hash: ''
-	}, {
-	  input: 'sc://ñ#x',
-	  base: 'about:blank',
-	  href: 'sc://%C3%B1#x',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '%C3%B1',
-	  hostname: '%C3%B1',
-	  port: '',
-	  pathname: '',
-	  search: '',
-	  hash: '#x'
-	}, {
-	  input: '#x',
-	  base: 'sc://ñ',
-	  href: 'sc://%C3%B1#x',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '%C3%B1',
-	  hostname: '%C3%B1',
-	  port: '',
-	  pathname: '',
-	  search: '',
-	  hash: '#x'
-	}, {
-	  input: '?x',
-	  base: 'sc://ñ',
-	  href: 'sc://%C3%B1?x',
-	  origin: 'null',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '%C3%B1',
-	  hostname: '%C3%B1',
-	  port: '',
-	  pathname: '',
-	  search: '?x',
-	  hash: ''
-	}, {
-	  input: 'sc://?',
-	  base: 'about:blank',
-	  href: 'sc://?',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'sc://#',
-	  base: 'about:blank',
-	  href: 'sc://#',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '///',
-	  base: 'sc://x/',
-	  href: 'sc:///',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '////',
-	  base: 'sc://x/',
-	  href: 'sc:////',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '//',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: '////x/',
-	  base: 'sc://x/',
-	  href: 'sc:////x/',
-	  protocol: 'sc:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '//x/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'tftp://foobar.com/someconfig;mode=netascii',
-	  base: 'about:blank',
-	  href: 'tftp://foobar.com/someconfig;mode=netascii',
-	  origin: 'null',
-	  protocol: 'tftp:',
-	  username: '',
-	  password: '',
-	  host: 'foobar.com',
-	  hostname: 'foobar.com',
-	  port: '',
-	  pathname: '/someconfig;mode=netascii',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'telnet://user:pass@foobar.com:23/',
-	  base: 'about:blank',
-	  href: 'telnet://user:pass@foobar.com:23/',
-	  origin: 'null',
-	  protocol: 'telnet:',
-	  username: 'user',
-	  password: 'pass',
-	  host: 'foobar.com:23',
-	  hostname: 'foobar.com',
-	  port: '23',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'ut2004://10.10.10.10:7777/Index.ut2',
-	  base: 'about:blank',
-	  href: 'ut2004://10.10.10.10:7777/Index.ut2',
-	  origin: 'null',
-	  protocol: 'ut2004:',
-	  username: '',
-	  password: '',
-	  host: '10.10.10.10:7777',
-	  hostname: '10.10.10.10',
-	  port: '7777',
-	  pathname: '/Index.ut2',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'redis://foo:bar@somehost:6379/0?baz=bam&qux=baz',
-	  base: 'about:blank',
-	  href: 'redis://foo:bar@somehost:6379/0?baz=bam&qux=baz',
-	  origin: 'null',
-	  protocol: 'redis:',
-	  username: 'foo',
-	  password: 'bar',
-	  host: 'somehost:6379',
-	  hostname: 'somehost',
-	  port: '6379',
-	  pathname: '/0',
-	  search: '?baz=bam&qux=baz',
-	  hash: ''
-	}, {
-	  input: 'rsync://foo@host:911/sup',
-	  base: 'about:blank',
-	  href: 'rsync://foo@host:911/sup',
-	  origin: 'null',
-	  protocol: 'rsync:',
-	  username: 'foo',
-	  password: '',
-	  host: 'host:911',
-	  hostname: 'host',
-	  port: '911',
-	  pathname: '/sup',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'git://github.com/foo/bar.git',
-	  base: 'about:blank',
-	  href: 'git://github.com/foo/bar.git',
-	  origin: 'null',
-	  protocol: 'git:',
-	  username: '',
-	  password: '',
-	  host: 'github.com',
-	  hostname: 'github.com',
-	  port: '',
-	  pathname: '/foo/bar.git',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'irc://myserver.com:6999/channel?passwd',
-	  base: 'about:blank',
-	  href: 'irc://myserver.com:6999/channel?passwd',
-	  origin: 'null',
-	  protocol: 'irc:',
-	  username: '',
-	  password: '',
-	  host: 'myserver.com:6999',
-	  hostname: 'myserver.com',
-	  port: '6999',
-	  pathname: '/channel',
-	  search: '?passwd',
-	  hash: ''
-	}, {
-	  input: 'dns://fw.example.org:9999/foo.bar.org?type=TXT',
-	  base: 'about:blank',
-	  href: 'dns://fw.example.org:9999/foo.bar.org?type=TXT',
-	  origin: 'null',
-	  protocol: 'dns:',
-	  username: '',
-	  password: '',
-	  host: 'fw.example.org:9999',
-	  hostname: 'fw.example.org',
-	  port: '9999',
-	  pathname: '/foo.bar.org',
-	  search: '?type=TXT',
-	  hash: ''
-	}, {
-	  input: 'ldap://localhost:389/ou=People,o=JNDITutorial',
-	  base: 'about:blank',
-	  href: 'ldap://localhost:389/ou=People,o=JNDITutorial',
-	  origin: 'null',
-	  protocol: 'ldap:',
-	  username: '',
-	  password: '',
-	  host: 'localhost:389',
-	  hostname: 'localhost',
-	  port: '389',
-	  pathname: '/ou=People,o=JNDITutorial',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'git+https://github.com/foo/bar',
-	  base: 'about:blank',
-	  href: 'git+https://github.com/foo/bar',
-	  origin: 'null',
-	  protocol: 'git+https:',
-	  username: '',
-	  password: '',
-	  host: 'github.com',
-	  hostname: 'github.com',
-	  port: '',
-	  pathname: '/foo/bar',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'urn:ietf:rfc:2648',
-	  base: 'about:blank',
-	  href: 'urn:ietf:rfc:2648',
-	  origin: 'null',
-	  protocol: 'urn:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'ietf:rfc:2648',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'tag:joe@example.org,2001:foo/bar',
-	  base: 'about:blank',
-	  href: 'tag:joe@example.org,2001:foo/bar',
-	  origin: 'null',
-	  protocol: 'tag:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'joe@example.org,2001:foo/bar',
-	  search: '',
-	  hash: ''
-	}, '# percent encoded hosts in non-special-URLs', {
-	  input: 'non-special://%E2%80%A0/',
-	  base: 'about:blank',
-	  href: 'non-special://%E2%80%A0/',
-	  protocol: 'non-special:',
-	  username: '',
-	  password: '',
-	  host: '%E2%80%A0',
-	  hostname: '%E2%80%A0',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'non-special://H%4fSt/path',
-	  base: 'about:blank',
-	  href: 'non-special://H%4fSt/path',
-	  protocol: 'non-special:',
-	  username: '',
-	  password: '',
-	  host: 'H%4fSt',
-	  hostname: 'H%4fSt',
-	  port: '',
-	  pathname: '/path',
-	  search: '',
-	  hash: ''
-	}, '# IPv6 in non-special-URLs', {
-	  input: 'non-special://[1:2:0:0:5:0:0:0]/',
-	  base: 'about:blank',
-	  href: 'non-special://[1:2:0:0:5::]/',
-	  protocol: 'non-special:',
-	  username: '',
-	  password: '',
-	  host: '[1:2:0:0:5::]',
-	  hostname: '[1:2:0:0:5::]',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'non-special://[1:2:0:0:0:0:0:3]/',
-	  base: 'about:blank',
-	  href: 'non-special://[1:2::3]/',
-	  protocol: 'non-special:',
-	  username: '',
-	  password: '',
-	  host: '[1:2::3]',
-	  hostname: '[1:2::3]',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'non-special://[1:2::3]:80/',
-	  base: 'about:blank',
-	  href: 'non-special://[1:2::3]:80/',
-	  protocol: 'non-special:',
-	  username: '',
-	  password: '',
-	  host: '[1:2::3]:80',
-	  hostname: '[1:2::3]',
-	  port: '80',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'non-special://[:80/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'blob:https://example.com:443/',
-	  base: 'about:blank',
-	  href: 'blob:https://example.com:443/',
-	  protocol: 'blob:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'https://example.com:443/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'blob:d3958f5c-0777-0845-9dcf-2cb28783acaf',
-	  base: 'about:blank',
-	  href: 'blob:d3958f5c-0777-0845-9dcf-2cb28783acaf',
-	  protocol: 'blob:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: 'd3958f5c-0777-0845-9dcf-2cb28783acaf',
-	  search: '',
-	  hash: ''
-	}, 'Invalid IPv4 radix digits', {
-	  input: 'http://0177.0.0.0189',
-	  base: 'about:blank',
-	  href: 'http://0177.0.0.0189/',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '0177.0.0.0189',
-	  hostname: '0177.0.0.0189',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://0x7f.0.0.0x7g',
-	  base: 'about:blank',
-	  href: 'http://0x7f.0.0.0x7g/',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '0x7f.0.0.0x7g',
-	  hostname: '0x7f.0.0.0x7g',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://0X7F.0.0.0X7G',
-	  base: 'about:blank',
-	  href: 'http://0x7f.0.0.0x7g/',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '0x7f.0.0.0x7g',
-	  hostname: '0x7f.0.0.0x7g',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'Invalid IPv4 portion of IPv6 address', {
-	  input: 'http://[::127.0.0.0.1]',
-	  base: 'about:blank',
-	  failure: true
-	}, 'Uncompressed IPv6 addresses with 0', {
-	  input: 'http://[0:1:0:1:0:1:0:1]',
-	  base: 'about:blank',
-	  href: 'http://[0:1:0:1:0:1:0:1]/',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '[0:1:0:1:0:1:0:1]',
-	  hostname: '[0:1:0:1:0:1:0:1]',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'http://[1:0:1:0:1:0:1:0]',
-	  base: 'about:blank',
-	  href: 'http://[1:0:1:0:1:0:1:0]/',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: '[1:0:1:0:1:0:1:0]',
-	  hostname: '[1:0:1:0:1:0:1:0]',
-	  port: '',
-	  pathname: '/',
-	  search: '',
-	  hash: ''
-	}, 'Percent-encoded query and fragment', {
-	  input: "http://example.org/test?\"",
-	  base: 'about:blank',
-	  href: 'http://example.org/test?%22',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/test',
-	  search: '?%22',
-	  hash: ''
-	}, {
-	  input: "http://example.org/test?#",
-	  base: 'about:blank',
-	  href: 'http://example.org/test?#',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/test',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: "http://example.org/test?<",
-	  base: 'about:blank',
-	  href: 'http://example.org/test?%3C',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/test',
-	  search: '?%3C',
-	  hash: ''
-	}, {
-	  input: "http://example.org/test?>",
-	  base: 'about:blank',
-	  href: 'http://example.org/test?%3E',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/test',
-	  search: '?%3E',
-	  hash: ''
-	}, {
-	  input: "http://example.org/test?\u2323",
-	  base: 'about:blank',
-	  href: 'http://example.org/test?%E2%8C%A3',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/test',
-	  search: '?%E2%8C%A3',
-	  hash: ''
-	}, {
-	  input: 'http://example.org/test?%23%23',
-	  base: 'about:blank',
-	  href: 'http://example.org/test?%23%23',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/test',
-	  search: '?%23%23',
-	  hash: ''
-	},
-	/*
-	{
-	  input: 'http://example.org/test?%GH',
-	  base: 'about:blank',
-	  href: 'http://example.org/test?%GH',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/test',
-	  search: '?%GH',
-	  hash: '',
-	},
-	*/
-	{
-	  input: 'http://example.org/test?a#%EF',
-	  base: 'about:blank',
-	  href: 'http://example.org/test?a#%EF',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/test',
-	  search: '?a',
-	  hash: '#%EF'
-	}, {
-	  input: 'http://example.org/test?a#%GH',
-	  base: 'about:blank',
-	  href: 'http://example.org/test?a#%GH',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/test',
-	  search: '?a',
-	  hash: '#%GH'
-	}, 'URLs that require a non-about:blank base. (Also serve as invalid base tests.)', {
-	  input: 'a',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'a/',
-	  base: 'about:blank',
-	  failure: true
-	}, {
-	  input: 'a//',
-	  base: 'about:blank',
-	  failure: true
-	}, "Bases that don't fail to parse but fail to be bases", {
-	  input: 'test-a-colon.html',
-	  base: 'a:',
-	  failure: true
-	}, {
-	  input: 'test-a-colon-b.html',
-	  base: 'a:b',
-	  failure: true
-	}, 'Other base URL tests, that must succeed', {
-	  input: 'test-a-colon-slash.html',
-	  base: 'a:/',
-	  href: 'a:/test-a-colon-slash.html',
-	  protocol: 'a:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test-a-colon-slash.html',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'test-a-colon-slash-slash.html',
-	  base: 'a://',
-	  href: 'a:///test-a-colon-slash-slash.html',
-	  protocol: 'a:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test-a-colon-slash-slash.html',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'test-a-colon-slash-b.html',
-	  base: 'a:/b',
-	  href: 'a:/test-a-colon-slash-b.html',
-	  protocol: 'a:',
-	  username: '',
-	  password: '',
-	  host: '',
-	  hostname: '',
-	  port: '',
-	  pathname: '/test-a-colon-slash-b.html',
-	  search: '',
-	  hash: ''
-	}, {
-	  input: 'test-a-colon-slash-slash-b.html',
-	  base: 'a://b',
-	  href: 'a://b/test-a-colon-slash-slash-b.html',
-	  protocol: 'a:',
-	  username: '',
-	  password: '',
-	  host: 'b',
-	  hostname: 'b',
-	  port: '',
-	  pathname: '/test-a-colon-slash-slash-b.html',
-	  search: '',
-	  hash: ''
-	}, 'Null code point in fragment', {
-	  input: "http://example.org/test?a#b\0c",
-	  base: 'about:blank',
-	  href: 'http://example.org/test?a#bc',
-	  protocol: 'http:',
-	  username: '',
-	  password: '',
-	  host: 'example.org',
-	  hostname: 'example.org',
-	  port: '',
-	  pathname: '/test',
-	  search: '?a',
-	  hash: '#bc'
-	}];
+	var _ref$4 = GLOBAL.Reflect || {},
+	  ownKeys$4 = _ref$4.ownKeys;
+	QUnit.test('Symbol', function (assert) {
+	  assert.isFunction(_Symbol$5);
+	  if (NATIVE) assert.strictEqual(_Symbol$5.length, 0, 'arity is 0');
+	  assert.name(_Symbol$5, 'Symbol');
+	  var symbol1 = _Symbol$5('symbol');
+	  var symbol2 = _Symbol$5('symbol');
+	  assert.ok(symbol1 !== symbol2, 'Symbol("symbol") !== Symbol("symbol")');
+	  var object = {};
+	  object[symbol1] = 42;
+	  assert.ok(object[symbol1] === 42, 'Symbol() work as key');
+	  assert.ok(object[symbol2] !== 42, 'Various symbols from one description are various keys');
+	  if (DESCRIPTORS) {
+	    var count = 0;
+	    // eslint-disable-next-line no-unused-vars -- required for testing
+	    for (var key in object) count++;
+	    assert.ok(count === 0, 'object[Symbol()] is not enumerable');
+	  }
+	});
+	QUnit.test('Well-known Symbols', function (assert) {
+	  assert.ok($inject_Symbol_hasInstance, "Symbol.hasInstance available");
+	  assert.ok($inject_Symbol_iterator, "Symbol.iterator available");
+	  assert.ok(_Symbol$5.asyncIterator, "Symbol.asyncIterator available");
+	});
+	QUnit.test('Global symbol registry', function (assert) {
+	  assert.isFunction(_Symbol$5["for"], 'Symbol.for is function');
+	  assert.strictEqual(_Symbol$5["for"].length, 1, 'Symbol.for arity is 1');
+	  if (NATIVE) assert.strictEqual(_Symbol$5["for"].name, 'for', 'Symbol.for.name is "for"');
+	  assert.isFunction(_Symbol$5.keyFor, 'Symbol.keyFor is function');
+	  assert.strictEqual(_Symbol$5.keyFor.length, 1, 'Symbol.keyFor arity is 1');
+	  assert.name(_Symbol$5.keyFor, 'keyFor');
+	  var symbol = _Symbol$5["for"]('foo');
+	  assert.strictEqual(_Symbol$5["for"]('foo'), symbol);
+	  assert.strictEqual(_Symbol$5.keyFor(symbol), 'foo');
+	  assert["throws"](function () {
+	    return _Symbol$5.keyFor('foo');
+	  }, 'throws on non-symbol');
+	});
+	QUnit.test('Object.getOwnPropertySymbols', function (assert) {
+	  assert.isFunction(Object.getOwnPropertySymbols);
+	  assert.strictEqual(Object.getOwnPropertySymbols.length, 1, 'arity is 1');
+	  assert.name(Object.getOwnPropertySymbols, 'getOwnPropertySymbols');
+	  var prototype = {
+	    q: 1,
+	    w: 2,
+	    e: 3
+	  };
+	  prototype[_Symbol$5()] = 42;
+	  prototype[_Symbol$5()] = 43;
+	  assert.deepEqual(Object.getOwnPropertyNames(prototype).sort(), ['e', 'q', 'w']);
+	  assert.strictEqual(Object.getOwnPropertySymbols(prototype).length, 2);
+	  var object = Object.create(prototype);
+	  object.a = 1;
+	  object.s = 2;
+	  object.d = 3;
+	  object[_Symbol$5()] = 44;
+	  assert.deepEqual(Object.getOwnPropertyNames(object).sort(), ['a', 'd', 's']);
+	  assert.strictEqual(Object.getOwnPropertySymbols(object).length, 1);
+	  assert.strictEqual(Object.getOwnPropertySymbols(Object.prototype).length, 0);
+	  var primitives = [42, 'foo', false];
+	  var _loop = function (value) {
+	    assert.notThrows(function () {
+	      return Object.getOwnPropertySymbols(value);
+	    }, "accept " + _typeof(value));
+	  };
+	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
+	    var value = _primitives[_i];
+	    _loop(value);
+	  }
+	});
+	if (JSON) {
+	  QUnit.test('Symbols & JSON.stringify', function (assert) {
+	    assert.strictEqual(JSON.stringify([1, _Symbol$5('foo'), false, _Symbol$5('bar'), {}]), '[1,null,false,null,{}]', 'array value');
+	    assert.strictEqual(JSON.stringify({
+	      symbol: _Symbol$5('symbol')
+	    }), '{}', 'object value');
+	    if (DESCRIPTORS) {
+	      var object = {
+	        bar: 2
+	      };
+	      object[_Symbol$5('symbol')] = 1;
+	      assert.strictEqual(JSON.stringify(object), '{"bar":2}', 'object key');
+	    }
+	    // assert.strictEqual(JSON.stringify(Symbol('symbol')), undefined, 'symbol value');
+	    if (_typeof(_Symbol$5()) === 'symbol') {
+	      assert.strictEqual(JSON.stringify(Object(_Symbol$5('symbol'))), '{}', 'boxed symbol');
+	    }
+	    // assert.strictEqual(JSON.stringify(undefined, () => 42), '42', 'replacer works with top-level undefined');
+	  });
+	}
 
-	/* eslint-disable no-script-url -- required for testing */
-	var settersTestData = {
-	  protocol: [{
-	    comment: 'The empty string is not a valid scheme. Setter leaves the URL unchanged.',
-	    href: 'a://example.net',
-	    newValue: '',
-	    expected: {
-	      href: 'a://example.net',
-	      protocol: 'a:'
-	    }
-	  }, {
-	    href: 'a://example.net',
-	    newValue: 'b',
-	    expected: {
-	      href: 'b://example.net',
-	      protocol: 'b:'
-	    }
-	  }, {
-	    href: 'javascript:alert(1)',
-	    newValue: 'defuse',
-	    expected: {
-	      href: 'defuse:alert(1)',
-	      protocol: 'defuse:'
-	    }
-	  }, {
-	    comment: 'Upper-case ASCII is lower-cased',
-	    href: 'a://example.net',
-	    newValue: 'B',
-	    expected: {
-	      href: 'b://example.net',
-	      protocol: 'b:'
-	    }
-	  }, {
-	    comment: 'Non-ASCII is rejected',
-	    href: 'a://example.net',
-	    newValue: 'é',
-	    expected: {
-	      href: 'a://example.net',
-	      protocol: 'a:'
-	    }
-	  }, {
-	    comment: 'No leading digit',
-	    href: 'a://example.net',
-	    newValue: '0b',
-	    expected: {
-	      href: 'a://example.net',
-	      protocol: 'a:'
-	    }
-	  }, {
-	    comment: 'No leading punctuation',
-	    href: 'a://example.net',
-	    newValue: '+b',
-	    expected: {
-	      href: 'a://example.net',
-	      protocol: 'a:'
-	    }
-	  }, {
-	    href: 'a://example.net',
-	    newValue: 'bC0+-.',
-	    expected: {
-	      href: 'bc0+-.://example.net',
-	      protocol: 'bc0+-.:'
-	    }
-	  }, {
-	    comment: 'Only some punctuation is acceptable',
-	    href: 'a://example.net',
-	    newValue: 'b,c',
-	    expected: {
-	      href: 'a://example.net',
-	      protocol: 'a:'
-	    }
-	  }, {
-	    comment: 'Non-ASCII is rejected',
-	    href: 'a://example.net',
-	    newValue: 'bé',
-	    expected: {
-	      href: 'a://example.net',
-	      protocol: 'a:'
-	    }
-	  }, {
-	    comment: 'Can’t switch from URL containing username/password/port to file',
-	    href: 'http://test@example.net',
-	    newValue: 'file',
-	    expected: {
-	      href: 'http://test@example.net/',
-	      protocol: 'http:'
-	    }
-	  }, {
-	    href: 'wss://x:x@example.net:1234',
-	    newValue: 'file',
-	    expected: {
-	      href: 'wss://x:x@example.net:1234/',
-	      protocol: 'wss:'
-	    }
-	  }, {
-	    comment: 'Can’t switch from file URL with no host',
-	    href: 'file://localhost/',
-	    newValue: 'http',
-	    expected: {
-	      href: 'file:///',
-	      protocol: 'file:'
-	    }
-	  }, {
-	    href: 'file:',
-	    newValue: 'wss',
-	    expected: {
-	      href: 'file:///',
-	      protocol: 'file:'
-	    }
-	  }, {
-	    comment: 'Can’t switch from special scheme to non-special',
-	    href: 'http://example.net',
-	    newValue: 'b',
-	    expected: {
-	      href: 'http://example.net/',
-	      protocol: 'http:'
-	    }
-	  }, {
-	    href: 'file://hi/path',
-	    newValue: 's',
-	    expected: {
-	      href: 'file://hi/path',
-	      protocol: 'file:'
-	    }
-	  }, {
-	    href: 'https://example.net',
-	    newValue: 's',
-	    expected: {
-	      href: 'https://example.net/',
-	      protocol: 'https:'
-	    }
-	  }, {
-	    href: 'ftp://example.net',
-	    newValue: 'test',
-	    expected: {
-	      href: 'ftp://example.net/',
-	      protocol: 'ftp:'
-	    }
-	  }, {
-	    comment: 'Cannot-be-a-base URL doesn’t have a host, but URL in a special scheme must.',
-	    href: 'mailto:me@example.net',
-	    newValue: 'http',
-	    expected: {
-	      href: 'mailto:me@example.net',
-	      protocol: 'mailto:'
-	    }
-	  }, {
-	    comment: 'Can’t switch from non-special scheme to special',
-	    href: 'ssh://me@example.net',
-	    newValue: 'http',
-	    expected: {
-	      href: 'ssh://me@example.net',
-	      protocol: 'ssh:'
-	    }
-	  }, {
-	    href: 'ssh://me@example.net',
-	    newValue: 'file',
-	    expected: {
-	      href: 'ssh://me@example.net',
-	      protocol: 'ssh:'
-	    }
-	  }, {
-	    href: 'ssh://example.net',
-	    newValue: 'file',
-	    expected: {
-	      href: 'ssh://example.net',
-	      protocol: 'ssh:'
-	    }
-	  }, {
-	    href: 'nonsense:///test',
-	    newValue: 'https',
-	    expected: {
-	      href: 'nonsense:///test',
-	      protocol: 'nonsense:'
-	    }
-	  }, {
-	    comment: "Stuff after the first ':' is ignored",
-	    href: 'http://example.net',
-	    newValue: 'https:foo : bar',
-	    expected: {
-	      href: 'https://example.net/',
-	      protocol: 'https:'
-	    }
-	  }, {
-	    comment: "Stuff after the first ':' is ignored",
-	    href: 'data:text/html,<p>Test',
-	    newValue: 'view-source+data:foo : bar',
-	    expected: {
-	      href: 'view-source+data:text/html,<p>Test',
-	      protocol: 'view-source+data:'
-	    }
-	  }, {
-	    comment: 'Port is set to null if it is the default for new scheme.',
-	    href: 'http://foo.com:443/',
-	    newValue: 'https',
-	    expected: {
-	      href: 'https://foo.com/',
-	      protocol: 'https:',
-	      port: ''
-	    }
-	  }],
-	  username: [{
-	    comment: 'No host means no username',
-	    href: 'file:///home/you/index.html',
-	    newValue: 'me',
-	    expected: {
-	      href: 'file:///home/you/index.html',
-	      username: ''
-	    }
-	  }, {
-	    comment: 'No host means no username',
-	    href: 'unix:/run/foo.socket',
-	    newValue: 'me',
-	    expected: {
-	      href: 'unix:/run/foo.socket',
-	      username: ''
-	    }
-	  }, {
-	    comment: 'Cannot-be-a-base means no username',
-	    href: 'mailto:you@example.net',
-	    newValue: 'me',
-	    expected: {
-	      href: 'mailto:you@example.net',
-	      username: ''
-	    }
-	  }, {
-	    href: 'javascript:alert(1)',
-	    newValue: 'wario',
-	    expected: {
-	      href: 'javascript:alert(1)',
-	      username: ''
-	    }
-	  }, {
-	    href: 'http://example.net',
-	    newValue: 'me',
-	    expected: {
-	      href: 'http://me@example.net/',
-	      username: 'me'
-	    }
-	  }, {
-	    href: 'http://:secret@example.net',
-	    newValue: 'me',
-	    expected: {
-	      href: 'http://me:secret@example.net/',
-	      username: 'me'
-	    }
-	  }, {
-	    href: 'http://me@example.net',
-	    newValue: '',
-	    expected: {
-	      href: 'http://example.net/',
-	      username: ''
-	    }
-	  }, {
-	    href: 'http://me:secret@example.net',
-	    newValue: '',
-	    expected: {
-	      href: 'http://:secret@example.net/',
-	      username: ''
-	    }
-	  }, {
-	    comment: 'UTF-8 percent encoding with the userinfo encode set.',
-	    href: 'http://example.net',
-	    newValue: "\0\x01\t\n\r\x1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7F\x80\x81\xC9\xE9",
-	    expected: {
-	      href: "http://%00%01%09%0A%0D%1F%20!%22%23$%&'()*+,-.%2F09%3A%3B%3C%3D%3E%3F%40AZ%5B%5C%5D%5E_%60az%7B%7C%7D~%7F%C2%80%C2%81%C3%89%C3%A9@example.net/",
-	      username: "%00%01%09%0A%0D%1F%20!%22%23$%&'()*+,-.%2F09%3A%3B%3C%3D%3E%3F%40AZ%5B%5C%5D%5E_%60az%7B%7C%7D~%7F%C2%80%C2%81%C3%89%C3%A9"
-	    }
-	  }, {
-	    comment: 'Bytes already percent-encoded are left as-is.',
-	    href: 'http://example.net',
-	    newValue: '%c3%89té',
-	    expected: {
-	      href: 'http://%c3%89t%C3%A9@example.net/',
-	      username: '%c3%89t%C3%A9'
-	    }
-	  }, {
-	    href: 'sc:///',
-	    newValue: 'x',
-	    expected: {
-	      href: 'sc:///',
-	      username: ''
-	    }
-	  }, {
-	    href: 'javascript://x/',
-	    newValue: 'wario',
-	    expected: {
-	      href: 'javascript://wario@x/',
-	      username: 'wario'
-	    }
-	  }, {
-	    href: 'file://test/',
-	    newValue: 'test',
-	    expected: {
-	      href: 'file://test/',
-	      username: ''
-	    }
-	  }],
-	  password: [{
-	    comment: 'No host means no password',
-	    href: 'file:///home/me/index.html',
-	    newValue: 'secret',
-	    expected: {
-	      href: 'file:///home/me/index.html',
-	      password: ''
-	    }
-	  }, {
-	    comment: 'No host means no password',
-	    href: 'unix:/run/foo.socket',
-	    newValue: 'secret',
-	    expected: {
-	      href: 'unix:/run/foo.socket',
-	      password: ''
-	    }
-	  }, {
-	    comment: 'Cannot-be-a-base means no password',
-	    href: 'mailto:me@example.net',
-	    newValue: 'secret',
-	    expected: {
-	      href: 'mailto:me@example.net',
-	      password: ''
-	    }
-	  }, {
-	    href: 'http://example.net',
-	    newValue: 'secret',
-	    expected: {
-	      href: 'http://:secret@example.net/',
-	      password: 'secret'
-	    }
-	  }, {
-	    href: 'http://me@example.net',
-	    newValue: 'secret',
-	    expected: {
-	      href: 'http://me:secret@example.net/',
-	      password: 'secret'
-	    }
-	  }, {
-	    href: 'http://:secret@example.net',
-	    newValue: '',
-	    expected: {
-	      href: 'http://example.net/',
-	      password: ''
-	    }
-	  }, {
-	    href: 'http://me:secret@example.net',
-	    newValue: '',
-	    expected: {
-	      href: 'http://me@example.net/',
-	      password: ''
-	    }
-	  }, {
-	    comment: 'UTF-8 percent encoding with the userinfo encode set.',
-	    href: 'http://example.net',
-	    newValue: "\0\x01\t\n\r\x1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7F\x80\x81\xC9\xE9",
-	    expected: {
-	      href: "http://:%00%01%09%0A%0D%1F%20!%22%23$%&'()*+,-.%2F09%3A%3B%3C%3D%3E%3F%40AZ%5B%5C%5D%5E_%60az%7B%7C%7D~%7F%C2%80%C2%81%C3%89%C3%A9@example.net/",
-	      password: "%00%01%09%0A%0D%1F%20!%22%23$%&'()*+,-.%2F09%3A%3B%3C%3D%3E%3F%40AZ%5B%5C%5D%5E_%60az%7B%7C%7D~%7F%C2%80%C2%81%C3%89%C3%A9"
-	    }
-	  }, {
-	    comment: 'Bytes already percent-encoded are left as-is.',
-	    href: 'http://example.net',
-	    newValue: '%c3%89té',
-	    expected: {
-	      href: 'http://:%c3%89t%C3%A9@example.net/',
-	      password: '%c3%89t%C3%A9'
-	    }
-	  }, {
-	    href: 'sc:///',
-	    newValue: 'x',
-	    expected: {
-	      href: 'sc:///',
-	      password: ''
-	    }
-	  }, {
-	    href: 'javascript://x/',
-	    newValue: 'bowser',
-	    expected: {
-	      href: 'javascript://:bowser@x/',
-	      password: 'bowser'
-	    }
-	  }, {
-	    href: 'file://test/',
-	    newValue: 'test',
-	    expected: {
-	      href: 'file://test/',
-	      password: ''
-	    }
-	  }],
-	  host: [{
-	    comment: 'Non-special scheme',
-	    href: 'sc://x/',
-	    newValue: "\0",
-	    expected: {
-	      href: 'sc://x/',
-	      host: 'x',
-	      hostname: 'x'
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: "\t",
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: "\n",
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: "\r",
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: ' ',
-	    expected: {
-	      href: 'sc://x/',
-	      host: 'x',
-	      hostname: 'x'
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: '#',
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: '/',
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: '?',
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: '@',
-	    expected: {
-	      href: 'sc://x/',
-	      host: 'x',
-	      hostname: 'x'
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: 'ß',
-	    expected: {
-	      href: 'sc://%C3%9F/',
-	      host: '%C3%9F',
-	      hostname: '%C3%9F'
-	    }
-	  }, {
-	    comment: 'IDNA Nontransitional_Processing',
-	    href: 'https://x/',
-	    newValue: 'ß',
-	    expected: {
-	      href: 'https://xn--zca/',
-	      host: 'xn--zca',
-	      hostname: 'xn--zca'
-	    }
-	  }, {
-	    comment: 'Cannot-be-a-base means no host',
-	    href: 'mailto:me@example.net',
-	    newValue: 'example.com',
-	    expected: {
-	      href: 'mailto:me@example.net',
-	      host: ''
-	    }
-	  }, {
-	    comment: 'Cannot-be-a-base means no password',
-	    href: 'data:text/plain,Stuff',
-	    newValue: 'example.net',
-	    expected: {
-	      href: 'data:text/plain,Stuff',
-	      host: ''
-	    }
-	  }, {
-	    href: 'http://example.net',
-	    newValue: 'example.com:8080',
-	    expected: {
-	      href: 'http://example.com:8080/',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Port number is unchanged if not specified in the new value',
-	    href: 'http://example.net:8080',
-	    newValue: 'example.com',
-	    expected: {
-	      href: 'http://example.com:8080/',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Port number is unchanged if not specified',
-	    href: 'http://example.net:8080',
-	    newValue: 'example.com:',
-	    expected: {
-	      href: 'http://example.com:8080/',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'The empty host is not valid for special schemes',
-	    href: 'http://example.net',
-	    newValue: '',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net'
-	    }
-	  }, {
-	    comment: 'The empty host is OK for non-special schemes',
-	    href: 'view-source+http://example.net/foo',
-	    newValue: '',
-	    expected: {
-	      href: 'view-source+http:///foo',
-	      host: ''
-	    }
-	  }, {
-	    comment: 'Path-only URLs can gain a host',
-	    href: 'a:/foo',
-	    newValue: 'example.net',
-	    expected: {
-	      href: 'a://example.net/foo',
-	      host: 'example.net'
-	    }
-	  }, {
-	    comment: 'IPv4 address syntax is normalized',
-	    href: 'http://example.net',
-	    newValue: '0x7F000001:8080',
-	    expected: {
-	      href: 'http://127.0.0.1:8080/',
-	      host: '127.0.0.1:8080',
-	      hostname: '127.0.0.1',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'IPv6 address syntax is normalized',
-	    href: 'http://example.net',
-	    newValue: '[::0:01]:2',
-	    expected: {
-	      href: 'http://[::1]:2/',
-	      host: '[::1]:2',
-	      hostname: '[::1]',
-	      port: '2'
-	    }
-	  }, {
-	    comment: 'Default port number is removed',
-	    href: 'http://example.net',
-	    newValue: 'example.com:80',
-	    expected: {
-	      href: 'http://example.com/',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Default port number is removed',
-	    href: 'https://example.net',
-	    newValue: 'example.com:443',
-	    expected: {
-	      href: 'https://example.com/',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Default port number is only removed for the relevant scheme',
-	    href: 'https://example.net',
-	    newValue: 'example.com:80',
-	    expected: {
-	      href: 'https://example.com:80/',
-	      host: 'example.com:80',
-	      hostname: 'example.com',
-	      port: '80'
-	    }
-	  }, {
-	    comment: 'Port number is removed if new port is scheme default and existing URL has a non-default port',
-	    href: 'http://example.net:8080',
-	    newValue: 'example.com:80',
-	    expected: {
-	      href: 'http://example.com/',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Stuff after a / delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com/stuff',
-	    expected: {
-	      href: 'http://example.com/path',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Stuff after a / delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com:8080/stuff',
-	    expected: {
-	      href: 'http://example.com:8080/path',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Stuff after a ? delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com?stuff',
-	    expected: {
-	      href: 'http://example.com/path',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Stuff after a ? delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com:8080?stuff',
-	    expected: {
-	      href: 'http://example.com:8080/path',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Stuff after a # delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com#stuff',
-	    expected: {
-	      href: 'http://example.com/path',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Stuff after a # delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com:8080#stuff',
-	    expected: {
-	      href: 'http://example.com:8080/path',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Stuff after a \\ delimiter is ignored for special schemes',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com\\stuff',
-	    expected: {
-	      href: 'http://example.com/path',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Stuff after a \\ delimiter is ignored for special schemes',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com:8080\\stuff',
-	    expected: {
-	      href: 'http://example.com:8080/path',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: '\\ is not a delimiter for non-special schemes, but still forbidden in hosts',
-	    href: 'view-source+http://example.net/path',
-	    newValue: 'example.com\\stuff',
-	    expected: {
-	      href: 'view-source+http://example.net/path',
-	      host: 'example.net',
-	      hostname: 'example.net',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Anything other than ASCII digit stops the port parser in a setter but is not an error',
-	    href: 'view-source+http://example.net/path',
-	    newValue: 'example.com:8080stuff2',
-	    expected: {
-	      href: 'view-source+http://example.com:8080/path',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Anything other than ASCII digit stops the port parser in a setter but is not an error',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com:8080stuff2',
-	    expected: {
-	      href: 'http://example.com:8080/path',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Anything other than ASCII digit stops the port parser in a setter but is not an error',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com:8080+2',
-	    expected: {
-	      href: 'http://example.com:8080/path',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Port numbers are 16 bit integers',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com:65535',
-	    expected: {
-	      href: 'http://example.com:65535/path',
-	      host: 'example.com:65535',
-	      hostname: 'example.com',
-	      port: '65535'
-	    }
-	  }, {
-	    comment: 'Port numbers are 16 bit integers, overflowing is an error. Hostname is still set, though.',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com:65536',
-	    expected: {
-	      href: 'http://example.com/path',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Broken IPv6',
-	    href: 'http://example.net/',
-	    newValue: '[google.com]',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net'
-	    }
-	  }, {
-	    href: 'http://example.net/',
-	    newValue: '[::1.2.3.4x]',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net'
-	    }
-	  }, {
-	    href: 'http://example.net/',
-	    newValue: '[::1.2.3.]',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net'
-	    }
-	  }, {
-	    href: 'http://example.net/',
-	    newValue: '[::1.2.]',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net'
-	    }
-	  }, {
-	    href: 'http://example.net/',
-	    newValue: '[::1.]',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net'
-	    }
-	  }, {
-	    href: 'file://y/',
-	    newValue: 'x:123',
-	    expected: {
-	      href: 'file://y/',
-	      host: 'y',
-	      hostname: 'y',
-	      port: ''
-	    }
-	  }, {
-	    href: 'file://y/',
-	    newValue: 'loc%41lhost',
-	    expected: {
-	      href: 'file:///',
-	      host: '',
-	      hostname: '',
-	      port: ''
-	    }
-	  }, {
-	    href: 'file://hi/x',
-	    newValue: '',
-	    expected: {
-	      href: 'file:///x',
-	      host: '',
-	      hostname: '',
-	      port: ''
-	    }
-	  }, {
-	    href: 'sc://test@test/',
-	    newValue: '',
-	    expected: {
-	      href: 'sc://test@test/',
-	      host: 'test',
-	      hostname: 'test',
-	      username: 'test'
-	    }
-	  }, {
-	    href: 'sc://test:12/',
-	    newValue: '',
-	    expected: {
-	      href: 'sc://test:12/',
-	      host: 'test:12',
-	      hostname: 'test',
-	      port: '12'
-	    }
-	  }],
-	  hostname: [{
-	    comment: 'Non-special scheme',
-	    href: 'sc://x/',
-	    newValue: "\0",
-	    expected: {
-	      href: 'sc://x/',
-	      host: 'x',
-	      hostname: 'x'
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: "\t",
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: "\n",
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: "\r",
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: ' ',
-	    expected: {
-	      href: 'sc://x/',
-	      host: 'x',
-	      hostname: 'x'
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: '#',
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: '/',
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: '?',
-	    expected: {
-	      href: 'sc:///',
-	      host: '',
-	      hostname: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: '@',
-	    expected: {
-	      href: 'sc://x/',
-	      host: 'x',
-	      hostname: 'x'
-	    }
-	  }, {
-	    comment: 'Cannot-be-a-base means no host',
-	    href: 'mailto:me@example.net',
-	    newValue: 'example.com',
-	    expected: {
-	      href: 'mailto:me@example.net',
-	      host: ''
-	    }
-	  }, {
-	    comment: 'Cannot-be-a-base means no password',
-	    href: 'data:text/plain,Stuff',
-	    newValue: 'example.net',
-	    expected: {
-	      href: 'data:text/plain,Stuff',
-	      host: ''
-	    }
-	  }, {
-	    href: 'http://example.net:8080',
-	    newValue: 'example.com',
-	    expected: {
-	      href: 'http://example.com:8080/',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'The empty host is not valid for special schemes',
-	    href: 'http://example.net',
-	    newValue: '',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net'
-	    }
-	  }, {
-	    comment: 'The empty host is OK for non-special schemes',
-	    href: 'view-source+http://example.net/foo',
-	    newValue: '',
-	    expected: {
-	      href: 'view-source+http:///foo',
-	      host: ''
-	    }
-	  }, {
-	    comment: 'Path-only URLs can gain a host',
-	    href: 'a:/foo',
-	    newValue: 'example.net',
-	    expected: {
-	      href: 'a://example.net/foo',
-	      host: 'example.net'
-	    }
-	  }, {
-	    comment: 'IPv4 address syntax is normalized',
-	    href: 'http://example.net:8080',
-	    newValue: '0x7F000001',
-	    expected: {
-	      href: 'http://127.0.0.1:8080/',
-	      host: '127.0.0.1:8080',
-	      hostname: '127.0.0.1',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'IPv6 address syntax is normalized',
-	    href: 'http://example.net',
-	    newValue: '[::0:01]',
-	    expected: {
-	      href: 'http://[::1]/',
-	      host: '[::1]',
-	      hostname: '[::1]',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Stuff after a : delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com:8080',
-	    expected: {
-	      href: 'http://example.com/path',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Stuff after a : delimiter is ignored',
-	    href: 'http://example.net:8080/path',
-	    newValue: 'example.com:',
-	    expected: {
-	      href: 'http://example.com:8080/path',
-	      host: 'example.com:8080',
-	      hostname: 'example.com',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Stuff after a / delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com/stuff',
-	    expected: {
-	      href: 'http://example.com/path',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Stuff after a ? delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com?stuff',
-	    expected: {
-	      href: 'http://example.com/path',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Stuff after a # delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com#stuff',
-	    expected: {
-	      href: 'http://example.com/path',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Stuff after a \\ delimiter is ignored for special schemes',
-	    href: 'http://example.net/path',
-	    newValue: 'example.com\\stuff',
-	    expected: {
-	      href: 'http://example.com/path',
-	      host: 'example.com',
-	      hostname: 'example.com',
-	      port: ''
-	    }
-	  }, {
-	    comment: '\\ is not a delimiter for non-special schemes, but still forbidden in hosts',
-	    href: 'view-source+http://example.net/path',
-	    newValue: 'example.com\\stuff',
-	    expected: {
-	      href: 'view-source+http://example.net/path',
-	      host: 'example.net',
-	      hostname: 'example.net',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Broken IPv6',
-	    href: 'http://example.net/',
-	    newValue: '[google.com]',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net'
-	    }
-	  }, {
-	    href: 'http://example.net/',
-	    newValue: '[::1.2.3.4x]',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net'
-	    }
-	  }, {
-	    href: 'http://example.net/',
-	    newValue: '[::1.2.3.]',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net'
-	    }
-	  }, {
-	    href: 'http://example.net/',
-	    newValue: '[::1.2.]',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net'
-	    }
-	  }, {
-	    href: 'http://example.net/',
-	    newValue: '[::1.]',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net'
-	    }
-	  }, {
-	    href: 'file://y/',
-	    newValue: 'x:123',
-	    expected: {
-	      href: 'file://y/',
-	      host: 'y',
-	      hostname: 'y',
-	      port: ''
-	    }
-	  }, {
-	    href: 'file://y/',
-	    newValue: 'loc%41lhost',
-	    expected: {
-	      href: 'file:///',
-	      host: '',
-	      hostname: '',
-	      port: ''
-	    }
-	  }, {
-	    href: 'file://hi/x',
-	    newValue: '',
-	    expected: {
-	      href: 'file:///x',
-	      host: '',
-	      hostname: '',
-	      port: ''
-	    }
-	  }, {
-	    href: 'sc://test@test/',
-	    newValue: '',
-	    expected: {
-	      href: 'sc://test@test/',
-	      host: 'test',
-	      hostname: 'test',
-	      username: 'test'
-	    }
-	  }, {
-	    href: 'sc://test:12/',
-	    newValue: '',
-	    expected: {
-	      href: 'sc://test:12/',
-	      host: 'test:12',
-	      hostname: 'test',
-	      port: '12'
-	    }
-	  }],
-	  port: [{
-	    href: 'http://example.net',
-	    newValue: '8080',
-	    expected: {
-	      href: 'http://example.net:8080/',
-	      host: 'example.net:8080',
-	      hostname: 'example.net',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Port number is removed if empty is the new value',
-	    href: 'http://example.net:8080',
-	    newValue: '',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Default port number is removed',
-	    href: 'http://example.net:8080',
-	    newValue: '80',
-	    expected: {
-	      href: 'http://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Default port number is removed',
-	    href: 'https://example.net:4433',
-	    newValue: '443',
-	    expected: {
-	      href: 'https://example.net/',
-	      host: 'example.net',
-	      hostname: 'example.net',
-	      port: ''
-	    }
-	  }, {
-	    comment: 'Default port number is only removed for the relevant scheme',
-	    href: 'https://example.net',
-	    newValue: '80',
-	    expected: {
-	      href: 'https://example.net:80/',
-	      host: 'example.net:80',
-	      hostname: 'example.net',
-	      port: '80'
-	    }
-	  }, {
-	    comment: 'Stuff after a / delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: '8080/stuff',
-	    expected: {
-	      href: 'http://example.net:8080/path',
-	      host: 'example.net:8080',
-	      hostname: 'example.net',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Stuff after a ? delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: '8080?stuff',
-	    expected: {
-	      href: 'http://example.net:8080/path',
-	      host: 'example.net:8080',
-	      hostname: 'example.net',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Stuff after a # delimiter is ignored',
-	    href: 'http://example.net/path',
-	    newValue: '8080#stuff',
-	    expected: {
-	      href: 'http://example.net:8080/path',
-	      host: 'example.net:8080',
-	      hostname: 'example.net',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Stuff after a \\ delimiter is ignored for special schemes',
-	    href: 'http://example.net/path',
-	    newValue: '8080\\stuff',
-	    expected: {
-	      href: 'http://example.net:8080/path',
-	      host: 'example.net:8080',
-	      hostname: 'example.net',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Anything other than ASCII digit stops the port parser in a setter but is not an error',
-	    href: 'view-source+http://example.net/path',
-	    newValue: '8080stuff2',
-	    expected: {
-	      href: 'view-source+http://example.net:8080/path',
-	      host: 'example.net:8080',
-	      hostname: 'example.net',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Anything other than ASCII digit stops the port parser in a setter but is not an error',
-	    href: 'http://example.net/path',
-	    newValue: '8080stuff2',
-	    expected: {
-	      href: 'http://example.net:8080/path',
-	      host: 'example.net:8080',
-	      hostname: 'example.net',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Anything other than ASCII digit stops the port parser in a setter but is not an error',
-	    href: 'http://example.net/path',
-	    newValue: '8080+2',
-	    expected: {
-	      href: 'http://example.net:8080/path',
-	      host: 'example.net:8080',
-	      hostname: 'example.net',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Port numbers are 16 bit integers',
-	    href: 'http://example.net/path',
-	    newValue: '65535',
-	    expected: {
-	      href: 'http://example.net:65535/path',
-	      host: 'example.net:65535',
-	      hostname: 'example.net',
-	      port: '65535'
-	    }
-	  }, {
-	    comment: 'Port numbers are 16 bit integers, overflowing is an error',
-	    href: 'http://example.net:8080/path',
-	    newValue: '65536',
-	    expected: {
-	      href: 'http://example.net:8080/path',
-	      host: 'example.net:8080',
-	      hostname: 'example.net',
-	      port: '8080'
-	    }
-	  }, {
-	    comment: 'Port numbers are 16 bit integers, overflowing is an error',
-	    href: 'non-special://example.net:8080/path',
-	    newValue: '65536',
-	    expected: {
-	      href: 'non-special://example.net:8080/path',
-	      host: 'example.net:8080',
-	      hostname: 'example.net',
-	      port: '8080'
-	    }
-	  }, {
-	    href: 'file://test/',
-	    newValue: '12',
-	    expected: {
-	      href: 'file://test/',
-	      port: ''
-	    }
-	  }, {
-	    href: 'file://localhost/',
-	    newValue: '12',
-	    expected: {
-	      href: 'file:///',
-	      port: ''
-	    }
-	  }, {
-	    href: 'non-base:value',
-	    newValue: '12',
-	    expected: {
-	      href: 'non-base:value',
-	      port: ''
-	    }
-	  }, {
-	    href: 'sc:///',
-	    newValue: '12',
-	    expected: {
-	      href: 'sc:///',
-	      port: ''
-	    }
-	  }, {
-	    href: 'sc://x/',
-	    newValue: '12',
-	    expected: {
-	      href: 'sc://x:12/',
-	      port: '12'
-	    }
-	  }, {
-	    href: 'javascript://x/',
-	    newValue: '12',
-	    expected: {
-	      href: 'javascript://x:12/',
-	      port: '12'
-	    }
-	  }],
-	  pathname: [{
-	    comment: 'Cannot-be-a-base don’t have a path',
-	    href: 'mailto:me@example.net',
-	    newValue: '/foo',
-	    expected: {
-	      href: 'mailto:me@example.net',
-	      pathname: 'me@example.net'
-	    }
-	  }, {
-	    href: 'unix:/run/foo.socket?timeout=10',
-	    newValue: '/var/log/../run/bar.socket',
-	    expected: {
-	      href: 'unix:/var/run/bar.socket?timeout=10',
-	      pathname: '/var/run/bar.socket'
-	    }
-	  }, {
-	    href: 'https://example.net#nav',
-	    newValue: 'home',
-	    expected: {
-	      href: 'https://example.net/home#nav',
-	      pathname: '/home'
-	    }
-	  }, {
-	    href: 'https://example.net#nav',
-	    newValue: '../home',
-	    expected: {
-	      href: 'https://example.net/home#nav',
-	      pathname: '/home'
-	    }
-	  }, {
-	    comment: "\\ is a segment delimiter for 'special' URLs",
-	    href: 'http://example.net/home?lang=fr#nav',
-	    newValue: '\\a\\%2E\\b\\%2e.\\c',
-	    expected: {
-	      href: 'http://example.net/a/c?lang=fr#nav',
-	      pathname: '/a/c'
-	    }
-	  }, {
-	    comment: "\\ is *not* a segment delimiter for non-'special' URLs",
-	    href: 'view-source+http://example.net/home?lang=fr#nav',
-	    newValue: '\\a\\%2E\\b\\%2e.\\c',
-	    expected: {
-	      href: 'view-source+http://example.net/\\a\\%2E\\b\\%2e.\\c?lang=fr#nav',
-	      pathname: '/\\a\\%2E\\b\\%2e.\\c'
-	    }
-	  }, {
-	    comment: 'UTF-8 percent encoding with the default encode set. Tabs and newlines are removed.',
-	    href: 'a:/',
-	    newValue: "\0\x01\t\n\r\x1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7F\x80\x81\xC9\xE9",
-	    expected: {
-	      href: "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9",
-	      pathname: "/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9"
-	    }
-	  }, {
-	    comment: 'Bytes already percent-encoded are left as-is, including %2E outside dotted segments.',
-	    href: 'http://example.net',
-	    newValue: '%2e%2E%c3%89té',
-	    expected: {
-	      href: 'http://example.net/%2e%2E%c3%89t%C3%A9',
-	      pathname: '/%2e%2E%c3%89t%C3%A9'
-	    }
-	  }, {
-	    comment: '? needs to be encoded',
-	    href: 'http://example.net',
-	    newValue: '?',
-	    expected: {
-	      href: 'http://example.net/%3F',
-	      pathname: '/%3F'
-	    }
-	  }, {
-	    comment: '# needs to be encoded',
-	    href: 'http://example.net',
-	    newValue: '#',
-	    expected: {
-	      href: 'http://example.net/%23',
-	      pathname: '/%23'
-	    }
-	  }, {
-	    comment: '? needs to be encoded, non-special scheme',
-	    href: 'sc://example.net',
-	    newValue: '?',
-	    expected: {
-	      href: 'sc://example.net/%3F',
-	      pathname: '/%3F'
-	    }
-	  }, {
-	    comment: '# needs to be encoded, non-special scheme',
-	    href: 'sc://example.net',
-	    newValue: '#',
-	    expected: {
-	      href: 'sc://example.net/%23',
-	      pathname: '/%23'
-	    }
-	  }, {
-	    comment: 'File URLs and (back)slashes',
-	    href: 'file://monkey/',
-	    newValue: '\\\\',
-	    expected: {
-	      href: 'file://monkey/',
-	      pathname: '/'
-	    }
-	  }, {
-	    comment: 'File URLs and (back)slashes',
-	    href: 'file:///unicorn',
-	    newValue: '//\\/',
-	    expected: {
-	      href: 'file:///',
-	      pathname: '/'
-	    }
-	  }, {
-	    comment: 'File URLs and (back)slashes',
-	    href: 'file:///unicorn',
-	    newValue: '//monkey/..//',
-	    expected: {
-	      href: 'file:///',
-	      pathname: '/'
-	    }
-	  }],
-	  search: [{
-	    href: 'https://example.net#nav',
-	    newValue: 'lang=fr',
-	    expected: {
-	      href: 'https://example.net/?lang=fr#nav',
-	      search: '?lang=fr'
-	    }
-	  }, {
-	    href: 'https://example.net?lang=en-US#nav',
-	    newValue: 'lang=fr',
-	    expected: {
-	      href: 'https://example.net/?lang=fr#nav',
-	      search: '?lang=fr'
-	    }
-	  }, {
-	    href: 'https://example.net?lang=en-US#nav',
-	    newValue: '?lang=fr',
-	    expected: {
-	      href: 'https://example.net/?lang=fr#nav',
-	      search: '?lang=fr'
-	    }
-	  }, {
-	    href: 'https://example.net?lang=en-US#nav',
-	    newValue: '??lang=fr',
-	    expected: {
-	      href: 'https://example.net/??lang=fr#nav',
-	      search: '??lang=fr'
-	    }
-	  }, {
-	    href: 'https://example.net?lang=en-US#nav',
-	    newValue: '?',
-	    expected: {
-	      href: 'https://example.net/?#nav',
-	      search: ''
-	    }
-	  }, {
-	    href: 'https://example.net?lang=en-US#nav',
-	    newValue: '',
-	    expected: {
-	      href: 'https://example.net/#nav',
-	      search: ''
-	    }
-	  }, {
-	    href: 'https://example.net?lang=en-US',
-	    newValue: '',
-	    expected: {
-	      href: 'https://example.net/',
-	      search: ''
-	    }
-	  }, {
-	    href: 'https://example.net',
-	    newValue: '',
-	    expected: {
-	      href: 'https://example.net/',
-	      search: ''
-	    }
-	  },
-	  /* URI malformed
-	  {
-	    comment: 'UTF-8 percent encoding with the query encode set. Tabs and newlines are removed.',
-	    href: 'a:/',
-	    newValue: "\u0000\u0001\t\n\r\u001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\u007f\u0080\u0081Éé",
-	    expected: {
-	      href: "a:/?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9",
-	      search: "?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9",
+	if (DESCRIPTORS) {
+	  QUnit.test('Symbols & descriptors', function (assert) {
+	    var d = _Symbol$5('d');
+	    var e = _Symbol$5('e');
+	    var f = _Symbol$5('f');
+	    var i = _Symbol$5('i');
+	    var j = _Symbol$5('j');
+	    var prototype = {
+	      g: 'g'
+	    };
+	    prototype[i] = 'i';
+	    Object.defineProperty(prototype, 'h', {
+	      value: 'h'
+	    });
+	    Object.defineProperty(prototype, 'j', {
+	      value: 'j'
+	    });
+	    var object = create(prototype);
+	    object.a = 'a';
+	    object[d] = 'd';
+	    Object.defineProperty(object, 'b', {
+	      value: 'b'
+	    });
+	    Object.defineProperty(object, 'c', {
+	      value: 'c',
+	      enumerable: true
+	    });
+	    Object.defineProperty(object, e, {
+	      configurable: true,
+	      writable: true,
+	      value: 'e'
+	    });
+	    var descriptor = {
+	      value: 'f',
+	      enumerable: true
+	    };
+	    Object.defineProperty(object, f, descriptor);
+	    assert.strictEqual(descriptor.enumerable, true, 'defineProperty not changes descriptor object');
+	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'a'), {
+	      configurable: true,
+	      writable: true,
+	      enumerable: true,
+	      value: 'a'
+	    }, 'getOwnPropertyDescriptor a');
+	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'b'), {
+	      configurable: false,
+	      writable: false,
+	      enumerable: false,
+	      value: 'b'
+	    }, 'getOwnPropertyDescriptor b');
+	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'c'), {
+	      configurable: false,
+	      writable: false,
+	      enumerable: true,
+	      value: 'c'
+	    }, 'getOwnPropertyDescriptor c');
+	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, d), {
+	      configurable: true,
+	      writable: true,
+	      enumerable: true,
+	      value: 'd'
+	    }, 'getOwnPropertyDescriptor d');
+	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
+	      configurable: true,
+	      writable: true,
+	      enumerable: false,
+	      value: 'e'
+	    }, 'getOwnPropertyDescriptor e');
+	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, f), {
+	      configurable: false,
+	      writable: false,
+	      enumerable: true,
+	      value: 'f'
+	    }, 'getOwnPropertyDescriptor f');
+	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'g'), undefined, 'getOwnPropertyDescriptor g');
+	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'h'), undefined, 'getOwnPropertyDescriptor h');
+	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, i), undefined, 'getOwnPropertyDescriptor i');
+	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, j), undefined, 'getOwnPropertyDescriptor j');
+	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'k'), undefined, 'getOwnPropertyDescriptor k');
+	    assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, 'toString').enumerable, false, 'getOwnPropertyDescriptor on Object.prototype');
+	    assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, d), undefined, 'getOwnPropertyDescriptor on Object.prototype missed symbol');
+	    assert.strictEqual(keys(object).length, 2, 'Object.keys');
+	    assert.strictEqual(Object.getOwnPropertyNames(object).length, 3, 'Object.getOwnPropertyNames');
+	    assert.strictEqual(Object.getOwnPropertySymbols(object).length, 3, 'Object.getOwnPropertySymbols');
+	    assert.strictEqual(ownKeys$4(object).length, 6, 'Reflect.ownKeys');
+	    delete object[e];
+	    object[e] = 'e';
+	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
+	      configurable: true,
+	      writable: true,
+	      enumerable: true,
+	      value: 'e'
+	    }, 'redefined non-enum key');
+	  });
+	  QUnit.test('Symbols & Object.defineProperties', function (assert) {
+	    var c = _Symbol$5('c');
+	    var d = _Symbol$5('d');
+	    var descriptors = {
+	      a: {
+	        value: 'a'
+	      }
+	    };
+	    descriptors[c] = {
+	      value: 'c'
+	    };
+	    Object.defineProperty(descriptors, 'b', {
+	      value: {
+	        value: 'b'
+	      }
+	    });
+	    Object.defineProperty(descriptors, d, {
+	      value: {
+	        value: 'd'
+	      }
+	    });
+	    var object = Object.defineProperties({}, descriptors);
+	    assert.strictEqual(object.a, 'a', 'a');
+	    assert.strictEqual(object.b, undefined, 'b');
+	    assert.strictEqual(object[c], 'c', 'c');
+	    assert.strictEqual(object[d], undefined, 'd');
+	  });
+	  QUnit.test('Symbols & Object.create', function (assert) {
+	    var c = _Symbol$5('c');
+	    var d = _Symbol$5('d');
+	    var descriptors = {
+	      a: {
+	        value: 'a'
+	      }
+	    };
+	    descriptors[c] = {
+	      value: 'c'
+	    };
+	    Object.defineProperty(descriptors, 'b', {
+	      value: {
+	        value: 'b'
+	      }
+	    });
+	    Object.defineProperty(descriptors, d, {
+	      value: {
+	        value: 'd'
+	      }
+	    });
+	    var object = create(null, descriptors);
+	    assert.strictEqual(object.a, 'a', 'a');
+	    assert.strictEqual(object.b, undefined, 'b');
+	    assert.strictEqual(object[c], 'c', 'c');
+	    assert.strictEqual(object[d], undefined, 'd');
+	  });
+	  var constructors = ['Map', 'Set', 'Promise'];
+	  var _loop2 = function (name) {
+	    QUnit.test(name + "@@species", function (assert) {
+	      assert.strictEqual(GLOBAL[name][_Symbol$5.species], GLOBAL[name], name + "@@species === " + name);
+	      var Subclass = create(GLOBAL[name]);
+	      assert.strictEqual(Subclass[_Symbol$5.species], Subclass, name + " subclass");
+	    });
+	  };
+	  for (var _i2 = 0, _constructors = constructors; _i2 < _constructors.length; _i2++) {
+	    var name = _constructors[_i2];
+	    _loop2(name);
+	  }
+	  QUnit.test('Array@@species', function (assert) {
+	    assert.strictEqual(Array[_Symbol$5.species], Array, 'Array@@species === Array');
+	    var Subclass = create(Array);
+	    assert.strictEqual(Subclass[_Symbol$5.species], Subclass, 'Array subclass');
+	  });
+	  QUnit.test('Symbol.sham flag', function (assert) {
+	    assert.same(_Symbol$5.sham, _typeof(_Symbol$5()) === 'symbol' ? undefined : true);
+	  });
+	}
+
+	QUnit.test('Symbol#description', function (assert) {
+	  assert.same(_Symbol$5('foo').description, 'foo');
+	  assert.same(_Symbol$5('').description, '');
+	  assert.same(_Symbol$5(')').description, ')');
+	  assert.same(_Symbol$5({}).description, '[object Object]');
+	  assert.same(_Symbol$5(null).description, 'null');
+	  assert.same(_Symbol$5(undefined).description, undefined);
+	  assert.same(_Symbol$5().description, undefined);
+	  assert.same(Object(_Symbol$5('foo')).description, 'foo');
+	  assert.same(Object(_Symbol$5()).description, undefined);
+	  // if (DESCRIPTORS) {
+	  //   assert.ok(!Object.prototype.hasOwnProperty.call(Symbol('foo'), 'description'));
+	  //   const descriptor = Object.getOwnPropertyDescriptor(Symbol.prototype, 'description');
+	  //   assert.same(descriptor.enumerable, false);
+	  //   assert.same(descriptor.configurable, true);
+	  //   assert.same(typeof descriptor.get, 'function');
+	  // }
+	  if (_typeof(_Symbol$5()) == 'symbol') {
+	    assert.same(_Symbol$5('foo').toString(), 'Symbol(foo)');
+	    assert.same(String(_Symbol$5('foo')), 'Symbol(foo)');
+	    assert.same(_Symbol$5('').toString(), 'Symbol()');
+	    assert.same(String(_Symbol$5('')), 'Symbol()');
+	    assert.same(_Symbol$5().toString(), 'Symbol()');
+	    assert.same(String(_Symbol$5()), 'Symbol()');
+	  }
+	});
+
+	QUnit.test('Symbol.asyncIterator', function (assert) {
+	  assert.ok('asyncIterator' in _Symbol$5, 'Symbol.asyncIterator available');
+	  if (DESCRIPTORS) {
+	    var descriptor = Object.getOwnPropertyDescriptor(_Symbol$5, 'asyncIterator');
+	    assert.ok(!descriptor.enumerble, 'non-enumerable');
+	    assert.ok(!descriptor.writable, 'non-writable');
+	    assert.ok(!descriptor.configurable, 'non-configurable');
+	  }
+	});
+
+	QUnit.test('Object.assign', function (assert) {
+	  assert.isFunction(Object.assign);
+	  assert.arity(Object.assign, 2);
+	  assert.name(Object.assign, 'assign');
+	  var object = {
+	    q: 1
+	  };
+	  assert.strictEqual(object, Object.assign(object, {
+	    bar: 2
+	  }), 'assign return target');
+	  assert.strictEqual(object.bar, 2, 'assign define properties');
+	  assert.deepEqual(Object.assign({}, {
+	    q: 1
+	  }, {
+	    w: 2
+	  }), {
+	    q: 1,
+	    w: 2
+	  });
+	  assert.deepEqual(Object.assign({}, 'qwe'), {
+	    0: 'q',
+	    1: 'w',
+	    2: 'e'
+	  });
+	  assert["throws"](function () {
+	    return Object.assign(null, {
+	      q: 1
+	    });
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return Object.assign(undefined, {
+	      q: 1
+	    });
+	  }, TypeError);
+	  var string = Object.assign('qwe', {
+	    q: 1
+	  });
+	  assert.strictEqual(_typeof(string), 'object');
+	  assert.strictEqual(String(string), 'qwe');
+	  assert.strictEqual(string.q, 1);
+	  assert.same(Object.assign({}, {
+	    valueOf: 42
+	  }).valueOf, 42, 'IE enum keys bug');
+	  if (DESCRIPTORS) {
+	    object = {
+	      baz: 1
+	    };
+	    Object.assign(object, Object.defineProperty({}, 'bar', {
+	      get: function () {
+	        return this.baz + 1;
+	      }
+	    }));
+	    assert.ok(object.bar === undefined, "assign don't copy descriptors");
+	    object = {
+	      a: 'a'
+	    };
+	    var c = _Symbol$5('c');
+	    var d = _Symbol$5('d');
+	    object[c] = 'c';
+	    Object.defineProperty(object, 'b', {
+	      value: 'b'
+	    });
+	    Object.defineProperty(object, d, {
+	      value: 'd'
+	    });
+	    var object2 = Object.assign({}, object);
+	    assert.strictEqual(object2.a, 'a', 'a');
+	    assert.strictEqual(object2.b, undefined, 'b');
+	    assert.strictEqual(object2[c], 'c', 'c');
+	    assert.strictEqual(object2[d], undefined, 'defineProperty 不允许使用Symbol');
+	    try {
+	      assert.strictEqual(Function('assign', "\n        return assign({ b: 1 }, { get a() {\n          delete this.b;\n        }, b: 2 });\n      ")(Object.assign).b, 1);
+	    } catch (_unused) {/* empty */}
+	    try {
+	      assert.strictEqual(Function('assign', "\n        return assign({ b: 1 }, { get a() {\n          Object.defineProperty(this, \"b\", {\n            value: 3,\n            enumerable: false\n          });\n        }, b: 2 });\n      ")(Object.assign).b, 1);
+	    } catch (_unused2) {/* empty */}
+	  }
+	  string = 'abcdefghijklmnopqrst';
+	  var result = {};
+	  for (var i = 0, _string = string, length = _string.length; i < length; ++i) {
+	    var _char = string.charAt(i);
+	    result[_char] = _char;
+	  }
+	  assert.strictEqual(Object.keys(Object.assign({}, result)).join(''), string);
+	});
+
+	if (!Object$1.getPrototypeOf) {
+	  Object$1.getPrototypeOf = getPrototypeOf$1;
+	}
+
+	QUnit.test('Object.create', function (assert) {
+	  function getPropertyNames(object) {
+	    var result = [];
+	    do {
+	      result = result.concat(Object.getOwnPropertyNames(object));
+	    } while (object = Object.getPrototypeOf(object));
+	    return result;
+	  }
+	  assert.isFunction(Object.create);
+	  assert.arity(Object.create, 2);
+	  assert.name(Object.create, 'create');
+	  var object = {
+	    q: 1
+	  };
+	  assert.ok({}.isPrototypeOf.call(object, Object.create(object)));
+	  assert.ok(Object.create(object).q === 1);
+	  function F() {
+	    return this.a = 1;
+	  }
+	  assert.ok(Object.create(new F()) instanceof F, "Object.create(new F())");
+	  assert.ok(F.prototype === Object.getPrototypeOf(Object.getPrototypeOf(Object.create(new F()))));
+	  assert.ok(Object.create(new F()).a === 1);
+	  assert.ok(Object.create({}, {
+	    a: {
+	      value: 42
+	    }
+	  }).a === 42);
+	  object = Object.create(null, {
+	    w: {
+	      value: 2
+	    }
+	  });
+	  assert.same(object, Object(object));
+	  assert.ok(!('toString' in object), "toString");
+	  assert.ok(object.w === 2);
+	  assert["throws"](function () {
+	    return String(object);
+	  }, "throws String({__proto__:null})");
+	  assert.deepEqual(getPropertyNames(Object.create(null)), []);
+	});
+	QUnit.test('Object.create.sham flag', function (assert) {
+	  assert.same(Object.create.sham, DESCRIPTORS ? undefined : true);
+	});
+
+	QUnit.test('Object.defineProperties', function (assert) {
+	  assert.isFunction(Object.defineProperties);
+	  assert.arity(Object.defineProperties, 2);
+	  assert.name(Object.defineProperties, 'defineProperties');
+	  var source = {};
+	  var result = Object.defineProperties(source, {
+	    q: {
+	      value: 42
 	    },
-	  },
-	  */
-	  {
-	    comment: 'Bytes already percent-encoded are left as-is',
-	    href: 'http://example.net',
-	    newValue: '%c3%89té',
-	    expected: {
-	      href: 'http://example.net/?%c3%89t%C3%A9',
-	      search: '?%c3%89t%C3%A9'
+	    w: {
+	      value: 33
 	    }
-	  }],
-	  hash: [{
-	    href: 'https://example.net',
-	    newValue: 'main',
-	    expected: {
-	      href: 'https://example.net/#main',
-	      hash: '#main'
-	    }
-	  }, {
-	    href: 'https://example.net#nav',
-	    newValue: 'main',
-	    expected: {
-	      href: 'https://example.net/#main',
-	      hash: '#main'
-	    }
-	  }, {
-	    href: 'https://example.net?lang=en-US',
-	    newValue: '##nav',
-	    expected: {
-	      href: 'https://example.net/?lang=en-US##nav',
-	      hash: '##nav'
-	    }
-	  }, {
-	    href: 'https://example.net?lang=en-US#nav',
-	    newValue: '#main',
-	    expected: {
-	      href: 'https://example.net/?lang=en-US#main',
-	      hash: '#main'
-	    }
-	  }, {
-	    href: 'https://example.net?lang=en-US#nav',
-	    newValue: '#',
-	    expected: {
-	      href: 'https://example.net/?lang=en-US#',
-	      hash: ''
-	    }
-	  }, {
-	    href: 'https://example.net?lang=en-US#nav',
-	    newValue: '',
-	    expected: {
-	      href: 'https://example.net/?lang=en-US',
-	      hash: ''
-	    }
-	  }, {
-	    href: 'http://example.net',
-	    newValue: '#foo bar',
-	    expected: {
-	      href: 'http://example.net/#foo%20bar',
-	      hash: '#foo%20bar'
-	    }
-	  }, {
-	    href: 'http://example.net',
-	    newValue: '#foo"bar',
-	    expected: {
-	      href: 'http://example.net/#foo%22bar',
-	      hash: '#foo%22bar'
-	    }
-	  }, {
-	    href: 'http://example.net',
-	    newValue: '#foo<bar',
-	    expected: {
-	      href: 'http://example.net/#foo%3Cbar',
-	      hash: '#foo%3Cbar'
-	    }
-	  }, {
-	    href: 'http://example.net',
-	    newValue: '#foo>bar',
-	    expected: {
-	      href: 'http://example.net/#foo%3Ebar',
-	      hash: '#foo%3Ebar'
-	    }
-	  }, {
-	    href: 'http://example.net',
-	    newValue: '#foo`bar',
-	    expected: {
-	      href: 'http://example.net/#foo%60bar',
-	      hash: '#foo%60bar'
-	    }
-	  }, {
-	    comment: 'Simple percent-encoding; nuls, tabs, and newlines are removed',
-	    href: 'a:/',
-	    newValue: "\0\x01\t\n\r\x1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x7F\x80\x81\xC9\xE9",
-	    expected: {
-	      href: "a:/#%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9",
-	      hash: "#%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
-	    }
-	  }, {
-	    comment: 'Bytes already percent-encoded are left as-is',
-	    href: 'http://example.net',
-	    newValue: '%c3%89té',
-	    expected: {
-	      href: 'http://example.net/#%c3%89t%C3%A9',
-	      hash: '#%c3%89t%C3%A9'
-	    }
-	  }, {
-	    href: 'javascript:alert(1)',
-	    newValue: 'castle',
-	    expected: {
-	      href: 'javascript:alert(1)#castle',
-	      hash: '#castle'
-	    }
-	  }]
-	};
+	  });
+	  assert.same(result, source);
+	  assert.same(result.q, 42);
+	  assert.same(result.w, 33);
+	});
 
-	/* eslint-disable max-len -- ignore */
-	var toASCIITestData = [{
-	  comment: 'Label with hyphens in 3rd and 4th position',
-	  input: 'aa--',
-	  output: 'aa--'
-	}, {
-	  input: 'a†--',
-	  output: 'xn--a---kp0a'
-	}, {
-	  input: 'ab--c',
-	  output: 'ab--c'
-	}, {
-	  comment: 'Label with leading hyphen',
-	  input: '-x',
-	  output: '-x'
-	}, {
-	  input: '-†',
-	  output: 'xn----xhn'
-	}, {
-	  input: '-x.xn--nxa',
-	  output: '-x.xn--nxa'
-	}, {
-	  input: '-x.β',
-	  output: '-x.xn--nxa'
-	}, {
-	  comment: 'Label with trailing hyphen',
-	  input: 'x-.xn--nxa',
-	  output: 'x-.xn--nxa'
-	}, {
-	  input: 'x-.β',
-	  output: 'x-.xn--nxa'
-	}, {
-	  comment: 'Empty labels',
-	  input: 'x..xn--nxa',
-	  output: 'x..xn--nxa'
-	}, {
-	  input: 'x..β',
-	  output: 'x..xn--nxa'
-	}, {
-	  comment: 'Invalid Punycode',
-	  input: 'xn--a',
-	  output: null
-	}, {
-	  input: 'xn--a.xn--nxa',
-	  output: null
-	}, {
-	  input: 'xn--a.β',
-	  output: null
-	}, {
-	  comment: 'Valid Punycode',
-	  input: 'xn--nxa.xn--nxa',
-	  output: 'xn--nxa.xn--nxa'
-	}, {
-	  comment: 'Mixed',
-	  input: 'xn--nxa.β',
-	  output: 'xn--nxa.xn--nxa'
-	}, {
-	  input: 'ab--c.xn--nxa',
-	  output: 'ab--c.xn--nxa'
-	}, {
-	  input: 'ab--c.β',
-	  output: 'ab--c.xn--nxa'
-	}, {
-	  comment: 'CheckJoiners is true',
-	  input: "\u200D.example",
-	  output: null
-	}, {
-	  input: 'xn--1ug.example',
-	  output: null
-	}, {
-	  comment: 'CheckBidi is true',
-	  input: 'يa',
-	  output: null
-	}, {
-	  input: 'xn--a-yoc',
-	  output: null
-	}, {
-	  comment: 'processing_option is Nontransitional_Processing',
-	  input: 'ශ්‍රී',
-	  output: 'xn--10cl1a0b660p'
-	}, {
-	  input: 'نامه‌ای',
-	  output: 'xn--mgba3gch31f060k'
-	}, {
-	  comment: 'U+FFFD',
-	  input: "\uFFFD.com",
-	  output: null
-	}, {
-	  comment: 'U+FFFD character encoded in Punycode',
-	  input: 'xn--zn7c.com',
-	  output: null
-	}, {
-	  comment: 'Label longer than 63 code points',
-	  input: 'x01234567890123456789012345678901234567890123456789012345678901x',
-	  output: 'x01234567890123456789012345678901234567890123456789012345678901x'
-	}, {
-	  input: 'x01234567890123456789012345678901234567890123456789012345678901†',
-	  output: 'xn--x01234567890123456789012345678901234567890123456789012345678901-6963b'
-	}, {
-	  input: 'x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa',
-	  output: 'x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa'
-	}, {
-	  input: 'x01234567890123456789012345678901234567890123456789012345678901x.β',
-	  output: 'x01234567890123456789012345678901234567890123456789012345678901x.xn--nxa'
-	}, {
-	  comment: 'Domain excluding TLD longer than 253 code points',
-	  input: '01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x',
-	  output: '01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.x'
-	}, {
-	  input: '01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa',
-	  output: '01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa'
-	}, {
-	  input: '01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.β',
-	  output: '01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.01234567890123456789012345678901234567890123456789.0123456789012345678901234567890123456789012345678.xn--nxa'
-	}];
+	// QUnit.test('Object.defineProperties.sham flag', assert => {
+	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
+	// });
 
-	var hasOwnProperty = Object.prototype.hasOwnProperty;
-	QUnit.test('URL constructor', function (assert) {
-	  assert.isFunction(URL);
-	  assert.arity(URL, 1);
-	  assert.name(URL, 'URL');
-	  assert.looksNative(URL);
-	  assert.same(String(new URL('http://www.domain.com/a/b')), 'http://www.domain.com/a/b');
-	  assert.same(String(new URL('/c/d', 'http://www.domain.com/a/b')), 'http://www.domain.com/c/d');
-	  assert.same(String(new URL('b/c', 'http://www.domain.com/a/b')), 'http://www.domain.com/a/b/c');
-	  assert.same(String(new URL('b/c', new URL('http://www.domain.com/a/b'))), 'http://www.domain.com/a/b/c');
-	  assert.same(String(new URL({
-	    toString: function () {
-	      return 'https://example.org/';
-	    }
-	  })), 'https://example.org/');
-	  assert.same(String(new URL('nonspecial://example.com/')), 'nonspecial://example.com/');
-	  assert.same(String(new URL('https://測試')), 'https://xn--g6w251d/', 'unicode parsing');
-	  assert.same(String(new URL('https://xxпривет.тест')), 'https://xn--xx-flcmn5bht.xn--e1aybc/', 'unicode parsing');
-	  assert.same(String(new URL('https://xxПРИВЕТ.тест')), 'https://xn--xx-flcmn5bht.xn--e1aybc/', 'unicode parsing');
-	  assert.same(String(new URL('http://Example.com/', 'https://example.org/')), 'http://example.com/');
-	  assert.same(String(new URL('https://Example.com/', 'https://example.org/')), 'https://example.com/');
-	  assert.same(String(new URL('nonspecial://Example.com/', 'https://example.org/')), 'nonspecial://Example.com/');
-	  assert.same(String(new URL('http:Example.com/', 'https://example.org/')), 'http://example.com/');
-	  assert.same(String(new URL('https:Example.com/', 'https://example.org/')), 'https://example.org/Example.com/');
-	  assert.same(String(new URL('nonspecial:Example.com/', 'https://example.org/')), 'nonspecial:Example.com/');
-	  assert.same(String(new URL('http://0300.168.0xF0')), 'http://192.168.0.240/');
-	  assert.same(String(new URL('http://[20:0:0:1:0:0:0:ff]')), 'http://[20:0:0:1::ff]/');
-	  // assert.same(String(new URL('http://257.168.0xF0')), 'http://257.168.0xf0/', 'incorrect IPv4 parsed as host'); // TypeError in Chrome and Safari
-	  assert.same(String(new URL('http://0300.168.0xG0')), 'http://0300.168.0xg0/', 'incorrect IPv4 parsed as host');
-	  assert.same(String(new URL('file:///var/log/system.log')), 'file:///var/log/system.log', 'file scheme');
-	  // assert.same(String(new URL('file://nnsc.nsf.net/bar/baz')), 'file://nnsc.nsf.net/bar/baz', 'file scheme'); // 'file:///bar/baz' in FF
-	  // assert.same(String(new URL('file://localhost/bar/baz')), 'file:///bar/baz', 'file scheme'); // 'file://localhost/bar/baz' in Chrome
-
+	QUnit.test('Object.defineProperty', function (assert) {
+	  assert.isFunction(Object.defineProperty);
+	  assert.arity(Object.defineProperty, 3);
+	  assert.name(Object.defineProperty, 'defineProperty');
+	  var source = {};
+	  var result = Object.defineProperty(source, 'q', {
+	    value: 42
+	  });
+	  assert.same(result, source);
+	  assert.same(result.q, 42);
 	  assert["throws"](function () {
-	    return new URL();
-	  }, 'TypeError: Failed to construct \'URL\': 1 argument required, but only 0 present.');
+	    return Object.defineProperty(42, 1, {});
+	  });
 	  assert["throws"](function () {
-	    return new URL('');
-	  }, 'TypeError: Failed to construct \'URL\': Invalid URL');
+	    return Object.defineProperty({}, Object.create(null), {});
+	  });
 	  assert["throws"](function () {
-	    return new URL('', 'about:blank');
-	  }, 'TypeError: Failed to construct \'URL\': Invalid URL');
+	    return Object.defineProperty({}, 1, 1);
+	  });
+	});
+	QUnit.test('Object.defineProperty.sham flag', function (assert) {
+	  assert.same(Object.defineProperty.sham, DESCRIPTORS ? undefined : true);
+	});
+
+	function entries$1(obj) {
+	  var resArray = new Array(); // preallocate the Array
+	  if (isString(obj)) {
+	    for (var i = 0; i < obj.length; i++) {
+	      resArray.push([String(i), obj.substr(i, 1)]);
+	    }
+	  } else {
+	    forOwn(obj, pushKeyValue, resArray);
+	  }
+	  return resArray;
+	}
+	function pushKeyValue(value, key) {
+	  this.push([key, value]);
+	}
+
+	if (!Object$1.entries) {
+	  Object$1.entries = entries$1;
+	}
+
+	QUnit.test('Object.entries', function (assert) {
+	  assert.isFunction(Object.entries);
+	  assert.arity(Object.entries, 1);
+	  assert.name(Object.entries, 'entries');
+	  assert.deepEqual(Object.entries({
+	    q: 1,
+	    w: 2,
+	    e: 3
+	  }), [['q', 1], ['w', 2], ['e', 3]]);
+	  assert.deepEqual(Object.entries(new String('qwe')), [['0', 'q'], ['1', 'w'], ['2', 'e']]);
+	  assert.deepEqual(Object.entries(Object.assign(Object.create({
+	    q: 1,
+	    w: 2,
+	    e: 3
+	  }), {
+	    a: 4,
+	    s: 5,
+	    d: 6
+	  })), [['a', 4], ['s', 5], ['d', 6]]);
+	  assert.deepEqual(Object.entries({
+	    valueOf: 42
+	  }), [['valueOf', 42]], 'IE enum keys bug');
+	  try {
+	    assert.deepEqual(Function('entries', "\n      return entries({\n        a: 1,\n        get b() {\n          delete this.c;\n          return 2;\n        },\n        c: 3\n      });\n    ")(Object.entries), [['a', 1], ['b', 2]]);
+	  } catch (_unused) {/* empty */}
+	  try {
+	    assert.deepEqual(Function('entries', "\n      return entries({\n        a: 1,\n        get b() {\n          Object.defineProperty(this, \"c\", {\n            value: 4,\n            enumerable: false\n          });\n          return 2;\n        },\n        c: 3\n      });\n    ")(Object.entries), [['a', 1], ['b', 2]]);
+	  } catch (_unused2) {/* empty */}
+	});
+
+	function fromEntries(obj) {
+	  var arr = Array.from(obj);
+	  var len = arr.length;
+	  var o = {};
+	  for (var i = 0; i < len; i++) {
+	    var item = arr[i];
+	    if (Array.isArray(item)) {
+	      o[item[0]] = item[1];
+	    } else {
+	      throw new TypeError("Iterator value 1 is not an entry object");
+	    }
+	  }
+	  return o;
+	}
+
+	if (!Object$1.fromEntries) {
+	  Object$1.fromEntries = fromEntries;
+	}
+
+	var Set$1 = window.Set;
+
+	function createMap() {
+	  function Map() {
+	    var arr = arguments[0];
+	    this.size = 0;
+	    this.head = null;
+	    this.tail = null;
+	    if (arr) {
+	      var entries = arr['@@iterator'];
+	      if (entries) {
+	        var it = entries.call(arr);
+	        while (true) {
+	          var next = it.next();
+	          if (next.done) break;
+	          try {
+	            this.set(next.value[0], next.value[1]);
+	          } catch (e) {
+	            if (it["return"]) {
+	              try {
+	                it["return"]();
+	              } catch (e) {}
+	            }
+	            throw e;
+	          }
+	        }
+	      }
+	    }
+	  }
+	  Map.prototype.has = has;
+	  Map.prototype.get = get;
+	  Map.prototype.set = set;
+	  Map.prototype["delete"] = remove;
+	  Map.prototype.clear = clear;
+	  Map.prototype.forEach = forEach$1;
+	  Map.prototype.entries = entries;
+	  Map.prototype.keys = keys$1;
+	  Map.prototype.values = values$1;
+	  Map.prototype['@@iterator'] = entries;
+	  return Map;
+	}
+	;
+	function has(key) {
+	  if (this.size === 0) {
+	    return false;
+	  }
+	  var item = this.head;
+	  while (item) {
+	    if (item.key === key || isNaN$1(key) && isNaN$1(item.key)) {
+	      return true;
+	    }
+	    item = item.next;
+	  }
+	  return false;
+	}
+	;
+	function get(key) {
+	  if (this.size === 0) {
+	    return undefined;
+	  }
+	  var item = this.head;
+	  while (item) {
+	    if (item.key === key || isNaN$1(key) && isNaN$1(item.key)) {
+	      return item.value;
+	    }
+	    item = item.next;
+	  }
+	  return undefined;
+	}
+	;
+	function set(key, value) {
+	  if (key === 0) {
+	    //-0 -> 0
+	    key = 0;
+	  }
+	  if (this.size === 0) {
+	    this.head = this.tail = {
+	      key: key,
+	      value: value,
+	      prev: null,
+	      next: null,
+	      exist: true
+	    };
+	    this.size = 1;
+	    return this;
+	  }
+	  var item = this.head;
+	  while (item) {
+	    if (item.key === key || isNaN$1(key) && isNaN$1(item.key)) {
+	      item.value = value;
+	      return this;
+	    }
+	    item = item.next;
+	  }
+	  var tail = this.tail;
+	  var newTail = {
+	    key: key,
+	    value: value,
+	    prev: tail,
+	    next: null,
+	    exist: true
+	  };
+	  tail.next = newTail;
+	  this.tail = newTail;
+	  this.size++;
+	  return this;
+	}
+	;
+	function remove(key) {
+	  if (this.size === 0) {
+	    return false;
+	  }
+	  var item = this.head;
+	  while (item) {
+	    if (item.key === key || isNaN$1(key) && isNaN$1(item.key)) {
+	      var prev = item.prev;
+	      var next = item.next;
+	      if (prev) {
+	        prev.next = next;
+	      } else {
+	        this.head = next;
+	      }
+	      if (next) {
+	        next.prev = prev;
+	      } else {
+	        this.tail = prev;
+	      }
+	      item.exist = false;
+	      this.size--;
+	      return true;
+	    }
+	    item = item.next;
+	  }
+	  return false;
+	}
+	;
+	function clear() {
+	  this.size = 0;
+	  this.head = null;
+	  this.tail = null;
+	}
+	;
+	function forEach$1(callbackfn) {
+	  var thisArg = arguments[1];
+	  var item = this.head;
+	  while (item) {
+	    callbackfn.call(thisArg, item.value, item.key, this);
+	    var next = item.next;
+	    if (item.exist || next && next.exist) {
+	      item = next;
+	    } else {
+	      while (true) {
+	        item = item.prev;
+	        if (item) {
+	          if (item.exist) {
+	            item = item.next;
+	            break;
+	          }
+	        } else {
+	          item = this.head;
+	          break;
+	        }
+	      }
+	    }
+	  }
+	}
+	;
+	function createIterable(that, getValue) {
+	  var done = false;
+	  var current;
+	  var it = {
+	    next: function () {
+	      var value;
+	      if (done) {
+	        return {
+	          done: done,
+	          value: value
+	        };
+	      }
+	      if (!current) {
+	        current = that.head;
+	      } else {
+	        var next = current.next;
+	        if (current.exist || next && next.exist) {
+	          current = next;
+	        } else {
+	          while (true) {
+	            current = current.prev;
+	            if (current) {
+	              if (current.exist) {
+	                current = current.next;
+	                break;
+	              }
+	            } else {
+	              current = that.head;
+	              break;
+	            }
+	          }
+	        }
+	      }
+	      if (current) {
+	        done = false;
+	        value = getValue(current);
+	      } else {
+	        done = true;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    }
+	  };
+	  it['@@iterator'] = function () {
+	    return createIterable(that, getValue);
+	  };
+	  return it;
+	}
+	function getKeyValue(item) {
+	  return [item.key, item.value];
+	}
+	function entries() {
+	  return createIterable(this, getKeyValue);
+	}
+	;
+	function getKey(item) {
+	  return item.key;
+	}
+	function keys$1() {
+	  return createIterable(this, getKey);
+	}
+	;
+	function getValue(item) {
+	  return item.value;
+	}
+	function values$1() {
+	  return createIterable(this, getValue);
+	}
+	;
+
+	function createSet() {
+	  function Set() {
+	    var arr = arguments[0];
+	    this.size = 0;
+	    this.head = null;
+	    this.tail = null;
+	    if (arr) {
+	      var entries = arr['@@iterator'];
+	      if (entries) {
+	        var it = entries.call(arr);
+	        while (true) {
+	          var next = it.next();
+	          if (next.done) break;
+	          try {
+	            this.add(next.value);
+	          } catch (e) {
+	            if (it["return"]) {
+	              try {
+	                it["return"]();
+	              } catch (e) {}
+	            }
+	            throw e;
+	          }
+	        }
+	      }
+	    }
+	  }
+	  Set.prototype.has = has;
+	  Set.prototype.add = add;
+	  Set.prototype["delete"] = remove;
+	  Set.prototype.clear = clear;
+	  Set.prototype.forEach = forEach$1;
+	  Set.prototype.entries = entries;
+	  Set.prototype.values = values$1;
+	  Set.prototype.keys = values$1;
+	  Set.prototype['@@iterator'] = values$1;
+	  return Set;
+	}
+	;
+	function add(value) {
+	  if (value === 0) {
+	    //-0 -> 0
+	    value = 0;
+	  }
+	  set.call(this, value, value);
+	  return this;
+	}
+	;
+
+	if (!Set$1) {
+	  window.Set = createSet();
+	}
+
+	QUnit.test('Object.fromEntries', function (assert) {
+	  assert.isFunction(Object.fromEntries);
+	  assert.arity(Object.fromEntries, 1);
+	  assert.name(Object.fromEntries, 'fromEntries');
+	  assert.ok(Object.fromEntries([]) instanceof Object);
+	  assert.same(Object.fromEntries([['foo', 1]]).foo, 1);
+	  assert.same(Object.fromEntries(createIterable$1([['bar', 2]])).bar, 2);
+	  var Unit = /*#__PURE__*/function () {
+	    function Unit(id) {
+	      this.id = id;
+	    }
+	    var _proto = Unit.prototype;
+	    _proto.toString = function () {
+	      function toString() {
+	        return "unit" + this.id;
+	      }
+	      return toString;
+	    }();
+	    return Unit;
+	  }();
+	  var units = new Set([new Unit(101), new Unit(102), new Unit(103)]);
+	  var object = Object.fromEntries(units.entries());
+	  assert.same(object.unit101.id, 101);
+	  assert.same(object.unit102.id, 102);
+	  assert.same(object.unit103.id, 103);
+	});
+
+	QUnit.test('Object.getOwnPropertyDescriptor', function (assert) {
+	  assert.isFunction(Object.getOwnPropertyDescriptor);
+	  assert.arity(Object.getOwnPropertyDescriptor, 2);
+	  assert.name(Object.getOwnPropertyDescriptor, 'getOwnPropertyDescriptor');
+	  assert.deepEqual(Object.getOwnPropertyDescriptor({
+	    q: 42
+	  }, 'q'), {
+	    writable: true,
+	    enumerable: true,
+	    configurable: true,
+	    value: 42
+	  });
+	  assert.ok(Object.getOwnPropertyDescriptor({}, 'toString') === undefined);
+	  var primitives = [42, 'foo', false];
+	  var _loop = function (value) {
+	    assert.notThrows(function () {
+	      return Object.getOwnPropertyDescriptor(value) || true;
+	    });
+	  };
+	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
+	    var value = _primitives[_i];
+	    _loop(value);
+	  }
 	  assert["throws"](function () {
-	    return new URL('abc');
-	  }, 'TypeError: Failed to construct \'URL\': Invalid URL');
+	    return Object.getOwnPropertyDescriptor(null);
+	  }, TypeError, 'throws on null');
 	  assert["throws"](function () {
-	    return new URL('//abc');
-	  }, 'TypeError: Failed to construct \'URL\': Invalid URL');
+	    return Object.getOwnPropertyDescriptor(undefined);
+	  }, TypeError, 'throws on undefined');
+	});
+	QUnit.test('Object.getOwnPropertyDescriptor.sham flag', function (assert) {
+	  assert.same(Object.getOwnPropertyDescriptor.sham, DESCRIPTORS ? undefined : true);
+	});
+
+	function getOwnPropertyDescriptors(obj) {
+	  var keys = Object.getOwnPropertyNames(obj);
+	  keys = keys.concat(Object.getOwnPropertySymbols(obj));
+	  var o = {};
+	  var i, key;
+	  for (i = 0; i < keys.length; i++) {
+	    key = keys[i];
+	    var desc = obj["@@desc:" + key];
+	    if (desc) {
+	      o[key] = desc;
+	    } else {
+	      o[key] = {
+	        value: obj[key],
+	        writable: true,
+	        enumerable: String(key).substring(0, 2) !== "__",
+	        configurable: true
+	      };
+	    }
+	  }
+	  return o;
+	}
+	;
+	getOwnPropertyDescriptors.sham = true;
+
+	if (!Object$1.getOwnPropertyDescriptors) {
+	  if (!Object$1.prototype.__defineSetter__) {
+	    Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors;
+	  }
+	}
+
+	QUnit.test('Object.getOwnPropertyDescriptors', function (assert) {
+	  assert.isFunction(Object.getOwnPropertyDescriptors);
+	  assert.arity(Object.getOwnPropertyDescriptors, 1);
+	  assert.name(Object.getOwnPropertyDescriptors, 'getOwnPropertyDescriptors');
+	  var object = Object.create({
+	    q: 1
+	  }, {
+	    e: {
+	      value: 3
+	    }
+	  });
+	  object.w = 2;
+	  var symbol = _Symbol$5('4');
+	  object[symbol] = 4;
+	  var descriptors = Object.getOwnPropertyDescriptors(object);
+	  assert.strictEqual(descriptors.q, undefined);
+	  assert.deepEqual(descriptors.w, {
+	    enumerable: true,
+	    configurable: true,
+	    writable: true,
+	    value: 2
+	  });
+	  if (DESCRIPTORS) {
+	    assert.deepEqual(descriptors.e, {
+	      enumerable: false,
+	      configurable: false,
+	      writable: false,
+	      value: 3
+	    });
+	  } else {
+	    assert.deepEqual(descriptors.e, {
+	      enumerable: true,
+	      configurable: true,
+	      writable: true,
+	      value: 3
+	    });
+	  }
+	  assert.strictEqual(descriptors[symbol].value, 4);
+	});
+	QUnit.test('Object.getOwnPropertyDescriptors.sham flag', function (assert) {
+	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);
+	});
+
+	QUnit.test('Object.getOwnPropertyNames', function (assert) {
+	  assert.isFunction(Object.getOwnPropertyNames);
+	  assert.arity(Object.getOwnPropertyNames, 1);
+	  assert.name(Object.getOwnPropertyNames, 'getOwnPropertyNames');
+	  function F1() {
+	    this.w = 1;
+	  }
+	  function F2() {
+	    this.toString = 1;
+	  }
+	  F1.prototype.q = F2.prototype.q = 1;
+	  var names = Object.getOwnPropertyNames([1, 2, 3]);
+	  assert.strictEqual(names.length, 4);
+	  assert.ok(includes$2(names, '0'));
+	  assert.ok(includes$2(names, '1'));
+	  assert.ok(includes$2(names, '2'));
+	  assert.ok(includes$2(names, 'length'));
+	  assert.deepEqual(Object.getOwnPropertyNames(new F1()), ['w']);
+	  assert.deepEqual(Object.getOwnPropertyNames(new F2()), ['toString']);
+	  // assert.ok(includes(Object.getOwnPropertyNames(Array.prototype), 'toString'));
+	  // assert.ok(includes(Object.getOwnPropertyNames(Object.prototype), 'toString'));
+	  // assert.ok(includes(Object.getOwnPropertyNames(Object.prototype), 'constructor'));
+	  var primitives = [42, 'foo', false];
+	  var _loop = function (value) {
+	    assert.notThrows(function () {
+	      return Object.getOwnPropertyNames(value);
+	    }, "accept " + _typeof(value));
+	  };
+	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
+	    var value = _primitives[_i];
+	    _loop(value);
+	  }
 	  assert["throws"](function () {
-	    return new URL('http:///www.domain.com/', 'abc');
-	  }, 'TypeError: Failed to construct \'URL\': Invalid base URL');
+	    Object.getOwnPropertyNames(null);
+	  }, TypeError, 'throws on null');
 	  assert["throws"](function () {
-	    return new URL('http:///www.domain.com/', null);
-	  }, 'TypeError: Failed to construct \'URL\': Invalid base URL');
+	    Object.getOwnPropertyNames(undefined);
+	  }, TypeError, 'throws on undefined');
+	  // if(GLOBAL.document) {
+	  //   assert.notThrows(() => {
+	  //     const iframe = document.createElement('iframe');
+	  //     iframe.src = 'http://example.com';
+	  //     document.documentElement.appendChild(iframe);
+	  //     const window = iframe.contentWindow;
+	  //     document.documentElement.removeChild(iframe);
+	  //     return Object.getOwnPropertyNames(window);
+	  //   }, 'IE11 bug with iframe and window');
+	  // }
+	});
+
+	QUnit.test('Object.getPrototypeOf', function (assert) {
+	  assert.isFunction(Object.getPrototypeOf);
+	  assert.arity(Object.getPrototypeOf, 1);
+	  assert.name(Object.getPrototypeOf, 'getPrototypeOf');
+	  assert.looksNative(Object.getPrototypeOf);
+	  assert.nonEnumerable(Object, 'getPrototypeOf');
+	  assert.ok(Object.getPrototypeOf({}) === Object.prototype);
+	  assert.ok(Object.getPrototypeOf([]) === Array.prototype);
+	  function F() {/* empty */}
+	  assert.ok(Object.getPrototypeOf(new F()) === F.prototype);
+	  var object = {
+	    q: 1
+	  };
+	  assert.ok(Object.getPrototypeOf(Object.create(object)) === object);
+	  assert.ok(Object.getPrototypeOf(Object.create(null)) === null);
+	  assert.ok(Object.getPrototypeOf(Object.getPrototypeOf({})) === null);
+	  function Foo() {/* empty */}
+	  Foo.prototype.foo = 'foo';
+	  function Bar() {/* empty */}
+	  Bar.prototype = Object.create(Foo.prototype);
+	  Bar.prototype.constructor = Bar;
+	  assert.strictEqual(Object.getPrototypeOf(Bar.prototype).foo, 'foo');
+	  var primitives = [42, 'foo', false];
+	  var _loop = function (value) {
+	    assert.notThrows(function () {
+	      return Object.getPrototypeOf(value);
+	    }, "accept " + _typeof(value) + " \u4E0D\u652F\u6301");
+	  };
+	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
+	    var value = _primitives[_i];
+	    _loop(value);
+	  }
 	  assert["throws"](function () {
-	    return new URL('//abc', null);
-	  }, 'TypeError: Failed to construct \'URL\': Invalid base URL');
+	    return Object.getPrototypeOf(null);
+	  }, TypeError, 'throws on null');
 	  assert["throws"](function () {
-	    return new URL('http://[20:0:0:1:0:0:0:ff');
-	  }, 'incorrect IPv6');
+	    return Object.getPrototypeOf(undefined);
+	  }, TypeError, 'throws on undefined');
+	  assert.strictEqual(Object.getPrototypeOf(Object('foo')), String.prototype);
+	});
+	QUnit.test('Object.getPrototypeOf.sham flag', function (assert) {
+	  assert.same(Object.getPrototypeOf.sham, CORRECT_PROTOTYPE_GETTER ? undefined : true);
+	});
+
+	function is(x, y) {
+	  if (x === y) {
+	    // Steps 1-5, 7-10
+	    // Steps 6.b-6.e: +0 != -0
+	    return x !== 0 || 1 / x === 1 / y;
+	  } else {
+	    // Step 6.a: NaN == NaN
+	    return x !== x && y !== y;
+	  }
+	}
+
+	if (!Object$1.is) {
+	  Object$1.is = is;
+	}
+
+	QUnit.test('Object.is', function (assert) {
+	  assert.isFunction(Object.is);
+	  assert.arity(Object.is, 2);
+	  assert.name(Object.is, 'is');
+	  assert.looksNative(Object.is);
+	  assert.nonEnumerable(Object, 'is');
+	  assert.ok(Object.is(1, 1), '1 is 1');
+	  assert.ok(Object.is(NaN, NaN), '1 is 1');
+	  assert.ok(!Object.is(0, -0), '0 isnt -0');
+	  assert.ok(!Object.is({}, {}), '{} isnt {}');
+	});
+
+	QUnit.test('Object.keys', function (assert) {
+	  assert.isFunction(Object.keys);
+	  assert.arity(Object.keys, 1);
+	  assert.name(Object.keys, 'keys');
+	  assert.looksNative(Object.keys);
+	  assert.nonEnumerable(Object, 'keys');
+	  function F1() {
+	    this.w = 1;
+	  }
+	  function F2() {
+	    this.toString = 1;
+	  }
+	  F1.prototype.q = F2.prototype.q = 1;
+	  assert.deepEqual(Object.keys([1, 2, 3]), ['0', '1', '2']);
+	  assert.deepEqual(Object.keys(new F1()), ['w']);
+	  assert.deepEqual(Object.keys(new F2()), ['toString']);
+	  assert.ok(!includes$2(Object.keys(Array.prototype), 'push'));
+	  var primitives = [42, 'foo', false];
+	  var _loop = function (value) {
+	    assert.notThrows(function () {
+	      return Object.keys(value);
+	    }, "accept " + _typeof(value) + " \u4E0D\u652F\u6301");
+	  };
+	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
+	    var value = _primitives[_i];
+	    _loop(value);
+	  }
 	  assert["throws"](function () {
-	    return new URL('http://[20:0:0:1:0:0:0:fg]');
-	  }, 'incorrect IPv6');
-	  // assert.throws(() => new URL('http://a%b'), 'forbidden host code point'); // no error in FF
+	    return Object.keys(null);
+	  }, TypeError, 'throws on null');
 	  assert["throws"](function () {
-	    return new URL('1http://zloirock.ru');
-	  }, 'incorrect scheme');
-	});
-	QUnit.test('URL#href', function (assert) {
-	  var url = new URL('http://zloirock.ru/');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'href'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'href');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	    assert.same(_typeof(descriptor.set), 'function');
-	  }
-	  assert.same(url.href, 'http://zloirock.ru/');
-	  if (DESCRIPTORS) {
-	    url.searchParams.append('foo', 'bar');
-	    assert.same(url.href, 'http://zloirock.ru/?foo=bar');
-	    url = new URL('http://zloirock.ru/foo');
-	    url.href = 'https://測試';
-	    assert.same(url.href, 'https://xn--g6w251d/', 'unicode parsing');
-	    assert.same(String(url), 'https://xn--g6w251d/', 'unicode parsing');
-	    url = new URL('http://zloirock.ru/foo');
-	    url.href = 'https://xxпривет.тест';
-	    assert.same(url.href, 'https://xn--xx-flcmn5bht.xn--e1aybc/', 'unicode parsing');
-	    assert.same(String(url), 'https://xn--xx-flcmn5bht.xn--e1aybc/', 'unicode parsing');
-	    url = new URL('http://zloirock.ru/foo');
-	    url.href = 'https://xxПРИВЕТ.тест';
-	    assert.same(url.href, 'https://xn--xx-flcmn5bht.xn--e1aybc/', 'unicode parsing');
-	    assert.same(String(url), 'https://xn--xx-flcmn5bht.xn--e1aybc/', 'unicode parsing');
-	    url = new URL('http://zloirock.ru/');
-	    url.href = 'http://0300.168.0xF0';
-	    assert.same(url.href, 'http://192.168.0.240/');
-	    assert.same(String(url), 'http://192.168.0.240/');
-	    url = new URL('http://zloirock.ru/');
-	    url.href = 'http://[20:0:0:1:0:0:0:ff]';
-	    assert.same(url.href, 'http://[20:0:0:1::ff]/');
-	    assert.same(String(url), 'http://[20:0:0:1::ff]/');
-
-	    // url = new URL('http://zloirock.ru/');
-	    // url.href = 'http://257.168.0xF0'; // TypeError and Safari
-	    // assert.same(url.href, 'http://257.168.0xf0/', 'incorrect IPv4 parsed as host'); // `F` instead of `f` in Chrome
-	    // assert.same(String(url), 'http://257.168.0xf0/', 'incorrect IPv4 parsed as host'); // `F` instead of `f` in Chrome
-
-	    url = new URL('http://zloirock.ru/');
-	    url.href = 'http://0300.168.0xG0';
-	    assert.same(url.href, 'http://0300.168.0xg0/', 'incorrect IPv4 parsed as host');
-	    assert.same(String(url), 'http://0300.168.0xg0/', 'incorrect IPv4 parsed as host');
-	    url = new URL('http://192.168.0.240/');
-	    url.href = 'file:///var/log/system.log';
-	    assert.same(url.href, 'file:///var/log/system.log', 'file -> ip');
-	    assert.same(String(url), 'file:///var/log/system.log', 'file -> ip');
-	    url = new URL('file:///var/log/system.log');
-	    url.href = 'http://0300.168.0xF0';
-	    assert.same(url.href, 'http://192.168.0.240/', 'file -> http');
-	    assert.same(String(url), 'http://192.168.0.240/', 'file -> http');
-
-	    // assert.throws(() => new URL('http://zloirock.ru/').href = undefined, 'incorrect URL'); // no error in Chrome
-	    // assert.throws(() => new URL('http://zloirock.ru/').href = '', 'incorrect URL'); // no error in Chrome
-	    // assert.throws(() => new URL('http://zloirock.ru/').href = 'abc', 'incorrect URL'); // no error in Chrome
-	    // assert.throws(() => new URL('http://zloirock.ru/').href = '//abc', 'incorrect URL'); // no error in Chrome
-	    // assert.throws(() => new URL('http://zloirock.ru/').href = 'http://[20:0:0:1:0:0:0:ff', 'incorrect IPv6'); // no error in Chrome
-	    // assert.throws(() => new URL('http://zloirock.ru/').href = 'http://[20:0:0:1:0:0:0:fg]', 'incorrect IPv6'); // no error in Chrome
-	    // assert.throws(() => new URL('http://zloirock.ru/').href = 'http://a%b', 'forbidden host code point'); // no error in Chrome and FF
-	    // assert.throws(() => new URL('http://zloirock.ru/').href = '1http://zloirock.ru', 'incorrect scheme'); // no error in Chrome
-	  }
+	    return Object.keys(undefined);
+	  }, TypeError, 'throws on undefined');
 	});
 
-	QUnit.test('URL#origin', function (assert) {
-	  var url = new URL('http://es6.zloirock.ru/tests.html');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'origin'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'origin');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	  }
-	  assert.same(url.origin, 'http://es6.zloirock.ru');
-	  assert.same(new URL('https://測試/tests').origin, 'https://xn--g6w251d');
-	});
-	QUnit.test('URL#protocol', function (assert) {
-	  var url = new URL('http://zloirock.ru/');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'protocol'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'protocol');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	    assert.same(_typeof(descriptor.set), 'function');
-	  }
-	  assert.same(url.protocol, 'http:');
-	  if (DESCRIPTORS) {
-	    url = new URL('http://zloirock.ru/');
-	    url.protocol = 'https';
-	    assert.same(url.protocol, 'https:');
-	    assert.same(String(url), 'https://zloirock.ru/');
-
-	    // https://nodejs.org/api/url.html#url_special_schemes
-	    // url = new URL('http://zloirock.ru/');
-	    // url.protocol = 'fish';
-	    // assert.same(url.protocol, 'http:');
-	    // assert.same(url.href, 'http://zloirock.ru/');
-	    // assert.same(String(url), 'http://zloirock.ru/');
-
-	    url = new URL('http://zloirock.ru/');
-	    url.protocol = '1http';
-	    assert.same(url.protocol, 'http:');
-	    assert.same(url.href, 'http://zloirock.ru/', 'incorrect scheme');
-	    assert.same(String(url), 'http://zloirock.ru/', 'incorrect scheme');
-	  }
-	});
-	QUnit.test('URL#username', function (assert) {
-	  var url = new URL('http://zloirock.ru/');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'username'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'username');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	    assert.same(_typeof(descriptor.set), 'function');
-	  }
-	  assert.same(url.username, '');
-	  url = new URL('http://username@zloirock.ru/');
-	  assert.same(url.username, 'username');
-	  if (DESCRIPTORS) {
-	    url = new URL('http://zloirock.ru/');
-	    url.username = 'username';
-	    assert.same(url.username, 'username');
-	    assert.same(String(url), 'http://username@zloirock.ru/');
-	  }
-	});
-	QUnit.test('URL#password', function (assert) {
-	  var url = new URL('http://zloirock.ru/');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'password'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'password');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	    assert.same(_typeof(descriptor.set), 'function');
-	  }
-	  assert.same(url.password, '');
-	  url = new URL('http://username:password@zloirock.ru/');
-	  assert.same(url.password, 'password');
-
-	  // url = new URL('http://:password@zloirock.ru/'); // TypeError in FF
-	  // assert.same(url.password, 'password');
-
-	  if (DESCRIPTORS) {
-	    url = new URL('http://zloirock.ru/');
-	    url.username = 'username';
-	    url.password = 'password';
-	    assert.same(url.password, 'password');
-	    assert.same(String(url), 'http://username:password@zloirock.ru/');
-
-	    // url = new URL('http://zloirock.ru/');
-	    // url.password = 'password';
-	    // assert.same(url.password, 'password'); // '' in FF
-	    // assert.same(String(url), 'http://:password@zloirock.ru/'); // 'http://zloirock.ru/' in FF
-	  }
+	if (PROTO) QUnit.test('Object.setPrototypeOf', function (assert) {
+	  assert.isFunction(Object.setPrototypeOf);
+	  assert.arity(Object.setPrototypeOf, 2);
+	  assert.name(Object.setPrototypeOf, 'setPrototypeOf');
+	  assert.looksNative(Object.setPrototypeOf);
+	  assert.nonEnumerable(Object, 'setPrototypeOf');
+	  assert.ok('apply' in Object.setPrototypeOf({}, Function.prototype), 'Parent properties in target');
+	  assert.strictEqual(Object.setPrototypeOf({
+	    a: 2
+	  }, {
+	    b: function () {
+	      return Math.pow(this.a, 2);
+	    }
+	  }).b(), 4, 'Child and parent properties in target');
+	  var object = {};
+	  assert.strictEqual(Object.setPrototypeOf(object, {
+	    a: 1
+	  }), object, 'setPrototypeOf return target');
+	  assert.ok(!('toString' in Object.setPrototypeOf({}, null)), 'Can set null as prototype');
 	});
 
-	QUnit.test('URL#host', function (assert) {
-	  var url = new URL('http://zloirock.ru:81/path');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'host'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'host');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	    assert.same(_typeof(descriptor.set), 'function');
+	function values(obj) {
+	  var r = [],
+	    key;
+	  if (isString(obj)) {
+	    for (key = 0; key < obj.length; key++) {
+	      r.push(obj.substr(key, 1));
+	    }
+	  } else if (Array.isArray(obj)) {
+	    for (key = 0; key < obj.length; key++) {
+	      r.push(obj[key]);
+	    }
+	  } else {
+	    forOwn(obj, function (value, key) {
+	      r.push(value);
+	    });
 	  }
-	  assert.same(url.host, 'zloirock.ru:81');
-	  if (DESCRIPTORS) {
-	    url = new URL('http://zloirock.ru:81/path');
-	    url.host = 'example.com:82';
-	    assert.same(url.host, 'example.com:82');
-	    assert.same(String(url), 'http://example.com:82/path');
+	  return r;
+	}
 
-	    // url = new URL('http://zloirock.ru:81/path');
-	    // url.host = 'other?domain.com';
-	    // assert.same(String(url), 'http://other:81/path'); // 'http://other/?domain.com/path' in Safari
+	if (!Object$1.values) {
+	  Object$1.values = values;
+	}
 
-	    url = new URL('https://www.mydomain.com:8080/path/');
-	    url.host = 'www.otherdomain.com:80';
-	    assert.same(url.href, 'https://www.otherdomain.com:80/path/', 'set default port for another protocol');
-
-	    // url = new URL('https://www.mydomain.com:8080/path/');
-	    // url.host = 'www.otherdomain.com:443';
-	    // assert.same(url.href, 'https://www.otherdomain.com/path/', 'set default port');
-
-	    url = new URL('http://zloirock.ru/foo');
-	    url.host = '測試';
-	    assert.same(url.host, 'xn--g6w251d', 'unicode parsing');
-	    assert.same(String(url), 'http://xn--g6w251d/foo', 'unicode parsing');
-	    url = new URL('http://zloirock.ru/foo');
-	    url.host = 'xxпривет.тест';
-	    assert.same(url.host, 'xn--xx-flcmn5bht.xn--e1aybc', 'unicode parsing');
-	    assert.same(String(url), 'http://xn--xx-flcmn5bht.xn--e1aybc/foo', 'unicode parsing');
-	    url = new URL('http://zloirock.ru/foo');
-	    url.host = 'xxПРИВЕТ.тест';
-	    assert.same(url.host, 'xn--xx-flcmn5bht.xn--e1aybc', 'unicode parsing');
-	    assert.same(String(url), 'http://xn--xx-flcmn5bht.xn--e1aybc/foo', 'unicode parsing');
-	    url = new URL('http://zloirock.ru/foo');
-	    url.host = '0300.168.0xF0';
-	    assert.same(url.host, '192.168.0.240');
-	    assert.same(String(url), 'http://192.168.0.240/foo');
-
-	    // url = new URL('http://zloirock.ru/foo');
-	    // url.host = '[20:0:0:1:0:0:0:ff]';
-	    // assert.same(url.host, '[20:0:0:1::ff]'); // ':0' in Chrome, 'zloirock.ru' in Safari
-	    // assert.same(String(url), 'http://[20:0:0:1::ff]/foo'); // 'http://[20:0/foo' in Chrome, 'http://zloirock.ru/foo' in Safari
-
-	    // url = new URL('file:///var/log/system.log');
-	    // url.host = 'nnsc.nsf.net'; // does not work in FF
-	    // assert.same(url.hostname, 'nnsc.nsf.net', 'file');
-	    // assert.same(String(url), 'file://nnsc.nsf.net/var/log/system.log', 'file');
-
-	    // url = new URL('http://zloirock.ru/');
-	    // url.host = '[20:0:0:1:0:0:0:ff';
-	    // assert.same(url.host, 'zloirock.ru', 'incorrect IPv6'); // ':0' in Chrome
-	    // assert.same(String(url), 'http://zloirock.ru/', 'incorrect IPv6'); // 'http://[20:0/' in Chrome
-
-	    // url = new URL('http://zloirock.ru/');
-	    // url.host = '[20:0:0:1:0:0:0:fg]';
-	    // assert.same(url.host, 'zloirock.ru', 'incorrect IPv6'); // ':0' in Chrome
-	    // assert.same(String(url), 'http://zloirock.ru/', 'incorrect IPv6'); // 'http://[20:0/' in Chrome
-
-	    // url = new URL('http://zloirock.ru/');
-	    // url.host = 'a%b';
-	    // assert.same(url.host, 'zloirock.ru', 'forbidden host code point'); // '' in Chrome, 'a%b' in FF
-	    // assert.same(String(url), 'http://zloirock.ru/', 'forbidden host code point'); // 'http://a%25b/' in Chrome, 'http://a%b/' in FF
-	  }
+	QUnit.test('Object.values', function (assert) {
+	  assert.isFunction(Object.values);
+	  assert.arity(Object.values, 1);
+	  assert.name(Object.values, 'values');
+	  assert.looksNative(Object.values);
+	  assert.nonEnumerable(Object, 'values');
+	  assert.deepEqual(Object.values({
+	    q: 1,
+	    w: 2,
+	    e: 3
+	  }), [1, 2, 3]);
+	  assert.deepEqual(Object.values(new String('qwe')), ['q', 'w', 'e']);
+	  assert.deepEqual(Object.values(Object.assign(Object.create({
+	    q: 1,
+	    w: 2,
+	    e: 3
+	  }), {
+	    a: 4,
+	    s: 5,
+	    d: 6
+	  })), [4, 5, 6]);
+	  assert.deepEqual(Object.values({
+	    valueOf: 42
+	  }), [42], 'IE enum keys bug');
+	  try {
+	    assert.deepEqual(Function('values', "\n      return values({ a: 1, get b() {\n        delete this.c;\n        return 2;\n      }, c: 3 });\n    ")(Object.values), [1, 2]);
+	  } catch (_unused) {/* empty */}
+	  try {
+	    assert.deepEqual(Function('values', "\n      return values({ a: 1, get b() {\n        Object.defineProperty(this, \"c\", {\n          value: 4,\n          enumerable: false\n        });\n        return 2;\n      }, c: 3 });\n    ")(Object.values), [1, 2]);
+	  } catch (_unused2) {/* empty */}
 	});
 
-	QUnit.test('URL#hostname', function (assert) {
-	  var url = new URL('http://zloirock.ru:81/');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'hostname'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'hostname');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	    assert.same(_typeof(descriptor.set), 'function');
-	  }
-	  assert.same(url.hostname, 'zloirock.ru');
-	  if (DESCRIPTORS) {
-	    url = new URL('http://zloirock.ru:81/');
-	    url.hostname = 'example.com';
-	    assert.same(url.hostname, 'example.com');
-	    assert.same(String(url), 'http://example.com:81/');
+	var globalThis$1 = window.globalThis;
 
-	    // url = new URL('http://zloirock.ru:81/');
-	    // url.hostname = 'example.com:82';
-	    // assert.same(url.hostname, 'example.com'); // '' in Chrome
-	    // assert.same(String(url), 'http://example.com:81/'); // 'ttp://example.com:82:81/' in Chrome
+	if (!globalThis$1) {
+	  window.globalThis = window;
+	}
 
-	    url = new URL('http://zloirock.ru/foo');
-	    url.hostname = '測試';
-	    assert.same(url.hostname, 'xn--g6w251d', 'unicode parsing');
-	    assert.same(String(url), 'http://xn--g6w251d/foo', 'unicode parsing');
-	    url = new URL('http://zloirock.ru/foo');
-	    url.hostname = 'xxпривет.тест';
-	    assert.same(url.hostname, 'xn--xx-flcmn5bht.xn--e1aybc', 'unicode parsing');
-	    assert.same(String(url), 'http://xn--xx-flcmn5bht.xn--e1aybc/foo', 'unicode parsing');
-	    url = new URL('http://zloirock.ru/foo');
-	    url.hostname = 'xxПРИВЕТ.тест';
-	    assert.same(url.hostname, 'xn--xx-flcmn5bht.xn--e1aybc', 'unicode parsing');
-	    assert.same(String(url), 'http://xn--xx-flcmn5bht.xn--e1aybc/foo', 'unicode parsing');
-	    url = new URL('http://zloirock.ru/foo');
-	    url.hostname = '0300.168.0xF0';
-	    assert.same(url.hostname, '192.168.0.240');
-	    assert.same(String(url), 'http://192.168.0.240/foo');
-
-	    // url = new URL('http://zloirock.ru/foo');
-	    // url.hostname = '[20:0:0:1:0:0:0:ff]';
-	    // assert.same(url.hostname, '[20:0:0:1::ff]'); // 'zloirock.ru' in Safari
-	    // assert.same(String(url), 'http://[20:0:0:1::ff]/foo'); // 'http://zloirock.ru/foo' in Safari
-
-	    // url = new URL('file:///var/log/system.log');
-	    // url.hostname = 'nnsc.nsf.net'; // does not work in FF
-	    // assert.same(url.hostname, 'nnsc.nsf.net', 'file');
-	    // assert.same(String(url), 'file://nnsc.nsf.net/var/log/system.log', 'file');
-
-	    // url = new URL('http://zloirock.ru/');
-	    // url.hostname = '[20:0:0:1:0:0:0:ff';
-	    // assert.same(url.hostname, 'zloirock.ru', 'incorrect IPv6'); // '' in Chrome
-	    // assert.same(String(url), 'http://zloirock.ru/', 'incorrect IPv6'); // 'http://[20:0:0:1:0:0:0:ff' in Chrome
-
-	    // url = new URL('http://zloirock.ru/');
-	    // url.hostname = '[20:0:0:1:0:0:0:fg]';
-	    // assert.same(url.hostname, 'zloirock.ru', 'incorrect IPv6'); // '' in Chrome
-	    // assert.same(String(url), 'http://zloirock.ru/', 'incorrect IPv6'); // 'http://[20:0:0:1:0:0:0:ff/' in Chrome
-
-	    // url = new URL('http://zloirock.ru/');
-	    // url.hostname = 'a%b';
-	    // assert.same(url.hostname, 'zloirock.ru', 'forbidden host code point'); // '' in Chrome, 'a%b' in FF
-	    // assert.same(String(url), 'http://zloirock.ru/', 'forbidden host code point'); // 'http://a%25b/' in Chrome, 'http://a%b/' in FF
-	  }
+	QUnit.test('globalThis', function (assert) {
+	  assert.same(globalThis, Object(globalThis), 'is object');
+	  assert.same(globalThis.Math, Math, 'contains globals');
 	});
 
-	QUnit.test('URL#port', function (assert) {
-	  var url = new URL('http://zloirock.ru:1337/');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'port'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'port');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	    assert.same(_typeof(descriptor.set), 'function');
-	  }
-	  assert.same(url.port, '1337');
-	  if (DESCRIPTORS) {
-	    url = new URL('http://zloirock.ru/');
-	    url.port = 80;
-	    assert.same(url.port, '');
-	    assert.same(String(url), 'http://zloirock.ru/');
-	    url.port = 1337;
-	    assert.same(url.port, '1337');
-	    assert.same(String(url), 'http://zloirock.ru:1337/');
-	    // url.port = 'abcd';
-	    // assert.same(url.port, '1337'); // '0' in Chrome
-	    // assert.same(String(url), 'http://zloirock.ru:1337/'); // 'http://zloirock.ru:0/' in Chrome
-	    // url.port = '5678abcd';
-	    // assert.same(url.port, '5678'); // '1337' in FF
-	    // assert.same(String(url), 'http://zloirock.ru:5678/'); // 'http://zloirock.ru:1337/"' in FF
-	    url.port = 1234.5678;
-	    assert.same(url.port, '1234');
-	    assert.same(String(url), 'http://zloirock.ru:1234/');
-	    // url.port = 1e10;
-	    // assert.same(url.port, '1234'); // '0' in Chrome
-	    // assert.same(String(url), 'http://zloirock.ru:1234/'); // 'http://zloirock.ru:0/' in Chrome
-	  }
+	QUnit.test('Function#bind', function (assert) {
+	  var bind = Function.prototype.bind;
+	  assert.isFunction(bind);
+	  assert.arity(bind, 1);
+	  assert.name(bind, 'bind');
+	  assert.looksNative(bind);
+	  assert.nonEnumerable(Function.prototype, 'bind');
+	  assert.same(function () {
+	    return this.a;
+	  }.bind({
+	    a: 42
+	  })(), 42);
+	  assert.same(new function () {/* empty */}().a, undefined);
+	  // new 用法MDN上说不建议使用，就不支持了，
+	  // function A() {
+	  // }
+	  // const a = new A();
+	  // const B = A.bind(a);
+	  // assert.ok(B.call(a) === undefined, "not allow new");
+
+	  // assert.same((it => it).bind(null, 42)(), 42);
+	  // const regExpTest = RegExp.prototype.test.bind(/a/);
+	  // assert.ok(regExpTest('a'));
+	  // const Date2017 = Date.bind(null, 2017);
+	  // const date = new Date2017(11);
+	  // assert.ok(date instanceof Date);
+	  // assert.strictEqual(date.getFullYear(), 2017);
+	  // assert.strictEqual(date.getMonth(), 11);
 	});
 
-	QUnit.test('URL#pathname', function (assert) {
-	  var url = new URL('http://zloirock.ru/foo/bar');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'pathname'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'pathname');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	    assert.same(_typeof(descriptor.set), 'function');
-	  }
-	  assert.same(url.pathname, '/foo/bar');
-	  if (DESCRIPTORS) {
-	    url = new URL('http://zloirock.ru/');
-	    url.pathname = 'bar/baz';
-	    assert.same(url.pathname, '/bar/baz');
-	    assert.same(String(url), 'http://zloirock.ru/bar/baz');
-	  }
-	});
-	QUnit.test('URL#search', function (assert) {
-	  var url = new URL('http://zloirock.ru/');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'search'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'search');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	    assert.same(_typeof(descriptor.set), 'function');
-	  }
-	  assert.same(url.search, '');
-	  url = new URL('http://zloirock.ru/?foo=bar');
-	  assert.same(url.search, '?foo=bar');
-	  if (DESCRIPTORS) {
-	    url = new URL('http://zloirock.ru/?');
-	    assert.same(url.search, '');
-	    assert.same(String(url), 'http://zloirock.ru/?');
-	    url.search = 'foo=bar';
-	    assert.same(url.search, '?foo=bar');
-	    assert.same(String(url), 'http://zloirock.ru/?foo=bar');
-	    url.search = '?bar=baz';
-	    assert.same(url.search, '?bar=baz');
-	    assert.same(String(url), 'http://zloirock.ru/?bar=baz');
-	    url.search = '';
-	    assert.same(url.search, '');
-	    assert.same(String(url), 'http://zloirock.ru/');
-	  }
-	});
-	QUnit.test('URL#searchParams', function (assert) {
-	  var url = new URL('http://zloirock.ru/?foo=bar&bar=baz');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'searchParams'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'searchParams');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	  }
-	  assert.ok(url.searchParams instanceof URLSearchParams);
-	  assert.same(url.searchParams.get('foo'), 'bar');
-	  assert.same(url.searchParams.get('bar'), 'baz');
-	  if (DESCRIPTORS) {
-	    url = new URL('http://zloirock.ru/');
-	    url.searchParams.append('foo', 'bar');
-	    assert.same(String(url), 'http://zloirock.ru/?foo=bar');
-	    url = new URL('http://zloirock.ru/');
-	    url.search = 'foo=bar';
-	    assert.same(url.searchParams.get('foo'), 'bar');
-	    url = new URL('http://zloirock.ru/?foo=bar&bar=baz');
-	    url.search = '';
-	    assert.same(url.searchParams.has('foo'), false);
-	  }
-	});
-	QUnit.test('URL#hash', function (assert) {
-	  var url = new URL('http://zloirock.ru/');
-	  if (DESCRIPTORS) {
-	    assert.ok(!hasOwnProperty.call(url, 'hash'));
-	    var descriptor = Object.getOwnPropertyDescriptor(URL.prototype, 'hash');
-	    assert.same(descriptor.enumerable, true);
-	    assert.same(descriptor.configurable, true);
-	    assert.same(_typeof(descriptor.get), 'function');
-	    assert.same(_typeof(descriptor.set), 'function');
-	  }
-	  assert.same(url.hash, '');
-	  url = new URL('http://zloirock.ru/#foo');
-	  assert.same(url.hash, '#foo');
-	  url = new URL('http://zloirock.ru/#');
-	  assert.same(url.hash, '');
-	  assert.same(String(url), 'http://zloirock.ru/#');
-	  if (DESCRIPTORS) {
-	    url = new URL('http://zloirock.ru/#');
-	    url.hash = 'foo';
-	    assert.same(url.hash, '#foo');
-	    assert.same(String(url), 'http://zloirock.ru/#foo');
-	    url.hash = '';
-	    assert.same(url.hash, '');
-	    assert.same(String(url), 'http://zloirock.ru/');
-	    // url.hash = '#';
-	    // assert.same(url.hash, '');
-	    // assert.same(String(url), 'http://zloirock.ru/'); // 'http://zloirock.ru/#' in FF
-	    url.hash = '#foo';
-	    assert.same(url.hash, '#foo');
-	    assert.same(String(url), 'http://zloirock.ru/#foo');
-	    url.hash = '#foo#bar';
-	    assert.same(url.hash, '#foo#bar');
-	    assert.same(String(url), 'http://zloirock.ru/#foo#bar');
-	    url = new URL('http://zloirock.ru/');
-	    url.hash = 'абa';
-	    assert.same(url.hash, '#%D0%B0%D0%B1a');
+	function freeze(o) {
+	  return o;
+	}
 
-	    // url = new URL('http://zloirock.ru/');
-	    // url.hash = '\udc01\ud802a';
-	    // assert.same(url.hash, '#%EF%BF%BD%EF%BF%BDa', 'unmatched surrogates');
-	  }
+	if (!Object$1.freeze) {
+	  Object$1.freeze = freeze;
+	}
+
+	if (DESCRIPTORS) {
+	  QUnit.test('Function#name', function (assert) {
+	    assert.ok('name' in Function.prototype);
+	    assert.nonEnumerable(Function.prototype, 'name');
+	    function foo() {/* empty */}
+	    assert.same(foo.name, 'foo');
+	    assert.same(function () {/* empty */}.name, '');
+	    if (Object.freeze) {
+	      assert.same(Object.freeze(function () {/* empty */}).name, '');
+	    }
+	    function bar() {/* empty */}
+	    bar.toString = function () {
+	      throw new Error();
+	    };
+	    assert.notThrows(function () {
+	      return bar.name === 'bar';
+	    }, 'works with redefined `.toString`');
+	    var baz = Object(function () {/* empty */});
+	    baz.toString = function () {
+	      return '';
+	    };
+	    assert.same(baz.name, '');
+	  });
+	}
+
+	QUnit.test('Function#@@hasInstance', function (assert) {
+	  assert.ok($inject_Symbol_hasInstance in Function.prototype);
+	  assert.nonEnumerable(Function.prototype, $inject_Symbol_hasInstance);
+	  assert.ok(Function[$inject_Symbol_hasInstance](function () {/* empty */}));
+	  assert.ok(!Function[$inject_Symbol_hasInstance]({}));
 	});
 
-	QUnit.test('URL#toJSON', function (assert) {
-	  var toJSON = URL.prototype.toJSON;
+	QUnit.test('Date#toJSON', function (assert) {
+	  var toJSON = Date.prototype.toJSON;
 	  assert.isFunction(toJSON);
-	  assert.arity(toJSON, 0);
+	  assert.arity(toJSON, 1);
 	  assert.name(toJSON, 'toJSON');
-	  assert.enumerable(URL.prototype, 'toJSON');
 	  assert.looksNative(toJSON);
-	  var url = new URL('http://zloirock.ru/');
-	  assert.same(url.toJSON(), 'http://zloirock.ru/');
-	  if (DESCRIPTORS) {
-	    url.searchParams.append('foo', 'bar');
-	    assert.same(url.toJSON(), 'http://zloirock.ru/?foo=bar');
-	  }
+	  assert.nonEnumerable(Date.prototype, 'toJSON');
+	  var date = new Date();
+	  assert.same(date.toJSON(), date.toISOString(), 'base');
+	  assert.same(new Date(NaN).toJSON(), null, 'not finite');
+	  assert.same(toJSON.call({
+	    toISOString: function () {
+	      return 42;
+	    }
+	  }), 42, 'generic');
 	});
-	QUnit.test('URL#toString', function (assert) {
-	  var toString = URL.prototype.toString;
+
+	QUnit.test('Date#toISOString', function (assert) {
+	  var toISOString = Date.prototype.toISOString;
+	  assert.isFunction(toISOString);
+	  assert.name(toISOString, 'toISOString');
+	  assert.looksNative(toISOString);
+	  assert.nonEnumerable(Date.prototype, 'toISOString');
+	  // assert.strictEqual(new Date(0).toISOString(), '1970-01-01T00:00:00.000Z');
+	  // assert.strictEqual(new Date(1e12 + 1).toISOString(), '2001-09-09T01:46:40.001Z');
+	  // assert.strictEqual(new Date(-5e13 - 1).toISOString(), '0385-07-25T07:06:39.999Z');
+	  var future = new Date(1e15 + 1).toISOString();
+	  assert.ok(future === '+033658-09-27T01:46:40.001Z' || future === '33658-09-27T01:46:40.001Z');
+	  var prehistoric = new Date(-1e15 + 1).toISOString();
+	  assert.ok(prehistoric === '-029719-04-05T22:13:20.001Z' || prehistoric === '-29719-04-05T22:13:20.001Z');
+	  assert["throws"](function () {
+	    return new Date(NaN).toISOString();
+	  }, RangeError);
+	});
+
+	QUnit.test('Date#toString', function (assert) {
+	  var toString = Date.prototype.toString;
 	  assert.isFunction(toString);
 	  assert.arity(toString, 0);
 	  assert.name(toString, 'toString');
-	  assert.enumerable(URL.prototype, 'toString');
 	  assert.looksNative(toString);
-	  var url = new URL('http://zloirock.ru/');
-	  assert.same(url.toString(), 'http://zloirock.ru/');
+	  assert.nonEnumerable(Date.prototype, 'toString');
+	  // assert.same(String(new Date(NaN)), 'Invalid Date');
+	});
+
+	if (Number$1.EPSILON === undefined) {
+	  Number$1.EPSILON = Math.pow(2, -52);
+	}
+
+	QUnit.test('Number.EPSILON', function (assert) {
+	  var EPSILON = Number.EPSILON;
+	  assert.ok('EPSILON' in Number, 'EPSILON in Number');
+	  assert.nonEnumerable(Number, 'EPSILON');
+	  assert.strictEqual(EPSILON, Math.pow(2, -52), 'Is 2^-52');
+	  assert.ok(1 !== 1 + EPSILON, '1 isnt 1 + EPSILON');
+	  assert.strictEqual(1, 1 + EPSILON / 2, '1 is 1 + EPSILON / 2');
+	});
+
+	var isFinite$2 = window.isFinite;
+
+	function isFinite$1(value) {
+	  return typeof value === 'number' && isFinite$2(value);
+	}
+
+	if (!Number$1.isFinite) {
+	  Number$1.isFinite = isFinite$1;
+	}
+
+	QUnit.test('Number.isFinite', function (assert) {
+	  var isFinite = Number.isFinite;
+	  var create = Object.create;
+	  assert.isFunction(isFinite);
+	  assert.name(isFinite, 'isFinite');
+	  assert.arity(isFinite, 1);
+	  assert.looksNative(isFinite);
+	  assert.nonEnumerable(Number, 'isFinite');
+	  var finite = [1, 0.1, -1, Math.pow(2, 16), Math.pow(2, 16) - 1, Math.pow(2, 31), Math.pow(2, 31) - 1, Math.pow(2, 32), Math.pow(2, 32) - 1, -0];
+	  for (var _i = 0, _finite = finite; _i < _finite.length; _i++) {
+	    var value = _finite[_i];
+	    assert.ok(isFinite(value), "isFinite " + _typeof(value) + " " + value);
+	  }
+	  var notFinite = [NaN, Infinity, 'NaN', '5', false, new Number(NaN), new Number(Infinity), new Number(5), new Number(0.1), undefined, null, {}, function () {/* empty */}];
+	  for (var _i2 = 0, _notFinite = notFinite; _i2 < _notFinite.length; _i2++) {
+	    var _value = _notFinite[_i2];
+	    assert.ok(!isFinite(_value), "not isFinite " + _typeof(_value) + " " + _value);
+	  }
+	  assert.ok(!isFinite(create(null)), 'Number.isFinite(Object.create(null)) -> false');
+	});
+
+	function isInteger(value) {
+	  return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
+	}
+
+	if (!Number$1.isInteger) {
+	  Number$1.isInteger = isInteger;
+	}
+
+	QUnit.test('Number.isInteger', function (assert) {
+	  var isInteger = Number.isInteger;
+	  var create = Object.create;
+	  assert.isFunction(isInteger);
+	  assert.name(isInteger, 'isInteger');
+	  assert.arity(isInteger, 1);
+	  assert.looksNative(isInteger);
+	  assert.nonEnumerable(Number, 'isInteger');
+	  var integers = [1, -1, Math.pow(2, 16), Math.pow(2, 16) - 1, Math.pow(2, 31), Math.pow(2, 31) - 1, Math.pow(2, 32), Math.pow(2, 32) - 1, -0];
+	  for (var _i = 0, _integers = integers; _i < _integers.length; _i++) {
+	    var value = _integers[_i];
+	    assert.ok(isInteger(value), "isInteger " + _typeof(value) + " " + value);
+	  }
+	  var notIntegers = [NaN, 0.1, Infinity, 'NaN', '5', false, new Number(NaN), new Number(Infinity), new Number(5), new Number(0.1), undefined, null, {}, function () {/* empty */}];
+	  for (var _i2 = 0, _notIntegers = notIntegers; _i2 < _notIntegers.length; _i2++) {
+	    var _value = _notIntegers[_i2];
+	    assert.ok(!isInteger(_value), "not isInteger " + _typeof(_value) + " " + _value);
+	  }
+	  assert.ok(!isInteger(create(null)), 'Number.isInteger(Object.create(null)) -> false');
+	});
+
+	if (!Number$1.isNaN) {
+	  Number$1.isNaN = isNaN$1;
+	}
+
+	QUnit.test('Number.isNaN', function (assert) {
+	  var isNaN = Number.isNaN;
+	  var create = Object.create;
+	  assert.isFunction(isNaN);
+	  assert.name(isNaN, 'isNaN');
+	  assert.arity(isNaN, 1);
+	  assert.looksNative(isNaN);
+	  assert.nonEnumerable(Number, 'isNaN');
+	  assert.ok(isNaN(NaN), 'Number.isNaN NaN');
+	  var notNaNs = [1, 0.1, -1, Math.pow(2, 16), Math.pow(2, 16) - 1, Math.pow(2, 31), Math.pow(2, 31) - 1, Math.pow(2, 32), Math.pow(2, 32) - 1, -0, Infinity, 'NaN', '5', false, new Number(NaN), new Number(Infinity), new Number(5), new Number(0.1), undefined, null, {}, function () {/* empty */}];
+	  for (var _i = 0, _notNaNs = notNaNs; _i < _notNaNs.length; _i++) {
+	    var value = _notNaNs[_i];
+	    assert.ok(!isNaN(value), "not Number.isNaN " + _typeof(value) + " " + value);
+	  }
+	  assert.ok(!isNaN(create(null)), 'Number.isNaN(Object.create(null)) -> false');
+	});
+
+	if (!('MIN_SAFE_INTEGER' in Number$1)) {
+	  Number$1.MIN_SAFE_INTEGER = -0x1FFFFFFFFFFFFF;
+	}
+
+	if (!Number$1.isSafeInteger) {
+	  Number$1.isSafeInteger = function () {
+	    function isSafeInteger(value) {
+	      return Number$1.isInteger(value) && Math.abs(value) <= Number$1.MAX_SAFE_INTEGER;
+	    }
+	    return isSafeInteger;
+	  }();
+	}
+
+	QUnit.test('Number.isSafeInteger', function (assert) {
+	  var isSafeInteger = Number.isSafeInteger;
+	  var create = Object.create;
+	  assert.isFunction(isSafeInteger);
+	  assert.name(isSafeInteger, 'isSafeInteger');
+	  assert.arity(isSafeInteger, 1);
+	  assert.looksNative(isSafeInteger);
+	  assert.nonEnumerable(Number, 'isSafeInteger');
+	  var safeIntegers = [1, -1, Math.pow(2, 16), Math.pow(2, 16) - 1, Math.pow(2, 31), Math.pow(2, 31) - 1, Math.pow(2, 32), Math.pow(2, 32) - 1, -0, 9007199254740991, -9007199254740991];
+	  for (var _i = 0, _safeIntegers = safeIntegers; _i < _safeIntegers.length; _i++) {
+	    var value = _safeIntegers[_i];
+	    assert.ok(isSafeInteger(value), "isSafeInteger " + _typeof(value) + " " + value);
+	  }
+	  var notSafeIntegers = [9007199254740992, -9007199254740992, NaN, 0.1, Infinity, 'NaN', '5', false, new Number(NaN), new Number(Infinity), new Number(5), new Number(0.1), undefined, null, {}, function () {/* empty */}];
+	  for (var _i2 = 0, _notSafeIntegers = notSafeIntegers; _i2 < _notSafeIntegers.length; _i2++) {
+	    var _value = _notSafeIntegers[_i2];
+	    assert.ok(!isSafeInteger(_value), "not isSafeInteger " + _typeof(_value) + " " + _value);
+	  }
+	  assert.ok(!isSafeInteger(create(null)), 'Number.isSafeInteger(Object.create(null)) -> false');
+	});
+
+	QUnit.test('Number.MAX_SAFE_INTEGER', function (assert) {
+	  assert.ok('MAX_SAFE_INTEGER' in Number);
+	  assert.nonEnumerable(Number, 'MAX_SAFE_INTEGER');
+	  assert.strictEqual(Number.MAX_SAFE_INTEGER, Math.pow(2, 53) - 1, 'Is 2^53 - 1');
+	});
+
+	QUnit.test('Number.MIN_SAFE_INTEGER', function (assert) {
+	  assert.ok('MIN_SAFE_INTEGER' in Number);
+	  assert.nonEnumerable(Number, 'MIN_SAFE_INTEGER');
+	  assert.strictEqual(Number.MIN_SAFE_INTEGER, -Math.pow(2, 53) + 1, 'Is -2^53 + 1');
+	});
+
+	if (!Number$1.parseFloat) Number$1.parseFloat = parseFloat;
+
+	QUnit.test('Number.parseFloat', function (assert) {
+	  var parseFloat = Number.parseFloat;
+	  assert.isFunction(parseFloat);
+	  assert.name(parseFloat, 'parseFloat');
+	  assert.arity(parseFloat, 1);
+	  assert.looksNative(parseFloat);
+	  assert.nonEnumerable(Number, 'parseFloat');
+	  assert.same(parseFloat, GLOBAL.parseFloat);
+	  assert.same(parseFloat('0'), 0);
+	  assert.same(parseFloat(' 0'), 0);
+	  assert.same(parseFloat('+0'), 0);
+	  assert.same(parseFloat(' +0'), 0);
+	  assert.same(parseFloat('-0'), -0);
+	  assert.same(parseFloat(' -0'), -0);
+	  assert.same(parseFloat(WHITESPACES + "+0"), 0);
+	  assert.same(parseFloat(WHITESPACES + "-0"), -0);
+	  assert.same(parseFloat(null), NaN);
+	  assert.same(parseFloat(undefined), NaN);
+	});
+
+	if (!Number$1.parseInt) Number$1.parseInt = parseInt;
+
+	QUnit.test('Number.parseInt', function (assert) {
+	  var parseInt = Number.parseInt;
+	  assert.isFunction(parseInt);
+	  assert.name(parseInt, 'parseInt');
+	  assert.arity(parseInt, 2);
+	  assert.looksNative(parseInt);
+	  assert.nonEnumerable(Number, 'parseInt');
+	  assert.same(parseInt, GLOBAL.parseInt);
+	  for (var radix = 2; radix <= 36; ++radix) {
+	    assert.same(parseInt('10', radix), radix, "radix " + radix);
+	  }
+	  var strings = ['01', '08', '10', '42'];
+	  for (var _i = 0, _strings = strings; _i < _strings.length; _i++) {
+	    var string = _strings[_i];
+	    assert.same(parseInt(string), parseInt(string, 10), "default radix is 10: " + string);
+	  }
+	  assert.same(parseInt('0x16'), parseInt('0x16', 16), 'default radix is 16: 0x16');
+	  assert.same(parseInt('  0x16'), parseInt('0x16', 16), 'ignores leading whitespace #1');
+	  assert.same(parseInt('  42'), parseInt('42', 10), 'ignores leading whitespace #2');
+	  assert.same(parseInt('  08'), parseInt('08', 10), 'ignores leading whitespace #3');
+	  // assert.same(parseInt(`${WHITESPACES}08`), parseInt('08', 10), 'ignores leading whitespace #4');
+	  // assert.same(parseInt(`${WHITESPACES}0x16`), parseInt('0x16', 16), 'ignores leading whitespace #5');
+	  var fakeZero = {
+	    valueOf: function () {
+	      return 0;
+	    }
+	  };
+	  // assert.same(parseInt('08', fakeZero), parseInt('08', 10), 'valueOf #1');
+	  // assert.same(parseInt('0x16', fakeZero), parseInt('0x16', 16), 'valueOf #2');
+	  assert.same(parseInt('-0xF'), -15, 'signed hex #1');
+	  assert.same(parseInt('-0xF', 16), -15, 'signed hex #2');
+	  assert.same(parseInt('+0xF'), 15, 'signed hex #3');
+	  assert.same(parseInt('+0xF', 16), 15, 'signed hex #4');
+	  assert.same(parseInt('10', -4294967294), 2, 'radix uses ToUint32');
+	  assert.same(parseInt(null), NaN);
+	  assert.same(parseInt(undefined), NaN);
+	});
+
+	function toInteger(n) {
+	  return isNaN(n = +n) ? 0 : (n > 0 ? Math.floor : Math.ceil)(n);
+	}
+
+	// from core-js
+	if (0.00008.toFixed(3) !== '0.000' || 0.9.toFixed(0) !== '1' || 1.255.toFixed(2) !== '1.25' || 1000000000000000128.0.toFixed(0) !== '1000000000000000128') {
+	  var pow$1 = function (x, n, acc) {
+	    return n === 0 ? acc : n % 2 === 1 ? pow$1(x, n - 1, acc * x) : pow$1(x * x, n / 2, acc);
+	  };
+	  var log$1 = function (x) {
+	    var n = 0;
+	    var x2 = x;
+	    while (x2 >= 4096) {
+	      n += 12;
+	      x2 /= 4096;
+	    }
+	    while (x2 >= 2) {
+	      n += 1;
+	      x2 /= 2;
+	    }
+	    return n;
+	  };
+	  var multiply = function (data, n, c) {
+	    var index = -1;
+	    var c2 = c;
+	    while (++index < 6) {
+	      c2 += n * data[index];
+	      data[index] = c2 % 1e7;
+	      c2 = Math.floor(c2 / 1e7);
+	    }
+	  };
+	  var divide = function (data, n) {
+	    var index = 6;
+	    var c = 0;
+	    while (--index >= 0) {
+	      c += data[index];
+	      data[index] = Math.floor(c / n);
+	      c = c % n * 1e7;
+	    }
+	  };
+	  var dataToString = function (data) {
+	    var index = 6;
+	    var s = '';
+	    while (--index >= 0) {
+	      if (s !== '' || index === 0 || data[index] !== 0) {
+	        var t = String(data[index]);
+	        s = s === '' ? t : s + repeat$1.call('0', 7 - t.length) + t;
+	      }
+	    }
+	    return s;
+	  };
+	  Number.prototype.toFixed = function (fractionDigits) {
+	    var number = this;
+	    var fractDigits = toInteger(fractionDigits);
+	    var data = [0, 0, 0, 0, 0, 0];
+	    var sign = '';
+	    var result = '0';
+	    var e, z, j, k;
+	    if (fractDigits < 0 || fractDigits > 20) throw RangeError('Incorrect fraction digits');
+	    // eslint-disable-next-line no-self-compare -- NaN check
+	    if (isNaN(number)) return 'NaN';
+	    if (number <= -1e21 || number >= 1e21) return String(number);
+	    if (number < 0) {
+	      sign = '-';
+	      number = -number;
+	    }
+	    if (number > 1e-21) {
+	      e = log$1(number * pow$1(2, 69, 1)) - 69;
+	      z = e < 0 ? number * pow$1(2, -e, 1) : number / pow$1(2, e, 1);
+	      z *= 0x10000000000000;
+	      e = 52 - e;
+	      if (e > 0) {
+	        multiply(data, 0, z);
+	        j = fractDigits;
+	        while (j >= 7) {
+	          multiply(data, 1e7, 0);
+	          j -= 7;
+	        }
+	        multiply(data, pow$1(10, j, 1), 0);
+	        j = e - 1;
+	        while (j >= 23) {
+	          divide(data, 1 << 23);
+	          j -= 23;
+	        }
+	        divide(data, 1 << j);
+	        multiply(data, 1, 1);
+	        divide(data, 2);
+	        result = dataToString(data);
+	      } else {
+	        multiply(data, 0, z);
+	        multiply(data, 1 << -e, 0);
+	        result = dataToString(data) + repeat$1.call('0', fractDigits);
+	      }
+	    }
+	    if (fractDigits > 0) {
+	      k = result.length;
+	      result = sign + (k <= fractDigits ? '0.' + repeat$1.call('0', fractDigits - k) + result : result.slice(0, k - fractDigits) + '.' + result.slice(k - fractDigits));
+	    } else {
+	      result = sign + result;
+	    }
+	    return result;
+	  };
+	}
+
+	QUnit.test('Number#toFixed', function (assert) {
+	  var toFixed = Number.prototype.toFixed;
+	  assert.isFunction(toFixed);
+	  assert.name(toFixed, 'toFixed');
+	  assert.arity(toFixed, 1);
+	  assert.looksNative(toFixed);
+	  assert.nonEnumerable(Number.prototype, 'toFixed');
+	  assert.same(0.00008.toFixed(3), '0.000');
+	  assert.same(0.9.toFixed(0), '1');
+	  assert.same(1.255.toFixed(2), '1.25');
+	  assert.same(1843654265.0774949.toFixed(5), '1843654265.07749');
+	  assert.same(1000000000000000128.0.toFixed(0), '1000000000000000128');
+	  assert.same(1 .toFixed(), '1');
+	  assert.same(1 .toFixed(0), '1');
+	  assert.same(1 .toFixed(1), '1.0');
+	  assert.same(1 .toFixed(1.1), '1.0');
+	  assert.same(1 .toFixed(0.9), '1');
+	  assert.same(1 .toFixed('0'), '1');
+	  assert.same(1 .toFixed('1'), '1.0');
+	  assert.same(1 .toFixed('1.1'), '1.0');
+	  assert.same(1 .toFixed('0.9'), '1');
+	  assert.same(1 .toFixed(NaN), '1');
+	  assert.same(1 .toFixed('some string'), '1');
+	  assert.notThrows(function () {
+	    return toFixed.call(1, -0.1) === '1';
+	  });
+	  assert.same(new Number(1).toFixed(), '1');
+	  assert.same(new Number(1).toFixed(0), '1');
+	  assert.same(new Number(1).toFixed(1), '1.0');
+	  assert.same(new Number(1).toFixed(1.1), '1.0');
+	  assert.same(new Number(1).toFixed(0.9), '1');
+	  assert.same(new Number(1).toFixed('0'), '1');
+	  assert.same(new Number(1).toFixed('1'), '1.0');
+	  assert.same(new Number(1).toFixed('1.1'), '1.0');
+	  assert.same(new Number(1).toFixed('0.9'), '1');
+	  assert.same(new Number(1).toFixed(NaN), '1');
+	  assert.same(new Number(1).toFixed('some string'), '1');
+	  assert.notThrows(function () {
+	    return new Number(1).toFixed(-0.1) === '1';
+	  });
+	  assert.same(NaN.toFixed(), 'NaN', 'NaN');
+	  assert.same(NaN.toFixed(0), 'NaN');
+	  assert.same(NaN.toFixed(1), 'NaN');
+	  assert.same(NaN.toFixed(1.1), 'NaN');
+	  assert.same(NaN.toFixed(0.9), 'NaN');
+	  assert.same(NaN.toFixed('0'), 'NaN');
+	  assert.same(NaN.toFixed('1'), 'NaN');
+	  assert.same(NaN.toFixed('1.1'), 'NaN');
+	  assert.same(NaN.toFixed('0.9'), 'NaN');
+	  assert.same(NaN.toFixed(NaN), 'NaN');
+	  assert.same(NaN.toFixed('some string'), 'NaN');
+	  assert.notThrows(function () {
+	    return NaN.toFixed(-0.1) === 'NaN';
+	  });
+	  assert.same(new Number(1e21).toFixed(), String(1e21));
+	  assert.same(new Number(1e21).toFixed(0), String(1e21));
+	  assert.same(new Number(1e21).toFixed(1), String(1e21));
+	  assert.same(new Number(1e21).toFixed(1.1), String(1e21));
+	  assert.same(new Number(1e21).toFixed(0.9), String(1e21));
+	  assert.same(new Number(1e21).toFixed('0'), String(1e21));
+	  assert.same(new Number(1e21).toFixed('1'), String(1e21));
+	  assert.same(new Number(1e21).toFixed('1.1'), String(1e21));
+	  assert.same(new Number(1e21).toFixed('0.9'), String(1e21));
+	  assert.same(new Number(1e21).toFixed(NaN), String(1e21));
+	  assert.same(new Number(1e21).toFixed('some string'), String(1e21));
+	  assert.notThrows(function () {
+	    return new Number(1e21).toFixed(-0.1) === String(1e21);
+	  });
+	  assert["throws"](function () {
+	    return 1.0.toFixed(-101);
+	  }, RangeError, 'If f < 0 or f > 20, throw a RangeError exception.');
+	  assert["throws"](function () {
+	    return 1.0.toFixed(101);
+	  }, RangeError, 'If f < 0 or f > 20, throw a RangeError exception.');
+	  assert["throws"](function () {
+	    return NaN.toFixed(Infinity);
+	  }, RangeError, 'If f < 0 or f > 20, throw a RangeError exception.');
+	  // assert.throws(() => toFixed.call({}, 1), TypeError, '? thisNumberValue(this value)');
+	  // assert.throws(() => toFixed.call('123', 1), TypeError, '? thisNumberValue(this value)');
+	  // assert.throws(() => toFixed.call(false, 1), TypeError, '? thisNumberValue(this value)');
+	  // assert.throws(() => toFixed.call(null, 1), TypeError, '? thisNumberValue(this value)');
+	  // assert.throws(() => toFixed.call(undefined, 1), TypeError, '? thisNumberValue(this value)');
+	});
+
+	QUnit.test('Number#toPrecision', function (assert) {
+	  var toPrecision = Number.prototype.toPrecision;
+	  assert.isFunction(toPrecision);
+	  assert.name(toPrecision, 'toPrecision');
+	  assert.arity(toPrecision, 1);
+	  assert.looksNative(toPrecision);
+	  assert.nonEnumerable(Number.prototype, 'toPrecision');
+	  assert.same(0.00008.toPrecision(3), '0.0000800', '0.00008.toPrecision(3)');
+	  assert.same(1.255.toPrecision(2), '1.3', '1.255.toPrecision(2)');
+	  assert.same(1843654265.0774949.toPrecision(13), '1843654265.077', '1843654265.0774949.toPrecision(13)');
+	  assert.same(NaN.toPrecision(1), 'NaN', 'If x is NaN, return the String "NaN".');
+	  assert.same(123.456.toPrecision(), '123.456', 'If precision is undefined, return ! ToString(x).');
+	  // assert.same(123.456.toPrecision(undefined), '123.456', 'If precision is undefined, return ! ToString(x).');
+	  assert["throws"](function () {
+	    return 0.9.toPrecision(0);
+	  }, RangeError, 'If p < 1 or p > 21, throw a RangeError exception.');
+	  assert["throws"](function () {
+	    return 0.9.toPrecision(101);
+	  }, RangeError, 'If p < 1 or p > 21, throw a RangeError exception.');
+	  assert["throws"](function () {
+	    return toPrecision.call({}, 1);
+	  }, TypeError, '? thisNumberValue(this value)');
+	  assert["throws"](function () {
+	    return toPrecision.call('123', 1);
+	  }, TypeError, '? thisNumberValue(this value)');
+	  assert["throws"](function () {
+	    return toPrecision.call(false, 1);
+	  }, TypeError, '? thisNumberValue(this value)');
+	  assert["throws"](function () {
+	    return toPrecision.call(null, 1);
+	  }, TypeError, '? thisNumberValue(this value)');
+	  assert["throws"](function () {
+	    return toPrecision.call(undefined, 1);
+	  }, TypeError, '? thisNumberValue(this value)');
+	});
+
+	var Math$1 = window.Math;
+
+	var log = Math.log;
+
+	var sqrt = Math.sqrt;
+
+	var LN2 = Math.LN2;
+
+	// from core-js https://github.com/zloirock/core-js
+	function log1p(x) {
+	  return (x = +x) > -1e-8 && x < 1e-8 ? x - x * x / 2 : Math.log(1 + x);
+	}
+	;
+
+	// from core-js https://github.com/zloirock/core-js
+	function acosh(x) {
+	  return (x = +x) < 1 ? NaN : x > 94906265.62425156 ? log(x) + LN2 : log1p(x - 1 + sqrt(x - 1) * sqrt(x + 1));
+	}
+
+	if (!Math$1.acosh) {
+	  Math$1.acosh = acosh;
+	}
+
+	QUnit.test('Math.acosh', function (assert) {
+	  assert.isFunction(Math.acosh);
+	  assert.name(Math.acosh, 'acosh');
+	  assert.arity(Math.acosh, 1);
+	  assert.looksNative(Math.acosh);
+	  assert.nonEnumerable(Math, 'acosh');
+	  assert.same(Math.acosh(NaN), NaN);
+	  assert.same(Math.acosh(0.5), NaN);
+	  assert.same(Math.acosh(-1), NaN);
+	  assert.same(Math.acosh(-1e300), NaN);
+	  assert.same(Math.acosh(1), 0);
+	  assert.strictEqual(Math.acosh(Infinity), Infinity);
+	  assert.epsilon(Math.acosh(1234), 7.811163220849231);
+	  assert.epsilon(Math.acosh(8.88), 2.8737631531629235);
+	  assert.epsilon(Math.acosh(1e+160), 369.10676205960726);
+	  assert.epsilon(Math.acosh(Number.MAX_VALUE), 710.475860073944);
+	  assert.epsilon(Math.acosh(1 + Number.EPSILON), 2.1073424255447017e-8);
+	});
+
+	// from core-js https://github.com/zloirock/core-js
+	function asinh(x) {
+	  return !isFinite(x = +x) || x == 0 ? x : x < 0 ? -asinh(-x) : log(x + sqrt(x * x + 1));
+	}
+
+	if (!Math$1.asinh) {
+	  Math$1.asinh = asinh;
+	}
+
+	QUnit.test('Math.asinh', function (assert) {
+	  assert.isFunction(Math.asinh);
+	  assert.name(Math.asinh, 'asinh');
+	  assert.arity(Math.asinh, 1);
+	  assert.looksNative(Math.asinh);
+	  assert.nonEnumerable(Math, 'asinh');
+	  assert.same(Math.asinh(NaN), NaN);
+	  assert.same(Math.asinh(0), 0);
+	  assert.same(Math.asinh(-0), -0);
+	  assert.strictEqual(Math.asinh(Infinity), Infinity);
+	  assert.strictEqual(Math.asinh(-Infinity), -Infinity);
+	  assert.epsilon(Math.asinh(1234), 7.811163549201245);
+	  assert.epsilon(Math.asinh(9.99), 2.997227420191335);
+	  assert.epsilon(Math.asinh(1e150), 346.0809111296668);
+	  assert.epsilon(Math.asinh(1e7), 16.811242831518268);
+	  assert.epsilon(Math.asinh(-1e7), -16.811242831518268);
+	});
+
+	// from core-js https://github.com/zloirock/core-js
+	function atanh(x) {
+	  return (x = +x) == 0 ? x : log((1 + x) / (1 - x)) / 2;
+	}
+
+	if (!Math$1.atanh) {
+	  Math$1.atanh = atanh;
+	}
+
+	QUnit.test('Math.atanh', function (assert) {
+	  assert.isFunction(Math.atanh);
+	  assert.name(Math.atanh, 'atanh');
+	  assert.arity(Math.atanh, 1);
+	  assert.looksNative(Math.atanh);
+	  assert.nonEnumerable(Math, 'atanh');
+	  assert.same(Math.atanh(NaN), NaN);
+	  assert.same(Math.atanh(-2), NaN);
+	  assert.same(Math.atanh(-1.5), NaN);
+	  assert.same(Math.atanh(2), NaN);
+	  assert.same(Math.atanh(1.5), NaN);
+	  assert.strictEqual(Math.atanh(-1), -Infinity);
+	  assert.strictEqual(Math.atanh(1), Infinity);
+	  assert.same(Math.atanh(0), 0);
+	  assert.same(Math.atanh(-0), -0);
+	  assert.same(Math.atanh(-1e300), NaN);
+	  assert.same(Math.atanh(1e300), NaN);
+	  assert.epsilon(Math.atanh(0.5), 0.5493061443340549);
+	  assert.epsilon(Math.atanh(-0.5), -0.5493061443340549);
+	  assert.epsilon(Math.atanh(0.444), 0.47720201260109457);
+	});
+
+	var abs = Math.abs;
+
+	var pow = Math.pow;
+
+	// from core-js https://github.com/zloirock/core-js
+	function sign(x) {
+	  return (x = +x) == 0 || x != x ? x : x < 0 ? -1 : 1;
+	}
+
+	// from core-js https://github.com/zloirock/core-js
+	function cbrt(x) {
+	  return sign(x = +x) * pow(abs(x), 1 / 3);
+	}
+
+	if (!Math$1.cbrt) {
+	  Math$1.cbrt = cbrt;
+	}
+
+	QUnit.test('Math.cbrt', function (assert) {
+	  assert.isFunction(Math.cbrt);
+	  assert.name(Math.cbrt, 'cbrt');
+	  assert.arity(Math.cbrt, 1);
+	  assert.looksNative(Math.cbrt);
+	  assert.nonEnumerable(Math, 'cbrt');
+	  assert.same(Math.cbrt(NaN), NaN);
+	  assert.same(Math.cbrt(0), 0);
+	  assert.same(Math.cbrt(-0), -0);
+	  assert.strictEqual(Math.cbrt(Infinity), Infinity);
+	  assert.strictEqual(Math.cbrt(-Infinity), -Infinity);
+	  assert.strictEqual(Math.cbrt(-8), -2);
+	  assert.strictEqual(Math.cbrt(8), 2);
+	  assert.epsilon(Math.cbrt(-1000), -10);
+	  assert.epsilon(Math.cbrt(1000), 10);
+	});
+
+	// from MDN
+	function clz32(x) {
+	  var asUint = x >>> 0; // 将x转换为Uint32类型
+	  if (asUint === 0) {
+	    return 32;
+	  }
+	  return 31 - (log(asUint) / LN2 | 0) | 0; // "| 0"相当于Math.floor
+	}
+
+	if (!Math$1.clz32) {
+	  Math$1.clz32 = clz32;
+	}
+
+	QUnit.test('Math.clz32', function (assert) {
+	  assert.isFunction(Math.clz32);
+	  assert.name(Math.clz32, 'clz32');
+	  assert.arity(Math.clz32, 1);
+	  assert.looksNative(Math.clz32);
+	  assert.nonEnumerable(Math, 'clz32');
+	  assert.strictEqual(Math.clz32(0), 32);
+	  assert.strictEqual(Math.clz32(1), 31);
+	  assert.same(Math.clz32(-1), 0);
+	  assert.strictEqual(Math.clz32(0.6), 32);
+	  assert.same(Math.clz32(Math.pow(2, 32) - 1), 0);
+	  assert.strictEqual(Math.clz32(Math.pow(2, 32)), 32);
+	});
+
+	var E = Math.E;
+
+	var exp = Math.exp;
+
+	// from core-js https://github.com/zloirock/core-js
+	function expm1(x) {
+	  return (x = +x) == 0 ? x : x > -1e-6 && x < 1e-6 ? x + x * x / 2 : exp(x) - 1;
+	}
+
+	// from core-js https://github.com/zloirock/core-js
+	function cosh(x) {
+	  var t = expm1(abs(x) - 1) + 1;
+	  return (t + 1 / (t * E * E)) * (E / 2);
+	}
+
+	if (!Math$1.cosh) {
+	  Math$1.cosh = cosh;
+	}
+
+	QUnit.test('Math.cosh', function (assert) {
+	  assert.isFunction(Math.cosh);
+	  assert.name(Math.cosh, 'cosh');
+	  assert.arity(Math.cosh, 1);
+	  assert.looksNative(Math.cosh);
+	  assert.nonEnumerable(Math, 'cosh');
+	  assert.same(Math.cosh(NaN), NaN);
+	  assert.strictEqual(Math.cosh(0), 1);
+	  assert.strictEqual(Math.cosh(-0), 1);
+	  assert.strictEqual(Math.cosh(Infinity), Infinity);
+	  assert.strictEqual(Math.cosh(-Infinity), Infinity);
+	  assert.epsilon(Math.cosh(12), 81377.395712574, 1e-9);
+	  assert.epsilon(Math.cosh(22), 1792456423.065795780980053377, 1e-5);
+	  assert.epsilon(Math.cosh(-10), 11013.23292010332313972137);
+	  assert.epsilon(Math.cosh(-23), 4872401723.1244513000, 1e-5);
+	  assert.epsilon(Math.cosh(710), 1.1169973830808557e+308, 1e+295);
+	});
+
+	if (!Math$1.expm1) {
+	  Math$1.expm1 = expm1;
+	}
+
+	QUnit.test('Math.expm1', function (assert) {
+	  assert.isFunction(Math.expm1);
+	  assert.name(Math.expm1, 'expm1');
+	  assert.arity(Math.expm1, 1);
+	  assert.looksNative(Math.expm1);
+	  assert.nonEnumerable(Math, 'expm1');
+	  assert.same(Math.expm1(NaN), NaN);
+	  assert.same(Math.expm1(0), 0);
+	  assert.same(Math.expm1(-0), -0);
+	  assert.strictEqual(Math.expm1(Infinity), Infinity);
+	  assert.strictEqual(Math.expm1(-Infinity), -1);
+	  assert.epsilon(Math.expm1(10), 22025.465794806718);
+	  assert.epsilon(Math.expm1(-10), -0.9999546000702375);
+	});
+
+	var EPSILON = pow(2, -52);
+	var EPSILON32 = pow(2, -23);
+	var MAX32 = pow(2, 127) * (2 - EPSILON32);
+	var MIN32 = pow(2, -126);
+	function roundTiesToEven(n) {
+	  return n + 1 / EPSILON - 1 / EPSILON;
+	}
+	;
+
+	// from core-js https://github.com/zloirock/core-js
+	function fround(x) {
+	  var $abs = abs(x);
+	  var $sign = sign(x);
+	  var a, result;
+	  if ($abs < MIN32) return $sign * roundTiesToEven($abs / MIN32 / EPSILON32) * MIN32 * EPSILON32;
+	  a = (1 + EPSILON32 / EPSILON) * $abs;
+	  result = a - (a - $abs);
+	  // eslint-disable-next-line no-self-compare -- NaN check
+	  if (result > MAX32 || result != result) return $sign * Infinity;
+	  return $sign * result;
+	}
+
+	if (!Math$1.fround) {
+	  Math$1.fround = fround;
+	}
+
+	QUnit.test('Math.fround', function (assert) {
+	  assert.isFunction(Math.fround);
+	  assert.name(Math.fround, 'fround');
+	  assert.arity(Math.fround, 1);
+	  assert.looksNative(Math.fround);
+	  assert.nonEnumerable(Math, 'fround');
+	  assert.same(Math.fround(undefined), NaN);
+	  assert.same(Math.fround(NaN), NaN);
+	  assert.same(Math.fround(0), 0);
+	  assert.same(Math.fround(-0), -0);
+	  assert.same(Math.fround(Number.MIN_VALUE), 0);
+	  assert.same(Math.fround(-Number.MIN_VALUE), -0);
+	  assert.strictEqual(Math.fround(Infinity), Infinity);
+	  assert.strictEqual(Math.fround(-Infinity), -Infinity);
+	  assert.strictEqual(Math.fround(1.7976931348623157e+308), Infinity);
+	  assert.strictEqual(Math.fround(-1.7976931348623157e+308), -Infinity);
+	  assert.strictEqual(Math.fround(3.4028235677973366e+38), Infinity);
+	  assert.strictEqual(Math.fround(3), 3);
+	  assert.strictEqual(Math.fround(-3), -3);
+	  var maxFloat32 = 3.4028234663852886e+38;
+	  var minFloat32 = 1.401298464324817e-45;
+	  assert.strictEqual(Math.fround(maxFloat32), maxFloat32);
+	  assert.strictEqual(Math.fround(-maxFloat32), -maxFloat32);
+	  assert.strictEqual(Math.fround(maxFloat32 + Math.pow(2, 102)), maxFloat32);
+	  assert.strictEqual(Math.fround(minFloat32), minFloat32);
+	  assert.strictEqual(Math.fround(-minFloat32), -minFloat32);
+	  assert.same(Math.fround(minFloat32 / 2), 0);
+	  assert.same(Math.fround(-minFloat32 / 2), -0);
+	  assert.strictEqual(Math.fround(minFloat32 / 2 + Math.pow(2, -202)), minFloat32);
+	  assert.strictEqual(Math.fround(-minFloat32 / 2 - Math.pow(2, -202)), -minFloat32);
+	});
+
+	// from core-js https://github.com/zloirock/core-js
+	function hypot(x, y) {
+	  var sum = 0;
+	  var i = 0;
+	  var aLen = arguments.length;
+	  var larg = 0;
+	  var arg, div;
+	  while (i < aLen) {
+	    arg = abs(arguments[i++]);
+	    if (larg < arg) {
+	      div = larg / arg;
+	      sum = sum * div * div + 1;
+	      larg = arg;
+	    } else if (arg > 0) {
+	      div = arg / larg;
+	      sum += div * div;
+	    } else sum += arg;
+	  }
+	  return larg === Infinity ? Infinity : larg * sqrt(sum);
+	}
+
+	if (!Math$1.hypot) {
+	  Math$1.hypot = hypot;
+	}
+
+	QUnit.test('Math.hypot', function (assert) {
+	  assert.isFunction(Math.hypot);
+	  assert.name(Math.hypot, 'hypot');
+	  assert.arity(Math.hypot, 2);
+	  assert.looksNative(Math.hypot);
+	  assert.nonEnumerable(Math, 'hypot');
+	  assert.strictEqual(Math.hypot(), 0);
+	  assert.strictEqual(Math.hypot(1), 1);
+	  assert.same(Math.hypot('', 0), 0);
+	  assert.same(Math.hypot(0, ''), 0);
+	  assert.strictEqual(Math.hypot(Infinity, 0), Infinity, 'Infinity, 0');
+	  assert.strictEqual(Math.hypot(-Infinity, 0), Infinity, '-Infinity, 0');
+	  assert.strictEqual(Math.hypot(0, Infinity), Infinity, '0, Infinity');
+	  assert.strictEqual(Math.hypot(0, -Infinity), Infinity, '0, -Infinity');
+	  assert.strictEqual(Math.hypot(Infinity, NaN), Infinity, 'Infinity, NaN');
+	  assert.strictEqual(Math.hypot(NaN, -Infinity), Infinity, 'NaN, -Infinity');
+	  assert.same(Math.hypot(NaN, 0), NaN, 'NaN, 0');
+	  assert.same(Math.hypot(0, NaN), NaN, '0, NaN');
+	  assert.same(Math.hypot(0, -0), 0);
+	  assert.same(Math.hypot(0, 0), 0);
+	  assert.same(Math.hypot(-0, -0), 0);
+	  assert.same(Math.hypot(-0, 0), 0);
+	  assert.strictEqual(Math.hypot(0, 1), 1);
+	  assert.strictEqual(Math.hypot(0, -1), 1);
+	  assert.strictEqual(Math.hypot(-0, 1), 1);
+	  assert.strictEqual(Math.hypot(-0, -1), 1);
+	  assert.same(Math.hypot(0), 0);
+	  assert.strictEqual(Math.hypot(1), 1);
+	  assert.strictEqual(Math.hypot(2), 2);
+	  assert.strictEqual(Math.hypot(0, 0, 1), 1);
+	  assert.strictEqual(Math.hypot(0, 1, 0), 1);
+	  assert.strictEqual(Math.hypot(1, 0, 0), 1);
+	  assert.strictEqual(Math.hypot(2, 3, 4), Math.sqrt(2 * 2 + 3 * 3 + 4 * 4));
+	  assert.strictEqual(Math.hypot(2, 3, 4, 5), Math.sqrt(2 * 2 + 3 * 3 + 4 * 4 + 5 * 5));
+	  assert.epsilon(Math.hypot(66, 66), 93.33809511662427);
+	  assert.epsilon(Math.hypot(0.1, 100), 100.0000499999875);
+	  assert.strictEqual(Math.hypot(1e+300, 1e+300), 1.4142135623730952e+300);
+	  assert.strictEqual(Math.floor(Math.hypot(1e-300, 1e-300) * 1e308), 141421356);
+	  assert.strictEqual(Math.hypot(1e+300, 1e+300, 2, 3), 1.4142135623730952e+300);
+	  assert.strictEqual(Math.hypot(-3, 4), 5);
+	  assert.strictEqual(Math.hypot(3, -4), 5);
+	});
+
+	// from MDN
+	function imul(opA, opB) {
+	  opB |= 0; // ensure that opB is an integer. opA will automatically be coerced.
+	  // floating points give us 53 bits of precision to work with plus 1 sign bit
+	  // automatically handled for our convienence:
+	  // 1. 0x003fffff /*opA & 0x000fffff*/ * 0x7fffffff /*opB*/ = 0x1fffff7fc00001
+	  //    0x1fffff7fc00001 < Number.MAX_SAFE_INTEGER /*0x1fffffffffffff*/
+	  var result = (opA & 0x003fffff) * opB;
+	  // 2. We can remove an integer coersion from the statement above because:
+	  //    0x1fffff7fc00001 + 0xffc00000 = 0x1fffffff800001
+	  //    0x1fffffff800001 < Number.MAX_SAFE_INTEGER /*0x1fffffffffffff*/
+	  if (opA & 0xffc00000 /*!== 0*/) result += (opA & 0xffc00000) * opB | 0;
+	  return result | 0;
+	}
+
+	if (!Math$1.imul) {
+	  Math$1.imul = imul;
+	}
+
+	QUnit.test('Math.imul', function (assert) {
+	  assert.isFunction(Math.imul);
+	  assert.name(Math.imul, 'imul');
+	  assert.arity(Math.imul, 2);
+	  assert.looksNative(Math.imul);
+	  assert.nonEnumerable(Math, 'imul');
+	  assert.same(Math.imul(0, 0), 0);
+	  assert.strictEqual(Math.imul(123, 456), 56088);
+	  assert.strictEqual(Math.imul(-123, 456), -56088);
+	  assert.strictEqual(Math.imul(123, -456), -56088);
+	  assert.strictEqual(Math.imul(19088743, 4275878552), 602016552);
+	  assert.same(Math.imul(false, 7), 0);
+	  assert.same(Math.imul(7, false), 0);
+	  assert.same(Math.imul(false, false), 0);
+	  assert.strictEqual(Math.imul(true, 7), 7);
+	  assert.strictEqual(Math.imul(7, true), 7);
+	  assert.strictEqual(Math.imul(true, true), 1);
+	  assert.same(Math.imul(undefined, 7), 0);
+	  assert.same(Math.imul(7, undefined), 0);
+	  assert.same(Math.imul(undefined, undefined), 0);
+	  assert.same(Math.imul('str', 7), 0);
+	  assert.same(Math.imul(7, 'str'), 0);
+	  assert.same(Math.imul({}, 7), 0);
+	  assert.same(Math.imul(7, {}), 0);
+	  assert.same(Math.imul([], 7), 0);
+	  assert.same(Math.imul(7, []), 0);
+	  assert.strictEqual(Math.imul(0xFFFFFFFF, 5), -5);
+	  assert.strictEqual(Math.imul(0xFFFFFFFE, 5), -10);
+	  assert.strictEqual(Math.imul(2, 4), 8);
+	  assert.strictEqual(Math.imul(-1, 8), -8);
+	  assert.strictEqual(Math.imul(-2, -2), 4);
+	  assert.same(Math.imul(-0, 7), 0);
+	  assert.same(Math.imul(7, -0), 0);
+	  assert.same(Math.imul(0.1, 7), 0);
+	  assert.same(Math.imul(7, 0.1), 0);
+	  assert.same(Math.imul(0.9, 7), 0);
+	  assert.same(Math.imul(7, 0.9), 0);
+	  assert.strictEqual(Math.imul(1.1, 7), 7);
+	  assert.strictEqual(Math.imul(7, 1.1), 7);
+	  assert.strictEqual(Math.imul(1.9, 7), 7);
+	  assert.strictEqual(Math.imul(7, 1.9), 7);
+	});
+
+	var LOG10E = Math.LOG10E;
+
+	// from core-js https://github.com/zloirock/core-js
+	function log10(x) {
+	  return log(x) * LOG10E;
+	}
+
+	if (!Math$1.log10) {
+	  Math$1.log10 = log10;
+	}
+
+	QUnit.test('Math.log10', function (assert) {
+	  assert.isFunction(Math.log10);
+	  assert.name(Math.log10, 'log10');
+	  assert.arity(Math.log10, 1);
+	  assert.looksNative(Math.log10);
+	  assert.nonEnumerable(Math, 'log10');
+	  assert.same(Math.log10(''), Math.log10(0));
+	  assert.same(Math.log10(NaN), NaN);
+	  assert.same(Math.log10(-1), NaN);
+	  assert.same(Math.log10(0), -Infinity);
+	  assert.same(Math.log10(-0), -Infinity);
+	  assert.same(Math.log10(1), 0);
+	  assert.same(Math.log10(Infinity), Infinity);
+	  assert.epsilon(Math.log10(0.1), -1);
+	  assert.epsilon(Math.log10(0.5), -0.3010299956639812);
+	  assert.epsilon(Math.log10(1.5), 0.17609125905568124);
+	  assert.epsilon(Math.log10(5), 0.6989700043360189);
+	  assert.epsilon(Math.log10(50), 1.6989700043360187);
+	  assert.epsilon(Math.log10(1000), 3);
+	});
+
+	if (!Math$1.log1p) {
+	  Math$1.log1p = log1p;
+	}
+
+	QUnit.test('Math.log1p', function (assert) {
+	  assert.isFunction(Math.log1p);
+	  assert.name(Math.log1p, 'log1p');
+	  assert.arity(Math.log1p, 1);
+	  assert.looksNative(Math.log1p);
+	  assert.nonEnumerable(Math, 'log1p');
+	  assert.same(Math.log1p(''), Math.log1p(0));
+	  assert.same(Math.log1p(NaN), NaN);
+	  assert.same(Math.log1p(-2), NaN);
+	  assert.same(Math.log1p(-1), -Infinity);
+	  assert.same(Math.log1p(0), 0);
+	  assert.same(Math.log1p(-0), -0);
+	  assert.same(Math.log1p(Infinity), Infinity);
+	  assert.epsilon(Math.log1p(5), 1.791759469228055);
+	  assert.epsilon(Math.log1p(50), 3.9318256327243257);
+	});
+
+	// from core-js https://github.com/zloirock/core-js
+	function log2(x) {
+	  return log(x) / LN2;
+	}
+
+	if (!Math$1.log2) {
+	  Math$1.log2 = log2;
+	}
+
+	QUnit.test('Math.log2', function (assert) {
+	  assert.isFunction(Math.log2);
+	  assert.name(Math.log2, 'log2');
+	  assert.arity(Math.log2, 1);
+	  assert.looksNative(Math.log2);
+	  assert.nonEnumerable(Math, 'log2');
+	  assert.same(Math.log2(''), Math.log2(0));
+	  assert.same(Math.log2(NaN), NaN);
+	  assert.same(Math.log2(-1), NaN);
+	  assert.same(Math.log2(0), -Infinity);
+	  assert.same(Math.log2(-0), -Infinity);
+	  assert.same(Math.log2(1), 0);
+	  assert.same(Math.log2(Infinity), Infinity);
+	  assert.same(Math.log2(0.5), -1);
+	  assert.same(Math.log2(32), 5);
+	  assert.epsilon(Math.log2(5), 2.321928094887362);
+	});
+
+	if (!Math$1.sign) {
+	  Math$1.sign = sign;
+	}
+
+	QUnit.test('Math.sign', function (assert) {
+	  assert.isFunction(Math.sign);
+	  assert.name(Math.sign, 'sign');
+	  assert.arity(Math.sign, 1);
+	  assert.looksNative(Math.sign);
+	  assert.nonEnumerable(Math, 'sign');
+	  assert.same(Math.sign(NaN), NaN);
+	  assert.same(Math.sign(), NaN);
+	  assert.same(Math.sign(-0), -0);
+	  assert.same(Math.sign(0), 0);
+	  assert.strictEqual(Math.sign(Infinity), 1);
+	  assert.strictEqual(Math.sign(-Infinity), -1);
+	  assert.strictEqual(Math.sign(13510798882111488), 1);
+	  assert.strictEqual(Math.sign(-13510798882111488), -1);
+	  assert.strictEqual(Math.sign(42.5), 1);
+	  assert.strictEqual(Math.sign(-42.5), -1);
+	});
+
+	// from core-js https://github.com/zloirock/core-js
+	function sinh(x) {
+	  return abs(x = +x) < 1 ? (expm1(x) - expm1(-x)) / 2 : (exp(x - 1) - exp(-x - 1)) * (E / 2);
+	}
+
+	if (!Math$1.sinh) {
+	  Math$1.sinh = sinh;
+	}
+
+	QUnit.test('Math.sinh', function (assert) {
+	  assert.isFunction(Math.sinh);
+	  assert.name(Math.sinh, 'sinh');
+	  assert.arity(Math.sinh, 1);
+	  assert.looksNative(Math.sinh);
+	  assert.nonEnumerable(Math, 'sinh');
+	  assert.same(Math.sinh(NaN), NaN);
+	  assert.same(Math.sinh(0), 0);
+	  assert.same(Math.sinh(-0), -0);
+	  assert.strictEqual(Math.sinh(Infinity), Infinity);
+	  assert.strictEqual(Math.sinh(-Infinity), -Infinity);
+	  assert.epsilon(Math.sinh(-5), -74.20321057778875);
+	  assert.epsilon(Math.sinh(2), 3.6268604078470186);
+	  assert.strictEqual(Math.sinh(-2e-17), -2e-17);
+	});
+
+	// from core-js https://github.com/zloirock/core-js
+	function tanh(x) {
+	  var a = expm1(x = +x);
+	  var b = expm1(-x);
+	  return a == Infinity ? 1 : b == Infinity ? -1 : (a - b) / (exp(x) + exp(-x));
+	}
+
+	if (!Math$1.tanh) {
+	  Math$1.tanh = tanh;
+	}
+
+	QUnit.test('Math.tanh', function (assert) {
+	  assert.isFunction(Math.tanh);
+	  assert.name(Math.tanh, 'tanh');
+	  assert.arity(Math.tanh, 1);
+	  assert.looksNative(Math.tanh);
+	  assert.nonEnumerable(Math, 'tanh');
+	  assert.same(Math.tanh(NaN), NaN);
+	  assert.same(Math.tanh(0), 0);
+	  assert.same(Math.tanh(-0), -0);
+	  assert.strictEqual(Math.tanh(Infinity), 1);
+	  assert.strictEqual(Math.tanh(90), 1);
+	  assert.epsilon(Math.tanh(10), 0.9999999958776927);
+	  if (NATIVE) assert.strictEqual(Math.tanh(710), 1);
+	});
+
+	var floor = Math.floor;
+
+	var ceil = Math.ceil;
+
+	// from core-js https://github.com/zloirock/core-js
+	function trunc(it) {
+	  return (it > 0 ? floor : ceil)(it);
+	}
+
+	if (!Math$1.trunc) {
+	  Math$1.trunc = trunc;
+	}
+
+	QUnit.test('Math.trunc', function (assert) {
+	  assert.isFunction(Math.trunc);
+	  assert.name(Math.trunc, 'trunc');
+	  assert.arity(Math.trunc, 1);
+	  assert.looksNative(Math.trunc);
+	  assert.nonEnumerable(Math, 'trunc');
+	  assert.same(Math.trunc(NaN), NaN, 'NaN -> NaN');
+	  assert.same(Math.trunc(-0), -0, '-0 -> -0');
+	  assert.same(Math.trunc(0), 0, '0 -> 0');
+	  assert.same(Math.trunc(Infinity), Infinity, 'Infinity -> Infinity');
+	  assert.same(Math.trunc(-Infinity), -Infinity, '-Infinity -> -Infinity');
+	  assert.same(Math.trunc(null), 0, 'null -> 0');
+	  assert.same(Math.trunc({}), NaN, '{} -> NaN');
+	  assert.strictEqual(Math.trunc([]), 0, '[] -> 0');
+	  assert.strictEqual(Math.trunc(1.01), 1, '1.01 -> 0');
+	  assert.strictEqual(Math.trunc(1.99), 1, '1.99 -> 0');
+	  assert.strictEqual(Math.trunc(-1), -1, '-1 -> -1');
+	  assert.strictEqual(Math.trunc(-1.99), -1, '-1.99 -> -1');
+	  assert.strictEqual(Math.trunc(-555.555), -555, '-555.555 -> -555');
+	  assert.strictEqual(Math.trunc(0x20000000000001), 0x20000000000001, '0x20000000000001 -> 0x20000000000001');
+	  assert.strictEqual(Math.trunc(-0x20000000000001), -0x20000000000001, '-0x20000000000001 -> -0x20000000000001');
+	});
+
+	var Map$1 = window.Map;
+
+	if (!Map$1) {
+	  window.Map = createMap();
+	}
+
+	var _ref$3 = GLOBAL.Reflect || {},
+	  ownKeys$3 = _ref$3.ownKeys;
+	QUnit.test('Map', function (assert) {
+	  assert.isFunction(Map);
+	  assert.arity(Map, 0);
+	  assert.name(Map, 'Map');
+	  assert.looksNative(Map);
+	  assert.ok('clear' in Map.prototype, 'clear in Map.prototype');
+	  assert.ok('delete' in Map.prototype, 'delete in Map.prototype');
+	  assert.ok('forEach' in Map.prototype, 'forEach in Map.prototype');
+	  assert.ok('get' in Map.prototype, 'get in Map.prototype');
+	  assert.ok('has' in Map.prototype, 'has in Map.prototype');
+	  assert.ok('set' in Map.prototype, 'set in Map.prototype');
+	  assert.ok(new Map() instanceof Map, 'new Map instanceof Map');
+	  assert.strictEqual(new Map(createIterable$1([[1, 1], [2, 2], [3, 3]])).size, 3, 'Init from iterable');
+	  assert.strictEqual(new Map([[Object.freeze({}), 1], [2, 3]]).size, 2, 'Support frozen objects');
+	  var done = false;
+	  try {
+	    new Map(createIterable$1([null, 1, 2], {
+	      "return": function () {
+	        return done = true;
+	      }
+	    }));
+	  } catch (_unused) {/* empty */}
+	  assert.ok(done, '.return #throw');
+	  var array = [];
+	  done = false;
+	  array['@@iterator'] = undefined;
+	  array[$inject_Symbol_iterator] = function () {
+	    done = true;
+	    return [][$inject_Symbol_iterator].call(this);
+	  };
+	  new Map(array);
+	  assert.ok(done);
+	  var object = {};
+	  new Map().set(object, 1);
 	  if (DESCRIPTORS) {
-	    url.searchParams.append('foo', 'bar');
-	    assert.same(url.toString(), 'http://zloirock.ru/?foo=bar');
+	    var results = [];
+	    for (var key in object) results.push(key);
+	    assert.arrayEqual(results, []);
+	    assert.arrayEqual(Object.keys(object), []);
+	  }
+	  assert.arrayEqual(Object.getOwnPropertyNames(object), []);
+	  if (Object.getOwnPropertySymbols) assert.arrayEqual(Object.getOwnPropertySymbols(object), []);
+	  if (ownKeys$3) assert.arrayEqual(ownKeys$3(object), []);
+	  if (nativeSubclass) {
+	    var Subclass = nativeSubclass(Map);
+	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
+	    assert.ok(new Subclass() instanceof Map, 'correct subclassing with native classes #2');
+	    assert.strictEqual(new Subclass().set(1, 2).get(1), 2, 'correct subclassing with native classes #3');
 	  }
 	});
-	QUnit.test('URL#@@toStringTag', function (assert) {
-	  var url = new URL('http://zloirock.ru/');
-	  assert.same({}.toString.call(url), '[object URL]');
+	QUnit.test('Map#clear', function (assert) {
+	  assert.isFunction(Map.prototype.clear);
+	  assert.arity(Map.prototype.clear, 0);
+	  assert.name(Map.prototype.clear, 'clear');
+	  assert.looksNative(Map.prototype.clear);
+	  assert.nonEnumerable(Map.prototype, 'clear');
+	  var map = new Map();
+	  map.clear();
+	  assert.strictEqual(map.size, 0);
+	  map = new Map();
+	  map.set(1, 2);
+	  map.set(2, 3);
+	  map.set(1, 4);
+	  map.clear();
+	  assert.strictEqual(map.size, 0);
+	  assert.ok(!map.has(1));
+	  assert.ok(!map.has(2));
+	  var frozen = Object.freeze({});
+	  map = new Map();
+	  map.set(1, 2);
+	  map.set(frozen, 3);
+	  map.clear();
+	  assert.strictEqual(map.size, 0, 'Support frozen objects');
+	  assert.ok(!map.has(1));
+	  assert.ok(!map.has(frozen));
 	});
-	QUnit.test('URL.sham', function (assert) {
-	  assert.same(URL.sham, DESCRIPTORS ? undefined : true);
+	QUnit.test('Map#delete', function (assert) {
+	  assert.isFunction(Map.prototype["delete"]);
+	  assert.arity(Map.prototype["delete"], 1);
+	  if (NATIVE) assert.name(Map.prototype["delete"], 'delete');
+	  assert.looksNative(Map.prototype["delete"]);
+	  assert.nonEnumerable(Map.prototype, 'delete');
+	  var object = {};
+	  var map = new Map();
+	  map.set(NaN, 1);
+	  map.set(2, 1);
+	  map.set(3, 7);
+	  map.set(2, 5);
+	  map.set(1, 4);
+	  map.set(object, 9);
+	  assert.strictEqual(map.size, 5);
+	  assert.ok(map["delete"](NaN));
+	  assert.strictEqual(map.size, 4);
+	  assert.ok(!map["delete"](4));
+	  assert.strictEqual(map.size, 4);
+	  map["delete"]([]);
+	  assert.strictEqual(map.size, 4);
+	  map["delete"](object);
+	  assert.strictEqual(map.size, 3);
+	  var frozen = Object.freeze({});
+	  map.set(frozen, 42);
+	  assert.strictEqual(map.size, 4);
+	  map["delete"](frozen);
+	  assert.strictEqual(map.size, 3);
+	});
+	QUnit.test('Map#forEach', function (assert) {
+	  assert.isFunction(Map.prototype.forEach);
+	  assert.arity(Map.prototype.forEach, 1);
+	  assert.name(Map.prototype.forEach, 'forEach');
+	  assert.looksNative(Map.prototype.forEach);
+	  assert.nonEnumerable(Map.prototype, 'forEach');
+	  var result = {};
+	  var count = 0;
+	  var object = {};
+	  var map = new Map();
+	  map.set(NaN, 1);
+	  map.set(2, 1);
+	  map.set(3, 7);
+	  map.set(2, 5);
+	  map.set(1, 4);
+	  map.set(object, 9);
+	  map.forEach(function (value, key) {
+	    count++;
+	    result[value] = key;
+	  });
+	  assert.strictEqual(count, 5);
+	  assert.deepEqual(result, {
+	    1: NaN,
+	    7: 3,
+	    5: 2,
+	    4: 1,
+	    9: object
+	  });
+	  map = new Map();
+	  map.set('0', 9);
+	  map.set('1', 9);
+	  map.set('2', 9);
+	  map.set('3', 9);
+	  result = '';
+	  map.forEach(function (value, key) {
+	    result += key;
+	    if (key === '2') {
+	      map["delete"]('2');
+	      map["delete"]('3');
+	      map["delete"]('1');
+	      map.set('4', 9);
+	    }
+	  });
+	  assert.strictEqual(result, '0124');
+	  map = new Map([['0', 1]]);
+	  result = '';
+	  map.forEach(function (it) {
+	    map["delete"]('0');
+	    if (result !== '') throw new Error();
+	    result += it;
+	  });
+	  assert.strictEqual(result, '1');
+	  // assert.throws(() => {
+	  //   Map.prototype.forEach.call(new Set(), () => { /* empty */ });
+	  // }, 'non-generic');
 	});
 
-	// `core-js` URL implementation pass all (exclude some encoding-ralated) tests
-	// from the next 3 test cases, but URLs from all of popular browsers fail a serious part of tests.
-	// Replacing all of them does not looks like a good idea, so next test cases disabled by default.
+	QUnit.test('Map#get', function (assert) {
+	  assert.isFunction(Map.prototype.get);
+	  assert.name(Map.prototype.get, 'get');
+	  assert.arity(Map.prototype.get, 1);
+	  assert.looksNative(Map.prototype.get);
+	  assert.nonEnumerable(Map.prototype, 'get');
+	  var object = {};
+	  var frozen = Object.freeze({});
+	  var map = new Map();
+	  map.set(NaN, 1);
+	  map.set(2, 1);
+	  map.set(3, 1);
+	  map.set(2, 5);
+	  map.set(1, 4);
+	  map.set(frozen, 42);
+	  map.set(object, object);
+	  assert.strictEqual(map.get(NaN), 1);
+	  assert.strictEqual(map.get(4), undefined);
+	  assert.strictEqual(map.get({}), undefined);
+	  assert.strictEqual(map.get(object), object);
+	  assert.strictEqual(map.get(frozen), 42);
+	  assert.strictEqual(map.get(2), 5);
+	});
+	QUnit.test('Map#has', function (assert) {
+	  assert.isFunction(Map.prototype.has);
+	  assert.name(Map.prototype.has, 'has');
+	  assert.arity(Map.prototype.has, 1);
+	  assert.looksNative(Map.prototype.has);
+	  assert.nonEnumerable(Map.prototype, 'has');
+	  var object = {};
+	  var frozen = Object.freeze({});
+	  var map = new Map();
+	  map.set(NaN, 1);
+	  map.set(2, 1);
+	  map.set(3, 1);
+	  map.set(2, 5);
+	  map.set(1, 4);
+	  map.set(frozen, 42);
+	  map.set(object, object);
+	  assert.ok(map.has(NaN));
+	  assert.ok(map.has(object));
+	  assert.ok(map.has(2));
+	  assert.ok(map.has(frozen));
+	  assert.ok(!map.has(4));
+	  assert.ok(!map.has({}));
+	});
+	QUnit.test('Map#set', function (assert) {
+	  assert.isFunction(Map.prototype.set);
+	  assert.name(Map.prototype.set, 'set');
+	  assert.arity(Map.prototype.set, 2);
+	  assert.looksNative(Map.prototype.set);
+	  assert.nonEnumerable(Map.prototype, 'set');
+	  var object = {};
+	  var map = new Map();
+	  map.set(NaN, 1);
+	  map.set(2, 1);
+	  map.set(3, 1);
+	  map.set(2, 5);
+	  map.set(1, 4);
+	  map.set(object, object);
+	  assert.ok(map.size === 5);
+	  var chain = map.set(7, 2);
+	  assert.strictEqual(chain, map);
+	  map.set(7, 2);
+	  assert.strictEqual(map.size, 6);
+	  assert.strictEqual(map.get(7), 2);
+	  assert.strictEqual(map.get(NaN), 1);
+	  map.set(NaN, 42);
+	  assert.strictEqual(map.size, 6);
+	  assert.strictEqual(map.get(NaN), 42);
+	  map.set({}, 11);
+	  assert.strictEqual(map.size, 7);
+	  assert.strictEqual(map.get(object), object);
+	  map.set(object, 27);
+	  assert.strictEqual(map.size, 7);
+	  assert.strictEqual(map.get(object), 27);
+	  map = new Map();
+	  map.set(NaN, 2);
+	  map.set(NaN, 3);
+	  map.set(NaN, 4);
+	  assert.strictEqual(map.size, 1);
+	  var frozen = Object.freeze({});
+	  map = new Map().set(frozen, 42);
+	  assert.strictEqual(map.get(frozen), 42);
+	});
+	QUnit.test('Map#size', function (assert) {
+	  assert.nonEnumerable(Map.prototype, 'size');
+	  var map = new Map();
+	  map.set(2, 1);
+	  var size = map.size;
+	  assert.strictEqual(_typeof(size), 'number', 'size is number');
+	  assert.strictEqual(size, 1, 'size is correct');
+	  if (DESCRIPTORS) {
+	    var sizeDescriptor = Object.getOwnPropertyDescriptor(Map.prototype, 'size');
+	    assert.ok(sizeDescriptor && sizeDescriptor.get, 'size is getter');
+	    assert.ok(sizeDescriptor && !sizeDescriptor.set, 'size isnt setter');
+	    assert["throws"](function () {
+	      return Map.prototype.size;
+	    }, TypeError);
+	  }
+	});
+	QUnit.test('Map & -0', function (assert) {
+	  var map = new Map();
+	  map.set(-0, 1);
+	  assert.strictEqual(map.size, 1);
+	  assert.ok(map.has(0));
+	  assert.ok(map.has(-0));
+	  assert.strictEqual(map.get(0), 1);
+	  assert.strictEqual(map.get(-0), 1);
+	  map.forEach(function (val, key) {
+	    assert.ok(!is$1(key, -0));
+	  });
+	  map["delete"](-0);
+	  assert.strictEqual(map.size, 0);
+	  map = new Map([[-0, 1]]);
+	  map.forEach(function (val, key) {
+	    assert.ok(!is$1(key, -0));
+	  });
+	  map = new Map();
+	  map.set(4, 4);
+	  map.set(3, 3);
+	  map.set(2, 2);
+	  map.set(1, 1);
+	  map.set(0, 0);
+	  assert.ok(map.has(-0));
+	});
 
-	// see https://github.com/web-platform-tests/wpt/blob/master/url
-	QUnit.skip('WPT URL constructor tests', function (assert) {
-	  var _loop = function (expected) {
-	    if (typeof expected == 'string') return "continue";
-	    var name = "Parsing: <" + expected.input + "> against <" + expected.base + ">";
-	    if (expected.failure) {
-	      assert["throws"](function () {
-	        return new URL(expected.input, expected.base || 'about:blank');
-	      }, name);
-	    } else {
-	      var url = new URL(expected.input, expected.base || 'about:blank');
-	      assert.same(url.href, expected.href, name + ": href");
-	      assert.same(url.protocol, expected.protocol, name + ": protocol");
-	      assert.same(url.username, expected.username, name + ": username");
-	      assert.same(url.password, expected.password, name + ": password");
-	      assert.same(url.host, expected.host, name + ": host");
-	      assert.same(url.hostname, expected.hostname, name + ": hostname");
-	      assert.same(url.port, expected.port, name + ": port");
-	      assert.same(url.pathname, expected.pathname, name + ": pathname");
-	      assert.same(url.search, expected.search, name + ": search");
-	      if ('searchParams' in expected) {
-	        assert.same(url.searchParams.toString(), expected.searchParams, name + ": searchParams");
+	// QUnit.test('Map#@@toStringTag', assert => {
+	//   assert.strictEqual(Map.prototype[Symbol.toStringTag], 'Map', 'Map::@@toStringTag is `Map`');
+	//   assert.strictEqual(String(new Map()), '[object Map]', 'correct stringification');
+	// });
+
+	QUnit.test('Map Iterator', function (assert) {
+	  var map = new Map();
+	  map.set('a', 1);
+	  map.set('b', 2);
+	  map.set('c', 3);
+	  map.set('d', 4);
+	  var results = [];
+	  var iterator = map.keys();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  assert.nonEnumerable(iterator, 'next');
+	  assert.nonEnumerable(iterator, $inject_Symbol_iterator);
+	  results.push(iterator.next().value);
+	  assert.ok(map["delete"]('a'));
+	  assert.ok(map["delete"]('b'));
+	  assert.ok(map["delete"]('c'));
+	  map.set('e');
+	  results.push(iterator.next().value, iterator.next().value);
+	  assert.ok(iterator.next().done);
+	  map.set('f');
+	  assert.ok(iterator.next().done);
+	  assert.deepEqual(results, ['a', 'd', 'e']);
+	});
+	QUnit.test('Map#keys', function (assert) {
+	  assert.isFunction(Map.prototype.keys);
+	  assert.name(Map.prototype.keys, 'keys');
+	  assert.arity(Map.prototype.keys, 0);
+	  assert.looksNative(Map.prototype.keys);
+	  assert.nonEnumerable(Map.prototype, 'keys');
+	  var map = new Map();
+	  map.set('a', 'q');
+	  map.set('s', 'w');
+	  map.set('d', 'e');
+	  var iterator = map.keys();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  // assert.strictEqual(iterator[Symbol.toStringTag], 'Map Iterator');
+	  assert.deepEqual(iterator.next(), {
+	    value: 'a',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 's',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'd',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	});
+	QUnit.test('Map#values', function (assert) {
+	  assert.isFunction(Map.prototype.values);
+	  assert.name(Map.prototype.values, 'values');
+	  assert.arity(Map.prototype.values, 0);
+	  assert.looksNative(Map.prototype.values);
+	  assert.nonEnumerable(Map.prototype, 'values');
+	  var map = new Map();
+	  map.set('a', 'q');
+	  map.set('s', 'w');
+	  map.set('d', 'e');
+	  var iterator = map.values();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  // assert.strictEqual(iterator[Symbol.toStringTag], 'Map Iterator');
+	  assert.deepEqual(iterator.next(), {
+	    value: 'q',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'w',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'e',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	});
+	QUnit.test('Map#entries', function (assert) {
+	  assert.isFunction(Map.prototype.entries);
+	  assert.name(Map.prototype.entries, 'entries');
+	  assert.arity(Map.prototype.entries, 0);
+	  assert.looksNative(Map.prototype.entries);
+	  assert.nonEnumerable(Map.prototype, 'entries');
+	  var map = new Map();
+	  map.set('a', 'q');
+	  map.set('s', 'w');
+	  map.set('d', 'e');
+	  var iterator = map.entries();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  // assert.strictEqual(iterator[Symbol.toStringTag], 'Map Iterator');
+	  assert.deepEqual(iterator.next(), {
+	    value: ['a', 'q'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: ['s', 'w'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: ['d', 'e'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	});
+	QUnit.test('Map#@@iterator', function (assert) {
+	  assert.isIterable(Map.prototype);
+	  assert.name(Map.prototype.entries, 'entries');
+	  assert.arity(Map.prototype.entries, 0);
+	  assert.looksNative(Map.prototype[$inject_Symbol_iterator]);
+	  assert.strictEqual(Map.prototype[$inject_Symbol_iterator], Map.prototype.entries);
+	  var map = new Map();
+	  map.set('a', 'q');
+	  map.set('s', 'w');
+	  map.set('d', 'e');
+	  var iterator = map[$inject_Symbol_iterator]();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  // assert.strictEqual(iterator[Symbol.toStringTag], 'Map Iterator');
+	  // assert.strictEqual(String(iterator), '[object Map Iterator]');
+	  assert.deepEqual(iterator.next(), {
+	    value: ['a', 'q'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: ['s', 'w'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: ['d', 'e'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	});
+
+	var _ref$2 = GLOBAL.Reflect || {},
+	  ownKeys$2 = _ref$2.ownKeys;
+	QUnit.test('Set', function (assert) {
+	  assert.isFunction(Set);
+	  assert.name(Set, 'Set');
+	  assert.arity(Set, 0);
+	  assert.looksNative(Set);
+	  assert.ok('add' in Set.prototype, 'add in Set.prototype');
+	  assert.ok('clear' in Set.prototype, 'clear in Set.prototype');
+	  assert.ok('delete' in Set.prototype, 'delete in Set.prototype');
+	  assert.ok('forEach' in Set.prototype, 'forEach in Set.prototype');
+	  assert.ok('has' in Set.prototype, 'has in Set.prototype');
+	  assert.ok(new Set() instanceof Set, 'new Set instanceof Set');
+	  var set = new Set();
+	  set.add(1);
+	  set.add(2);
+	  set.add(3);
+	  set.add(2);
+	  set.add(1);
+	  assert.strictEqual(set.size, 3);
+	  var result = [];
+	  set.forEach(function (val) {
+	    result.push(val);
+	  });
+	  assert.deepEqual(result, [1, 2, 3]);
+	  assert.strictEqual(new Set(createIterable$1([1, 2, 3])).size, 3, 'Init from iterable');
+	  assert.strictEqual(new Set([Object.freeze({}), 1]).size, 2, 'Support frozen objects');
+	  assert.strictEqual(new Set([NaN, NaN, NaN]).size, 1);
+	  assert.deepEqual(Array.from(new Set([3, 4]).add(2).add(1)), [3, 4, 2, 1]);
+	  var done = false;
+	  var add = Set.prototype.add;
+	  // eslint-disable-next-line no-extend-native -- required for testing
+	  Set.prototype.add = function () {
+	    throw new Error();
+	  };
+	  try {
+	    new Set(createIterable$1([null, 1, 2], {
+	      "return": function () {
+	        return done = true;
 	      }
-	      assert.same(url.hash, expected.hash, name + ": hash");
-	      if ('origin' in expected) {
-	        assert.same(url.origin, expected.origin, name + ": origin");
+	    }));
+	  } catch (_unused) {/* empty */}
+	  // eslint-disable-next-line no-extend-native -- required for testing
+	  Set.prototype.add = add;
+	  assert.ok(done, '.return #throw');
+	  var array = [];
+	  done = false;
+	  array['@@iterator'] = undefined;
+	  array[$inject_Symbol_iterator] = function () {
+	    done = true;
+	    return [][$inject_Symbol_iterator].call(this);
+	  };
+	  new Set(array);
+	  assert.ok(done);
+	  var object = {};
+	  new Set().add(object);
+	  if (DESCRIPTORS) {
+	    var results = [];
+	    for (var key in object) results.push(key);
+	    assert.arrayEqual(results, []);
+	    assert.arrayEqual(Object.keys(object), []);
+	  }
+	  assert.arrayEqual(Object.getOwnPropertyNames(object), []);
+	  if (Object.getOwnPropertySymbols) assert.arrayEqual(Object.getOwnPropertySymbols(object), []);
+	  if (ownKeys$2) assert.arrayEqual(ownKeys$2(object), []);
+	  if (nativeSubclass) {
+	    var Subclass = nativeSubclass(Set);
+	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
+	    assert.ok(new Subclass() instanceof Set, 'correct subclassing with native classes #2');
+	    assert.ok(new Subclass().add(2).has(2), 'correct subclassing with native classes #3');
+	  }
+	});
+	QUnit.test('Set#add', function (assert) {
+	  assert.isFunction(Set.prototype.add);
+	  assert.name(Set.prototype.add, 'add');
+	  assert.arity(Set.prototype.add, 1);
+	  assert.looksNative(Set.prototype.add);
+	  assert.nonEnumerable(Set.prototype, 'add');
+	  var array = [];
+	  var set = new Set();
+	  set.add(NaN);
+	  set.add(2);
+	  set.add(3);
+	  set.add(2);
+	  set.add(1);
+	  set.add(array);
+	  assert.strictEqual(set.size, 5);
+	  var chain = set.add(NaN);
+	  assert.strictEqual(chain, set);
+	  assert.strictEqual(set.size, 5);
+	  set.add(2);
+	  assert.strictEqual(set.size, 5);
+	  set.add(array);
+	  assert.strictEqual(set.size, 5);
+	  set.add([]);
+	  assert.strictEqual(set.size, 6);
+	  set.add(4);
+	  assert.strictEqual(set.size, 7);
+	  var frozen = Object.freeze({});
+	  set = new Set();
+	  set.add(frozen);
+	  assert.ok(set.has(frozen));
+	});
+	QUnit.test('Set#clear', function (assert) {
+	  assert.isFunction(Set.prototype.clear);
+	  assert.name(Set.prototype.clear, 'clear');
+	  assert.arity(Set.prototype.clear, 0);
+	  assert.looksNative(Set.prototype.clear);
+	  assert.nonEnumerable(Set.prototype, 'clear');
+	  var set = new Set();
+	  set.clear();
+	  assert.strictEqual(set.size, 0);
+	  set = new Set();
+	  set.add(1);
+	  set.add(2);
+	  set.add(3);
+	  set.add(2);
+	  set.add(1);
+	  set.clear();
+	  assert.strictEqual(set.size, 0);
+	  assert.ok(!set.has(1));
+	  assert.ok(!set.has(2));
+	  assert.ok(!set.has(3));
+	  var frozen = Object.freeze({});
+	  set = new Set();
+	  set.add(1);
+	  set.add(frozen);
+	  set.clear();
+	  assert.strictEqual(set.size, 0, 'Support frozen objects');
+	  assert.ok(!set.has(1));
+	  assert.ok(!set.has(frozen));
+	});
+	QUnit.test('Set#delete', function (assert) {
+	  assert.isFunction(Set.prototype["delete"]);
+	  if (NATIVE) assert.name(Set.prototype["delete"], 'delete');
+	  assert.arity(Set.prototype["delete"], 1);
+	  assert.looksNative(Set.prototype["delete"]);
+	  assert.nonEnumerable(Set.prototype, 'delete');
+	  var array = [];
+	  var set = new Set();
+	  set.add(NaN);
+	  set.add(2);
+	  set.add(3);
+	  set.add(2);
+	  set.add(1);
+	  set.add(array);
+	  assert.strictEqual(set.size, 5);
+	  assert.strictEqual(set["delete"](NaN), true);
+	  assert.strictEqual(set.size, 4);
+	  assert.strictEqual(set["delete"](4), false);
+	  assert.strictEqual(set.size, 4);
+	  set["delete"]([]);
+	  assert.strictEqual(set.size, 4);
+	  set["delete"](array);
+	  assert.strictEqual(set.size, 3);
+	  var frozen = Object.freeze({});
+	  set.add(frozen);
+	  assert.strictEqual(set.size, 4);
+	  set["delete"](frozen);
+	  assert.strictEqual(set.size, 3);
+	});
+	QUnit.test('Set#forEach', function (assert) {
+	  assert.isFunction(Set.prototype.forEach);
+	  assert.name(Set.prototype.forEach, 'forEach');
+	  assert.arity(Set.prototype.forEach, 1);
+	  assert.looksNative(Set.prototype.forEach);
+	  assert.nonEnumerable(Set.prototype, 'forEach');
+	  var result = [];
+	  var count = 0;
+	  var set = new Set();
+	  set.add(1);
+	  set.add(2);
+	  set.add(3);
+	  set.add(2);
+	  set.add(1);
+	  set.forEach(function (value) {
+	    count++;
+	    result.push(value);
+	  });
+	  assert.strictEqual(count, 3);
+	  assert.deepEqual(result, [1, 2, 3]);
+	  set = new Set();
+	  set.add('0');
+	  set.add('1');
+	  set.add('2');
+	  set.add('3');
+	  result = '';
+	  set.forEach(function (it) {
+	    result += it;
+	    if (it === '2') {
+	      set["delete"]('2');
+	      set["delete"]('3');
+	      set["delete"]('1');
+	      set.add('4');
+	    }
+	  });
+	  assert.strictEqual(result, '0124');
+	  set = new Set();
+	  set.add('0');
+	  result = '';
+	  set.forEach(function (it) {
+	    set["delete"]('0');
+	    if (result !== '') throw new Error();
+	    result += it;
+	  });
+	  assert.strictEqual(result, '0');
+	  // assert.throws(() => {
+	  //   Set.prototype.forEach.call(new Map(), () => { /* empty */ });
+	  // }, 'non-generic');
+	});
+
+	QUnit.test('Set#has', function (assert) {
+	  assert.isFunction(Set.prototype.has);
+	  assert.name(Set.prototype.has, 'has');
+	  assert.arity(Set.prototype.has, 1);
+	  assert.looksNative(Set.prototype.has);
+	  assert.nonEnumerable(Set.prototype, 'has');
+	  var array = [];
+	  var frozen = Object.freeze({});
+	  var set = new Set();
+	  set.add(NaN);
+	  set.add(2);
+	  set.add(3);
+	  set.add(2);
+	  set.add(1);
+	  set.add(frozen);
+	  set.add(array);
+	  assert.ok(set.has(NaN));
+	  assert.ok(set.has(array));
+	  assert.ok(set.has(frozen));
+	  assert.ok(set.has(2));
+	  assert.ok(!set.has(4));
+	  assert.ok(!set.has([]));
+	});
+	QUnit.test('Set#size', function (assert) {
+	  assert.nonEnumerable(Set.prototype, 'size');
+	  var set = new Set();
+	  set.add(1);
+	  var size = set.size;
+	  assert.strictEqual(_typeof(size), 'number', 'size is number');
+	  assert.strictEqual(size, 1, 'size is correct');
+	  if (DESCRIPTORS) {
+	    var sizeDescriptor = Object.getOwnPropertyDescriptor(Set.prototype, 'size');
+	    assert.ok(sizeDescriptor && sizeDescriptor.get, 'size is getter');
+	    assert.ok(sizeDescriptor && !sizeDescriptor.set, 'size isnt setter');
+	    assert["throws"](function () {
+	      return Set.prototype.size;
+	    }, TypeError);
+	  }
+	});
+	QUnit.test('Set & -0', function (assert) {
+	  var set = new Set();
+	  set.add(-0);
+	  assert.strictEqual(set.size, 1);
+	  assert.ok(set.has(0));
+	  assert.ok(set.has(-0));
+	  set.forEach(function (it) {
+	    assert.ok(!is$1(it, -0));
+	  });
+	  set["delete"](-0);
+	  assert.strictEqual(set.size, 0);
+	  set = new Set([-0]);
+	  set.forEach(function (key) {
+	    assert.ok(!is$1(key, -0));
+	  });
+	  set = new Set();
+	  set.add(4);
+	  set.add(3);
+	  set.add(2);
+	  set.add(1);
+	  set.add(0);
+	  assert.ok(set.has(-0));
+	});
+
+	// QUnit.test('Set#@@toStringTag', assert => {
+	//   assert.strictEqual(Set.prototype[Symbol.toStringTag], 'Set', 'Set::@@toStringTag is `Set`');
+	//   assert.strictEqual(String(new Set()), '[object Set]', 'correct stringification');
+	// });
+
+	QUnit.test('Set Iterator', function (assert) {
+	  var set = new Set();
+	  set.add('a');
+	  set.add('b');
+	  set.add('c');
+	  set.add('d');
+	  var results = [];
+	  var iterator = set.keys();
+	  results.push(iterator.next().value);
+	  assert.ok(set["delete"]('a'));
+	  assert.ok(set["delete"]('b'));
+	  assert.ok(set["delete"]('c'));
+	  set.add('e');
+	  results.push(iterator.next().value, iterator.next().value);
+	  assert.ok(iterator.next().done);
+	  set.add('f');
+	  assert.ok(iterator.next().done);
+	  assert.deepEqual(results, ['a', 'd', 'e']);
+	});
+	QUnit.test('Set#keys', function (assert) {
+	  assert.isFunction(Set.prototype.keys);
+	  assert.name(Set.prototype.keys, 'values');
+	  assert.arity(Set.prototype.keys, 0);
+	  assert.looksNative(Set.prototype.keys);
+	  assert.strictEqual(Set.prototype.keys, Set.prototype.values);
+	  assert.nonEnumerable(Set.prototype, 'keys');
+	  var set = new Set();
+	  set.add('q');
+	  set.add('w');
+	  set.add('e');
+	  var iterator = set.keys();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  // assert.strictEqual(iterator[Symbol.toStringTag], 'Set Iterator');
+	  assert.deepEqual(iterator.next(), {
+	    value: 'q',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'w',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'e',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	});
+	QUnit.test('Set#values', function (assert) {
+	  assert.isFunction(Set.prototype.values);
+	  assert.name(Set.prototype.values, 'values');
+	  assert.arity(Set.prototype.values, 0);
+	  assert.looksNative(Set.prototype.values);
+	  assert.nonEnumerable(Set.prototype, 'values');
+	  var set = new Set();
+	  set.add('q');
+	  set.add('w');
+	  set.add('e');
+	  var iterator = set.values();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  // assert.strictEqual(iterator[Symbol.toStringTag], 'Set Iterator');
+	  assert.deepEqual(iterator.next(), {
+	    value: 'q',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'w',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'e',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	});
+	QUnit.test('Set#entries', function (assert) {
+	  assert.isFunction(Set.prototype.entries);
+	  assert.name(Set.prototype.entries, 'entries');
+	  assert.arity(Set.prototype.entries, 0);
+	  assert.looksNative(Set.prototype.entries);
+	  assert.nonEnumerable(Set.prototype, 'entries');
+	  var set = new Set();
+	  set.add('q');
+	  set.add('w');
+	  set.add('e');
+	  var iterator = set.entries();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  // assert.strictEqual(iterator[Symbol.toStringTag], 'Set Iterator');
+	  assert.deepEqual(iterator.next(), {
+	    value: ['q', 'q'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: ['w', 'w'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: ['e', 'e'],
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	});
+	QUnit.test('Set#@@iterator', function (assert) {
+	  assert.isIterable(Set.prototype);
+	  assert.name(Set.prototype[$inject_Symbol_iterator], 'values');
+	  assert.arity(Set.prototype[$inject_Symbol_iterator], 0);
+	  assert.looksNative(Set.prototype[$inject_Symbol_iterator]);
+	  assert.strictEqual(Set.prototype[$inject_Symbol_iterator], Set.prototype.values);
+	  assert.nonEnumerable(Set.prototype, 'values');
+	  var set = new Set();
+	  set.add('q');
+	  set.add('w');
+	  set.add('e');
+	  var iterator = set[$inject_Symbol_iterator]();
+	  assert.isIterator(iterator);
+	  assert.isIterable(iterator);
+	  // assert.strictEqual(iterator[Symbol.toStringTag], 'Set Iterator');
+	  // assert.strictEqual(String(iterator), '[object Set Iterator]');
+	  assert.deepEqual(iterator.next(), {
+	    value: 'q',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'w',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: 'e',
+	    done: false
+	  });
+	  assert.deepEqual(iterator.next(), {
+	    value: undefined,
+	    done: true
+	  });
+	});
+
+	var KEY_WM = "@@WeakMap";
+	var weakSeq = 0;
+	function WeakMap$1() {
+	  this.symbol = weakSeq++;
+	  if (arguments.length) {
+	    var iterable = arguments[0];
+	    var entries = iterable[$inject_Symbol_iterator];
+	    if (entries) {
+	      var it = entries.call(iterable);
+	      while (true) {
+	        var next = it.next();
+	        if (next.done) break;
+	        try {
+	          this.set(next.value[0], next.value[1]);
+	        } catch (e) {
+	          if (it["return"]) {
+	            try {
+	              it["return"]();
+	            } catch (e) {}
+	          }
+	          throw e;
+	        }
 	      }
+	    }
+	  }
+	}
+	WeakMap$1.prototype.set = function (key, value) {
+	  if (_typeof(key) !== "object" && typeof key !== "function") {
+	    throw new TypeError("Invalid value used in weak");
+	  }
+	  var map = key[KEY_WM];
+	  if (!map) {
+	    map = key[KEY_WM] = {};
+	  }
+	  map[this.symbol] = value;
+	  return this;
+	};
+	WeakMap$1.prototype.get = function (key) {
+	  var map = key[KEY_WM];
+	  if (map) {
+	    return map[this.symbol];
+	  }
+	};
+	WeakMap$1.prototype.has = function (key) {
+	  var map = key[KEY_WM];
+	  if (map) {
+	    return this.symbol in map;
+	  }
+	  return false;
+	};
+	WeakMap$1.prototype["delete"] = function (key) {
+	  if (_typeof(key) !== "object" && typeof key !== "function") {
+	    return false;
+	  }
+	  var map = key[KEY_WM];
+	  if (map) {
+	    if (this.symbol in map) {
+	      delete map[this.symbol];
+	      return false;
+	    }
+	  }
+	  return false;
+	};
+
+	if (!window.WeakMap) {
+	  window.WeakMap = WeakMap$1;
+	}
+
+	var _ref$1 = GLOBAL.Reflect || {},
+	  ownKeys$1 = _ref$1.ownKeys;
+	QUnit.test('WeakMap', function (assert) {
+	  assert.isFunction(WeakMap);
+	  assert.name(WeakMap, 'WeakMap');
+	  assert.arity(WeakMap, 0);
+	  assert.looksNative(WeakMap);
+	  assert.ok('delete' in WeakMap.prototype, 'delete in WeakMap.prototype');
+	  assert.ok('get' in WeakMap.prototype, 'get in WeakMap.prototype');
+	  assert.ok('has' in WeakMap.prototype, 'has in WeakMap.prototype');
+	  assert.ok('set' in WeakMap.prototype, 'set in WeakMap.prototype');
+	  assert.ok(new WeakMap() instanceof WeakMap, 'new WeakMap instanceof WeakMap');
+	  var object = {};
+	  assert.strictEqual(new WeakMap(createIterable$1([[object, 42]])).get(object), 42, 'Init from iterable');
+	  var weakmap = new WeakMap();
+	  var frozen = Object.freeze({});
+	  weakmap.set(frozen, 42);
+	  assert.strictEqual(weakmap.get(frozen), 42, 'Support frozen objects');
+	  weakmap = new WeakMap();
+	  weakmap.set(frozen, 42);
+	  assert.strictEqual(weakmap.has(frozen), true, 'works with frozen objects, #1');
+	  assert.strictEqual(weakmap.get(frozen), 42, 'works with frozen objects, #2');
+	  weakmap["delete"](frozen);
+	  assert.strictEqual(weakmap.has(frozen), false, 'works with frozen objects, #3');
+	  assert.strictEqual(weakmap.get(frozen), undefined, 'works with frozen objects, #4');
+	  var done = false;
+	  try {
+	    new WeakMap(createIterable$1([null, 1, 2], {
+	      "return": function () {
+	        return done = true;
+	      }
+	    }));
+	  } catch (_unused) {/* empty */}
+	  assert.ok(done, '.return #throw');
+	  assert.ok(!('clear' in WeakMap.prototype), 'should not contains `.clear` method');
+	  var array = [];
+	  done = false;
+	  array['@@iterator'] = undefined;
+	  array[$inject_Symbol_iterator] = function () {
+	    done = true;
+	    return [][$inject_Symbol_iterator].call(this);
+	  };
+	  new WeakMap(array);
+	  assert.ok(done);
+	  object = {};
+	  new WeakMap().set(object, 1);
+	  if (DESCRIPTORS) {
+	    var results = [];
+	    for (var key in object) results.push(key);
+	    assert.arrayEqual(results, []);
+	    assert.arrayEqual(Object.keys(object), []);
+	  }
+	  assert.arrayEqual(Object.getOwnPropertyNames(object), []);
+	  if (Object.getOwnPropertySymbols) assert.arrayEqual(Object.getOwnPropertySymbols(object), []);
+	  if (ownKeys$1) assert.arrayEqual(ownKeys$1(object), []);
+	  if (nativeSubclass) {
+	    var Subclass = nativeSubclass(WeakMap);
+	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
+	    assert.ok(new Subclass() instanceof WeakMap, 'correct subclassing with native classes #2');
+	    object = {};
+	    assert.same(new Subclass().set(object, 2).get(object), 2, 'correct subclassing with native classes #3');
+	  }
+	});
+	QUnit.test('WeakMap#delete', function (assert) {
+	  assert.isFunction(WeakMap.prototype["delete"]);
+	  if (NATIVE) assert.name(WeakMap.prototype["delete"], 'delete');
+	  if (NATIVE) assert.arity(WeakMap.prototype["delete"], 1);
+	  assert.looksNative(WeakMap.prototype["delete"]);
+	  assert.nonEnumerable(WeakMap.prototype, 'delete');
+	  var a = {};
+	  var b = {};
+	  var weakmap = new WeakMap();
+	  weakmap.set(a, 42);
+	  weakmap.set(b, 21);
+	  assert.ok(weakmap.has(a) && weakmap.has(b), 'WeakMap has values before .delete()');
+	  weakmap["delete"](a);
+	  assert.ok(!weakmap.has(a) && weakmap.has(b), 'WeakMap hasn`t value after .delete()');
+	  assert.notThrows(function () {
+	    return !weakmap["delete"](1);
+	  }, 'return false on primitive');
+	  var object = {};
+	  weakmap.set(object, 42);
+	  Object.freeze(object);
+	  assert.ok(weakmap.has(object), 'works with frozen objects #1');
+	  weakmap["delete"](object);
+	  assert.ok(!weakmap.has(object), 'works with frozen objects #2');
+	});
+	QUnit.test('WeakMap#get', function (assert) {
+	  assert.isFunction(WeakMap.prototype.get);
+	  assert.name(WeakMap.prototype.get, 'get');
+	  if (NATIVE) assert.arity(WeakMap.prototype.get, 1);
+	  assert.looksNative(WeakMap.prototype.get);
+	  assert.nonEnumerable(WeakMap.prototype, 'get');
+	  var weakmap = new WeakMap();
+	  assert.strictEqual(weakmap.get({}), undefined, 'WeakMap .get() before .set() return undefined');
+	  var object = {};
+	  weakmap.set(object, 42);
+	  assert.strictEqual(weakmap.get(object), 42, 'WeakMap .get() return value');
+	  weakmap["delete"](object);
+	  assert.strictEqual(weakmap.get(object), undefined, 'WeakMap .get() after .delete() return undefined');
+	  assert.notThrows(function () {
+	    return weakmap.get(1) === undefined;
+	  }, 'return undefined on primitive');
+	  object = {};
+	  weakmap.set(object, 42);
+	  Object.freeze(object);
+	  assert.same(weakmap.get(object), 42, 'works with frozen objects #1');
+	  weakmap["delete"](object);
+	  assert.same(weakmap.get(object), undefined, 'works with frozen objects #2');
+	});
+	QUnit.test('WeakMap#has', function (assert) {
+	  assert.isFunction(WeakMap.prototype.has);
+	  assert.name(WeakMap.prototype.has, 'has');
+	  if (NATIVE) assert.arity(WeakMap.prototype.has, 1);
+	  assert.looksNative(WeakMap.prototype.has);
+	  assert.nonEnumerable(WeakMap.prototype, 'has');
+	  var weakmap = new WeakMap();
+	  assert.ok(!weakmap.has({}), 'WeakMap .has() before .set() return false');
+	  var object = {};
+	  weakmap.set(object, 42);
+	  assert.ok(weakmap.has(object), 'WeakMap .has() return true');
+	  weakmap["delete"](object);
+	  assert.ok(!weakmap.has(object), 'WeakMap .has() after .delete() return false');
+	  assert.notThrows(function () {
+	    return !weakmap.has(1);
+	  }, 'return false on primitive');
+	  object = {};
+	  weakmap.set(object, 42);
+	  Object.freeze(object);
+	  assert.ok(weakmap.has(object), 'works with frozen objects #1');
+	  weakmap["delete"](object);
+	  assert.ok(!weakmap.has(object), 'works with frozen objects #2');
+	});
+	QUnit.test('WeakMap#set', function (assert) {
+	  assert.isFunction(WeakMap.prototype.set);
+	  assert.name(WeakMap.prototype.set, 'set');
+	  assert.arity(WeakMap.prototype.set, 2);
+	  assert.looksNative(WeakMap.prototype.set);
+	  assert.nonEnumerable(WeakMap.prototype, 'set');
+	  var weakmap = new WeakMap();
+	  var object = {};
+	  weakmap.set(object, 33);
+	  assert.same(weakmap.get(object), 33, 'works with object as keys');
+	  assert.ok(weakmap.set({}, 42) === weakmap, 'chaining');
+	  assert["throws"](function () {
+	    return new WeakMap().set(42, 42);
+	  }, 'throws with primitive keys');
+	  var object1 = Object.freeze({});
+	  var object2 = {};
+	  weakmap.set(object1, 42);
+	  weakmap.set(object2, 42);
+	  Object.freeze(object);
+	  assert.same(weakmap.get(object1), 42, 'works with frozen objects #1');
+	  assert.same(weakmap.get(object2), 42, 'works with frozen objects #2');
+	  weakmap["delete"](object1);
+	  weakmap["delete"](object2);
+	  assert.same(weakmap.get(object1), undefined, 'works with frozen objects #3');
+	  assert.same(weakmap.get(object2), undefined, 'works with frozen objects #4');
+	});
+
+	// QUnit.test('WeakMap#@@toStringTag', assert => {
+	//   assert.strictEqual(WeakMap.prototype[Symbol.toStringTag], 'WeakMap', 'WeakMap::@@toStringTag is `WeakMap`');
+	//   assert.strictEqual(String(new WeakMap()), '[object WeakMap]', 'correct stringification');
+	// });
+
+	function WeakSet$1() {
+	  this.map = new WeakMap();
+	  if (arguments.length) {
+	    var iterable = arguments[0];
+	    var entries = iterable[$inject_Symbol_iterator];
+	    if (entries) {
+	      var it = entries.call(iterable);
+	      while (true) {
+	        var next = it.next();
+	        if (next.done) break;
+	        try {
+	          this.add(next.value);
+	        } catch (e) {
+	          if (it["return"]) {
+	            try {
+	              it["return"]();
+	            } catch (e) {}
+	          }
+	          throw e;
+	        }
+	      }
+	    }
+	  }
+	}
+	WeakSet$1.prototype.add = function (key) {
+	  this.map.set(key, true);
+	  return this;
+	};
+	WeakSet$1.prototype.has = function (key) {
+	  return this.map.has(key);
+	};
+	WeakSet$1.prototype["delete"] = function (key) {
+	  return this.map["delete"](key);
+	};
+
+	if (!window.WeakSet) {
+	  window.WeakSet = WeakSet$1;
+	}
+
+	var _ref = GLOBAL.Reflect || {},
+	  ownKeys = _ref.ownKeys;
+	QUnit.test('WeakSet', function (assert) {
+	  assert.isFunction(WeakSet);
+	  assert.name(WeakSet, 'WeakSet');
+	  assert.arity(WeakSet, 0);
+	  assert.looksNative(WeakSet);
+	  assert.ok('add' in WeakSet.prototype, 'add in WeakSet.prototype');
+	  assert.ok('delete' in WeakSet.prototype, 'delete in WeakSet.prototype');
+	  assert.ok('has' in WeakSet.prototype, 'has in WeakSet.prototype');
+	  assert.ok(new WeakSet() instanceof WeakSet, 'new WeakSet instanceof WeakSet');
+	  var object = {};
+	  assert.ok(new WeakSet(createIterable$1([object])).has(object), 'Init from iterable');
+	  var weakset = new WeakSet();
+	  var frozen = Object.freeze({});
+	  weakset.add(frozen);
+	  assert.strictEqual(weakset.has(frozen), true, 'works with frozen objects, #1');
+	  weakset["delete"](frozen);
+	  assert.strictEqual(weakset.has(frozen), false, 'works with frozen objects, #2');
+	  var done = false;
+	  try {
+	    new WeakSet(createIterable$1([null, 1, 2], {
+	      "return": function () {
+	        return done = true;
+	      }
+	    }));
+	  } catch (_unused) {/* empty */}
+	  assert.ok(done, '.return #throw');
+	  assert.ok(!('clear' in WeakSet.prototype), 'should not contains `.clear` method');
+	  var array = [];
+	  done = false;
+	  array['@@iterator'] = undefined;
+	  array[$inject_Symbol_iterator] = function () {
+	    done = true;
+	    return [][$inject_Symbol_iterator].call(this);
+	  };
+	  new WeakSet(array);
+	  assert.ok(done);
+	  object = {};
+	  new WeakSet().add(object);
+	  if (DESCRIPTORS) {
+	    var results = [];
+	    for (var key in object) results.push(key);
+	    assert.arrayEqual(results, []);
+	    assert.arrayEqual(Object.keys(object), []);
+	  }
+	  assert.arrayEqual(Object.getOwnPropertyNames(object), []);
+	  if (Object.getOwnPropertySymbols) assert.arrayEqual(Object.getOwnPropertySymbols(object), []);
+	  if (ownKeys) assert.arrayEqual(ownKeys(object), []);
+	  if (nativeSubclass) {
+	    var Subclass = nativeSubclass(WeakSet);
+	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
+	    assert.ok(new Subclass() instanceof WeakSet, 'correct subclassing with native classes #2');
+	    object = {};
+	    assert.ok(new Subclass().add(object).has(object), 'correct subclassing with native classes #3');
+	  }
+	});
+	QUnit.test('WeakSet#add', function (assert) {
+	  assert.isFunction(WeakSet.prototype.add);
+	  assert.name(WeakSet.prototype.add, 'add');
+	  assert.arity(WeakSet.prototype.add, 1);
+	  assert.looksNative(WeakSet.prototype.add);
+	  assert.nonEnumerable(WeakSet.prototype, 'add');
+	  var weakset = new WeakSet();
+	  assert.ok(weakset.add({}) === weakset, 'chaining');
+	  assert["throws"](function () {
+	    return new WeakSet().add(42);
+	  }, 'throws with primitive keys');
+	});
+	QUnit.test('WeakSet#delete', function (assert) {
+	  assert.isFunction(WeakSet.prototype["delete"]);
+	  if (NATIVE) assert.arity(WeakSet.prototype["delete"], 1);
+	  assert.looksNative(WeakSet.prototype["delete"]);
+	  assert.nonEnumerable(WeakSet.prototype, 'delete');
+	  var a = {};
+	  var b = {};
+	  var weakset = new WeakSet().add(a).add(b);
+	  assert.ok(weakset.has(a) && weakset.has(b), 'WeakSet has values before .delete()');
+	  weakset["delete"](a);
+	  assert.ok(!weakset.has(a) && weakset.has(b), 'WeakSet has`nt value after .delete()');
+	  assert.notThrows(function () {
+	    return !weakset["delete"](1);
+	  }, 'return false on primitive');
+	});
+	QUnit.test('WeakSet#has', function (assert) {
+	  assert.isFunction(WeakSet.prototype.has);
+	  assert.name(WeakSet.prototype.has, 'has');
+	  assert.arity(WeakSet.prototype.has, 1);
+	  assert.looksNative(WeakSet.prototype.has);
+	  assert.nonEnumerable(WeakSet.prototype, 'has');
+	  var weakset = new WeakSet();
+	  assert.ok(!weakset.has({}), 'WeakSet has`nt value');
+	  var object = {};
+	  weakset.add(object);
+	  assert.ok(weakset.has(object), 'WeakSet has value after .add()');
+	  weakset["delete"](object);
+	  assert.ok(!weakset.has(object), 'WeakSet hasn`t value after .delete()');
+	  assert.notThrows(function () {
+	    return !weakset.has(1);
+	  }, 'return false on primitive');
+	});
+
+	// QUnit.test('WeakSet::@@toStringTag', assert => {
+	//   assert.strictEqual(WeakSet.prototype[Symbol.toStringTag], 'WeakSet', 'WeakSet::@@toStringTag is `WeakSet`');
+	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
+	// });
+
+	var Promise$3 = window.Promise;
+
+	var ticks = null;
+	var nextTick = setTimeout;
+	function initQueueMicrotask(fn) {
+	  nextTick = fn;
+	}
+	function next() {
+	  if (ticks && ticks.length) {
+	    for (var i = 0; i < ticks.length; i++) {
+	      var args = ticks[i];
+	      var fn = args[0];
+	      args = Array.prototype.slice.call(args, 1);
+	      try {
+	        fn.apply(this, args);
+	      } catch (e) {
+	        console.error(e);
+	      }
+	    }
+	    ticks = null;
+	  }
+	}
+	function queueMicrotask$1() {
+	  if (!ticks) {
+	    ticks = new Array();
+	    nextTick(next);
+	  }
+	  ticks.push(arguments);
+	}
+	;
+
+	if (!window.queueMicrotask) {
+	  window.queueMicrotask = queueMicrotask$1;
+	}
+
+	function isObject(obj) {
+	  var type = _typeof(obj);
+	  if (type !== "object") {
+	    return false;
+	  }
+	  type = Object.prototype.toString.call(obj);
+	  switch (type) {
+	    case '[object String]':
+	    case '[object Number]':
+	    case '[object Function]':
+	    case '[object Boolean]':
+	      return false;
+	  }
+	  if (typeof obj.toString === "function" && obj.toString().indexOf("@@") === 0) {
+	    return false; //symbol polyfill
+	  }
+
+	  return true;
+	}
+	;
+
+	var forEach = Array.prototype.forEach || forEach$2;
+
+	var PENDING = 1;
+	var RESOLVED = 2;
+	var REJECTED = 3;
+	function Promise$2(executor) {
+	  if (!executor) {
+	    throw new TypeError("undefined is not a promise");
+	  }
+	  this._resolveds = [];
+	  this._rejecteds = [];
+	  this._state = PENDING; //resolved | rejected
+
+	  var me = this;
+	  function resolve(value) {
+	    if (me._state === PENDING) {
+	      if (value) {
+	        try {
+	          var then = value.then;
+	          if (isFunction(then)) {
+	            queueMicrotask(function () {
+	              try {
+	                value.then(resolve, reject);
+	              } catch (e) {
+	                reject(e);
+	              }
+	            });
+	            return;
+	          }
+	        } catch (e) {
+	          reject(e);
+	          return;
+	        }
+	      }
+	      me._value = value;
+	      me._state = RESOLVED;
+	      queueMicrotask(function () {
+	        forEach.call(me._resolveds, callAll, me);
+	        me._resolveds = null;
+	      });
+	    }
+	  }
+	  function reject(reason) {
+	    if (me._state === PENDING) {
+	      me._value = reason;
+	      me._state = REJECTED;
+	      queueMicrotask(function () {
+	        forEach.call(me._rejecteds, callAll, me);
+	        me._rejecteds = null;
+	      });
+	    }
+	  }
+	  try {
+	    executor(resolve, reject);
+	  } catch (e) {
+	    reject(e);
+	  }
+	}
+	function callAll(fn) {
+	  fn.call(this, this._value);
+	}
+	function nextPromise(before, after, resolve, reject) {
+	  return function (value) {
+	    try {
+	      var x = before(value);
+	      if (x && typeof x.then === "function") {
+	        x.then(resolve, reject);
+	      } else {
+	        after(x);
+	      }
+	    } catch (r) {
+	      reject(r);
 	    }
 	  };
-	  for (var _iterator = _createForOfIteratorHelperLoose(urlTestData), _step; !(_step = _iterator()).done;) {
-	    var expected = _step.value;
-	    var _ret = _loop(expected);
-	    if (_ret === "continue") continue;
-	  }
-	});
-
-	// see https://github.com/web-platform-tests/wpt/blob/master/url
-	if (DESCRIPTORS) QUnit.skip('WPT URL setters tests', function (assert) {
-	  for (var setter in settersTestData) {
-	    var testCases = settersTestData[setter];
-	    for (var _iterator2 = _createForOfIteratorHelperLoose(testCases), _step2; !(_step2 = _iterator2()).done;) {
-	      var _ref = _step2.value;
-	      var href = _ref.href;
-	      var newValue = _ref.newValue;
-	      var comment = _ref.comment;
-	      var expected = _ref.expected;
-	      var name = "Setting <" + href + ">." + setter + " = '" + newValue + "'.";
-	      if (comment) name += " " + comment;
-	      var url = new URL(href);
-	      url[setter] = newValue;
-	      for (var attribute in expected) {
-	        assert.same(url[attribute], expected[attribute], name);
+	}
+	function returnArg1(arg1) {
+	  return arg1;
+	}
+	Promise$2.prototype.then = function () {
+	  function then(onResolved, onRejected) {
+	    // var Class = speciesConstructor(this, Promise);
+	    var me = this;
+	    onResolved = onResolved || returnArg1;
+	    onRejected = onRejected || returnArg1;
+	    return new Promise$2(function (resolve, reject) {
+	      switch (me._state) {
+	        case RESOLVED:
+	          queueMicrotask(nextPromise(onResolved, resolve, resolve, reject), me._value);
+	          break;
+	        case REJECTED:
+	          queueMicrotask(nextPromise(onRejected, reject, resolve, reject), me._value);
+	          break;
+	        default:
+	          me._resolveds.push(nextPromise(onResolved, resolve, resolve, reject));
+	          me._rejecteds.push(nextPromise(onRejected, reject, resolve, reject));
 	      }
-	    }
+	    });
 	  }
+	  return then;
+	}();
+	Promise$2.prototype["catch"] = function (onRejected) {
+	  return this.then(undefined, onRejected);
+	};
+	function ResolvePromise(value) {
+	  this._value = value;
+	  this._state = RESOLVED;
+	}
+	ResolvePromise.prototype = Promise$2.prototype;
+	function RejectPromise(value) {
+	  this._value = value;
+	  this._state = REJECTED;
+	}
+	RejectPromise.prototype = Promise$2.prototype;
+	Promise$2.resolve = function () {
+	  function resolve(value) {
+	    if (value && _typeof(value) === "object" && value.constructor === this) {
+	      return value;
+	    }
+	    if (!this) {
+	      throw TypeError("Promise.resolve called on non-object");
+	    }
+	    if (typeof this !== "function") {
+	      throw TypeError(this + " is not a constructor");
+	    }
+	    return new ResolvePromise(value);
+	    // var Class = this;
+	    // if(Class === Promise) {
+	    // }
+	    // var promiseCapability = new PromiseCapability(Class);
+	    // var resolve = promiseCapability.resolve;
+	    // resolve(value);
+	    // return promiseCapability.promise;
+	  }
+	  return resolve;
+	}();
+	Promise$2.reject = function () {
+	  function reject(value) {
+	    if (value && _typeof(value) === "object" && value.constructor === this) {
+	      return value;
+	    }
+	    if (!this) {
+	      throw TypeError("Promise.resolve called on non-object");
+	    }
+	    if (typeof this !== "function") {
+	      throw TypeError(this + " is not a constructor");
+	    }
+	    return new RejectPromise(value);
+	  }
+	  return reject;
+	}();
+	Promise$2.all = function (promises) {
+	  if (!Array.isArray(promises)) {
+	    throw new TypeError('You must pass an array to all.');
+	  }
+	  if (promises.length == 0) return Promise$2.resolve();
+	  return new Promise$2(function (resolve, reject) {
+	    var result = new Array(promises.length);
+	    var c = 0;
+	    forEach.call(promises, function (one, index) {
+	      if (one && typeof one.then === "function") {
+	        one.then(function (data) {
+	          c++;
+	          result[index] = data;
+	          if (c >= promises.length) {
+	            resolve(result);
+	          }
+	        }, function (error) {
+	          reject(error);
+	        });
+	      } else {
+	        c++;
+	        if (c >= promises.length) {
+	          resolve();
+	        }
+	      }
+	    });
+	  });
+	};
+	Promise$2.race = function (promises) {
+	  if (!Array.isArray(promises)) {
+	    throw new TypeError('You must pass an array to all.');
+	  }
+	  return new Promise$2(function (resolve, reject) {
+	    forEach.call(promises, function (one) {
+	      one.then(function () {
+	        resolve();
+	      }, function () {
+	        reject();
+	      });
+	    });
+	  });
+	};
+
+	var Promise$1 = Promise$3;
+	if (!Promise$1) {
+	  Promise$1 = window.Promise = Promise$2;
+	}
+
+	function promise_finally (onCompleted) {
+	  return this.then(function (value) {
+	    var r = onCompleted();
+	    if (r === undefined) {
+	      return value;
+	    }
+	    return r;
+	  }, function (error) {
+	    var r = onCompleted();
+	    if (r === undefined) {
+	      return error;
+	    }
+	    return r;
+	  });
+	}
+	;
+
+	if (!Promise$1.prototype["finally"]) {
+	  Promise$1.prototype["finally"] = promise_finally;
+	}
+
+	var _Symbol = GLOBAL.Symbol || {};
+	var setPrototypeOf = Object.setPrototypeOf,
+	  create$1 = Object.create;
+	QUnit.test('Promise', function (assert) {
+	  assert.isFunction(Promise);
+	  assert.arity(Promise, 1);
+	  assert.name(Promise, 'Promise');
+	  assert.looksNative(Promise);
+	  assert["throws"](function () {
+	    Promise();
+	  }, 'throws w/o `new`');
+	  new Promise(function (resolve, reject) {
+	    assert.isFunction(resolve, 'resolver is function');
+	    assert.isFunction(reject, 'rejector is function');
+	    if (STRICT) assert.same(this, undefined, 'correct executor context');
+	  });
+	});
+	if (DESCRIPTORS) QUnit.asyncTest('Promise operations order', function (assert) {
+	  var resolve, resolve2;
+	  expect(1);
+	  var EXPECTED_ORDER = 'DEHAFGBC';
+	  var result = '';
+	  var promise1 = new Promise(function (r) {
+	    resolve = r;
+	  });
+	  resolve({
+	    then: function () {
+	      result += 'A';
+	      throw Error();
+	    }
+	  });
+	  promise1["catch"](function () {
+	    result += 'B';
+	  });
+	  promise1["catch"](function () {
+	    result += 'C';
+	    assert.same(result, EXPECTED_ORDER);
+	    start();
+	  });
+	  var promise2 = new Promise(function (r) {
+	    resolve2 = r;
+	  });
+	  resolve2(Object.defineProperty({}, 'then', {
+	    get: function () {
+	      result += 'D';
+	      throw Error();
+	    }
+	  }));
+	  resolve2(Object.defineProperty({}, 'then', {
+	    get: function () {
+	      result += 'I';
+	      return 1;
+	    }
+	  }));
+	  result += 'E';
+	  promise2["catch"](function () {
+	    result += 'F';
+	  });
+	  promise2["catch"](function () {
+	    result += 'G';
+	  });
+	  result += 'H';
+	  setTimeout(function () {
+	    if (!~result.indexOf('C')) {
+	      assert.same(result, EXPECTED_ORDER);
+	      start();
+	    }
+	  }, 1e3);
+	});
+	QUnit.test('Promise#then', function (assert) {
+	  assert.isFunction(Promise.prototype.then);
+	  if (NATIVE) assert.arity(Promise.prototype.then, 2);
+	  assert.name(Promise.prototype.then, 'then');
+	  assert.looksNative(Promise.prototype.then);
+	  assert.nonEnumerable(Promise.prototype, 'then');
+	  var promise = new Promise(function (resolve) {
+	    resolve(42);
+	  });
+	  var FakePromise1 = promise.constructor = function (executor) {
+	    executor(function () {/* empty */}, function () {/* empty */});
+	  };
+	  var FakePromise2 = FakePromise1[_Symbol.species] = function (executor) {
+	    executor(function () {/* empty */}, function () {/* empty */});
+	  };
+	  // assert.ok(promise.then(() => { /* empty */ }) instanceof FakePromise2, 'subclassing, @@species pattern');
+	  promise = new Promise(function (resolve) {
+	    resolve(42);
+	  });
+	  promise.constructor = FakePromise1 = function (executor) {
+	    executor(function () {/* empty */}, function () {/* empty */});
+	  };
+	  assert.ok(promise.then(function () {/* empty */}) instanceof Promise, 'subclassing, incorrect `this` pattern');
+	  promise = new Promise(function (resolve) {
+	    resolve(42);
+	  });
+	  // promise.constructor = FakePromise1 = function(executor) {
+	  //   executor(() => { /* empty */ }, () => { /* empty */ });
+	  // };
+	  // FakePromise1[Symbol.species] = function() { /* empty */ };
+	  // assert.throws(() => {
+	  //   promise.then(() => { /* empty */ });
+	  // }, 'NewPromiseCapability validations, #1');
+	  // FakePromise1[Symbol.species] = function(executor) {
+	  //   executor(null, () => { /* empty */ });
+	  // };
+	  // assert.throws(() => {
+	  //   promise.then(() => { /* empty */ });
+	  // }, 'NewPromiseCapability validations, #2');
+	  // FakePromise1[Symbol.species] = function(executor) {
+	  //   executor(() => { /* empty */ }, null);
+	  // };
+	  // assert.throws(() => {
+	  //   promise.then(() => { /* empty */ });
+	  // }, 'NewPromiseCapability validations, #3');
 	});
 
-	// see https://github.com/web-platform-tests/wpt/blob/master/url
-	QUnit.skip('WPT conversion to ASCII tests', function (assert) {
-	  var _loop2 = function (input) {
-	    var name = "Parsing: <" + input + ">";
-	    if (comment) name += " " + comment;
-	    if (output === null) {
-	      assert["throws"](function () {
-	        return new URL("https://" + input + "/x");
-	      }, name);
-	    } else {
-	      var url = new URL("https://" + input + "/x");
-	      assert.same(url.host, output, name);
-	      assert.same(url.hostname, output, name);
-	      assert.same(url.pathname, '/x', name);
-	      assert.same(url.href, "https://" + output + "/x", name);
-	    }
+	QUnit.test('Promise#catch', function (assert) {
+	  assert.isFunction(Promise.prototype["catch"]);
+	  if (NATIVE) assert.arity(Promise.prototype["catch"], 1);
+	  if (NATIVE) assert.name(Promise.prototype["catch"], 'catch');
+	  assert.looksNative(Promise.prototype["catch"]);
+	  assert.nonEnumerable(Promise.prototype, 'catch');
+	  var promise = new Promise(function (resolve) {
+	    resolve(42);
+	  });
+	  var FakePromise1 = promise.constructor = function (executor) {
+	    executor(function () {/* empty */}, function () {/* empty */});
 	  };
-	  for (var _iterator3 = _createForOfIteratorHelperLoose(toASCIITestData), _step3; !(_step3 = _iterator3()).done;) {
-	    var _ref2 = _step3.value;
-	    var comment = _ref2.comment;
-	    var input = _ref2.input;
-	    var output = _ref2.output;
-	    _loop2(input);
-	  }
+	  promise = new Promise(function (resolve) {
+	    resolve(42);
+	  });
+	  promise.constructor = FakePromise1 = function (executor) {
+	    executor(function () {/* empty */}, function () {/* empty */});
+	  };
+	  assert.ok(promise["catch"](function () {/* empty */}) instanceof Promise, 'subclassing, incorrect `this` pattern');
+	  promise = new Promise(function (resolve) {
+	    resolve(42);
+	  });
+	  promise.constructor = FakePromise1 = function (executor) {
+	    executor(function () {/* empty */}, function () {/* empty */});
+	  };
+	  assert.same(Promise.prototype["catch"].call({
+	    then: function (x, y) {
+	      return y;
+	    }
+	  }, 42), 42, 'calling `.then`');
 	});
+	QUnit.test('Promise.resolve', function (assert) {
+	  var resolve = Promise.resolve;
+	  assert.isFunction(resolve);
+	  if (NATIVE) assert.arity(resolve, 1);
+	  assert.name(resolve, 'resolve');
+	  assert.looksNative(resolve);
+	  assert.nonEnumerable(Promise, 'resolve');
+	  assert["throws"](function () {
+	    resolve.call(null, 1)["catch"](function () {/* empty */});
+	  }, TypeError, 'throws without context');
+	  // function FakePromise1(executor) {
+	  //   executor(() => { /* empty */ }, () => { /* empty */ });
+	  // }
+	  // FakePromise1[Symbol.species] = function(executor) {
+	  //   executor(() => { /* empty */ }, () => { /* empty */ });
+	  // };
+	  // assert.ok(resolve.call(FakePromise1, 42) instanceof FakePromise1, 'subclassing, `this` pattern');
+	  // assert.throws(() => {
+	  //   resolve.call(() => { /* empty */ }, 42);
+	  // }, 'NewPromiseCapability validations, #1');
+	  // assert.throws(() => {
+	  //   resolve.call(executor => {
+	  //     executor(null, () => { /* empty */ });
+	  //   }, 42);
+	  // }, 'NewPromiseCapability validations, #2');
+	  // assert.throws(() => {
+	  //   resolve.call(executor => {
+	  //     executor(() => { /* empty */ }, null);
+	  //   }, 42);
+	  // }, 'NewPromiseCapability validations, #3');
+	});
+
+	QUnit.test('Promise.reject', function (assert) {
+	  var reject = Promise.reject;
+	  assert.isFunction(reject);
+	  if (NATIVE) assert.arity(reject, 1);
+	  assert.name(reject, 'reject');
+	  assert.looksNative(reject);
+	  assert.nonEnumerable(Promise, 'reject');
+	  assert["throws"](function () {
+	    reject.call(null, 1)["catch"](function () {/* empty */});
+	  }, TypeError, 'throws without context');
+	  // function FakePromise1(executor) {
+	  //   executor(() => { /* empty */ }, () => { /* empty */ });
+	  // }
+	  // FakePromise1[Symbol.species] = function(executor) {
+	  //   executor(() => { /* empty */ }, () => { /* empty */ });
+	  // };
+	  // assert.ok(reject.call(FakePromise1, 42) instanceof FakePromise1, 'subclassing, `this` pattern');
+	  // assert.throws(() => {
+	  //   reject.call(() => { /* empty */ }, 42);
+	  // }, 'NewPromiseCapability validations, #1');
+	  // assert.throws(() => {
+	  //   reject.call(executor => {
+	  //     executor(null, () => { /* empty */ });
+	  //   }, 42);
+	  // }, 'NewPromiseCapability validations, #2');
+	  // assert.throws(() => {
+	  //   reject.call(executor => {
+	  //     executor(() => { /* empty */ }, null);
+	  //   }, 42);
+	  // }, 'NewPromiseCapability validations, #3');
+	});
+
+	QUnit.test('Promise.all', function (assert) {
+	  var FakePromise1, FakePromise2;
+	  var all = Promise.all,
+	    resolve = Promise.resolve;
+	  assert.isFunction(all);
+	  assert.arity(all, 1);
+	  assert.name(all, 'all');
+	  assert.looksNative(all);
+	  assert.nonEnumerable(Promise, 'all');
+	  // const iterable = createIterable([1, 2, 3]);
+	  // Promise.all(iterable).catch(() => { /* empty */ });
+	  // assert.ok(iterable.received, 'works with iterables: iterator received');
+	  // assert.ok(iterable.called, 'works with iterables: next called');
+	  // const array = [];
+	  // let done = false;
+	  // array['@@iterator'] = undefined;
+	  // array[Symbol.iterator] = function() {
+	  //   done = true;
+	  //   return [][Symbol.iterator].call(this);
+	  // };
+	  // Promise.all(array);
+	  // assert.ok(done);
+	  assert["throws"](function () {
+	    all.call(null, [])["catch"](function () {/* empty */});
+	  }, TypeError, 'throws without context');
+	  // done = false;
+	  // try {
+	  //   Promise.resolve = function() {
+	  //     throw new Error();
+	  //   };
+	  //   Promise.all(createIterable([1, 2, 3], {
+	  //     return() {
+	  //       done = true;
+	  //     },
+	  //   })).catch(() => { /* empty */ });
+	  // } catch(error) { /* empty */ }
+	  // Promise.resolve = resolve;
+	  // assert.ok(done, 'iteration closing');
+	  // FakePromise1 = function(executor) {
+	  //   executor(() => { /* empty */ }, () => { /* empty */ });
+	  // };
+	  // FakePromise2 = FakePromise1[Symbol.species] = function(executor) {
+	  //   executor(() => { /* empty */ }, () => { /* empty */ });
+	  // };
+	  // FakePromise1.resolve = FakePromise2.resolve = resolve.bind(Promise);
+	  // assert.ok(all.call(FakePromise1, [1, 2, 3]) instanceof FakePromise1, 'subclassing, `this` pattern');
+	  // FakePromise1 = function() { /* empty */ };
+	  // FakePromise2 = function(executor) {
+	  //   executor(null, () => { /* empty */ });
+	  // };
+	  // const FakePromise3 = function(executor) {
+	  //   executor(() => { /* empty */ }, null);
+	  // };
+	  // FakePromise1.resolve = FakePromise2.resolve = FakePromise3.resolve = resolve.bind(Promise);
+	  // assert.throws(() => {
+	  //   all.call(FakePromise1, [1, 2, 3]);
+	  // }, 'NewPromiseCapability validations, #1');
+	  // assert.throws(() => {
+	  //   all.call(FakePromise2, [1, 2, 3]);
+	  // }, 'NewPromiseCapability validations, #2');
+	  // assert.throws(() => {
+	  //   all.call(FakePromise3, [1, 2, 3]);
+	  // }, 'NewPromiseCapability validations, #3');
+	});
+
+	QUnit.test('Promise.race', function (assert) {
+	  var FakePromise1, FakePromise2;
+	  var race = Promise.race,
+	    resolve = Promise.resolve;
+	  assert.isFunction(race);
+	  assert.arity(race, 1);
+	  assert.name(race, 'race');
+	  assert.looksNative(race);
+	  assert.nonEnumerable(Promise, 'race');
+	  var iterable = createIterable$1([1, 2, 3]);
+	  Promise.race(iterable)["catch"](function () {/* empty */});
+	  assert.ok(iterable.received, 'works with iterables: iterator received');
+	  assert.ok(iterable.called, 'works with iterables: next called');
+	  var array = [];
+	  var done = false;
+	  array['@@iterator'] = undefined;
+	  array[_Symbol.iterator] = function () {
+	    done = true;
+	    return [][_Symbol.iterator].call(this);
+	  };
+	  Promise.race(array);
+	  assert.ok(done);
+	  assert["throws"](function () {
+	    race.call(null, [])["catch"](function () {/* empty */});
+	  }, TypeError, 'throws without context');
+	  done = false;
+	  try {
+	    Promise.resolve = function () {
+	      throw new Error();
+	    };
+	    Promise.race(createIterable$1([1, 2, 3], {
+	      "return": function () {
+	        done = true;
+	      }
+	    }))["catch"](function () {/* empty */});
+	  } catch (error) {/* empty */}
+	  Promise.resolve = resolve;
+	  assert.ok(done, 'iteration closing');
+	  // FakePromise1 = function(executor) {
+	  //   executor(() => { /* empty */ }, () => { /* empty */ });
+	  // };
+	  // FakePromise2 = FakePromise1[Symbol.species] = function(executor) {
+	  //   executor(() => { /* empty */ }, () => { /* empty */ });
+	  // };
+	  // FakePromise1.resolve = FakePromise2.resolve = resolve.bind(Promise);
+	  // assert.ok(race.call(FakePromise1, [1, 2, 3]) instanceof FakePromise1, 'subclassing, `this` pattern');
+	  // FakePromise1 = function() { /* empty */ };
+	  // FakePromise2 = function(executor) {
+	  //   executor(null, () => { /* empty */ });
+	  // };
+	  // const FakePromise3 = function(executor) {
+	  //   executor(() => { /* empty */ }, null);
+	  // };
+	  // FakePromise1.resolve = FakePromise2.resolve = FakePromise3.resolve = resolve.bind(Promise);
+	  // assert.throws(() => {
+	  //   race.call(FakePromise1, [1, 2, 3]);
+	  // }, 'NewPromiseCapability validations, #1');
+	  // assert.throws(() => {
+	  //   race.call(FakePromise2, [1, 2, 3]);
+	  // }, 'NewPromiseCapability validations, #2');
+	  // assert.throws(() => {
+	  //   race.call(FakePromise3, [1, 2, 3]);
+	  // }, 'NewPromiseCapability validations, #3');
+	});
+
+	// if(PROTO) QUnit.test('Promise subclassing', assert => {
+	//   function SubPromise(executor) {
+	//     const self = new Promise(executor);
+	//     setPrototypeOf(self, SubPromise.prototype);
+	//     self.mine = 'subclass';
+	//     return self;
+	//   }
+	//   setPrototypeOf(SubPromise, Promise);
+	//   SubPromise.prototype = create(Promise.prototype);
+	//   SubPromise.prototype.constructor = SubPromise;
+	//   let promise1 = SubPromise.resolve(5);
+	//   assert.strictEqual(promise1.mine, 'subclass');
+	//   promise1 = promise1.then(it => {
+	//     assert.strictEqual(it, 5);
+	//   });
+	//   assert.strictEqual(promise1.mine, 'subclass');
+	//   let promise2 = new SubPromise(resolve => {
+	//     resolve(6);
+	//   });
+	//   assert.strictEqual(promise2.mine, 'subclass');
+	//   promise2 = promise2.then(it => {
+	//     assert.strictEqual(it, 6);
+	//   });
+	//   assert.strictEqual(promise2.mine, 'subclass');
+	//   const promise3 = SubPromise.all([promise1, promise2]);
+	//   assert.strictEqual(promise3.mine, 'subclass');
+	//   assert.ok(promise3 instanceof Promise);
+	//   assert.ok(promise3 instanceof SubPromise);
+	//   promise3.then(assert.async(), error => {
+	//     assert.ok(false, error);
+	//   });
+	// });
+
+	var promise$1 = function () {
+	  try {
+	    return Function('return (async function () { /* empty */ })()')();
+	  } catch (_unused) {/* empty */}
+	}();
+	if (promise$1 && promise$1.constructor !== Promise) QUnit.test('Native Promise, patched', function (assert) {
+	  assert.isFunction(promise$1.then);
+	  assert.arity(promise$1.then, 2);
+	  assert.looksNative(promise$1.then);
+	  assert.nonEnumerable(promise$1.constructor.prototype, 'then');
+	  function empty() {/* empty */}
+	  assert.ok(promise$1.then(empty) instanceof Promise, '`.then` returns `Promise` instance #1');
+	  assert.ok(new promise$1.constructor(empty).then(empty) instanceof Promise, '`.then` returns `Promise` instance #2');
+	  assert.ok(promise$1["catch"](empty) instanceof Promise, '`.catch` returns `Promise` instance #1');
+	  assert.ok(new promise$1.constructor(empty)["catch"](empty) instanceof Promise, '`.catch` returns `Promise` instance #2');
+	  assert.ok(promise$1["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #1');
+	  assert.ok(new promise$1.constructor(empty)["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
+	});
+
+	QUnit.test('Promise#finally', function (assert) {
+	  assert.isFunction(Promise.prototype["finally"]);
+	  assert.arity(Promise.prototype["finally"], 1);
+	  assert.looksNative(Promise.prototype["finally"]);
+	  assert.nonEnumerable(Promise.prototype, 'finally');
+	  assert.ok(Promise.resolve(42)["finally"](function () {/* empty */}) instanceof Promise, 'returns a promise');
+	});
+	QUnit.asyncTest('Promise#finally, resolved', function (assert) {
+	  expect(3);
+	  var called = 0;
+	  var argument = null;
+	  Promise.resolve(42)["finally"](function (it) {
+	    called++;
+	    argument = it;
+	  }).then(function (it) {
+	    assert.same(it, 42, 'resolved with a correct value');
+	    assert.same(called, 1, 'onFinally function called one time');
+	    assert.same(argument, undefined, 'onFinally function called with a correct argument');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('Promise#finally, rejected', function (assert) {
+	  expect(2);
+	  var called = 0;
+	  var argument = null;
+	  Promise.reject(42)["finally"](function (it) {
+	    called++;
+	    argument = it;
+	  })["catch"](function () {
+	    assert.same(called, 1, 'onFinally function called one time');
+	    assert.same(argument, undefined, 'onFinally function called with a correct argument');
+	    start();
+	  });
+	});
+	var promise = function () {
+	  try {
+	    return Function('return (async function () { /* empty */ })()')();
+	  } catch (_unused) {/* empty */}
+	}();
+	if (promise && promise.constructor !== Promise) QUnit.test('Native Promise, patched', function (assert) {
+	  assert.isFunction(promise["finally"]);
+	  assert.arity(promise["finally"], 1);
+	  assert.looksNative(promise["finally"]);
+	  assert.nonEnumerable(promise.constructor.prototype, 'finally');
+	  function empty() {/* empty */}
+	  assert.ok(promise["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #1');
+	  assert.ok(new promise.constructor(empty)["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
+	});
+
+	QUnit.test('Promise.allSettled', function (assert) {
+	  assert.isFunction(Promise.allSettled);
+	  assert.arity(Promise.allSettled, 1);
+	  assert.looksNative(Promise.allSettled);
+	  assert.nonEnumerable(Promise, 'allSettled');
+	  assert.ok(Promise.allSettled([1, 2, 3]) instanceof Promise, 'returns a promise');
+	});
+	QUnit.asyncTest('Promise.allSettled, resolved', function (assert) {
+	  expect(1);
+	  Promise.allSettled([Promise.resolve(1), Promise.reject(2), Promise.resolve(3)]).then(function (it) {
+	    assert.deepEqual(it, [{
+	      value: 1,
+	      status: 'fulfilled'
+	    }, {
+	      reason: 2,
+	      status: 'rejected'
+	    }, {
+	      value: 3,
+	      status: 'fulfilled'
+	    }], 'resolved with a correct value');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('Promise.allSettled, rejected', function (assert) {
+	  expect(1);
+	  Promise.allSettled()["catch"](function () {
+	    assert.ok(true, 'rejected as expected');
+	    start();
+	  });
+	});
+
+	QUnit.test('Promise.any', function (assert) {
+	  assert.isFunction(Promise.any);
+	  assert.arity(Promise.any, 1);
+	  assert.looksNative(Promise.any);
+	  assert.nonEnumerable(Promise, 'any');
+	  assert.ok(Promise.any([1, 2, 3]) instanceof Promise, 'returns a promise');
+	});
+	QUnit.test('Promise.any, resolved', function (assert) {
+	  assert.expect(1);
+	  var async = assert.async();
+	  Promise.any([Promise.resolve(1), Promise.reject(2), Promise.resolve(3)]).then(function (it) {
+	    assert.same(it, 1, 'resolved with a correct value');
+	    async();
+	  });
+	});
+	QUnit.test('Promise.any, rejected #1', function (assert) {
+	  assert.expect(2);
+	  var async = assert.async();
+	  Promise.any([Promise.reject(1), Promise.reject(2), Promise.reject(3)])["catch"](function (error) {
+	    assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
+	    assert.deepEqual(error.errors, [1, 2, 3], 'rejected with a correct value');
+	    async();
+	  });
+	});
+	QUnit.test('Promise.any, rejected #2', function (assert) {
+	  assert.expect(1);
+	  var async = assert.async();
+	  Promise.any()["catch"](function () {
+	    assert.ok(true, 'rejected as expected');
+	    async();
+	  });
+	});
+	QUnit.test('Promise.any, rejected #3', function (assert) {
+	  assert.expect(2);
+	  var async = assert.async();
+	  Promise.any([])["catch"](function (error) {
+	    assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
+	    assert.deepEqual(error.errors, [], 'rejected with a correct value');
+	    async();
+	  });
+	});
+
+	QUnit.test('AggregateError', function (assert) {
+	  assert.isFunction(AggregateError);
+	  assert.arity(AggregateError, 2);
+	  assert.name(AggregateError, 'AggregateError');
+	  assert.looksNative(AggregateError);
+	  assert.ok(new AggregateError([1]) instanceof AggregateError);
+	  assert.ok(new AggregateError([1]) instanceof Error);
+	  assert.ok(AggregateError([1]) instanceof AggregateError);
+	  assert.ok(AggregateError([1]) instanceof Error);
+	  assert.same(AggregateError([1], 'foo').message, 'foo');
+	  assert.deepEqual(AggregateError([1, 2, 3]).errors, [1, 2, 3]);
+	});
+
+	// import "../web/web.url";
 
 })();
