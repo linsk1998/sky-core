@@ -1,1 +1,1 @@
-export var URL = this.URL;
+export var URL = this.URL || this.webkitURL;

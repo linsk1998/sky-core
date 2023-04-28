@@ -50,7 +50,8 @@ export function initURL() {
 		};
 	}
 }
-export function URL(relativePath, absolutePath) {
+export function URL(relativePath) {
+	var absolutePath = arguments[1];
 	var url = new modern_URL(relativePath, absolutePath);
 	var o = VBUrlFactory(url);
 	if(url.host) {

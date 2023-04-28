@@ -1,6 +1,7 @@
 import { SearchParams } from "../impl/SearchParams";
 
-export function URL(relativePath, absolutePath) {
+export function URL(relativePath) {
+	var absolutePath = arguments[1];
 	var path, arr;
 	this.port = this.search = this.hash = this.username = this.password = "";
 	this.searchParams = new SearchParams(this);
