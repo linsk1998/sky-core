@@ -1,3 +1,8 @@
-
-import { setPrototypeOf } from "../../impl-modern/Object/setPrototypeOf";
-export default Object.setPrototypeOf || setPrototypeOf;
+import { ff_setPrototypeOf, ie_setPrototypeOf } from "../../impl-modern/Object/setPrototypeOf";
+import { Object } from "../../native/Object";
+import { setPrototypeOf } from "../../native/Object/setPrototypeOf";
+export default setPrototypeOf ||
+	Object.prototype.__proto__ ?
+	ff_setPrototypeOf :
+	ie_setPrototypeOf
+	;

@@ -1,2 +1,2 @@
-import { Object } from "../native/Object";
-export var proto = !!Object.setPrototypeOf || ('__proto__' in Object.prototype);
+import { setPrototypeOf } from "../native/Object/setPrototypeOf";
+export var proto = !!setPrototypeOf || ('__proto__' in Object.prototype);
