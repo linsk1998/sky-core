@@ -3,9 +3,11 @@ import { defineProperty as native_defineProperty } from "../../native/Object/def
 export function ie8_defineProperty(obj, prop, descriptor) {
 	if(obj instanceof Object || obj instanceof NullProtoObject) {
 		compat_defineProperty.apply(Object, arguments);
-	} else {
+	} else if(window == obj || obj instanceof Element || obj instanceof HTMLDocument) {
 		delete descriptor.enumerable;
 		native_defineProperty.apply(Object, arguments);
+	} else {
+		compat_defineProperty.apply(Object, arguments);
 	}
 	return obj;
 };
@@ -37,7 +39,6 @@ export function compat_defineProperty(obj, prop, description) {
 		obj[prop] = description.value;
 		descriptor.value = description.value;
 	} else {
-		console.warn("ES3 do NOT support accessor.");
 		descriptor.get = description.get;
 		descriptor.set = description.set;
 	}
