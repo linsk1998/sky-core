@@ -1,1 +1,1 @@
-export { asinh } from "../../impl/Math/asinh";
+export { asinh as default } from "../../impl/Math/asinh";

@@ -1,1 +1,1 @@
-export { imul } from "../../impl/Math/imul";
+export { imul as default } from "../../impl/Math/imul";

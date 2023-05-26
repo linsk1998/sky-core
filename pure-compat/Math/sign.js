@@ -1,1 +1,1 @@
-export { sign } from "../../impl/Math/sign";
+export { sign as default } from "../../impl/Math/sign";

@@ -1,1 +1,1 @@
-export { cosh } from "../../impl/Math/cosh";
+export { cosh as default } from "../../impl/Math/cosh";

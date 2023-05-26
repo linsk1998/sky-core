@@ -1,6 +1,6 @@
 import { pow } from "../../native/Math/pow";
 import { abs } from "../../native/Math/abs";
-import { sign } from "sky-core/pure/Math/sign";
+import sign from "sky-core/pure/Math/sign";
 
 
 var EPSILON = pow(2, -52);

@@ -1,1 +1,1 @@
-export { acosh } from "../../impl/Math/acosh";
+export { acosh as default } from "../../impl/Math/acosh";

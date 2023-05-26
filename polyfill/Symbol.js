@@ -38,3 +38,4 @@ if(!native_Symbol) {
 	// if(!Symbol.toStringTag) { Symbol.toStringTag = Symbol("toStringTag"); }
 	// if(!Symbol.unscopables) { Symbol.unscopables = Symbol("unscopables"); }
 }
+export { Symbol };

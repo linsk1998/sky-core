@@ -1,7 +1,7 @@
 import { log } from "../../native/Math/log";
 import { sqrt } from "../../native/Math/sqrt";
 import { LN2 } from "../../native/Math/LN2";
-import { log1p } from "sky-core/pure/Math/log1p";
+import log1p from "sky-core/pure/Math/log1p";
 
 // from core-js https://github.com/zloirock/core-js
 export function acosh(x) {

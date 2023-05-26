@@ -1,1 +1,1 @@
-export { sinh } from "../../impl/Math/sinh";
+export { sinh as default } from "../../impl/Math/sinh";

@@ -235,14 +235,71 @@
     Array.prototype.values = values;
   }
 
-  var iterator = '@@iterator';
+  var _Symbol$4 = window.Symbol;
+
+  var Object$1 = window.Object;
+
+  var defineProperty$1 = Object$1.defineProperty;
+
+  var defineProperties = Object$1.defineProperties;
+
+  var nonEnumerable = !!defineProperties;
+
+  var iterator = (function () {
+    if (!_Symbol$4) {
+      if (nonEnumerable) {
+        defineProperty$1(Object.prototype, '@@iterator', {
+          enumerable: false,
+          configurable: false,
+          writable: true
+        });
+      }
+      return '@@iterator';
+    } else {
+      return _Symbol$4.iterator || _Symbol$4('iterator');
+    }
+  })();
 
   if (!Array.prototype[iterator]) {
     Array.prototype[iterator] = Array.prototype.values;
   }
 
-  if (!String.prototype['@@iterator']) {
-    String.prototype['@@iterator'] = iterator$1;
+  function ES6Iterator(it, transform) {
+    this.iterator = it;
+    this.transform = transform;
+  }
+  ES6Iterator.prototype.next = function () {
+    var r = {};
+    try {
+      r.value = this.iterator.next();
+    } catch (e) {
+      r.done = true;
+      r.value = undefined;
+      return r;
+    }
+    r.done = false;
+    if (this.transform) {
+      r.value = this.transform(r.value);
+    }
+    return r;
+  };
+  //使用ff版iterator必然不支持Symbol，因此不使用Symbol.iterator，避免产生依赖
+  ES6Iterator.prototype['@@iterator'] = function () {
+    return this;
+  };
+  function toES6Iterator(it) {
+    return new ES6Iterator(it);
+  }
+  ;
+
+  if (!_Symbol$4) {
+    if (!String.prototype['@@iterator']) {
+      String.prototype['@@iterator'] = iterator$1;
+    } else if (String.prototype.iterator) {
+      String.prototype['@@iterator'] = function () {
+        return toES6Iterator(this.iterator());
+      };
+    }
   }
 
   function _arrayLikeToArray(arr, len) {
@@ -505,18 +562,18 @@
   };
 
   QUnit.assert.notThrows = function (fn, message) {
-    var _throws, result, error;
+    var throws, result, error;
     try {
       result = fn();
-      _throws = false;
+      throws = false;
     } catch (err) {
-      _throws = true;
+      throws = true;
       error = err;
     }
     this.pushResult({
-      result: !_throws && result,
-      actual: _throws ? error : result,
-      expected: _throws ? undefined : true,
+      result: !throws && result,
+      actual: throws ? error : result,
+      expected: throws ? undefined : true,
       message: message || 'does not throw'
     });
   };
@@ -528,29 +585,6 @@
       message: message
     });
   };
-
-  function indexOf(e) {
-    var fromIndex = 0;
-    if (arguments.length > 1) {
-      fromIndex = 0 + arguments[1];
-      if (fromIndex < 0) {
-        fromIndex += this.length;
-        if (fromIndex < 0) {
-          fromIndex = 0;
-        }
-      }
-    }
-    for (var i = fromIndex; i < this.length; i++) {
-      if (i in this && this[i] === e) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = indexOf;
-  }
 
   QUnit.test('Array#indexOf', function (assert) {
     var indexOf = Array.prototype.indexOf;
@@ -567,37 +601,14 @@
     assert.same(-1, Array(1).indexOf(undefined));
     assert.same(0, [1].indexOf(1, -0), "shouldn't return negative zero");
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return indexOf.call(null, 0);
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return indexOf.call(undefined, 0);
       }, TypeError);
     }
   });
-
-  function lastIndexOf(e) {
-    var i = this.length;
-    if (arguments.length > 1) {
-      i = Math.min(1 + arguments[1], i);
-      if (i < 1) {
-        i += this.length;
-        if (i < 1) {
-          return -1;
-        }
-      }
-    }
-    while (i--) {
-      if (i in this && this[i] === e) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  if (!Array.prototype.lastIndexOf) {
-    Array.prototype.lastIndexOf = lastIndexOf;
-  }
 
   QUnit.test('Array#lastIndexOf', function (assert) {
     var lastIndexOf = Array.prototype.lastIndexOf;
@@ -614,27 +625,14 @@
     assert.same(1, [1, 2, 3].concat(Array(2)).lastIndexOf(2));
     assert.same(0, [1].lastIndexOf(1, -0), "shouldn't return negative zero");
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return lastIndexOf.call(null, 0);
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return lastIndexOf.call(undefined, 0);
       }, TypeError);
     }
   });
-
-  function forEach(callback) {
-    var thisArg = arguments[1];
-    for (var i = 0; i < this.length; i++) {
-      if (i in this) {
-        callback.call(thisArg, this[i], i, this);
-      }
-    }
-  }
-
-  if (!Array.prototype.forEach) {
-    Array.prototype.forEach = forEach;
-  }
 
   QUnit.test('Array#forEach', function (assert) {
     var forEach = Array.prototype.forEach;
@@ -678,27 +676,14 @@
     });
     assert.ok(result === '5');
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         forEach.call(null, function () {/* empty */});
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         forEach.call(undefined, function () {/* empty */});
       }, TypeError);
     }
   });
-
-  function filter(fn) {
-    var thisArg = arguments[1];
-    var arr = [];
-    for (var k = 0, length = this.length; k < length; k++) {
-      fn.call(thisArg, this[k], k, this) && arr.push(this[k]);
-    }
-    return arr;
-  }
-
-  if (!Array.prototype.filter) {
-    Array.prototype.filter = filter;
-  }
 
   QUnit.test('Array#filter', function (assert) {
     var filter = Array.prototype.filter;
@@ -718,27 +703,14 @@
       return typeof it === 'number';
     }));
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return filter.call(null, function () {/* empty */});
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return filter.call(undefined, function () {/* empty */});
       }, TypeError);
     }
   });
-
-  function map$1(fn) {
-    var thisArg = arguments[1];
-    var arr = [];
-    for (var k = 0, length = this.length; k < length; k++) {
-      arr.push(fn.call(thisArg, this[k], k, this));
-    }
-    return arr;
-  }
-
-  if (!Array.prototype.map) {
-    Array.prototype.map = map$1;
-  }
 
   QUnit.test('Array#map', function (assert) {
     var map = Array.prototype.map;
@@ -764,38 +736,14 @@
       return +this;
     }, 2));
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return map.call(null, function () {/* empty */});
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return map.call(undefined, function () {/* empty */});
       }, TypeError);
     }
   });
-
-  function reduce(callback) {
-    var i, value;
-    if (arguments.length >= 2) {
-      value = arguments[1];
-      i = 0;
-    } else if (this.length > 0) {
-      value = this[0];
-      i = 1;
-    } else {
-      throw new Error("Reduce of empty array with no initial value");
-    }
-    while (i < this.length) {
-      if (i in this) {
-        value = callback(value, this[i], i, this);
-      }
-      i++;
-    }
-    return value;
-  }
-
-  if (!Array.prototype.reduce) {
-    Array.prototype.reduce = reduce;
-  }
 
   QUnit.test('Array#reduce', function (assert) {
     var reduce = Array.prototype.reduce;
@@ -838,36 +786,14 @@
       return a + b;
     }), 3, 'generic');
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return reduce.call(null, function () {/* empty */}, 1);
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return reduce.call(undefined, function () {/* empty */}, 1);
       }, TypeError);
     }
   });
-
-  function reduceRight(callback) {
-    var i = this.length,
-      value;
-    if (arguments.length >= 2) {
-      value = arguments[1];
-    } else if (this.length > 0) {
-      value = this[--i];
-    } else {
-      throw new Error("Reduce of empty array with no initial value");
-    }
-    while (i-- > 0) {
-      if (i in this) {
-        value = callback(value, this[i], i, this);
-      }
-    }
-    return value;
-  }
-
-  if (!Array.prototype.reduceRight) {
-    Array.prototype.reduceRight = reduceRight;
-  }
 
   QUnit.test('Array#reduceRight', function (assert) {
     var reduceRight = Array.prototype.reduceRight;
@@ -910,28 +836,14 @@
       return a + b;
     }), 3, 'generic');
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return reduceRight.call(null, function () {/* empty */}, 1);
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return reduceRight.call(undefined, function () {/* empty */}, 1);
       }, TypeError);
     }
   });
-
-  function some(fn) {
-    var thisArg = arguments[1];
-    var passed = false;
-    for (var k = 0, length = this.length; k < length; k++) {
-      if (passed === true) break;
-      passed = !!fn.call(thisArg, this[k], k, this);
-    }
-    return passed;
-  }
-
-  if (!Array.prototype.some) {
-    Array.prototype.some = some;
-  }
 
   QUnit.test('Array#some', function (assert) {
     var some = Array.prototype.some;
@@ -973,28 +885,14 @@
       return that !== array;
     }));
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return some.call(null, function () {/* empty */});
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return some.call(undefined, function () {/* empty */});
       }, TypeError);
     }
   });
-
-  function every(fn) {
-    var thisArg = arguments[1];
-    var passed = true;
-    for (var k = 0, length = this.length; k < length; k++) {
-      if (passed === false) break;
-      passed = !!fn.call(thisArg, this[k], k, this);
-    }
-    return passed;
-  }
-
-  if (!Array.prototype.every) {
-    Array.prototype.every = every;
-  }
 
   QUnit.test('Array#every', function (assert) {
     var every = Array.prototype.every;
@@ -1035,10 +933,10 @@
       return that === array;
     }));
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return every.call(null, function () {/* empty */});
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return every.call(undefined, function () {/* empty */});
       }, TypeError);
     }
@@ -1115,16 +1013,16 @@
       var primitive = _primitives[_i];
       assert.arrayEqual(from(primitive), [], "Works with " + primitive);
     }
-    assert["throws"](function () {
+    assert.throws(function () {
       return from(null);
     }, TypeError, 'Throws on null');
-    assert["throws"](function () {
+    assert.throws(function () {
       return from(undefined);
     }, TypeError, 'Throws on undefined');
     assert.arrayEqual(from('𠮷𠮷𠮷'), ['𠮷', '𠮷', '𠮷'], 'Uses correct string iterator');
     var done = true;
     from(createIterable([1, 2, 3], {
-      "return": function () {
+      return: function () {
         return done = false;
       }
     }), function () {
@@ -1134,7 +1032,7 @@
     done = false;
     try {
       from(createIterable([1, 2, 3], {
-        "return": function () {
+        return: function () {
           return done = true;
         }
       }), function () {
@@ -1142,10 +1040,7 @@
       });
     } catch (_unused) {/* empty */}
     assert.ok(done, '.return #throw');
-    var C = function () {
-      function C() {}
-      return C;
-    }();
+    var C = function C() {};
     var instance = from.call(C, createIterable([1, 2]));
     assert.ok(instance instanceof C, 'generic, iterable case, instanceof');
     assert.arrayEqual(instance, [1, 2], 'generic, iterable case, elements');
@@ -1177,19 +1072,19 @@
       }).length === 0;
     }, 'Uses ToLength');
     assert.arrayEqual(from([], undefined), [], 'Works with undefined as asecond argument');
-    assert["throws"](function () {
+    assert.throws(function () {
       return from([], null);
     }, TypeError, 'Throws with null as second argument');
-    assert["throws"](function () {
+    assert.throws(function () {
       return from([], 0);
     }, TypeError, 'Throws with 0 as second argument');
-    assert["throws"](function () {
+    assert.throws(function () {
       return from([], '');
     }, TypeError, 'Throws with "" as second argument');
-    assert["throws"](function () {
+    assert.throws(function () {
       return from([], false);
     }, TypeError, 'Throws with false as second argument');
-    assert["throws"](function () {
+    assert.throws(function () {
       return from([], {});
     }, TypeError, 'Throws with {} as second argument');
     if (DESCRIPTORS) {
@@ -1219,10 +1114,7 @@
     assert.name(Array.of, 'of');
     assert.deepEqual(Array.of(1), [1]);
     assert.deepEqual(Array.of(1, 2, 3), [1, 2, 3]);
-    var C = function () {
-      function C() {}
-      return C;
-    }();
+    var C = function C() {};
     var instance = Array.of.call(C, 1, 2);
     assert.ok(instance instanceof C);
     assert.strictEqual(instance[0], 1);
@@ -1281,10 +1173,10 @@
       return it === 43;
     }), -1);
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return findIndex.call(null, 0);
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return findIndex.call(undefined, 0);
       }, TypeError);
     }
@@ -1332,10 +1224,10 @@
       return it === 43;
     }), undefined);
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return find.call(null, 0);
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return find.call(undefined, 0);
       }, TypeError);
     }
@@ -1377,119 +1269,23 @@
     Array.prototype.fill = fill;
   }
 
-  var Object$1 = window.Object;
-
-  var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
-
-  // from core-js
-  var GT = '>';
-  var LT = '<';
-  var SCRIPT = 'script';
-  function scriptTag(content) {
-    return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
-  }
-
-  // Create object with fake `null` prototype: use ActiveX Object with cleared prototype
-  function NullProtoObjectViaActiveX(activeXDocument) {
-    activeXDocument.write(scriptTag(''));
-    activeXDocument.close();
-    var temp = activeXDocument.parentWindow.Object;
-    activeXDocument = null; // avoid memory leak
-    return temp;
-  }
-  ;
-
-  // Create object with fake `null` prototype: use iframe Object with cleared prototype
-  function NullProtoObjectViaIFrame() {
-    // Thrash, waste and sodomy: IE GC bug
-    var iframe = documentCreateElement('iframe');
-    var JS = 'java' + SCRIPT + ':';
-    var iframeDocument;
-    iframe.style.display = 'none';
-    html.appendChild(iframe);
-    // https://github.com/zloirock/core-js/issues/475
-    iframe.src = String(JS);
-    iframeDocument = iframe.contentWindow.document;
-    iframeDocument.open();
-    iframeDocument.write(scriptTag('document.F=Object'));
-    iframeDocument.close();
-    return iframeDocument.F;
-  }
-  ;
-
-  // Check for document.domain and active x support
-  // No need to use active x approach when document.domain is not set
-  // see https://github.com/es-shims/es5-shim/issues/150
-  // variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
-  // avoid IE GC bug
-  var activeXDocument;
-  var NullProtoObject = function () {
-    try {
-      /* global ActiveXObject -- old IE */
-      activeXDocument = document.domain && new ActiveXObject('htmlfile');
-    } catch (error) {/* ignore */}
-    NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
-    var i = dontEnums.length;
-    while (i--) delete NullProtoObject.prototype[dontEnums[i]];
-    return NullProtoObject();
-  };
-
-  var defineProperty$1 = Object$1.defineProperty;
-
-  function ie8_defineProperty(obj, prop, descriptor) {
-    if (obj instanceof Object || obj instanceof NullProtoObject) {
-      compat_defineProperty.apply(Object, arguments);
-    } else if (window == obj || obj instanceof Element || obj instanceof HTMLDocument) {
-      delete descriptor.enumerable;
-      defineProperty$1.apply(Object, arguments);
+  function defineProperty(obj, prop, descriptor) {
+    if ('value' in descriptor) {
+      delete obj[prop];
+      obj[prop] = descriptor.value;
     } else {
-      compat_defineProperty.apply(Object, arguments);
+      if (descriptor.get) obj.__defineGetter__(prop, descriptor.get);
+      if (descriptor.set) obj.__defineSetter__(prop, descriptor.set);
     }
     return obj;
   }
   ;
-  function defineProperty(obj, prop, description) {
-    if (defineProperty$1) {
-      if (obj instanceof Object || obj instanceof NullProtoObject) {
-        compat_defineProperty.apply(Object, arguments);
-      } else {
-        delete description.enumerable;
-        defineProperty$1.apply(Object, arguments);
-      }
-    } else {
-      compat_defineProperty.apply(Object, arguments);
-    }
-    return obj;
-  }
-  ;
-  function compat_defineProperty(obj, prop, description) {
-    if (_typeof(obj) !== "object" && typeof obj !== "function") {
-      throw new TypeError("Object.defineProperty called on non-object");
-    }
-    prop = String(prop);
-    var descriptor = {
-      configurable: true,
-      enumerable: true,
-      writable: true
-    };
-    if ('value' in description) {
-      obj[prop] = description.value;
-      descriptor.value = description.value;
-    } else {
-      descriptor.get = description.get;
-      descriptor.set = description.set;
-    }
-    obj['@@desc:' + prop] = descriptor;
-    return obj;
-  }
-  ;
 
-  if (Object$1.defineProperty) {
-    Object$1.defineProperty = ie8_defineProperty;
-  } else {
-    Object$1.defineProperty = compat_defineProperty;
+  if (!Object$1.defineProperty) {
+    if (Object$1.prototype.__defineSetter__) {
+      Object$1.defineProperty = defineProperty;
+    }
   }
-  Object$1.defineProperty.sham = true;
 
   QUnit.test('Array#fill', function (assert) {
     var fill = Array.prototype.fill;
@@ -1507,10 +1303,10 @@
       length: 5
     }, 5), [5, 5, 5, 5, 5]);
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return fill.call(null, 0);
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return fill.call(undefined, 0);
       }, TypeError);
     }
@@ -1590,16 +1386,16 @@
     assert.deepEqual([1, 2, 3, 4, 5].copyWithin(-4, -3, -1), [1, 3, 4, 4, 5]);
     assert.deepEqual([1, 2, 3, 4, 5].copyWithin(-4, -3), [1, 3, 4, 5, 5]);
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return copyWithin.call(null, 0);
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return copyWithin.call(undefined, 0);
       }, TypeError);
     }
   });
 
-  function keys() {
+  function keys$2() {
     var array = this;
     var index = 0;
     return {
@@ -1623,7 +1419,7 @@
   }
 
   if (!Array.prototype.keys) {
-    Array.prototype.keys = keys;
+    Array.prototype.keys = keys$2;
   }
 
   function entries() {
@@ -1653,7 +1449,29 @@
     Array.prototype.entries = entries;
   }
 
-  var _Symbol$3 = window.Symbol;
+  function ff_setPrototypeOf(obj, proto) {
+    obj.__proto__ = proto;
+    return obj;
+  }
+  function ie_setPrototypeOf(o, proto) {
+    o.__proto__ = proto;
+    for (var key in proto) {
+      if (Object.prototype.hasOwnProperty.call(proto, key)) {
+        o[key] = proto[key];
+      }
+    }
+    return o;
+  }
+
+  var setPrototypeOf = Object$1.setPrototypeOf;
+
+  if (!setPrototypeOf) {
+    if (Object$1.prototype.__proto__) {
+      Object$1.setPrototypeOf = ff_setPrototypeOf;
+    } else {
+      Object$1.setPrototypeOf = ie_setPrototypeOf;
+    }
+  }
 
   function prefixIntrger2(number) {
     if (number < 10) {
@@ -1690,26 +1508,92 @@
     };
   }
 
+  var keys$1 = Object$1.keys;
+
+  function ie_keys(obj) {
+    return keys$1.call(Object, obj).filter(checkSymbolKey);
+  }
+  function checkSymbolKey(key) {
+    return key.substring(0, 2) !== "@@";
+  }
+  function nie_keys(obj) {
+    var result = [];
+    for (var key in obj) {
+      if (key.substring(0, 2) !== "@@" && Object.prototype.hasOwnProperty.call(obj, key)) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+  function keys(obj) {
+    if (!keys$1) {
+      return nie_keys(obj);
+    } else if (_Symbol$4) {
+      return keys$1(obj);
+    } else {
+      return ie_keys(obj);
+    }
+  }
+
+  function getOwnPropertyNames(obj) {
+    var keys$1 = keys(obj);
+    var i = keys$1.length;
+    var names = [];
+    while (i-- > 0) {
+      var key = keys$1[i];
+      var set = obj.__lookupSetter__(key);
+      var get = obj.__lookupGetter__(key);
+      if (set || get) {
+        names.push(key);
+      }
+    }
+    return descs;
+  }
+
+  if (!Object$1.getOwnPropertyNames) {
+    if (Object$1.prototype.__defineSetter__) {
+      Object$1.getOwnPropertyNames = getOwnPropertyNames;
+    }
+  }
+
   var symbol_sqe = 0;
   var all_symbol = {};
-  function _Symbol$2(desc) {
-    this.__name__ = "@@" + desc + ":" + symbol_sqe;
+  function _Symbol$3(desc) {
+    var key = "@@" + desc + ":" + symbol_sqe;
+    this.__name__ = key;
+    if (nonEnumerable) {
+      defineProperty$1(Object.prototype, key, {
+        enumerable: false,
+        configurable: true,
+        set: function (value) {
+          defineProperty$1(this, key, {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: value
+          });
+        }
+      });
+    }
     if (desc !== undefined) {
       this.description = String(desc);
     }
     symbol_sqe++;
-    all_symbol[this.__name__] = this;
+    all_symbol[key] = this;
   }
   ;
-  _Symbol$2.prototype.toString = function () {
+  _Symbol$3.prototype.toString = function () {
     return this.__name__;
   };
-  _Symbol$2.prototype.toJSON = function () {
+  _Symbol$3.prototype.toJSON = function () {
     return undefined;
   };
   function getOwnPropertySymbols(obj) {
     var arr = [];
-    for (var key in obj) {
+    var keys = Object.getOwnPropertyNames(obj);
+    var i = keys.length;
+    while (i-- > 0) {
+      var key = keys[i];
       if (key.substring(0, 2) === "@@") {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {
           if (key in all_symbol) {
@@ -1722,29 +1606,62 @@
   }
   ;
 
-  function _Symbol$1(desc) {
-    return new _Symbol$2(desc);
+  function _Symbol$2(desc) {
+    return new _Symbol$3(desc);
   }
   ;
-  _Symbol$1.sham = true;
+  _Symbol$2.sham = true;
 
-  var _Symbol = _Symbol$3;
-  if (!_Symbol) {
-    window.Symbol = _Symbol = _Symbol$1;
+  function _Symbol$1(desc) {
+    if (desc == undefined) {
+      desc = "";
+    }
+    return _Symbol$4(desc);
+  }
+  ;
+
+  var _Symbol = _Symbol$4;
+  if (!_Symbol$4) {
+    _Symbol = window.Symbol = _Symbol$2;
     _Symbol.sham = true;
-    _Symbol.asyncIterator = "@@asyncIterator";
-    _Symbol.hasInstance = "@@hasInstance";
-    // Symbol.isConcatSpreadable = "@@isConcatSpreadable";
     _Symbol.iterator = "@@iterator";
+    _Symbol.hasInstance = "@@hasInstance";
+    _Symbol.asyncIterator = "@@asyncIterator";
+    // 其他目前不支持
+    // Symbol.species = "@@species";
+    // Symbol.isConcatSpreadable = "@@isConcatSpreadable";
     // Symbol.match = "@@match";
     // Symbol.matchAll = "@@matchAll";
     // Symbol.replace = "@@replace";
     // Symbol.search = "@@search";
-    // Symbol.species = "@@species";
     // Symbol.split = "@@split";
     // Symbol.toPrimitive = "@@toPrimitive";
     // Symbol.toStringTag = "@@toStringTag";
-    // Symbol.unscopables = "@@unscopables";
+    // compat_Symbol.unscopables = "@@unscopables";
+  } else {
+    if (String(_Symbol()) !== String(_Symbol(""))) {
+      Object.setPrototypeOf(_Symbol$1, _Symbol);
+      _Symbol = window.Symbol = _Symbol$1;
+    }
+    if (!_Symbol.iterator) {
+      _Symbol.iterator = _Symbol("iterator");
+    }
+    if (!_Symbol.hasInstance) {
+      _Symbol.hasInstance = _Symbol("hasInstance");
+    }
+    if (!_Symbol.asyncIterator) {
+      _Symbol.asyncIterator = _Symbol("asyncIterator");
+    }
+    // if(!Symbol.species) { Symbol.species = Symbol("species"); }
+    // if(!Symbol.isConcatSpreadable) { Symbol.isConcatSpreadable = Symbol("isConcatSpreadable"); }
+    // if(!Symbol.match) { Symbol.match = Symbol("match"); }
+    // if(!Symbol.matchAll) { Symbol.matchAll = Symbol("matchAll"); }
+    // if(!Symbol.replace) { Symbol.replace = Symbol("replace"); }
+    // if(!Symbol.search) { Symbol.search = Symbol("search"); }
+    // if(!Symbol.split) { Symbol.split = Symbol("split"); }
+    // if(!Symbol.toPrimitive) { Symbol.toPrimitive = Symbol("toPrimitive"); }
+    // if(!Symbol.toStringTag) { Symbol.toStringTag = Symbol("toStringTag"); }
+    // if(!Symbol.unscopables) { Symbol.unscopables = Symbol("unscopables"); }
   }
 
   QUnit.test('Array#keys', function (assert) {
@@ -1872,11 +1789,17 @@
     }, 'uses ToLength');
   });
 
-  var isNaN$2 = window.isNaN;
+  var isNaN$3 = window.isNaN;
 
-  function isNaN$1(value) {
-    return typeof value === "number" && isNaN$2(value);
+  function isNaN$2(value) {
+    return typeof value === "number" && isNaN$3(value);
   }
+
+  if (!Number$1.isNaN) {
+    Number$1.isNaN = isNaN$2;
+  }
+
+  var isNaN$1 = Number.isNaN || isNaN$2;
 
   function includes$1(search) {
     var i = this.length;
@@ -1925,10 +1848,10 @@
     assert.ok(Array(1).includes(undefined));
     assert.ok([NaN].includes(NaN));
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return includes.call(null, 0);
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return includes.call(undefined, 0);
       }, TypeError);
     }
@@ -1969,10 +1892,10 @@
     assert.deepEqual(array.flat(-1), array);
     assert.deepEqual(array.flat(Infinity), [1, 2, 3, 4, 5, 6]);
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return flat.call(null);
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return flat.call(undefined);
       }, TypeError);
     }
@@ -1990,7 +1913,7 @@
     }
   });
 
-  var map = Array.prototype.map || map$1;
+  var map = Array.prototype.map;
 
   function flatMap(fn) {
     return flat.call(map.call(this, fn, arguments[1]), 1);
@@ -2030,12 +1953,12 @@
       return value;
     }, context);
     if (STRICT) {
-      assert["throws"](function () {
+      assert.throws(function () {
         return flatMap.call(null, function (it) {
           return it;
         });
       }, TypeError);
-      assert["throws"](function () {
+      assert.throws(function () {
         return flatMap.call(undefined, function (it) {
           return it;
         });

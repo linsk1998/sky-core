@@ -1,1 +1,1 @@
-export { hypot } from "../../impl/Math/hypot";
+export { hypot as default } from "../../impl/Math/hypot";

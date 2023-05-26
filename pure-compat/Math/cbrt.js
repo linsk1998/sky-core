@@ -1,1 +1,1 @@
-export { cbrt } from "../../impl/Math/cbrt";
+export { cbrt as default } from "../../impl/Math/cbrt";

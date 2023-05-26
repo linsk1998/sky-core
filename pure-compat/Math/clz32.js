@@ -1,1 +1,1 @@
-export { clz32 } from "../../impl/Math/clz32";
+export { clz32 as default } from "../../impl/Math/clz32";

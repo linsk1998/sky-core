@@ -1,4 +1,4 @@
-import "../Symbol";
+import { Symbol } from "../Symbol";
 import { Symbol as native_Symbol } from "../../native/Symbol";
 import compat_for from "../../impl-compat/Symbol/for";
 import modern_for from "../../impl-modern/Symbol/for";

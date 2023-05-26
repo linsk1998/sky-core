@@ -1,1 +1,1 @@
-export { tanh } from "../../impl/Math/tanh";
+export { tanh as default } from "../../impl/Math/tanh";

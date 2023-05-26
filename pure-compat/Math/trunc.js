@@ -1,1 +1,1 @@
-export { trunc } from "../../impl/Math/trunc";
+export { trunc as default } from "../../impl/Math/trunc";

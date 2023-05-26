@@ -1,1 +1,1 @@
-export { fround } from "../../impl/Math/fround";
+export { fround as default } from "../../impl/Math/fround";

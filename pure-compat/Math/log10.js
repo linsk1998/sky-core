@@ -1,1 +1,1 @@
-export { log10 } from "../../impl/Math/log10";
+export { log10 as default } from "../../impl/Math/log10";

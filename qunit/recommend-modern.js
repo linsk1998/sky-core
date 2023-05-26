@@ -7,8 +7,6 @@ export default [
 			'parseInt': "sky-core/polyfill/parseInt",
 
 			"JSON.stringify": "sky-core/polyfill/Date/prototype/toJSON",
-			//简易版的实现，仅适用于解析内容安全的json
-			"JSON": "sky-core/polyfill/JSON",
 			// Date
 			"Date.now": "sky-core/polyfill/Date/now",
 			// "Date": "sky-core/polyfill/Date/constructor",
@@ -48,6 +46,8 @@ export default [
 			"Math.sinh": "sky-core/polyfill/Math/sinh",
 			"Math.tanh": "sky-core/polyfill/Math/tanh",
 			"Math.trunc": "sky-core/polyfill/Math/trunc",
+			//如果，需要解析第三方或其他不安全的json，需要使用其他JSON解析库
+			//"JSON": "JSON",
 			//ES2015.Core Number
 			"Number.EPSILON": "sky-core/polyfill/Number/EPSILON",
 			"Number.isFinite": "sky-core/polyfill/Number/isFinite",
@@ -77,7 +77,6 @@ export default [
 			//Object 原型相关
 			"Object.create": "sky-core/polyfill/Object/create",
 			"Object.getPrototypeOf": "sky-core/polyfill/Object/getPrototypeOf",
-			//ES3不能真正实现setPrototypeOf，只允许在继承时使用
 			"Object.setPrototypeOf": "sky-core/polyfill/Object/setPrototypeOf",
 			//Object 动态相关
 			"Object.preventExtensions": "sky-core/polyfill/Object/preventExtensions",
@@ -199,8 +198,6 @@ export default [
 			// "Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
 			// "Symbol.iterator": "sky-core/pure/Symbol/iterator",
 			// "Symbol": "sky-core/pure/Symbol",
-			// 由于有比较多的库使用XMLHttpRequest来判断浏览器版本，污染全局变量会导致判断错误，因此建议只在需要用的地方注入
-			"XMLHttpRequest": "sky-core/pure/XMLHttpRequest"
 		},
 		exclude: [
 		]
