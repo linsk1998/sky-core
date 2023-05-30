@@ -1473,6 +1473,8 @@
     }
   }
 
+  var Date = window.Date;
+
   function prefixIntrger2(number) {
     if (number < 10) {
       return '0' + number;
