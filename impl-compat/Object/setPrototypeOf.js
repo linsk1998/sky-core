@@ -4,6 +4,10 @@ export function setPrototypeOf(o, proto) {
 	o.__proto__ = proto;
 	var key;
 	for(key in proto) {
+		switch(key) {
+			case "__proto__":
+				continue;
+		}
 		if(Object.prototype.hasOwnProperty.call(proto, key)) {
 			o[key] = proto[key];
 		}
