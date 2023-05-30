@@ -1,5 +1,5 @@
+export { Error as native_Error } from "../native/Error";
 
-var native_Error = window.Error;
 function Error(message) {
 	this.message = message;
 }

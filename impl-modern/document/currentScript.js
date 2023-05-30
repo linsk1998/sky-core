@@ -1,3 +1,5 @@
+export { Error } from "../native/Error";
+
 export function ie_getCurrentScript() {
 	var nodes = document.scripts;
 	var i = nodes.length;
