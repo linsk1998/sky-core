@@ -1,4 +1,4 @@
-export { Error as native_Error } from "../native/Error";
+import { Error as native_Error } from "../native/Error";
 
 function Error(message) {
 	this.message = message;

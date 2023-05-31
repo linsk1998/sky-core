@@ -1,4 +1,4 @@
-export { Error } from "../../native/Error";
+import { Error } from "../../native/Error";
 
 export function ie_getCurrentScript() {
 	var nodes = document.scripts;

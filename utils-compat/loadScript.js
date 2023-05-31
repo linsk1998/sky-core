@@ -1,4 +1,4 @@
-export { Error } from "../native/Error";
+import { Error } from "../native/Error";
 export function loadScript(src, charset) {
 	return new Promise(function(resolve, reject) {
 		var script = document.createElement('script');
