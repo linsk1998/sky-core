@@ -3,6 +3,7 @@ var ticks = null;
 var nextTick = setTimeout;
 export function initQueueMicrotask(fn) {
 	nextTick = fn;
+	return queueMicrotask;
 }
 export function next() {
 	if(ticks && ticks.length) {
@@ -19,7 +20,7 @@ export function next() {
 		ticks = null;
 	}
 }
-export function queueMicrotask() {
+function queueMicrotask() {
 	if(!ticks) {
 		ticks = new Array();
 		nextTick(next);

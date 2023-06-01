@@ -1,2 +1,2 @@
 
-export var Symbol = this.Symbol;
+export var Symbol = window.Symbol;

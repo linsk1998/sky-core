@@ -1,1 +1,1 @@
-export var String = this.String;
+export var String = window.String;

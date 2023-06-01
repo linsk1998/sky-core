@@ -1,5 +1,5 @@
 import "sky-core/polyfill/document/head";
-if(this.HTMLElement) {
+if(window.HTMLElement) {
 	if(!('children' in document.head)) {
 		HTMLElement.prototype.__defineGetter__("children", function() {
 			var a = [];

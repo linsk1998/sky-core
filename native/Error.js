@@ -1,1 +1,1 @@
-export var Error = this.Error;
+export var Error = window.Error;

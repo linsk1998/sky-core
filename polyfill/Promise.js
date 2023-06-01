@@ -3,6 +3,6 @@ import { Promise as impl_Promise } from "../impl/Promise";
 
 var Promise = native_Promise;
 if(!Promise) {
-	Promise = this.Promise = impl_Promise;
+	Promise = window.Promise = impl_Promise;
 }
 export { Promise };

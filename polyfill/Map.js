@@ -5,9 +5,9 @@ import { createMap } from "../impl-compat/Map";
 
 if(!Symbol) {
 	if(Map && (Map.prototype.iterator || Map.prototype['@@iterator'])) {
-		this.Map = fixMap();
+		window.Map = fixMap();
 	} else {
-		this.Map = createMap();
+		window.Map = createMap();
 	}
 } else {
 	if(!Symbol.iterator) {

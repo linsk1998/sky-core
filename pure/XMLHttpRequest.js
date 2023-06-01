@@ -1,3 +1,3 @@
 import { XMLHttpRequest } from "../impl/XMLHttpRequest";
 
-export default this.XMLHttpRequest || XMLHttpRequest;
+export default window.XMLHttpRequest || XMLHttpRequest;

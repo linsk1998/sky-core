@@ -1,1 +1,1 @@
-export var Set = this.Set;
+export var Set = window.Set;

@@ -1,1 +1,1 @@
-export var document = this.document;
+export var document = window.document;

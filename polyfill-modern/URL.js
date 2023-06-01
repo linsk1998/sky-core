@@ -1,8 +1,8 @@
 import { URL } from "../native/URL";
 import { URL as modern_URL, URLProperties, getSearchParams } from "../impl-modern/URL";
-if(!this.URL) {
+if(!URL) {
 	Object.defineProperties(modern_URL.prototype, URLProperties);
-	this.URL = modern_URL;
+	window.URL = modern_URL;
 } else {
 	var url;
 	try {
@@ -13,7 +13,7 @@ if(!this.URL) {
 		modern_URL.createObjectURL = URL.createObjectURL;
 		modern_URL.revokeObjectURL = URL.revokeObjectURL;
 		Object.defineProperties(modern_URL.prototype, URLProperties);
-		this.URL = modern_URL;
+		window.URL = modern_URL;
 	} else {
 		if(!('origin' in url)) {
 			Object.defineProperty(URL.prototype, "origin", URLProperties.origin);

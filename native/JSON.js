@@ -1,1 +1,1 @@
-export var JSON = this.JSON;
+export var JSON = window.JSON;

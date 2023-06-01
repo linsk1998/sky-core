@@ -1,1 +1,1 @@
-export var isNaN = this.isNaN;
+export var isNaN = window.isNaN;

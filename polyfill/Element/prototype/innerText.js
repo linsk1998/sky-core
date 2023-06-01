@@ -1,4 +1,4 @@
-if(this.HTMLElement) {
+if(window.HTMLElement) {
 	if(!('innerText' in document.head)) {
 		HTMLElement.prototype.__defineGetter__("innerText", function() {
 			var anyString = "";

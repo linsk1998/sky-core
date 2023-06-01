@@ -1,7 +1,8 @@
 
+import { URL } from "../native/URL";
 import { URL as modern_URL, URLProperties, getSearchParams } from "../impl-modern/URL";
-export default (function(globalThis) {
-	if(!globalThis.URL) {
+export default (function() {
+	if(!URL) {
 		Object.defineProperties(modern_URL.prototype, URLProperties);
 		return modern_URL;
 	} else {
@@ -28,4 +29,4 @@ export default (function(globalThis) {
 			return URL;
 		}
 	}
-})(this);
+})();

@@ -6,5 +6,5 @@ if(isNaN(new Date("2011-11-11T11:11:11.111Z"))) {
 	compat_Date.parse = function(str) {
 		return new compat_Date(str).getTime();
 	};
-	this.Date = compat_Date;
+	window.Date = compat_Date;
 }

@@ -1,1 +1,1 @@
-export var Map = this.Map;
+export var Map = window.Map;

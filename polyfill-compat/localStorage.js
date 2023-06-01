@@ -1,10 +1,10 @@
 
-if(!this.localStorage) {
+if(!window.localStorage) {
 	var ele = document.createElement("localStorage");
 	if(ele.addBehavior) {
 		ele.addBehavior("#default#userData");
 		document.head.appendChild(ele);
-		this.localStorage = {
+		window.localStorage = {
 			getItem: function(key) {
 				ele.load("localStorage");
 				return ele.getAttribute(key);

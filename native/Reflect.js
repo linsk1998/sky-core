@@ -1,1 +1,1 @@
-export var Reflect = this.Reflect;
+export var Reflect = window.Reflect;

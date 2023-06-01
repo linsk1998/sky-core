@@ -1,5 +1,5 @@
-
+import { WeakMap } from "../native/WeakMap";
 import { WeakMap as impl_WeakMap } from "../impl/WeakMap";
-if(!this.WeakMap) {
-	this.WeakMap = impl_WeakMap;
+if(!WeakMap) {
+	window.WeakMap = impl_WeakMap;
 }

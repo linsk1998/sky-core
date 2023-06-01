@@ -1,1 +1,1 @@
-export var isFinite = this.isFinite;
+export var isFinite = window.isFinite;

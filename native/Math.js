@@ -1,1 +1,1 @@
-export var Math = this.Math;
+export var Math = window.Math;

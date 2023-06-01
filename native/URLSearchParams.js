@@ -1,1 +1,1 @@
-export var URLSearchParams = this.URLSearchParams;
+export var URLSearchParams = window.URLSearchParams;

@@ -1,6 +1,6 @@
 
-if(!this.console) {
-	this.console = (function() {
+if(!window.console) {
+	window.console = (function() {
 		function log(data) {
 			if(window.Debug) {
 				Debug.writeln(data);

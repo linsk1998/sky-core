@@ -1,1 +1,1 @@
-export var navigator = this.navigator;
+export var navigator = window.navigator;

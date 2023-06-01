@@ -49,6 +49,7 @@ export function initURL() {
 			return url;
 		};
 	}
+	return URL;
 }
 export function URL(relativePath) {
 	var absolutePath = arguments[1];

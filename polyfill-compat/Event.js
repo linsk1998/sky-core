@@ -1,7 +1,7 @@
 
 if(typeof Event !== "function") {
 	if(document.createEventObject) {
-		this.Event = function(evt, init) {
+		window.Event = function(evt, init) {
 			var e = document.createEventObject();
 			e.type = evt;
 			if(init) {

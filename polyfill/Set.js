@@ -5,9 +5,9 @@ import { createSet } from "../impl-compat/Set";
 
 if(!Symbol) {
 	if(Set && (Set.prototype.iterator || Set.prototype['@@iterator'])) {
-		this.Set = fixSet();
+		window.Set = fixSet();
 	} else {
-		this.Set = createSet();
+		window.Set = createSet();
 	}
 } else {
 	if(!Symbol.iterator) {

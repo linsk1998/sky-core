@@ -1,1 +1,1 @@
-export var Promise = this.Promise;
+export var Promise = window.Promise;

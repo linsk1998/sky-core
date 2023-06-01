@@ -1,4 +1,4 @@
 import { XMLHttpRequest } from "../impl/XMLHttpRequest";
-if(!this.XMLHttpRequest) {
-	this.XMLHttpRequest = XMLHttpRequest;
+if(!window.XMLHttpRequest) {
+	window.XMLHttpRequest = XMLHttpRequest;
 }

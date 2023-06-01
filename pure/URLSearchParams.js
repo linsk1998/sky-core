@@ -1,3 +1,4 @@
 
+import { URLSearchParams } from "../native/URLSearchParams";
 import { URLSearchParams as impl_URLSearchParams } from "../impl/URLSearchParams";
-export default this.URLSearchParams || impl_URLSearchParams;
+export default URLSearchParams || impl_URLSearchParams;

@@ -1,1 +1,1 @@
-export var Object = this.Object;
+export var Object = window.Object;

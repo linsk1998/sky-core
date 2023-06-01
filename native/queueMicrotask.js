@@ -1,1 +1,1 @@
-export var queueMicrotask = this.queueMicrotask;
+export var queueMicrotask = window.queueMicrotask;

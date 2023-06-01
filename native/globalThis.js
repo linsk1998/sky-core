@@ -1,1 +1,1 @@
-export var globalThis = this.globalThis;
+export var globalThis = window.globalThis;

@@ -1,1 +1,1 @@
-export var Number = this.Number;
+export var Number = window.Number;

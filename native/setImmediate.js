@@ -1,1 +1,1 @@
-export var setImmediate = this.setImmediate;
+export var setImmediate = window.setImmediate;

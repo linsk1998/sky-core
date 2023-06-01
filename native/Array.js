@@ -1,1 +1,1 @@
-export var Array = this.Array;
+export var Array = window.Array;

@@ -1,1 +1,1 @@
-export var WeakMap = this.WeakMap;
+export var WeakMap = window.WeakMap;

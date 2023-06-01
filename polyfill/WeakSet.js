@@ -1,4 +1,5 @@
-import { WeakSet } from "../impl/WeakSet";
-if(!this.WeakSet) {
-	this.WeakSet = WeakSet;
+import { WeakSet } from "../native/WeakSet.js";
+import { WeakSet as impl_WeakSet } from "../impl/WeakSet";
+if(!WeakSet) {
+	window.WeakSet = impl_WeakSet;
 }

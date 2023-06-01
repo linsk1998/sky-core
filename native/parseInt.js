@@ -1,1 +1,1 @@
-export var parseInt = this.parseInt;
+export var parseInt = window.parseInt;
