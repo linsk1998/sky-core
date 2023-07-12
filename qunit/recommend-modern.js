@@ -125,6 +125,8 @@ export default [
 			// 'Event': "sky-core/polyfill/Event",
 		},
 		exclude: [
+			"polyfill/**/*",
+			"polyfill-*/**/*",
 			"qunit/helpers/*"
 		]
 	}),
@@ -195,9 +197,12 @@ export default [
 	}),
 	inject({
 		modules: {
-			// "Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
-			// "Symbol.iterator": "sky-core/pure/Symbol/iterator",
-			// "Symbol": "sky-core/pure/Symbol",
+			"Symbol.asyncIterator": "sky-core/pure/Symbol/asyncIterator",
+			"Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
+			"Symbol.iterator": "sky-core/pure/Symbol/iterator",
+			"Symbol.for": "sky-core/pure/Symbol/for",
+			"Symbol.keyFor": "sky-core/pure/Symbol/keyFor",
+			"Symbol": "sky-core/pure/Symbol",
 		},
 		exclude: [
 		]

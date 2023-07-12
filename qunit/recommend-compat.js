@@ -5,11 +5,11 @@ export default [
 		modules: {
 			// breaking change
 			'parseInt': "sky-core/polyfill/parseInt",
-
+			// ES5
 			"JSON.stringify": "sky-core/polyfill/Date/prototype/toJSON",
 			//简易版的实现，仅适用于解析内容安全的json
 			"JSON": "sky-core/polyfill/JSON",
-			// Date
+			// ES5 Date
 			"Date.now": "sky-core/polyfill/Date/now",
 			// "Date": "sky-core/polyfill/Date/constructor",
 			// "Date.parse": "sky-core/polyfill/Date/parse",
@@ -134,7 +134,7 @@ export default [
 		modules: {
 			// breaking change
 			'.toFixed': "sky-core/polyfill/Number/prototype/toFixed",
-			//Date
+			//ES5 Date
 			//toLocaleFormat 这个只有火狐支持，非标准
 			".toLocaleFormat": "sky-core/polyfill/Date/prototype/toLocaleFormat",
 			".toISOString": "sky-core/polyfill/Date/prototype/toISOString",
@@ -196,9 +196,12 @@ export default [
 	}),
 	inject({
 		modules: {
-			// "Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
-			// "Symbol.iterator": "sky-core/pure/Symbol/iterator",
-			// "Symbol": "sky-core/pure/Symbol",
+			"Symbol.asyncIterator": "sky-core/pure/Symbol/asyncIterator",
+			"Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
+			"Symbol.iterator": "sky-core/pure/Symbol/iterator",
+			"Symbol.for": "sky-core/pure/Symbol/for",
+			"Symbol.keyFor": "sky-core/pure/Symbol/keyFor",
+			"Symbol": "sky-core/pure/Symbol",
 			// 由于有比较多的库使用XMLHttpRequest来判断浏览器版本，污染全局变量会导致判断错误，因此建议只在需要用的地方注入
 			"XMLHttpRequest": "sky-core/pure/XMLHttpRequest"
 		},

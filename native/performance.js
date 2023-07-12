@@ -1,1 +1,1 @@
-export var performance = window.performance;
+export var performance = window.performance || window.msPerformance || window.webkitPerformance;

@@ -9,28 +9,22 @@ if(!window.sessionStorage) {
 		document.head.appendChild(ele);
 		var sessionId = getCookie("storageId");
 		if(!sessionId) {
-			sessionId = Math.random().toString(16).replace("0.", "");
+			sessionId = Date.now().toString(16);
 			setCookie("storageId", sessionId);
 		}
-		// TODO
-		// ele.load(sessionId);
-		// var expires = new Date();
-		// expires.setDate(expires.getDate() + 7);
-		// ele.expires = expires.toUTCString();
-		// ele.save(sessionId);
 		window.sessionStorage = {
 			getItem: function(key) {
 				ele.load(sessionId);
 				return ele.getAttribute(key);
 			},
 			setItem: function(key, value) {
-				ele.load(sessionId);
 				ele.setAttribute(key, new String(value));
+				ele.expires = new Date(Date.now() + 864000000).toUTCString();
 				ele.save(sessionId);
 			},
 			removeItem: function(key) {
-				ele.load(sessionId);
 				ele.removeAttribute(key);
+				ele.expires = new Date(Date.now() + 864000000).toUTCString();
 				ele.save(sessionId);
 			},
 			sham: true

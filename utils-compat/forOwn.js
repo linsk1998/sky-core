@@ -1,4 +1,5 @@
 import { hasEnumBug } from "../utils/hasEnumBug";
+import { getPrototypeOf } from "../impl-compat/Object/getPrototypeOf";
 import { dontEnums } from "./dontEnums";
 import { isJsObject } from "./isJsObject";
 export function forOwn(obj, fn, thisArg) {

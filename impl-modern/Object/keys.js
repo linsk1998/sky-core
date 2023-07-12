@@ -1,10 +1,8 @@
 import { Symbol } from "../../native/Symbol";
 import { keys as native_keys } from "../../native/Object/keys";
+import { isNotSymbolKey } from "./isNotSymbolKey";
 export function ie_keys(obj) {
-	return native_keys.call(Object, obj).filter(checkSymbolKey);
-}
-function checkSymbolKey(key) {
-	return key.substring(0, 2) !== "@@";
+	return native_keys.call(Object, obj).filter(isNotSymbolKey);
 }
 export function nie_keys(obj) {
 	var result = [];

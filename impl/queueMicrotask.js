@@ -20,7 +20,7 @@ export function next() {
 		ticks = null;
 	}
 }
-function queueMicrotask() {
+export function queueMicrotask() {
 	if(!ticks) {
 		ticks = new Array();
 		nextTick(next);
