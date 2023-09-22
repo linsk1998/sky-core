@@ -1,3 +1,4 @@
+import { Object } from "../../native/Object";
 import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
 import { Symbol } from "../../native/Symbol";
 import { ff_getOwnPropertyNames, ie_getOwnPropertyNames } from "../../impl-modern/Object/getOwnPropertyNames";

@@ -125,8 +125,6 @@ export default [
 			// 'Event': "sky-core/polyfill/Event",
 		},
 		exclude: [
-			"polyfill/**/*",
-			"polyfill-*/**/*",
 			"qunit/helpers/*"
 		]
 	}),

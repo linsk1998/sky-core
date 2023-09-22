@@ -72,6 +72,10 @@
 	  };
 	}
 
+	function isPrimitive(value) {
+	  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
+	}
+
 	var symbol_sqe = 0;
 	var all_symbol = {};
 	function _Symbol$1(desc) {
@@ -91,6 +95,9 @@
 	};
 	function getOwnPropertySymbols(obj) {
 	  var arr = [];
+	  if (isPrimitive(obj)) {
+	    return arr;
+	  }
 	  for (var key in obj) {
 	    if (key.substring(0, 2) === "@@") {
 	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -331,7 +338,7 @@
 	  Array$1.from = from;
 	}
 
-	function values() {
+	function values$2() {
 	  var array = this;
 	  var index = 0;
 	  return {
@@ -355,7 +362,7 @@
 	}
 
 	if (!Array.prototype.values) {
-	  Array.prototype.values = values;
+	  Array.prototype.values = values$2;
 	}
 
 	if (!Array.prototype[$inject_Symbol_iterator]) {
@@ -417,7 +424,7 @@
 	  if (methods) for (var key in methods) iterator[key] = methods[key];
 	  return iterator;
 	}
-	function createIterable(elements, methods) {
+	function createIterable$1(elements, methods) {
 	  var _iterable;
 	  var iterable = (_iterable = {
 	    called: false,
@@ -446,7 +453,7 @@
 	  }
 	  return false;
 	}
-	function is(a, b) {
+	function is$1(a, b) {
 	  // eslint-disable-next-line no-self-compare -- NaN check
 	  return a === b ? a !== 0 || 1 / a === 1 / b : a != a && b != b;
 	}
@@ -510,7 +517,7 @@
 	    result = false;
 	  } else {
 	    for (var i = 0, length = a.length; i < length; ++i) {
-	      if (!is(a[i], b[i])) {
+	      if (!is$1(a[i], b[i])) {
 	        result = false;
 	        break;
 	      }
@@ -643,66 +650,76 @@
 	};
 	QUnit.assert.same = function (a, b, message) {
 	  this.pushResult({
-	    result: is(a, b),
+	    result: is$1(a, b),
 	    actual: a,
 	    expected: b,
 	    message: message
 	  });
 	};
 
-	var $inject_Symbol_hasInstance = '@@hasInstance';
-
-	var $inject_Symbol_asyncIterator = '@@asyncIterator';
-
-	var symbol_cache = {};
-	function compat_for (desc) {
-	  if (Object.prototype.hasOwnProperty.call(symbol_cache, desc)) {
-	    return symbol_cache[desc];
-	  }
-	  var s = _Symbol(desc);
-	  s.__key__ = desc;
-	  symbol_cache[desc] = s;
-	  return s;
-	}
-	;
-
-	function indexOf(e) {
-	  var fromIndex = 0;
-	  if (arguments.length > 1) {
-	    fromIndex = 0 + arguments[1];
-	    if (fromIndex < 0) {
-	      fromIndex += this.length;
-	      if (fromIndex < 0) {
-	        fromIndex = 0;
+	function keys$2() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = index;
+	        index++;
 	      }
-	    }
-	  }
-	  for (var i = fromIndex; i < this.length; i++) {
-	    if (i in this && this[i] === e) {
-	      return i;
-	    }
-	  }
-	  return -1;
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
 	}
 
-	if (!Array.prototype.indexOf) {
-	  Array.prototype.indexOf = indexOf;
+	if (!Array.prototype.keys) {
+	  Array.prototype.keys = keys$2;
 	}
-
-	function keyFor(symbol) {
-	  var s = String(symbol);
-	  if (s.indexOf("@@") !== 0) {
-	    throw new TypeError(s + " is not a symbol");
-	  }
-	  return symbol.__key__;
-	}
-	;
 
 	var Object$1 = window.Object;
 
 	if (!Object$1.getOwnPropertySymbols) {
 	  Object$1.getOwnPropertySymbols = getOwnPropertySymbols;
 	}
+
+	var hasEnumBug = !{
+	  toString: null
+	}.propertyIsEnumerable('toString');
+
+	function getPrototypeOf(obj) {
+	  if (obj == null) {
+	    throw new TypeError("Cannot convert undefined or null to object");
+	  }
+	  if (_typeof(obj) !== "object" && typeof obj !== "function") {
+	    obj = Object(obj);
+	  }
+	  if ('__proto__' in obj) {
+	    return obj.__proto__;
+	  }
+	  if (!('constructor' in obj)) {
+	    return null;
+	  }
+	  if (Object.prototype.hasOwnProperty.call(obj, 'constructor')) {
+	    if ('__proto__' in obj.constructor) {
+	      return obj.constructor.__proto__.prototype;
+	    } else if (obj === Object.prototype) {
+	      return null;
+	    } else {
+	      return Object.prototype;
+	    }
+	  }
+	  return obj.constructor.prototype;
+	}
+	;
+	getPrototypeOf.sham = true;
 
 	var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
 
@@ -772,50 +789,8 @@
 	  return false;
 	}
 
-	var hasEnumBug = !{
-	  toString: null
-	}.propertyIsEnumerable('toString');
-
-	function getPrototypeOf(obj) {
-	  if (obj == null) {
-	    throw new TypeError("Cannot convert undefined or null to object");
-	  }
-	  if (_typeof(obj) !== "object" && typeof obj !== "function") {
-	    obj = Object(obj);
-	  }
-	  if ('__proto__' in obj) {
-	    return obj.__proto__;
-	  }
-	  if (!('constructor' in obj)) {
-	    return null;
-	  }
-	  if (Object.prototype.hasOwnProperty.call(obj, 'constructor')) {
-	    if ('__proto__' in obj.constructor) {
-	      return obj.constructor.__proto__.prototype;
-	    } else if (obj === Object.prototype) {
-	      return null;
-	    } else {
-	      return Object.prototype;
-	    }
-	  }
-	  return obj.constructor.prototype;
-	}
-	;
-	getPrototypeOf.sham = true;
-
-	function getOwnPropertyNames(obj) {
-	  if (obj == null) {
-	    throw new TypeError("Cannot convert undefined or null to object");
-	  }
-	  var result = [],
-	    key;
-	  if (isString(obj) || isArray(obj)) {
-	    for (key = 0; key < obj.length; key++) {
-	      result.push(String(key));
-	    }
-	    result.push("length");
-	    return result;
-	  }
+	function forOwn(obj, fn, thisArg) {
+	  var key;
 	  var jsObject = isJsObject(obj);
 	  if (!jsObject) {
 	    var proto = getPrototypeOf(obj);
@@ -826,91 +801,14 @@
 	          case "@@":
 	            continue;
 	        }
-	        if (proto[key] !== obj[key]) {
-	          result.push(key);
+	        if (proto[key] === obj[key]) {
+	          continue;
+	        }
+	        if (fn.call(thisArg, obj[key], key) === false) {
+	          return false;
 	        }
 	      }
-	      return result;
-	    }
-	  }
-	  for (key in obj) {
-	    if (key === "__proto__") {
-	      continue;
-	    }
-	    if (key.substring(0, 2) === "@@") {
-	      continue;
-	    }
-	    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-	      result.push(key);
-	    }
-	  }
-	  if (hasEnumBug) {
-	    var i = dontEnums.length;
-	    while (i-- > 0) {
-	      key = dontEnums[i];
-	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-	        result.push(key);
-	      }
-	    }
-	  }
-	  return result;
-	}
-	;
-
-	if (!Object$1.getOwnPropertyNames) {
-	  Object$1.getOwnPropertyNames = getOwnPropertyNames;
-	}
-
-	var defineProperties$1 = Object$1.defineProperties;
-
-	function keys$2() {
-	  var array = this;
-	  var index = 0;
-	  return {
-	    next: function () {
-	      var value;
-	      var done = array.length <= index;
-	      if (!done) {
-	        value = index;
-	        index++;
-	      }
-	      return {
-	        done: done,
-	        value: value
-	      };
-	    },
-	    '@@iterator': function () {
-	      return this;
-	    },
-	    '@@toStringTag': 'Array Iterator'
-	  };
-	}
-
-	if (!Array.prototype.keys) {
-	  Array.prototype.keys = keys$2;
-	}
-
-	function keys$1(obj) {
-	  if (obj == null) {
-	    throw new TypeError("Cannot convert undefined or null to object");
-	  }
-	  var result = [],
-	    key;
-	  var jsObject = isJsObject(obj);
-	  if (!jsObject) {
-	    var proto = getPrototypeOf(obj);
-	    if (proto) {
-	      for (key in obj) {
-	        switch (key.substring(0, 2)) {
-	          case "__":
-	          case "@@":
-	            continue;
-	        }
-	        if (proto[key] !== obj[key]) {
-	          result.push(key);
-	        }
-	      }
-	      return result;
+	      return true;
 	    }
 	  }
 	  for (key in obj) {
@@ -920,9 +818,8 @@
 	        continue;
 	    }
 	    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-	      var desc = obj["@@desc:" + key];
-	      if (!desc || desc.enumerable) {
-	        result.push(key);
+	      if (fn.call(thisArg, obj[key], key) === false) {
+	        return false;
 	      }
 	    }
 	  }
@@ -931,15 +828,46 @@
 	    while (i-- > 0) {
 	      key = dontEnums[i];
 	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-	        result.push(key);
+	        if (fn.call(thisArg, obj[key], key) === false) {
+	          return false;
+	        }
 	      }
 	    }
 	  }
-	  return result;
+	  return true;
+	}
+	;
+
+	function assign(target, varArgs) {
+	  if (target == null) {
+	    throw new TypeError('Cannot convert undefined or null to object');
+	  }
+	  var to = Object(target);
+	  for (var i = 1; i < arguments.length; i++) {
+	    var obj = arguments[i];
+	    if (obj != null) {
+	      var j;
+	      if (isString(obj)) {
+	        for (j = 0; j < obj.length; j++) {
+	          to[j] = obj.charAt(j);
+	        }
+	      } else {
+	        forOwn(obj, function (value, key) {
+	          to[key] = value;
+	        });
+	        var ownKeys = Object.getOwnPropertySymbols(obj);
+	        for (j = 0; j < ownKeys.length; j++) {
+	          var key = ownKeys[j];
+	          to[key] = obj[key];
+	        }
+	      }
+	    }
+	  }
+	  return to;
 	}
 
-	if (!Object$1.keys) {
-	  Object$1.keys = keys$1;
+	if (!Object$1.assign) {
+	  Object$1.assign = assign;
 	}
 
 	var defineProperty$1 = Object$1.defineProperty;
@@ -999,6 +927,208 @@
 	}
 	Object$1.defineProperty.sham = true;
 
+	function keys$1(obj) {
+	  if (obj == null) {
+	    throw new TypeError("Cannot convert undefined or null to object");
+	  }
+	  var result = [],
+	    key;
+	  var jsObject = isJsObject(obj);
+	  if (!jsObject) {
+	    var proto = getPrototypeOf(obj);
+	    if (proto) {
+	      for (key in obj) {
+	        switch (key.substring(0, 2)) {
+	          case "__":
+	          case "@@":
+	            continue;
+	        }
+	        if (proto[key] !== obj[key]) {
+	          result.push(key);
+	        }
+	      }
+	      return result;
+	    }
+	  }
+	  for (key in obj) {
+	    switch (key.substring(0, 2)) {
+	      case "__":
+	      case "@@":
+	        continue;
+	    }
+	    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	      var desc = obj["@@desc:" + key];
+	      if (!desc || desc.enumerable) {
+	        result.push(key);
+	      }
+	    }
+	  }
+	  if (hasEnumBug) {
+	    var i = dontEnums.length;
+	    while (i-- > 0) {
+	      key = dontEnums[i];
+	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	        result.push(key);
+	      }
+	    }
+	  }
+	  return result;
+	}
+
+	if (!Object$1.keys) {
+	  Object$1.keys = keys$1;
+	}
+
+	QUnit.test('Object.assign', function (assert) {
+	  assert.isFunction(Object.assign);
+	  assert.arity(Object.assign, 2);
+	  assert.name(Object.assign, 'assign');
+	  var object = {
+	    q: 1
+	  };
+	  assert.strictEqual(object, Object.assign(object, {
+	    bar: 2
+	  }), 'assign return target');
+	  assert.strictEqual(object.bar, 2, 'assign define properties');
+	  assert.deepEqual(Object.assign({}, {
+	    q: 1
+	  }, {
+	    w: 2
+	  }), {
+	    q: 1,
+	    w: 2
+	  });
+	  assert.deepEqual(Object.assign({}, 'qwe'), {
+	    0: 'q',
+	    1: 'w',
+	    2: 'e'
+	  });
+	  assert["throws"](function () {
+	    return Object.assign(null, {
+	      q: 1
+	    });
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return Object.assign(undefined, {
+	      q: 1
+	    });
+	  }, TypeError);
+	  var string = Object.assign('qwe', {
+	    q: 1
+	  });
+	  assert.strictEqual(_typeof(string), 'object');
+	  assert.strictEqual(String(string), 'qwe');
+	  assert.strictEqual(string.q, 1);
+	  assert.same(Object.assign({}, {
+	    valueOf: 42
+	  }).valueOf, 42, 'IE enum keys bug');
+	  if (DESCRIPTORS) {
+	    object = {
+	      baz: 1
+	    };
+	    Object.assign(object, Object.defineProperty({}, 'bar', {
+	      get: function () {
+	        return this.baz + 1;
+	      }
+	    }));
+	    assert.ok(object.bar === undefined, "assign don't copy descriptors");
+	    object = {
+	      a: 'a'
+	    };
+	    var c = _Symbol('c');
+	    var d = _Symbol('d');
+	    object[c] = 'c';
+	    Object.defineProperty(object, 'b', {
+	      value: 'b'
+	    });
+	    Object.defineProperty(object, d, {
+	      value: 'd'
+	    });
+	    var object2 = Object.assign({}, object);
+	    assert.strictEqual(object2.a, 'a', 'a');
+	    assert.strictEqual(object2.b, undefined, 'b');
+	    assert.strictEqual(object2[c], 'c', 'c');
+	    assert.strictEqual(object2[d], undefined, 'defineProperty 不允许使用Symbol');
+	    try {
+	      assert.strictEqual(Function('assign', "\n        return assign({ b: 1 }, { get a() {\n          delete this.b;\n        }, b: 2 });\n      ")(Object.assign).b, 1);
+	    } catch (_unused) {/* empty */}
+	    try {
+	      assert.strictEqual(Function('assign', "\n        return assign({ b: 1 }, { get a() {\n          Object.defineProperty(this, \"b\", {\n            value: 3,\n            enumerable: false\n          });\n        }, b: 2 });\n      ")(Object.assign).b, 1);
+	    } catch (_unused2) {/* empty */}
+	  }
+	  string = 'abcdefghijklmnopqrst';
+	  var result = {};
+	  for (var i = 0, _string = string, length = _string.length; i < length; ++i) {
+	    var _char = string.charAt(i);
+	    result[_char] = _char;
+	  }
+	  assert.strictEqual(Object.keys(Object.assign({}, result)).join(''), string);
+	});
+
+	function getOwnPropertyNames(obj) {
+	  if (obj == null) {
+	    throw new TypeError("Cannot convert undefined or null to object");
+	  }
+	  var result = [],
+	    key;
+	  if (isString(obj) || isArray(obj)) {
+	    for (key = 0; key < obj.length; key++) {
+	      result.push(String(key));
+	    }
+	    result.push("length");
+	    return result;
+	  }
+	  var jsObject = isJsObject(obj);
+	  if (!jsObject) {
+	    var proto = getPrototypeOf(obj);
+	    if (proto) {
+	      for (key in obj) {
+	        switch (key.substring(0, 2)) {
+	          case "__":
+	          case "@@":
+	            continue;
+	        }
+	        if (proto[key] !== obj[key]) {
+	          result.push(key);
+	        }
+	      }
+	      return result;
+	    }
+	  }
+	  for (key in obj) {
+	    if (key === "__proto__") {
+	      continue;
+	    }
+	    if (key.substring(0, 2) === "@@") {
+	      continue;
+	    }
+	    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	      result.push(key);
+	    }
+	  }
+	  if (hasEnumBug) {
+	    var i = dontEnums.length;
+	    while (i-- > 0) {
+	      key = dontEnums[i];
+	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	        result.push(key);
+	      }
+	    }
+	  }
+	  return result;
+	}
+	;
+
+	if (!Object$1.getOwnPropertyNames) {
+	  Object$1.getOwnPropertyNames = getOwnPropertyNames;
+	}
+
+	if (!Object$1.getPrototypeOf) {
+	  Object$1.getPrototypeOf = getPrototypeOf;
+	}
+
+	var defineProperties$1 = Object$1.defineProperties;
+
 	function defineProperties(obj, properties) {
 	  var ownKeys = Object.keys(properties);
 	  var len = ownKeys.length;
@@ -1017,7 +1147,7 @@
 
 	function F() {/* empty */}
 	;
-	function create$1(proto, properties) {
+	function create(proto, properties) {
 	  var o;
 	  if (proto !== null) {
 	    F.prototype = proto;
@@ -1033,106 +1163,534 @@
 	  return o;
 	}
 	;
-	create$1.sham = true;
+	create.sham = true;
 
 	if (!Object$1.create) {
-	  Object$1.create = create$1;
+	  Object$1.create = create;
 	}
 
-	var JSON$1 = window.JSON;
+	QUnit.test('Object.create', function (assert) {
+	  function getPropertyNames(object) {
+	    var result = [];
+	    do {
+	      result = result.concat(Object.getOwnPropertyNames(object));
+	    } while (object = Object.getPrototypeOf(object));
+	    return result;
+	  }
+	  assert.isFunction(Object.create);
+	  assert.arity(Object.create, 2);
+	  assert.name(Object.create, 'create');
+	  var object = {
+	    q: 1
+	  };
+	  assert.ok({}.isPrototypeOf.call(object, Object.create(object)));
+	  assert.ok(Object.create(object).q === 1);
+	  function F() {
+	    return this.a = 1;
+	  }
+	  assert.ok(Object.create(new F()) instanceof F, "Object.create(new F())");
+	  assert.ok(F.prototype === Object.getPrototypeOf(Object.getPrototypeOf(Object.create(new F()))));
+	  assert.ok(Object.create(new F()).a === 1);
+	  assert.ok(Object.create({}, {
+	    a: {
+	      value: 42
+	    }
+	  }).a === 42);
+	  object = Object.create(null, {
+	    w: {
+	      value: 2
+	    }
+	  });
+	  assert.same(object, Object(object));
+	  assert.ok(!('toString' in object), "toString");
+	  assert.ok(object.w === 2);
+	  assert["throws"](function () {
+	    return String(object);
+	  }, "throws String({__proto__:null})");
+	  assert.deepEqual(getPropertyNames(Object.create(null)), []);
+	});
+	QUnit.test('Object.create.sham flag', function (assert) {
+	  assert.same(Object.create.sham, DESCRIPTORS ? undefined : true);
+	});
 
-	function map(fn) {
+	QUnit.test('Object.defineProperties', function (assert) {
+	  assert.isFunction(Object.defineProperties);
+	  assert.arity(Object.defineProperties, 2);
+	  assert.name(Object.defineProperties, 'defineProperties');
+	  var source = {};
+	  var result = Object.defineProperties(source, {
+	    q: {
+	      value: 42
+	    },
+	    w: {
+	      value: 33
+	    }
+	  });
+	  assert.same(result, source);
+	  assert.same(result.q, 42);
+	  assert.same(result.w, 33);
+	});
+
+	// QUnit.test('Object.defineProperties.sham flag', assert => {
+	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
+	// });
+
+	QUnit.test('Object.defineProperty', function (assert) {
+	  assert.isFunction(Object.defineProperty);
+	  assert.arity(Object.defineProperty, 3);
+	  assert.name(Object.defineProperty, 'defineProperty');
+	  var source = {};
+	  var result = Object.defineProperty(source, 'q', {
+	    value: 42
+	  });
+	  assert.same(result, source);
+	  assert.same(result.q, 42);
+	  assert["throws"](function () {
+	    return Object.defineProperty(42, 1, {});
+	  });
+	  assert["throws"](function () {
+	    return Object.defineProperty({}, Object.create(null), {});
+	  });
+	  assert["throws"](function () {
+	    return Object.defineProperty({}, 1, 1);
+	  });
+	});
+	QUnit.test('Object.defineProperty.sham flag', function (assert) {
+	  assert.same(Object.defineProperty.sham, DESCRIPTORS ? undefined : true);
+	});
+
+	function entries$2() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = [index, array[index]];
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	if (!Array.prototype.entries) {
+	  Array.prototype.entries = entries$2;
+	}
+
+	function entries$1(obj) {
+	  var resArray = new Array(); // preallocate the Array
+	  if (isString(obj)) {
+	    for (var i = 0; i < obj.length; i++) {
+	      resArray.push([String(i), obj.substr(i, 1)]);
+	    }
+	  } else {
+	    forOwn(obj, pushKeyValue, resArray);
+	  }
+	  return resArray;
+	}
+	function pushKeyValue(value, key) {
+	  this.push([key, value]);
+	}
+
+	if (!Object$1.entries) {
+	  Object$1.entries = entries$1;
+	}
+
+	QUnit.test('Object.entries', function (assert) {
+	  assert.isFunction(Object.entries);
+	  assert.arity(Object.entries, 1);
+	  assert.name(Object.entries, 'entries');
+	  assert.deepEqual(Object.entries({
+	    q: 1,
+	    w: 2,
+	    e: 3
+	  }), [['q', 1], ['w', 2], ['e', 3]]);
+	  assert.deepEqual(Object.entries(new String('qwe')), [['0', 'q'], ['1', 'w'], ['2', 'e']]);
+	  assert.deepEqual(Object.entries(Object.assign(Object.create({
+	    q: 1,
+	    w: 2,
+	    e: 3
+	  }), {
+	    a: 4,
+	    s: 5,
+	    d: 6
+	  })), [['a', 4], ['s', 5], ['d', 6]]);
+	  assert.deepEqual(Object.entries({
+	    valueOf: 42
+	  }), [['valueOf', 42]], 'IE enum keys bug');
+	  try {
+	    assert.deepEqual(Function('entries', "\n      return entries({\n        a: 1,\n        get b() {\n          delete this.c;\n          return 2;\n        },\n        c: 3\n      });\n    ")(Object.entries), [['a', 1], ['b', 2]]);
+	  } catch (_unused) {/* empty */}
+	  try {
+	    assert.deepEqual(Function('entries', "\n      return entries({\n        a: 1,\n        get b() {\n          Object.defineProperty(this, \"c\", {\n            value: 4,\n            enumerable: false\n          });\n          return 2;\n        },\n        c: 3\n      });\n    ")(Object.entries), [['a', 1], ['b', 2]]);
+	  } catch (_unused2) {/* empty */}
+	});
+
+	function fromEntries(obj) {
+	  var arr = Array.from(obj);
+	  var len = arr.length;
+	  var o = {};
+	  for (var i = 0; i < len; i++) {
+	    var item = arr[i];
+	    if (Array.isArray(item)) {
+	      o[item[0]] = item[1];
+	    } else {
+	      throw new TypeError("Iterator value 1 is not an entry object");
+	    }
+	  }
+	  return o;
+	}
+
+	if (!Object$1.fromEntries) {
+	  Object$1.fromEntries = fromEntries;
+	}
+
+	var Set$1 = window.Set;
+
+	function forEach$1(callback) {
 	  var thisArg = arguments[1];
-	  var arr = [];
-	  for (var k = 0, length = this.length; k < length; k++) {
-	    arr.push(fn.call(thisArg, this[k], k, this));
+	  for (var i = 0; i < this.length; i++) {
+	    if (i in this) {
+	      callback.call(thisArg, this[i], i, this);
+	    }
 	  }
-	  return arr;
 	}
 
-	if (!Array.prototype.map) {
-	  Array.prototype.map = map;
+	if (!Array.prototype.forEach) {
+	  Array.prototype.forEach = forEach$1;
 	}
 
-	function isSymbol(obj) {
-	  if (_typeof(obj) === "symbol") {
-	    return true;
-	  }
-	  if (typeof obj.toString === "function" && obj.toString().indexOf("@@") === 0) {
-	    return true; //symbol polyfill
-	  }
+	var isNaN$2 = window.isNaN;
 
+	function isNaN$1(value) {
+	  return typeof value === "number" && isNaN$2(value);
+	}
+
+	function createMap() {
+	  function Map() {
+	    var arr = arguments[0];
+	    this.size = 0;
+	    this.head = null;
+	    this.tail = null;
+	    if (arr) {
+	      var entries = arr['@@iterator'];
+	      if (entries) {
+	        var it = entries.call(arr);
+	        while (true) {
+	          var next = it.next();
+	          if (next.done) break;
+	          try {
+	            this.set(next.value[0], next.value[1]);
+	          } catch (e) {
+	            if (it["return"]) {
+	              try {
+	                it["return"]();
+	              } catch (e) {}
+	            }
+	            throw e;
+	          }
+	        }
+	      }
+	    }
+	  }
+	  Map.prototype.has = has;
+	  Map.prototype.get = get;
+	  Map.prototype.set = set;
+	  Map.prototype["delete"] = remove;
+	  Map.prototype.clear = clear;
+	  Map.prototype.forEach = forEach;
+	  Map.prototype.entries = entries;
+	  Map.prototype.keys = keys;
+	  Map.prototype.values = values$1;
+	  Map.prototype['@@iterator'] = entries;
+	  return Map;
+	}
+	;
+	function has(key) {
+	  if (this.size === 0) {
+	    return false;
+	  }
+	  var item = this.head;
+	  while (item) {
+	    if (item.key === key || isNaN$1(key) && isNaN$1(item.key)) {
+	      return true;
+	    }
+	    item = item.next;
+	  }
 	  return false;
 	}
 	;
-
-	function isFunction(obj) {
-	  return typeof obj === 'function';
+	function get(key) {
+	  if (this.size === 0) {
+	    return undefined;
+	  }
+	  var item = this.head;
+	  while (item) {
+	    if (item.key === key || isNaN$1(key) && isNaN$1(item.key)) {
+	      return item.value;
+	    }
+	    item = item.next;
+	  }
+	  return undefined;
 	}
 	;
-
-	var rx_escapable = /[\\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
-	function escapeString(str) {
-	  //from lodash
-	  rx_escapable.lastIndex = 0;
-	  return rx_escapable.test(str) ? str.replace(rx_escapable, function (a) {
-	    var meta = {
-	      "\b": "\\b",
-	      "\t": "\\t",
-	      "\n": "\\n",
-	      "\f": "\\f",
-	      "\r": "\\r",
-	      "\"": "\\\"",
-	      "\\": "\\\\"
+	function set(key, value) {
+	  if (key === 0) {
+	    //-0 -> 0
+	    key = 0;
+	  }
+	  if (this.size === 0) {
+	    this.head = this.tail = {
+	      key: key,
+	      value: value,
+	      prev: null,
+	      next: null,
+	      exist: true
 	    };
-	    var c = meta[a];
-	    return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
-	  }) : str;
+	    this.size = 1;
+	    return this;
+	  }
+	  var item = this.head;
+	  while (item) {
+	    if (item.key === key || isNaN$1(key) && isNaN$1(item.key)) {
+	      item.value = value;
+	      return this;
+	    }
+	    item = item.next;
+	  }
+	  var tail = this.tail;
+	  var newTail = {
+	    key: key,
+	    value: value,
+	    prev: tail,
+	    next: null,
+	    exist: true
+	  };
+	  tail.next = newTail;
+	  this.tail = newTail;
+	  this.size++;
+	  return this;
 	}
 	;
-	function stringify(obj) {
-	  switch (obj) {
-	    case undefined:
-	    case null:
-	      return "null";
-	    case false:
-	    case true:
-	      return obj;
-	    default:
-	      var type = Object.prototype.toString.call(obj);
-	      switch (type) {
-	        case '[object String]':
-	          return '"' + escapeString(obj) + '"';
-	        case '[object Number]':
-	          return isNaN(obj) ? "null" : obj.toString();
-	        case '[object Array]':
-	          return "[" + obj.map(stringify).join(",") + "]";
-	        default:
-	          if (obj.toJSON && isFunction(obj.toJSON)) {
-	            return stringify(obj.toJSON());
-	          }
-	          var items = [];
-	          var ownKeys = Object.keys(obj);
-	          for (var i = 0; i < ownKeys.length; i++) {
-	            var key = ownKeys[i];
-	            var value = obj[key];
-	            if (value !== void 0) {
-	              if (!isFunction(value) && !isSymbol(value)) {
-	                items.push('"' + escapeString(key) + '":' + stringify(value));
-	              }
-	            }
-	          }
-	          return "{" + items.join(",") + "}";
+	function remove(key) {
+	  if (this.size === 0) {
+	    return false;
+	  }
+	  var item = this.head;
+	  while (item) {
+	    if (item.key === key || isNaN$1(key) && isNaN$1(item.key)) {
+	      var prev = item.prev;
+	      var next = item.next;
+	      if (prev) {
+	        prev.next = next;
+	      } else {
+	        this.head = next;
 	      }
+	      if (next) {
+	        next.prev = prev;
+	      } else {
+	        this.tail = prev;
+	      }
+	      item.exist = false;
+	      this.size--;
+	      return true;
+	    }
+	    item = item.next;
+	  }
+	  return false;
+	}
+	;
+	function clear() {
+	  this.size = 0;
+	  this.head = null;
+	  this.tail = null;
+	}
+	;
+	function forEach(callbackfn) {
+	  var thisArg = arguments[1];
+	  var item = this.head;
+	  while (item) {
+	    callbackfn.call(thisArg, item.value, item.key, this);
+	    var next = item.next;
+	    if (item.exist || next && next.exist) {
+	      item = next;
+	    } else {
+	      while (true) {
+	        item = item.prev;
+	        if (item) {
+	          if (item.exist) {
+	            item = item.next;
+	            break;
+	          }
+	        } else {
+	          item = this.head;
+	          break;
+	        }
+	      }
+	    }
 	  }
 	}
-
-	if (!JSON$1) {
-	  window.JSON = {
-	    stringify: stringify,
-	    parse: new Function("json", "return eval('(' + json + ')')")
+	;
+	function createIterable(that, getValue) {
+	  var done = false;
+	  var current;
+	  var it = {
+	    next: function () {
+	      var value;
+	      if (done) {
+	        return {
+	          done: done,
+	          value: value
+	        };
+	      }
+	      if (!current) {
+	        current = that.head;
+	      } else {
+	        var next = current.next;
+	        if (current.exist || next && next.exist) {
+	          current = next;
+	        } else {
+	          while (true) {
+	            current = current.prev;
+	            if (current) {
+	              if (current.exist) {
+	                current = current.next;
+	                break;
+	              }
+	            } else {
+	              current = that.head;
+	              break;
+	            }
+	          }
+	        }
+	      }
+	      if (current) {
+	        done = false;
+	        value = getValue(current);
+	      } else {
+	        done = true;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    }
 	  };
+	  it['@@iterator'] = function () {
+	    return createIterable(that, getValue);
+	  };
+	  return it;
 	}
+	function getKeyValue(item) {
+	  return [item.key, item.value];
+	}
+	function entries() {
+	  return createIterable(this, getKeyValue);
+	}
+	;
+	function getKey(item) {
+	  return item.key;
+	}
+	function keys() {
+	  return createIterable(this, getKey);
+	}
+	;
+	function getValue(item) {
+	  return item.value;
+	}
+	function values$1() {
+	  return createIterable(this, getValue);
+	}
+	;
+
+	function createSet() {
+	  function Set() {
+	    var arr = arguments[0];
+	    this.size = 0;
+	    this.head = null;
+	    this.tail = null;
+	    if (arr) {
+	      var entries = arr['@@iterator'];
+	      if (entries) {
+	        var it = entries.call(arr);
+	        while (true) {
+	          var next = it.next();
+	          if (next.done) break;
+	          try {
+	            this.add(next.value);
+	          } catch (e) {
+	            if (it["return"]) {
+	              try {
+	                it["return"]();
+	              } catch (e) {}
+	            }
+	            throw e;
+	          }
+	        }
+	      }
+	    }
+	  }
+	  Set.prototype.has = has;
+	  Set.prototype.add = add;
+	  Set.prototype["delete"] = remove;
+	  Set.prototype.clear = clear;
+	  Set.prototype.forEach = forEach;
+	  Set.prototype.entries = entries;
+	  Set.prototype.values = values$1;
+	  Set.prototype.keys = values$1;
+	  Set.prototype['@@iterator'] = values$1;
+	  return Set;
+	}
+	;
+	function add(value) {
+	  if (value === 0) {
+	    //-0 -> 0
+	    value = 0;
+	  }
+	  set.call(this, value, value);
+	  return this;
+	}
+	;
+
+	if (!Set$1) {
+	  window.Set = createSet();
+	}
+
+	QUnit.test('Object.fromEntries', function (assert) {
+	  assert.isFunction(Object.fromEntries);
+	  assert.arity(Object.fromEntries, 1);
+	  assert.name(Object.fromEntries, 'fromEntries');
+	  assert.ok(Object.fromEntries([]) instanceof Object);
+	  assert.same(Object.fromEntries([['foo', 1]]).foo, 1);
+	  assert.same(Object.fromEntries(createIterable$1([['bar', 2]])).bar, 2);
+	  var Unit = /*#__PURE__*/function () {
+	    function Unit(id) {
+	      this.id = id;
+	    }
+	    var _proto = Unit.prototype;
+	    _proto.toString = function () {
+	      function toString() {
+	        return "unit" + this.id;
+	      }
+	      return toString;
+	    }();
+	    return Unit;
+	  }();
+	  var units = new Set([new Unit(101), new Unit(102), new Unit(103)]);
+	  var object = Object.fromEntries(units.entries());
+	  assert.same(object.unit101.id, 101);
+	  assert.same(object.unit102.id, 102);
+	  assert.same(object.unit103.id, 103);
+	});
 
 	var getOwnPropertyDescriptor$1 = Object$1.getOwnPropertyDescriptor;
 
@@ -1184,319 +1742,374 @@
 	  Object$1.getOwnPropertyDescriptor = getOwnPropertyDescriptor;
 	}
 
-	var _ref = GLOBAL.Reflect || {},
-	  ownKeys = _ref.ownKeys;
-	QUnit.test('Symbol', function (assert) {
-	  assert.isFunction(_Symbol);
-	  if (NATIVE) assert.strictEqual(_Symbol.length, 0, 'arity is 0');
-	  assert.name(_Symbol, 'Symbol');
-	  var symbol1 = _Symbol('symbol');
-	  var symbol2 = _Symbol('symbol');
-	  assert.ok(symbol1 !== symbol2, 'Symbol("symbol") !== Symbol("symbol")');
-	  var object = {};
-	  object[symbol1] = 42;
-	  assert.ok(object[symbol1] === 42, 'Symbol() work as key');
-	  assert.ok(object[symbol2] !== 42, 'Various symbols from one description are various keys');
-	  if (DESCRIPTORS) {
-	    var count = 0;
-	    // eslint-disable-next-line no-unused-vars -- required for testing
-	    for (var key in object) count++;
-	    assert.ok(count === 0, 'object[Symbol()] is not enumerable');
-	  }
-	});
-	QUnit.test('Well-known Symbols', function (assert) {
-	  assert.ok($inject_Symbol_hasInstance, "Symbol.hasInstance available");
-	  assert.ok($inject_Symbol_iterator, "Symbol.iterator available");
-	  assert.ok($inject_Symbol_asyncIterator, "Symbol.asyncIterator available");
-	});
-	QUnit.test('Global symbol registry', function (assert) {
-	  assert.isFunction(compat_for, 'Symbol.for is function');
-	  assert.strictEqual(compat_for.length, 1, 'Symbol.for arity is 1');
-	  if (NATIVE) assert.strictEqual(compat_for.name, 'for', 'Symbol.for.name is "for"');
-	  assert.isFunction(keyFor, 'Symbol.keyFor is function');
-	  assert.strictEqual(keyFor.length, 1, 'Symbol.keyFor arity is 1');
-	  assert.name(keyFor, 'keyFor');
-	  var symbol = compat_for('foo');
-	  assert.strictEqual(compat_for('foo'), symbol);
-	  assert.strictEqual(keyFor(symbol), 'foo');
-	  assert["throws"](function () {
-	    return keyFor('foo');
-	  }, 'throws on non-symbol');
-	});
-	QUnit.test('Object.getOwnPropertySymbols', function (assert) {
-	  assert.isFunction(Object.getOwnPropertySymbols);
-	  assert.strictEqual(Object.getOwnPropertySymbols.length, 1, 'arity is 1');
-	  assert.name(Object.getOwnPropertySymbols, 'getOwnPropertySymbols');
-	  var prototype = {
-	    q: 1,
-	    w: 2,
-	    e: 3
-	  };
-	  prototype[_Symbol()] = 42;
-	  prototype[_Symbol()] = 43;
-	  assert.deepEqual(Object.getOwnPropertyNames(prototype).sort(), ['e', 'q', 'w']);
-	  assert.strictEqual(Object.getOwnPropertySymbols(prototype).length, 2);
-	  var object = Object.create(prototype);
-	  object.a = 1;
-	  object.s = 2;
-	  object.d = 3;
-	  object[_Symbol()] = 44;
-	  assert.deepEqual(Object.getOwnPropertyNames(object).sort(), ['a', 'd', 's']);
-	  assert.strictEqual(Object.getOwnPropertySymbols(object).length, 1);
-	  assert.strictEqual(Object.getOwnPropertySymbols(Object.prototype).length, 0);
+	QUnit.test('Object.getOwnPropertyDescriptor', function (assert) {
+	  assert.isFunction(Object.getOwnPropertyDescriptor);
+	  assert.arity(Object.getOwnPropertyDescriptor, 2);
+	  assert.name(Object.getOwnPropertyDescriptor, 'getOwnPropertyDescriptor');
+	  assert.deepEqual(Object.getOwnPropertyDescriptor({
+	    q: 42
+	  }, 'q'), {
+	    writable: true,
+	    enumerable: true,
+	    configurable: true,
+	    value: 42
+	  });
+	  assert.ok(Object.getOwnPropertyDescriptor({}, 'toString') === undefined);
 	  var primitives = [42, 'foo', false];
 	  var _loop = function (value) {
 	    assert.notThrows(function () {
-	      return Object.getOwnPropertySymbols(value);
+	      return Object.getOwnPropertyDescriptor(value) || true;
+	    });
+	  };
+	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
+	    var value = _primitives[_i];
+	    _loop(value);
+	  }
+	  assert["throws"](function () {
+	    return Object.getOwnPropertyDescriptor(null);
+	  }, TypeError, 'throws on null');
+	  assert["throws"](function () {
+	    return Object.getOwnPropertyDescriptor(undefined);
+	  }, TypeError, 'throws on undefined');
+	});
+	QUnit.test('Object.getOwnPropertyDescriptor.sham flag', function (assert) {
+	  assert.same(Object.getOwnPropertyDescriptor.sham, DESCRIPTORS ? undefined : true);
+	});
+
+	function getOwnPropertyDescriptors(obj) {
+	  var keys = Object.getOwnPropertyNames(obj);
+	  keys = keys.concat(Object.getOwnPropertySymbols(obj));
+	  var o = {};
+	  var i, key;
+	  for (i = 0; i < keys.length; i++) {
+	    key = keys[i];
+	    var desc = obj["@@desc:" + key];
+	    if (desc) {
+	      o[key] = desc;
+	    } else {
+	      o[key] = {
+	        value: obj[key],
+	        writable: true,
+	        enumerable: String(key).substring(0, 2) !== "__",
+	        configurable: true
+	      };
+	    }
+	  }
+	  return o;
+	}
+	;
+	getOwnPropertyDescriptors.sham = true;
+
+	if (!Object$1.getOwnPropertyDescriptors) {
+	  if (!Object$1.prototype.__defineSetter__) {
+	    Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors;
+	  }
+	}
+
+	QUnit.test('Object.getOwnPropertyDescriptors', function (assert) {
+	  assert.isFunction(Object.getOwnPropertyDescriptors);
+	  assert.arity(Object.getOwnPropertyDescriptors, 1);
+	  assert.name(Object.getOwnPropertyDescriptors, 'getOwnPropertyDescriptors');
+	  var object = Object.create({
+	    q: 1
+	  }, {
+	    e: {
+	      value: 3
+	    }
+	  });
+	  object.w = 2;
+	  var symbol = _Symbol('4');
+	  object[symbol] = 4;
+	  var descriptors = Object.getOwnPropertyDescriptors(object);
+	  assert.strictEqual(descriptors.q, undefined);
+	  assert.deepEqual(descriptors.w, {
+	    enumerable: true,
+	    configurable: true,
+	    writable: true,
+	    value: 2
+	  });
+	  if (DESCRIPTORS) {
+	    assert.deepEqual(descriptors.e, {
+	      enumerable: false,
+	      configurable: false,
+	      writable: false,
+	      value: 3
+	    });
+	  } else {
+	    assert.deepEqual(descriptors.e, {
+	      enumerable: true,
+	      configurable: true,
+	      writable: true,
+	      value: 3
+	    });
+	  }
+	  assert.strictEqual(descriptors[symbol].value, 4);
+	});
+	QUnit.test('Object.getOwnPropertyDescriptors.sham flag', function (assert) {
+	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);
+	});
+
+	QUnit.test('Object.getOwnPropertyNames', function (assert) {
+	  assert.isFunction(Object.getOwnPropertyNames);
+	  assert.arity(Object.getOwnPropertyNames, 1);
+	  assert.name(Object.getOwnPropertyNames, 'getOwnPropertyNames');
+	  function F1() {
+	    this.w = 1;
+	  }
+	  function F2() {
+	    this.toString = 1;
+	  }
+	  F1.prototype.q = F2.prototype.q = 1;
+	  var names = Object.getOwnPropertyNames([1, 2, 3]);
+	  assert.strictEqual(names.length, 4);
+	  assert.ok(includes(names, '0'));
+	  assert.ok(includes(names, '1'));
+	  assert.ok(includes(names, '2'));
+	  assert.ok(includes(names, 'length'));
+	  assert.deepEqual(Object.getOwnPropertyNames(new F1()), ['w']);
+	  assert.deepEqual(Object.getOwnPropertyNames(new F2()), ['toString']);
+	  // assert.ok(includes(Object.getOwnPropertyNames(Array.prototype), 'toString'));
+	  // assert.ok(includes(Object.getOwnPropertyNames(Object.prototype), 'toString'));
+	  // assert.ok(includes(Object.getOwnPropertyNames(Object.prototype), 'constructor'));
+	  var primitives = [42, 'foo', false];
+	  var _loop = function (value) {
+	    assert.notThrows(function () {
+	      return Object.getOwnPropertyNames(value);
 	    }, "accept " + _typeof(value));
 	  };
 	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
 	    var value = _primitives[_i];
 	    _loop(value);
 	  }
-	});
-	if (JSON) {
-	  QUnit.test('Symbols & JSON.stringify', function (assert) {
-	    assert.strictEqual(JSON.stringify([1, _Symbol('foo'), false, _Symbol('bar'), {}]), '[1,null,false,null,{}]', 'array value');
-	    assert.strictEqual(JSON.stringify({
-	      symbol: _Symbol('symbol')
-	    }), '{}', 'object value');
-	    if (DESCRIPTORS) {
-	      var object = {
-	        bar: 2
-	      };
-	      object[_Symbol('symbol')] = 1;
-	      assert.strictEqual(JSON.stringify(object), '{"bar":2}', 'object key');
-	    }
-	    // assert.strictEqual(JSON.stringify(Symbol('symbol')), undefined, 'symbol value');
-	    if (_typeof(_Symbol()) === 'symbol') {
-	      assert.strictEqual(JSON.stringify(Object(_Symbol('symbol'))), '{}', 'boxed symbol');
-	    }
-	    // assert.strictEqual(JSON.stringify(undefined, () => 42), '42', 'replacer works with top-level undefined');
-	  });
-	}
-
-	if (DESCRIPTORS) {
-	  QUnit.test('Symbols & descriptors', function (assert) {
-	    var d = _Symbol('d');
-	    var e = _Symbol('e');
-	    var f = _Symbol('f');
-	    var i = _Symbol('i');
-	    var j = _Symbol('j');
-	    var prototype = {
-	      g: 'g'
-	    };
-	    prototype[i] = 'i';
-	    Object.defineProperty(prototype, 'h', {
-	      value: 'h'
-	    });
-	    Object.defineProperty(prototype, 'j', {
-	      value: 'j'
-	    });
-	    var object = create(prototype);
-	    object.a = 'a';
-	    object[d] = 'd';
-	    Object.defineProperty(object, 'b', {
-	      value: 'b'
-	    });
-	    Object.defineProperty(object, 'c', {
-	      value: 'c',
-	      enumerable: true
-	    });
-	    Object.defineProperty(object, e, {
-	      configurable: true,
-	      writable: true,
-	      value: 'e'
-	    });
-	    var descriptor = {
-	      value: 'f',
-	      enumerable: true
-	    };
-	    Object.defineProperty(object, f, descriptor);
-	    assert.strictEqual(descriptor.enumerable, true, 'defineProperty not changes descriptor object');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'a'), {
-	      configurable: true,
-	      writable: true,
-	      enumerable: true,
-	      value: 'a'
-	    }, 'getOwnPropertyDescriptor a');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'b'), {
-	      configurable: false,
-	      writable: false,
-	      enumerable: false,
-	      value: 'b'
-	    }, 'getOwnPropertyDescriptor b');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'c'), {
-	      configurable: false,
-	      writable: false,
-	      enumerable: true,
-	      value: 'c'
-	    }, 'getOwnPropertyDescriptor c');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, d), {
-	      configurable: true,
-	      writable: true,
-	      enumerable: true,
-	      value: 'd'
-	    }, 'getOwnPropertyDescriptor d');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
-	      configurable: true,
-	      writable: true,
-	      enumerable: false,
-	      value: 'e'
-	    }, 'getOwnPropertyDescriptor e');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, f), {
-	      configurable: false,
-	      writable: false,
-	      enumerable: true,
-	      value: 'f'
-	    }, 'getOwnPropertyDescriptor f');
-	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'g'), undefined, 'getOwnPropertyDescriptor g');
-	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'h'), undefined, 'getOwnPropertyDescriptor h');
-	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, i), undefined, 'getOwnPropertyDescriptor i');
-	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, j), undefined, 'getOwnPropertyDescriptor j');
-	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'k'), undefined, 'getOwnPropertyDescriptor k');
-	    assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, 'toString').enumerable, false, 'getOwnPropertyDescriptor on Object.prototype');
-	    assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, d), undefined, 'getOwnPropertyDescriptor on Object.prototype missed symbol');
-	    assert.strictEqual(keys(object).length, 2, 'Object.keys');
-	    assert.strictEqual(Object.getOwnPropertyNames(object).length, 3, 'Object.getOwnPropertyNames');
-	    assert.strictEqual(Object.getOwnPropertySymbols(object).length, 3, 'Object.getOwnPropertySymbols');
-	    assert.strictEqual(ownKeys(object).length, 6, 'Reflect.ownKeys');
-	    delete object[e];
-	    object[e] = 'e';
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
-	      configurable: true,
-	      writable: true,
-	      enumerable: true,
-	      value: 'e'
-	    }, 'redefined non-enum key');
-	  });
-	  QUnit.test('Symbols & Object.defineProperties', function (assert) {
-	    var c = _Symbol('c');
-	    var d = _Symbol('d');
-	    var descriptors = {
-	      a: {
-	        value: 'a'
-	      }
-	    };
-	    descriptors[c] = {
-	      value: 'c'
-	    };
-	    Object.defineProperty(descriptors, 'b', {
-	      value: {
-	        value: 'b'
-	      }
-	    });
-	    Object.defineProperty(descriptors, d, {
-	      value: {
-	        value: 'd'
-	      }
-	    });
-	    var object = Object.defineProperties({}, descriptors);
-	    assert.strictEqual(object.a, 'a', 'a');
-	    assert.strictEqual(object.b, undefined, 'b');
-	    assert.strictEqual(object[c], 'c', 'c');
-	    assert.strictEqual(object[d], undefined, 'd');
-	  });
-	  QUnit.test('Symbols & Object.create', function (assert) {
-	    var c = _Symbol('c');
-	    var d = _Symbol('d');
-	    var descriptors = {
-	      a: {
-	        value: 'a'
-	      }
-	    };
-	    descriptors[c] = {
-	      value: 'c'
-	    };
-	    Object.defineProperty(descriptors, 'b', {
-	      value: {
-	        value: 'b'
-	      }
-	    });
-	    Object.defineProperty(descriptors, d, {
-	      value: {
-	        value: 'd'
-	      }
-	    });
-	    var object = create(null, descriptors);
-	    assert.strictEqual(object.a, 'a', 'a');
-	    assert.strictEqual(object.b, undefined, 'b');
-	    assert.strictEqual(object[c], 'c', 'c');
-	    assert.strictEqual(object[d], undefined, 'd');
-	  });
-	  var constructors = ['Map', 'Set', 'Promise'];
-	  var _loop2 = function (name) {
-	    QUnit.test(name + "@@species", function (assert) {
-	      assert.strictEqual(GLOBAL[name][_Symbol.species], GLOBAL[name], name + "@@species === " + name);
-	      var Subclass = create(GLOBAL[name]);
-	      assert.strictEqual(Subclass[_Symbol.species], Subclass, name + " subclass");
-	    });
-	  };
-	  for (var _i2 = 0, _constructors = constructors; _i2 < _constructors.length; _i2++) {
-	    var name = _constructors[_i2];
-	    _loop2(name);
-	  }
-	  QUnit.test('Array@@species', function (assert) {
-	    assert.strictEqual(Array[_Symbol.species], Array, 'Array@@species === Array');
-	    var Subclass = create(Array);
-	    assert.strictEqual(Subclass[_Symbol.species], Subclass, 'Array subclass');
-	  });
-	  QUnit.test('Symbol.sham flag', function (assert) {
-	    assert.same(_Symbol.sham, _typeof(_Symbol()) === 'symbol' ? undefined : true);
-	  });
-	}
-
-	QUnit.test('Symbol#description', function (assert) {
-	  assert.same(_Symbol('foo').description, 'foo');
-	  assert.same(_Symbol('').description, '');
-	  assert.same(_Symbol(')').description, ')');
-	  assert.same(_Symbol({}).description, '[object Object]');
-	  assert.same(_Symbol(null).description, 'null');
-	  assert.same(_Symbol(undefined).description, undefined);
-	  assert.same(_Symbol().description, undefined);
-	  assert.same(Object(_Symbol('foo')).description, 'foo');
-	  assert.same(Object(_Symbol()).description, undefined);
-	  // if (DESCRIPTORS) {
-	  //   assert.ok(!Object.prototype.hasOwnProperty.call(Symbol('foo'), 'description'));
-	  //   const descriptor = Object.getOwnPropertyDescriptor(Symbol.prototype, 'description');
-	  //   assert.same(descriptor.enumerable, false);
-	  //   assert.same(descriptor.configurable, true);
-	  //   assert.same(typeof descriptor.get, 'function');
+	  assert["throws"](function () {
+	    Object.getOwnPropertyNames(null);
+	  }, TypeError, 'throws on null');
+	  assert["throws"](function () {
+	    Object.getOwnPropertyNames(undefined);
+	  }, TypeError, 'throws on undefined');
+	  // if(GLOBAL.document) {
+	  //   assert.notThrows(() => {
+	  //     const iframe = document.createElement('iframe');
+	  //     iframe.src = 'http://example.com';
+	  //     document.documentElement.appendChild(iframe);
+	  //     const window = iframe.contentWindow;
+	  //     document.documentElement.removeChild(iframe);
+	  //     return Object.getOwnPropertyNames(window);
+	  //   }, 'IE11 bug with iframe and window');
 	  // }
-	  if (_typeof(_Symbol()) == 'symbol') {
-	    assert.same(_Symbol('foo').toString(), 'Symbol(foo)');
-	    assert.same(String(_Symbol('foo')), 'Symbol(foo)');
-	    assert.same(_Symbol('').toString(), 'Symbol()');
-	    assert.same(String(_Symbol('')), 'Symbol()');
-	    assert.same(_Symbol().toString(), 'Symbol()');
-	    assert.same(String(_Symbol()), 'Symbol()');
-	  }
 	});
 
-	QUnit.test('Symbol.asyncIterator', function (assert) {
-	  assert.ok('asyncIterator' in _Symbol, 'Symbol.asyncIterator available');
-	  if (DESCRIPTORS) {
-	    var descriptor = Object.getOwnPropertyDescriptor(_Symbol, 'asyncIterator');
-	    assert.ok(!descriptor.enumerble, 'non-enumerable');
-	    assert.ok(!descriptor.writable, 'non-writable');
-	    assert.ok(!descriptor.configurable, 'non-configurable');
+	QUnit.test('Object.getPrototypeOf', function (assert) {
+	  assert.isFunction(Object.getPrototypeOf);
+	  assert.arity(Object.getPrototypeOf, 1);
+	  assert.name(Object.getPrototypeOf, 'getPrototypeOf');
+	  assert.looksNative(Object.getPrototypeOf);
+	  assert.nonEnumerable(Object, 'getPrototypeOf');
+	  assert.ok(Object.getPrototypeOf({}) === Object.prototype);
+	  assert.ok(Object.getPrototypeOf([]) === Array.prototype);
+	  function F() {/* empty */}
+	  assert.ok(Object.getPrototypeOf(new F()) === F.prototype);
+	  var object = {
+	    q: 1
+	  };
+	  assert.ok(Object.getPrototypeOf(Object.create(object)) === object);
+	  assert.ok(Object.getPrototypeOf(Object.create(null)) === null);
+	  assert.ok(Object.getPrototypeOf(Object.getPrototypeOf({})) === null);
+	  function Foo() {/* empty */}
+	  Foo.prototype.foo = 'foo';
+	  function Bar() {/* empty */}
+	  Bar.prototype = Object.create(Foo.prototype);
+	  Bar.prototype.constructor = Bar;
+	  assert.strictEqual(Object.getPrototypeOf(Bar.prototype).foo, 'foo');
+	  var primitives = [42, 'foo', false];
+	  var _loop = function (value) {
+	    assert.notThrows(function () {
+	      return Object.getPrototypeOf(value);
+	    }, "accept " + _typeof(value) + " \u4E0D\u652F\u6301");
+	  };
+	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
+	    var value = _primitives[_i];
+	    _loop(value);
 	  }
+	  assert["throws"](function () {
+	    return Object.getPrototypeOf(null);
+	  }, TypeError, 'throws on null');
+	  assert["throws"](function () {
+	    return Object.getPrototypeOf(undefined);
+	  }, TypeError, 'throws on undefined');
+	  assert.strictEqual(Object.getPrototypeOf(Object('foo')), String.prototype);
+	});
+	QUnit.test('Object.getPrototypeOf.sham flag', function (assert) {
+	  assert.same(Object.getPrototypeOf.sham, CORRECT_PROTOTYPE_GETTER ? undefined : true);
 	});
 
-	// import "./es.object.assign";
-	// import "./es.object.create";
-	// import "./es.object.define-properties";
-	// import "./es.object.define-property";
-	// import "./es.object.entries";
-	// import "./es.object.from-entries";
-	// import "./es.object.get-own-property-descriptor";
-	// import "./es.object.get-own-property-descriptors";
-	// import "./es.object.get-own-property-names";
-	// import "./es.object.get-prototype-of";
-	// import "./es.object.is";
-	// import "./es.object.keys";
-	// import "./es.object.set-prototype-of";
-	// import "./es.object.values";
+	function is(x, y) {
+	  if (x === y) {
+	    // Steps 1-5, 7-10
+	    // Steps 6.b-6.e: +0 != -0
+	    return x !== 0 || 1 / x === 1 / y;
+	  } else {
+	    // Step 6.a: NaN == NaN
+	    return x !== x && y !== y;
+	  }
+	}
+
+	if (!Object$1.is) {
+	  Object$1.is = is;
+	}
+
+	QUnit.test('Object.is', function (assert) {
+	  assert.isFunction(Object.is);
+	  assert.arity(Object.is, 2);
+	  assert.name(Object.is, 'is');
+	  assert.looksNative(Object.is);
+	  assert.nonEnumerable(Object, 'is');
+	  assert.ok(Object.is(1, 1), '1 is 1');
+	  assert.ok(Object.is(NaN, NaN), '1 is 1');
+	  assert.ok(!Object.is(0, -0), '0 isnt -0');
+	  assert.ok(!Object.is({}, {}), '{} isnt {}');
+	});
+
+	QUnit.test('Object.keys', function (assert) {
+	  assert.isFunction(Object.keys);
+	  assert.arity(Object.keys, 1);
+	  assert.name(Object.keys, 'keys');
+	  assert.looksNative(Object.keys);
+	  assert.nonEnumerable(Object, 'keys');
+	  function F1() {
+	    this.w = 1;
+	  }
+	  function F2() {
+	    this.toString = 1;
+	  }
+	  F1.prototype.q = F2.prototype.q = 1;
+	  assert.deepEqual(Object.keys([1, 2, 3]), ['0', '1', '2']);
+	  assert.deepEqual(Object.keys(new F1()), ['w']);
+	  assert.deepEqual(Object.keys(new F2()), ['toString']);
+	  assert.ok(!includes(Object.keys(Array.prototype), 'push'));
+	  var primitives = [42, 'foo', false];
+	  var _loop = function (value) {
+	    assert.notThrows(function () {
+	      return Object.keys(value);
+	    }, "accept " + _typeof(value) + " \u4E0D\u652F\u6301");
+	  };
+	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
+	    var value = _primitives[_i];
+	    _loop(value);
+	  }
+	  assert["throws"](function () {
+	    return Object.keys(null);
+	  }, TypeError, 'throws on null');
+	  assert["throws"](function () {
+	    return Object.keys(undefined);
+	  }, TypeError, 'throws on undefined');
+	});
+
+	var setPrototypeOf$1 = Object$1.setPrototypeOf;
+
+	var proto = !!setPrototypeOf$1 || '__proto__' in Object.prototype;
+
+	function setPrototypeOf(o, proto) {
+	  o.__proto__ = proto;
+	  var key;
+	  for (key in proto) {
+	    switch (key) {
+	      case "__proto__":
+	        continue;
+	    }
+	    if (Object.prototype.hasOwnProperty.call(proto, key)) {
+	      o[key] = proto[key];
+	    }
+	  }
+	  var i = dontEnums.length;
+	  while (i-- > 0) {
+	    key = dontEnums[i];
+	    if (Object.prototype.hasOwnProperty.call(proto, key)) {
+	      o[key] = proto[key];
+	    }
+	  }
+	  return o;
+	}
+
+	if (!proto) {
+	  Object$1.setPrototypeOf = setPrototypeOf;
+	}
+
+	if (PROTO) QUnit.test('Object.setPrototypeOf', function (assert) {
+	  assert.isFunction(Object.setPrototypeOf);
+	  assert.arity(Object.setPrototypeOf, 2);
+	  assert.name(Object.setPrototypeOf, 'setPrototypeOf');
+	  assert.looksNative(Object.setPrototypeOf);
+	  assert.nonEnumerable(Object, 'setPrototypeOf');
+	  assert.ok('apply' in Object.setPrototypeOf({}, Function.prototype), 'Parent properties in target');
+	  assert.strictEqual(Object.setPrototypeOf({
+	    a: 2
+	  }, {
+	    b: function () {
+	      return Math.pow(this.a, 2);
+	    }
+	  }).b(), 4, 'Child and parent properties in target');
+	  var object = {};
+	  assert.strictEqual(Object.setPrototypeOf(object, {
+	    a: 1
+	  }), object, 'setPrototypeOf return target');
+	  assert.ok(!('toString' in Object.setPrototypeOf({}, null)), 'Can set null as prototype');
+	});
+
+	function values(obj) {
+	  var r = [],
+	    key;
+	  if (isString(obj)) {
+	    for (key = 0; key < obj.length; key++) {
+	      r.push(obj.substr(key, 1));
+	    }
+	  } else if (Array.isArray(obj)) {
+	    for (key = 0; key < obj.length; key++) {
+	      r.push(obj[key]);
+	    }
+	  } else {
+	    forOwn(obj, function (value, key) {
+	      r.push(value);
+	    });
+	  }
+	  return r;
+	}
+
+	if (!Object$1.values) {
+	  Object$1.values = values;
+	}
+
+	QUnit.test('Object.values', function (assert) {
+	  assert.isFunction(Object.values);
+	  assert.arity(Object.values, 1);
+	  assert.name(Object.values, 'values');
+	  assert.looksNative(Object.values);
+	  assert.nonEnumerable(Object, 'values');
+	  assert.deepEqual(Object.values({
+	    q: 1,
+	    w: 2,
+	    e: 3
+	  }), [1, 2, 3]);
+	  assert.deepEqual(Object.values(new String('qwe')), ['q', 'w', 'e']);
+	  assert.deepEqual(Object.values(Object.assign(Object.create({
+	    q: 1,
+	    w: 2,
+	    e: 3
+	  }), {
+	    a: 4,
+	    s: 5,
+	    d: 6
+	  })), [4, 5, 6]);
+	  assert.deepEqual(Object.values({
+	    valueOf: 42
+	  }), [42], 'IE enum keys bug');
+	  try {
+	    assert.deepEqual(Function('values', "\n      return values({ a: 1, get b() {\n        delete this.c;\n        return 2;\n      }, c: 3 });\n    ")(Object.values), [1, 2]);
+	  } catch (_unused) {/* empty */}
+	  try {
+	    assert.deepEqual(Function('values', "\n      return values({ a: 1, get b() {\n        Object.defineProperty(this, \"c\", {\n          value: 4,\n          enumerable: false\n        });\n        return 2;\n      }, c: 3 });\n    ")(Object.values), [1, 2]);
+	  } catch (_unused2) {/* empty */}
+	});
 
 	// import "./es.global-this";
 

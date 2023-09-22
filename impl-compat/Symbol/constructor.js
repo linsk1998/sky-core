@@ -1,3 +1,4 @@
+import { isPrimitive } from "../../utils/isPrimitive";
 
 var symbol_sqe = 0;
 var all_symbol = {};
@@ -17,6 +18,9 @@ Symbol.prototype.toJSON = function() {
 };
 export function getOwnPropertySymbols(obj) {
 	var arr = [];
+	if(isPrimitive(obj)) {
+		return arr;
+	}
 	for(var key in obj) {
 		if(key.substring(0, 2) === "@@") {
 			if(Object.prototype.hasOwnProperty.call(obj, key)) {

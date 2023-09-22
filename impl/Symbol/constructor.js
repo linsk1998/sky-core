@@ -1,5 +1,7 @@
+import { isPrimitive } from "../../utils/isPrimitive";
 import { nonEnumerable } from "../../support/nonEnumerable";
 import { defineProperty } from "../../native/Object/defineProperty";
+import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
 var symbol_sqe = 0;
 var all_symbol = {};
 export function Symbol(desc) {
@@ -27,19 +29,34 @@ Symbol.prototype.toString = function() {
 Symbol.prototype.toJSON = function() {
 	return undefined;
 };
-export function getOwnPropertySymbols(obj) {
-	var arr = [];
-	var keys = Object.getOwnPropertyNames(obj);
-	var i = keys.length;
-	while(i-- > 0) {
-		var key = keys[i];
-		if(key.substring(0, 2) === "@@") {
-			if(Object.prototype.hasOwnProperty.call(obj, key)) {
+export var getOwnPropertySymbols = nonEnumerable ?
+	function(obj) {
+		var arr = [];
+		if(isPrimitive(obj)) {
+			return arr;
+		}
+		var keys = getOwnPropertyNames(obj);
+		var i = keys.length;
+		while(i-- > 0) {
+			var key = keys[i];
+			if(key.substring(0, 2) === "@@") {
 				if(key in all_symbol) {
 					arr.push(all_symbol[key]);
 				}
 			}
 		}
-	}
-	return arr;
-};
+		return arr;
+	} : function(obj) {
+		var arr = [];
+		if(isPrimitive(obj)) {
+			return arr;
+		}
+		for(var key in obj) {
+			if(key.substring(0, 2) === "@@") {
+				if(Object.prototype.hasOwnProperty.call(obj, key)) {
+					arr.push(all_symbol[key]);
+				}
+			}
+		}
+		return arr;
+	};
