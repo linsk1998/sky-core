@@ -51,6 +51,7 @@
 		"build:es": "rollup --config build/rollup.config.es.js && rollup --config build/rollup.config.es-compat.js && rollup --config build/rollup.config.es-modern.js",
 		"build:web": "rollup --config build/rollup.config.web.js && rollup --config build/rollup.config.web-compat.js && rollup --config build/rollup.config.web-modern.js",
 		"build:sky": "rollup --config build/rollup.config.sky.js && rollup --config build/rollup.config.sky-compat.js && rollup --config build/rollup.config.sky-modern.js",
+		"build:advance": "rollup --config build/rollup.config.advance-es2015.js && rollup --config build/rollup.config.advance-modern.js && rollup --config build/rollup.config.advance-compat.js",
 		"test": "rollup --config qunit/rollup.config.recommend-compat.js && rollup --config qunit/rollup.config.recommend-modern.js"
 	},
 	"type": "module",
@@ -59,5 +60,5 @@
 		"core-js",
 		"shim"
 	],
-	"version": "0.10.2"
+	"version": "0.11.0"
 }
