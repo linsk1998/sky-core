@@ -140,7 +140,7 @@ export default [
 			".toJSON": "sky-core/polyfill/Date/prototype/toJSON",
 			//ES5 Function
 			".bind": "sky-core/polyfill/Function/prototype/bind",
-			// ".name": "sky-core/polyfill/Function/prototype/name",
+			".name": "sky-core/polyfill/Function/prototype/name",
 			//ES5 Array
 			".every": "sky-core/polyfill/Array/prototype/every",
 			".filter": "sky-core/polyfill/Array/prototype/filter",

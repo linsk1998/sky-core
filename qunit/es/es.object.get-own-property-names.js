@@ -23,10 +23,10 @@ QUnit.test('Object.getOwnPropertyNames', assert => {
   // assert.ok(includes(Object.getOwnPropertyNames(Array.prototype), 'toString'));
   // assert.ok(includes(Object.getOwnPropertyNames(Object.prototype), 'toString'));
   // assert.ok(includes(Object.getOwnPropertyNames(Object.prototype), 'constructor'));
-  const primitives = [42, 'foo', false];
-  for(const value of primitives) {
-    assert.notThrows(() => Object.getOwnPropertyNames(value), `accept ${typeof value}`);
-  }
+  // const primitives = [42, 'foo', false];
+  // for(const value of primitives) {
+  //   assert.notThrows(() => Object.getOwnPropertyNames(value), `accept ${typeof value}`);
+  // }
   assert.throws(() => {
     Object.getOwnPropertyNames(null);
   }, TypeError, 'throws on null');

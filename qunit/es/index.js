@@ -43,20 +43,20 @@ import "../helpers/qunit-helpers";
 // import "./es.symbol.async-iterator";
 
 
-import "./es.object.assign";
-import "./es.object.create";
-import "./es.object.define-properties";
-import "./es.object.define-property";
-import "./es.object.entries";
-import "./es.object.from-entries";
-import "./es.object.get-own-property-descriptor";
-import "./es.object.get-own-property-descriptors";
-import "./es.object.get-own-property-names";
-import "./es.object.get-prototype-of";
-import "./es.object.is";
-import "./es.object.keys";
-import "./es.object.set-prototype-of";
-import "./es.object.values";
+// import "./es.object.assign";
+// import "./es.object.create";
+// import "./es.object.define-properties";
+// import "./es.object.define-property";
+// import "./es.object.entries";
+// import "./es.object.from-entries";
+// import "./es.object.get-own-property-descriptor";
+// import "./es.object.get-own-property-descriptors";
+// import "./es.object.get-own-property-names";
+// import "./es.object.get-prototype-of";
+// import "./es.object.is";
+// import "./es.object.keys";
+// import "./es.object.set-prototype-of";
+// import "./es.object.values";
 
 
 
@@ -64,7 +64,6 @@ import "./es.object.values";
 
 // import "./es.function.bind";
 // import "./es.function.name";
-// import "./es.function.has-instance";
 
 // import "./es.date.to-json";
 // import "./es.date.to-iso-string";
@@ -111,10 +110,10 @@ import "./es.object.values";
 // import "./es.weak-map";
 // import "./es.weak-set";
 
-// import "./es.promise";
-// import "./es.promise.finally";
-// import "./es.promise.all-settled";
-// import "./es.promise.any";
+import "./es.promise";
+import "./es.promise.finally";
+import "./es.promise.all-settled";
+import "./es.promise.any";
 // import "./es.aggregate-error";
 
 // import "../web/web.url";

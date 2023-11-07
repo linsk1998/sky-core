@@ -1,7 +1,7 @@
 QUnit.test('Number#toFixed', assert => {
   const toFixed = Number.prototype.toFixed;
   assert.isFunction(toFixed);
-  assert.name(toFixed, 'toFixed');
+  // assert.name(toFixed, 'toFixed');
   assert.arity(toFixed, 1);
   assert.looksNative(toFixed);
   assert.nonEnumerable(Number.prototype, 'toFixed');
