@@ -78,7 +78,7 @@
 
 	var symbol_sqe = 0;
 	var all_symbol = {};
-	function _Symbol$2(desc) {
+	function _Symbol$1(desc) {
 	  this.__name__ = "@@" + desc + ":" + symbol_sqe;
 	  if (desc !== undefined) {
 	    this.description = String(desc);
@@ -87,10 +87,10 @@
 	  all_symbol[this.__name__] = this;
 	}
 	;
-	_Symbol$2.prototype.toString = function () {
+	_Symbol$1.prototype.toString = function () {
 	  return this.__name__;
 	};
-	_Symbol$2.prototype.toJSON = function () {
+	_Symbol$1.prototype.toJSON = function () {
 	  return undefined;
 	};
 	function getOwnPropertySymbols(obj) {
@@ -111,32 +111,32 @@
 	}
 	;
 
-	function _Symbol$1(desc) {
-	  return new _Symbol$2(desc);
+	function _Symbol(desc) {
+	  return new _Symbol$1(desc);
 	}
 	;
-	_Symbol$1.sham = true;
+	_Symbol.sham = true;
 
-	_Symbol$1.sham = true;
-	_Symbol$1.asyncIterator = "@@asyncIterator";
-	_Symbol$1.isConcatSpreadable = "@@isConcatSpreadable";
-	_Symbol$1.match = "@@match";
-	_Symbol$1.matchAll = "@@matchAll";
-	_Symbol$1.replace = "@@replace";
-	_Symbol$1.search = "@@search";
-	_Symbol$1.species = "@@species";
-	_Symbol$1.split = "@@split";
-	_Symbol$1.toPrimitive = "@@toPrimitive";
-	_Symbol$1.toStringTag = "@@toStringTag";
-	_Symbol$1.unscopables = "@@unscopables";
+	_Symbol.sham = true;
+	_Symbol.asyncIterator = "@@asyncIterator";
+	_Symbol.isConcatSpreadable = "@@isConcatSpreadable";
+	_Symbol.match = "@@match";
+	_Symbol.matchAll = "@@matchAll";
+	_Symbol.replace = "@@replace";
+	_Symbol.search = "@@search";
+	_Symbol.species = "@@species";
+	_Symbol.split = "@@split";
+	_Symbol.toPrimitive = "@@toPrimitive";
+	_Symbol.toStringTag = "@@toStringTag";
+	_Symbol.unscopables = "@@unscopables";
 
 	function _typeof(obj) {
 	  "@babel/helpers - typeof";
 
-	  return _typeof = "function" == typeof _Symbol$1 && "symbol" == typeof $inject_Symbol_iterator ? function (obj) {
+	  return _typeof = "function" == typeof _Symbol && "symbol" == typeof $inject_Symbol_iterator ? function (obj) {
 	    return typeof obj;
 	  } : function (obj) {
-	    return obj && "function" == typeof _Symbol$1 && obj.constructor === _Symbol$1 && obj !== _Symbol$1.prototype ? "symbol" : typeof obj;
+	    return obj && "function" == typeof _Symbol && obj.constructor === _Symbol && obj !== _Symbol.prototype ? "symbol" : typeof obj;
 	  }, _typeof(obj);
 	}
 
@@ -391,7 +391,7 @@
 	}
 
 	function _createForOfIteratorHelperLoose(o, allowArrayLike) {
-	  var it = typeof _Symbol$1 !== "undefined" && o[$inject_Symbol_iterator] || o["@@iterator"];
+	  var it = typeof _Symbol !== "undefined" && o[$inject_Symbol_iterator] || o["@@iterator"];
 	  if (it) return (it = it.call(o)).next.bind(it);
 	  if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
 	    if (it) o = it;
@@ -657,29 +657,6 @@
 	  });
 	};
 
-	function indexOf(e) {
-	  var fromIndex = 0;
-	  if (arguments.length > 1) {
-	    fromIndex = 0 + arguments[1];
-	    if (fromIndex < 0) {
-	      fromIndex += this.length;
-	      if (fromIndex < 0) {
-	        fromIndex = 0;
-	      }
-	    }
-	  }
-	  for (var i = fromIndex; i < this.length; i++) {
-	    if (i in this && this[i] === e) {
-	      return i;
-	    }
-	  }
-	  return -1;
-	}
-
-	if (!Array.prototype.indexOf) {
-	  Array.prototype.indexOf = indexOf;
-	}
-
 	var Promise$3 = window.Promise;
 
 	var queueMicrotask$2 = window.queueMicrotask;
@@ -716,6 +693,29 @@
 
 	if (!queueMicrotask$2) {
 	  window.queueMicrotask = queueMicrotask$1;
+	}
+
+	function indexOf(e) {
+	  var fromIndex = 0;
+	  if (arguments.length > 1) {
+	    fromIndex = 0 + arguments[1];
+	    if (fromIndex < 0) {
+	      fromIndex += this.length;
+	      if (fromIndex < 0) {
+	        fromIndex = 0;
+	      }
+	    }
+	  }
+	  for (var i = fromIndex; i < this.length; i++) {
+	    if (i in this && this[i] === e) {
+	      return i;
+	    }
+	  }
+	  return -1;
+	}
+
+	if (!Array.prototype.indexOf) {
+	  Array.prototype.indexOf = indexOf;
 	}
 
 	function isObject(obj) {
@@ -976,561 +976,52 @@
 	  Promise$1.prototype["finally"] = promise_finally;
 	}
 
-	var Object$1 = window.Object;
-
-	var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
-
-	// from core-js
-	var GT = '>';
-	var LT = '<';
-	var SCRIPT = 'script';
-	function scriptTag(content) {
-	  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
-	}
-
-	// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
-	function NullProtoObjectViaActiveX(activeXDocument) {
-	  activeXDocument.write(scriptTag(''));
-	  activeXDocument.close();
-	  var temp = activeXDocument.parentWindow.Object;
-	  activeXDocument = null; // avoid memory leak
-	  return temp;
-	}
-	;
-
-	// Create object with fake `null` prototype: use iframe Object with cleared prototype
-	function NullProtoObjectViaIFrame() {
-	  // Thrash, waste and sodomy: IE GC bug
-	  var iframe = documentCreateElement('iframe');
-	  var JS = 'java' + SCRIPT + ':';
-	  var iframeDocument;
-	  iframe.style.display = 'none';
-	  html.appendChild(iframe);
-	  // https://github.com/zloirock/core-js/issues/475
-	  iframe.src = String(JS);
-	  iframeDocument = iframe.contentWindow.document;
-	  iframeDocument.open();
-	  iframeDocument.write(scriptTag('document.F=Object'));
-	  iframeDocument.close();
-	  return iframeDocument.F;
-	}
-	;
-
-	// Check for document.domain and active x support
-	// No need to use active x approach when document.domain is not set
-	// see https://github.com/es-shims/es5-shim/issues/150
-	// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
-	// avoid IE GC bug
-	var activeXDocument;
-	var NullProtoObject = function () {
-	  try {
-	    /* global ActiveXObject -- old IE */
-	    activeXDocument = document.domain && new ActiveXObject('htmlfile');
-	  } catch (error) {/* ignore */}
-	  NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
-	  var i = dontEnums.length;
-	  while (i--) delete NullProtoObject.prototype[dontEnums[i]];
-	  return NullProtoObject();
-	};
-
-	var defineProperty$1 = Object$1.defineProperty;
-
-	function ie8_defineProperty(obj, prop, descriptor) {
-	  if (obj instanceof Object || obj instanceof NullProtoObject) {
-	    compat_defineProperty.apply(Object, arguments);
-	  } else if (window == obj || obj instanceof Element || obj instanceof HTMLDocument) {
-	    delete descriptor.enumerable;
-	    defineProperty$1.apply(Object, arguments);
-	  } else {
-	    compat_defineProperty.apply(Object, arguments);
+	function allSettled(promises) {
+	  if (!Array.isArray(promises)) {
+	    return Promise.reject(new TypeError('You must pass an array to allSettled.'));
 	  }
-	  return obj;
-	}
-	;
-	function defineProperty(obj, prop, description) {
-	  if (defineProperty$1) {
-	    if (obj instanceof Object || obj instanceof NullProtoObject) {
-	      compat_defineProperty.apply(Object, arguments);
-	    } else {
-	      delete description.enumerable;
-	      defineProperty$1.apply(Object, arguments);
-	    }
-	  } else {
-	    compat_defineProperty.apply(Object, arguments);
-	  }
-	  return obj;
-	}
-	;
-	function compat_defineProperty(obj, prop, description) {
-	  if (_typeof(obj) !== "object" && typeof obj !== "function") {
-	    throw new TypeError("Object.defineProperty called on non-object");
-	  }
-	  prop = String(prop);
-	  var descriptor = {
-	    configurable: true,
-	    enumerable: true,
-	    writable: true
-	  };
-	  if ('value' in description) {
-	    obj[prop] = description.value;
-	    descriptor.value = description.value;
-	  } else {
-	    descriptor.get = description.get;
-	    descriptor.set = description.set;
-	  }
-	  obj['@@desc:' + prop] = descriptor;
-	  return obj;
-	}
-	;
-
-	if (Object$1.defineProperty) {
-	  Object$1.defineProperty = ie8_defineProperty;
-	} else {
-	  Object$1.defineProperty = compat_defineProperty;
-	}
-	Object$1.defineProperty.sham = true;
-
-	var _Symbol = GLOBAL.Symbol || {};
-	var setPrototypeOf = Object.setPrototypeOf,
-	  create = Object.create;
-	QUnit.test('Promise', function (assert) {
-	  assert.isFunction(Promise);
-	  assert.arity(Promise, 1);
-	  assert.name(Promise, 'Promise');
-	  assert.looksNative(Promise);
-	  assert["throws"](function () {
-	    Promise();
-	  }, 'throws w/o `new`');
-	  new Promise(function (resolve, reject) {
-	    assert.isFunction(resolve, 'resolver is function');
-	    assert.isFunction(reject, 'rejector is function');
-	    if (STRICT) assert.same(this, undefined, 'correct executor context');
-	  });
-	});
-	if (DESCRIPTORS) QUnit.asyncTest('Promise operations order', function (assert) {
-	  var resolve, resolve2;
-	  expect(1);
-	  var EXPECTED_ORDER = 'DEHAFGBC';
-	  var result = '';
-	  var promise1 = new Promise(function (r) {
-	    resolve = r;
-	  });
-	  resolve({
-	    then: function () {
-	      result += 'A';
-	      throw Error();
-	    }
-	  });
-	  promise1["catch"](function () {
-	    result += 'B';
-	  });
-	  promise1["catch"](function () {
-	    result += 'C';
-	    assert.same(result, EXPECTED_ORDER);
-	    start();
-	  });
-	  var promise2 = new Promise(function (r) {
-	    resolve2 = r;
-	  });
-	  resolve2(Object.defineProperty({}, 'then', {
-	    get: function () {
-	      result += 'D';
-	      throw Error();
-	    }
-	  }));
-	  resolve2(Object.defineProperty({}, 'then', {
-	    get: function () {
-	      result += 'I';
-	      return 1;
-	    }
-	  }));
-	  result += 'E';
-	  promise2["catch"](function () {
-	    result += 'F';
-	  });
-	  promise2["catch"](function () {
-	    result += 'G';
-	  });
-	  result += 'H';
-	  setTimeout(function () {
-	    if (!~result.indexOf('C')) {
-	      assert.same(result, EXPECTED_ORDER);
-	      start();
-	    }
-	  }, 1e3);
-	});
-	QUnit.test('Promise#then', function (assert) {
-	  assert.isFunction(Promise.prototype.then);
-	  if (NATIVE) assert.arity(Promise.prototype.then, 2);
-	  assert.name(Promise.prototype.then, 'then');
-	  assert.looksNative(Promise.prototype.then);
-	  assert.nonEnumerable(Promise.prototype, 'then');
-	  var promise = new Promise(function (resolve) {
-	    resolve(42);
-	  });
-	  var FakePromise1 = promise.constructor = function (executor) {
-	    executor(function () {/* empty */}, function () {/* empty */});
-	  };
-	  var FakePromise2 = FakePromise1[_Symbol.species] = function (executor) {
-	    executor(function () {/* empty */}, function () {/* empty */});
-	  };
-	  // assert.ok(promise.then(() => { /* empty */ }) instanceof FakePromise2, 'subclassing, @@species pattern');
-	  promise = new Promise(function (resolve) {
-	    resolve(42);
-	  });
-	  promise.constructor = FakePromise1 = function (executor) {
-	    executor(function () {/* empty */}, function () {/* empty */});
-	  };
-	  assert.ok(promise.then(function () {/* empty */}) instanceof Promise, 'subclassing, incorrect `this` pattern');
-	  promise = new Promise(function (resolve) {
-	    resolve(42);
-	  });
-	  // promise.constructor = FakePromise1 = function(executor) {
-	  //   executor(() => { /* empty */ }, () => { /* empty */ });
-	  // };
-	  // FakePromise1[Symbol.species] = function() { /* empty */ };
-	  // assert.throws(() => {
-	  //   promise.then(() => { /* empty */ });
-	  // }, 'NewPromiseCapability validations, #1');
-	  // FakePromise1[Symbol.species] = function(executor) {
-	  //   executor(null, () => { /* empty */ });
-	  // };
-	  // assert.throws(() => {
-	  //   promise.then(() => { /* empty */ });
-	  // }, 'NewPromiseCapability validations, #2');
-	  // FakePromise1[Symbol.species] = function(executor) {
-	  //   executor(() => { /* empty */ }, null);
-	  // };
-	  // assert.throws(() => {
-	  //   promise.then(() => { /* empty */ });
-	  // }, 'NewPromiseCapability validations, #3');
-	});
-
-	QUnit.test('Promise#catch', function (assert) {
-	  assert.isFunction(Promise.prototype["catch"]);
-	  if (NATIVE) assert.arity(Promise.prototype["catch"], 1);
-	  if (NATIVE) assert.name(Promise.prototype["catch"], 'catch');
-	  assert.looksNative(Promise.prototype["catch"]);
-	  assert.nonEnumerable(Promise.prototype, 'catch');
-	  var promise = new Promise(function (resolve) {
-	    resolve(42);
-	  });
-	  var FakePromise1 = promise.constructor = function (executor) {
-	    executor(function () {/* empty */}, function () {/* empty */});
-	  };
-	  promise = new Promise(function (resolve) {
-	    resolve(42);
-	  });
-	  promise.constructor = FakePromise1 = function (executor) {
-	    executor(function () {/* empty */}, function () {/* empty */});
-	  };
-	  assert.ok(promise["catch"](function () {/* empty */}) instanceof Promise, 'subclassing, incorrect `this` pattern');
-	  promise = new Promise(function (resolve) {
-	    resolve(42);
-	  });
-	  promise.constructor = FakePromise1 = function (executor) {
-	    executor(function () {/* empty */}, function () {/* empty */});
-	  };
-	  assert.same(Promise.prototype["catch"].call({
-	    then: function (x, y) {
-	      return y;
-	    }
-	  }, 42), 42, 'calling `.then`');
-	});
-	QUnit.test('Promise.resolve', function (assert) {
-	  var resolve = Promise.resolve;
-	  assert.isFunction(resolve);
-	  if (NATIVE) assert.arity(resolve, 1);
-	  assert.name(resolve, 'resolve');
-	  assert.looksNative(resolve);
-	  assert.nonEnumerable(Promise, 'resolve');
-	  assert["throws"](function () {
-	    resolve.call(null, 1)["catch"](function () {/* empty */});
-	  }, TypeError, 'throws without context');
-	  // function FakePromise1(executor) {
-	  //   executor(() => { /* empty */ }, () => { /* empty */ });
-	  // }
-	  // FakePromise1[Symbol.species] = function(executor) {
-	  //   executor(() => { /* empty */ }, () => { /* empty */ });
-	  // };
-	  // assert.ok(resolve.call(FakePromise1, 42) instanceof FakePromise1, 'subclassing, `this` pattern');
-	  // assert.throws(() => {
-	  //   resolve.call(() => { /* empty */ }, 42);
-	  // }, 'NewPromiseCapability validations, #1');
-	  // assert.throws(() => {
-	  //   resolve.call(executor => {
-	  //     executor(null, () => { /* empty */ });
-	  //   }, 42);
-	  // }, 'NewPromiseCapability validations, #2');
-	  // assert.throws(() => {
-	  //   resolve.call(executor => {
-	  //     executor(() => { /* empty */ }, null);
-	  //   }, 42);
-	  // }, 'NewPromiseCapability validations, #3');
-	});
-
-	QUnit.test('Promise.reject', function (assert) {
-	  var reject = Promise.reject;
-	  assert.isFunction(reject);
-	  if (NATIVE) assert.arity(reject, 1);
-	  assert.name(reject, 'reject');
-	  assert.looksNative(reject);
-	  assert.nonEnumerable(Promise, 'reject');
-	  assert["throws"](function () {
-	    reject.call(null, 1)["catch"](function () {/* empty */});
-	  }, TypeError, 'throws without context');
-	  // function FakePromise1(executor) {
-	  //   executor(() => { /* empty */ }, () => { /* empty */ });
-	  // }
-	  // FakePromise1[Symbol.species] = function(executor) {
-	  //   executor(() => { /* empty */ }, () => { /* empty */ });
-	  // };
-	  // assert.ok(reject.call(FakePromise1, 42) instanceof FakePromise1, 'subclassing, `this` pattern');
-	  // assert.throws(() => {
-	  //   reject.call(() => { /* empty */ }, 42);
-	  // }, 'NewPromiseCapability validations, #1');
-	  // assert.throws(() => {
-	  //   reject.call(executor => {
-	  //     executor(null, () => { /* empty */ });
-	  //   }, 42);
-	  // }, 'NewPromiseCapability validations, #2');
-	  // assert.throws(() => {
-	  //   reject.call(executor => {
-	  //     executor(() => { /* empty */ }, null);
-	  //   }, 42);
-	  // }, 'NewPromiseCapability validations, #3');
-	});
-
-	QUnit.test('Promise.all', function (assert) {
-	  var FakePromise1, FakePromise2;
-	  var all = Promise.all,
-	    resolve = Promise.resolve;
-	  assert.isFunction(all);
-	  assert.arity(all, 1);
-	  // assert.name(all, 'all');
-	  assert.looksNative(all);
-	  assert.nonEnumerable(Promise, 'all');
-	  // const iterable = createIterable([1, 2, 3]);
-	  // Promise.all(iterable).catch(() => { /* empty */ });
-	  // assert.ok(iterable.received, 'works with iterables: iterator received');
-	  // assert.ok(iterable.called, 'works with iterables: next called');
-	  // const array = [];
-	  // let done = false;
-	  // array['@@iterator'] = undefined;
-	  // array[Symbol.iterator] = function() {
-	  //   done = true;
-	  //   return [][Symbol.iterator].call(this);
-	  // };
-	  // Promise.all(array);
-	  // assert.ok(done);
-	  // assert.throws(() => {
-	  //   all.call(null, []).catch(() => { /* empty */ });
-	  // }, TypeError, 'throws without context');
-	  // done = false;
-	  // try {
-	  //   Promise.resolve = function() {
-	  //     throw new Error();
-	  //   };
-	  //   Promise.all(createIterable([1, 2, 3], {
-	  //     return() {
-	  //       done = true;
-	  //     },
-	  //   })).catch(() => { /* empty */ });
-	  // } catch(error) { /* empty */ }
-	  // Promise.resolve = resolve;
-	  // assert.ok(done, 'iteration closing');
-	  // FakePromise1 = function(executor) {
-	  //   executor(() => { /* empty */ }, () => { /* empty */ });
-	  // };
-	  // FakePromise2 = FakePromise1[Symbol.species] = function(executor) {
-	  //   executor(() => { /* empty */ }, () => { /* empty */ });
-	  // };
-	  // FakePromise1.resolve = FakePromise2.resolve = resolve.bind(Promise);
-	  // assert.ok(all.call(FakePromise1, [1, 2, 3]) instanceof FakePromise1, 'subclassing, `this` pattern');
-	  // FakePromise1 = function() { /* empty */ };
-	  // FakePromise2 = function(executor) {
-	  //   executor(null, () => { /* empty */ });
-	  // };
-	  // const FakePromise3 = function(executor) {
-	  //   executor(() => { /* empty */ }, null);
-	  // };
-	  // FakePromise1.resolve = FakePromise2.resolve = FakePromise3.resolve = resolve.bind(Promise);
-	  // assert.throws(() => {
-	  //   all.call(FakePromise1, [1, 2, 3]);
-	  // }, 'NewPromiseCapability validations, #1');
-	  // assert.throws(() => {
-	  //   all.call(FakePromise2, [1, 2, 3]);
-	  // }, 'NewPromiseCapability validations, #2');
-	  // assert.throws(() => {
-	  //   all.call(FakePromise3, [1, 2, 3]);
-	  // }, 'NewPromiseCapability validations, #3');
-	});
-
-	QUnit.test('Promise.race', function (assert) {
-	  var FakePromise1, FakePromise2;
-	  var race = Promise.race,
-	    resolve = Promise.resolve;
-	  assert.isFunction(race);
-	  assert.arity(race, 1);
-	  // assert.name(race, 'race');
-	  assert.looksNative(race);
-	  assert.nonEnumerable(Promise, 'race');
-	  var iterable = createIterable([1, 2, 3]);
-	  Promise.race(iterable)["catch"](function () {/* empty */});
-	  assert.ok(iterable.received, 'works with iterables: iterator received');
-	  assert.ok(iterable.called, 'works with iterables: next called');
-	  var array = [];
-	  var done = false;
-	  array['@@iterator'] = undefined;
-	  array[_Symbol.iterator] = function () {
-	    done = true;
-	    return [][_Symbol.iterator].call(this);
-	  };
-	  Promise.race(array);
-	  assert.ok(done);
-	  assert["throws"](function () {
-	    race.call(null, [])["catch"](function () {/* empty */});
-	  }, TypeError, 'throws without context');
-	  done = false;
-	  try {
-	    Promise.resolve = function () {
-	      throw new Error();
-	    };
-	    Promise.race(createIterable([1, 2, 3], {
-	      "return": function () {
-	        done = true;
+	  return new Promise(function (resolve, reject) {
+	    if (promises.length == 0) return resolve(new Array());
+	    var result = new Array(promises.length);
+	    var c = 0;
+	    promises.forEach(function (one, index) {
+	      if (typeof one.then === "function") {
+	        one.then(function (data) {
+	          c++;
+	          result[index] = {
+	            value: data,
+	            status: 'fulfilled'
+	          };
+	          if (c >= promises.length) {
+	            resolve(result);
+	          }
+	        }, function (data) {
+	          c++;
+	          result[index] = {
+	            reason: data,
+	            status: 'rejected'
+	          };
+	          if (c >= promises.length) {
+	            resolve(result);
+	          }
+	        });
+	      } else {
+	        c++;
+	        result[index] = {
+	          value: data,
+	          status: 'fulfilled'
+	        };
+	        if (c >= promises.length) {
+	          resolve(result);
+	        }
 	      }
-	    }))["catch"](function () {/* empty */});
-	  } catch (error) {/* empty */}
-	  Promise.resolve = resolve;
-	  assert.ok(done, 'iteration closing');
-	  // FakePromise1 = function(executor) {
-	  //   executor(() => { /* empty */ }, () => { /* empty */ });
-	  // };
-	  // FakePromise2 = FakePromise1[Symbol.species] = function(executor) {
-	  //   executor(() => { /* empty */ }, () => { /* empty */ });
-	  // };
-	  // FakePromise1.resolve = FakePromise2.resolve = resolve.bind(Promise);
-	  // assert.ok(race.call(FakePromise1, [1, 2, 3]) instanceof FakePromise1, 'subclassing, `this` pattern');
-	  // FakePromise1 = function() { /* empty */ };
-	  // FakePromise2 = function(executor) {
-	  //   executor(null, () => { /* empty */ });
-	  // };
-	  // const FakePromise3 = function(executor) {
-	  //   executor(() => { /* empty */ }, null);
-	  // };
-	  // FakePromise1.resolve = FakePromise2.resolve = FakePromise3.resolve = resolve.bind(Promise);
-	  // assert.throws(() => {
-	  //   race.call(FakePromise1, [1, 2, 3]);
-	  // }, 'NewPromiseCapability validations, #1');
-	  // assert.throws(() => {
-	  //   race.call(FakePromise2, [1, 2, 3]);
-	  // }, 'NewPromiseCapability validations, #2');
-	  // assert.throws(() => {
-	  //   race.call(FakePromise3, [1, 2, 3]);
-	  // }, 'NewPromiseCapability validations, #3');
-	});
-
-	// if(PROTO) QUnit.test('Promise subclassing', assert => {
-	//   function SubPromise(executor) {
-	//     const self = new Promise(executor);
-	//     setPrototypeOf(self, SubPromise.prototype);
-	//     self.mine = 'subclass';
-	//     return self;
-	//   }
-	//   setPrototypeOf(SubPromise, Promise);
-	//   SubPromise.prototype = create(Promise.prototype);
-	//   SubPromise.prototype.constructor = SubPromise;
-	//   let promise1 = SubPromise.resolve(5);
-	//   assert.strictEqual(promise1.mine, 'subclass');
-	//   promise1 = promise1.then(it => {
-	//     assert.strictEqual(it, 5);
-	//   });
-	//   assert.strictEqual(promise1.mine, 'subclass');
-	//   let promise2 = new SubPromise(resolve => {
-	//     resolve(6);
-	//   });
-	//   assert.strictEqual(promise2.mine, 'subclass');
-	//   promise2 = promise2.then(it => {
-	//     assert.strictEqual(it, 6);
-	//   });
-	//   assert.strictEqual(promise2.mine, 'subclass');
-	//   const promise3 = SubPromise.all([promise1, promise2]);
-	//   assert.strictEqual(promise3.mine, 'subclass');
-	//   assert.ok(promise3 instanceof Promise);
-	//   assert.ok(promise3 instanceof SubPromise);
-	//   promise3.then(assert.async(), error => {
-	//     assert.ok(false, error);
-	//   });
-	// });
-
-	var promise$1 = function () {
-	  try {
-	    return Function('return (async function () { /* empty */ })()')();
-	  } catch (_unused) {/* empty */}
-	}();
-	if (promise$1 && promise$1.constructor !== Promise) QUnit.test('Native Promise, patched', function (assert) {
-	  assert.isFunction(promise$1.then);
-	  assert.arity(promise$1.then, 2);
-	  assert.looksNative(promise$1.then);
-	  assert.nonEnumerable(promise$1.constructor.prototype, 'then');
-	  function empty() {/* empty */}
-	  assert.ok(promise$1.then(empty) instanceof Promise, '`.then` returns `Promise` instance #1');
-	  assert.ok(new promise$1.constructor(empty).then(empty) instanceof Promise, '`.then` returns `Promise` instance #2');
-	  assert.ok(promise$1["catch"](empty) instanceof Promise, '`.catch` returns `Promise` instance #1');
-	  assert.ok(new promise$1.constructor(empty)["catch"](empty) instanceof Promise, '`.catch` returns `Promise` instance #2');
-	  assert.ok(promise$1["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #1');
-	  assert.ok(new promise$1.constructor(empty)["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
-	});
-
-	QUnit.test('Promise#finally', function (assert) {
-	  assert.isFunction(Promise.prototype["finally"]);
-	  assert.arity(Promise.prototype["finally"], 1);
-	  assert.looksNative(Promise.prototype["finally"]);
-	  assert.nonEnumerable(Promise.prototype, 'finally');
-	  assert.ok(Promise.resolve(42)["finally"](function () {/* empty */}) instanceof Promise, 'returns a promise');
-	});
-	QUnit.asyncTest('Promise#finally, resolved', function (assert) {
-	  expect(3);
-	  var called = 0;
-	  var argument = null;
-	  Promise.resolve(42)["finally"](function (it) {
-	    called++;
-	    argument = it;
-	  }).then(function (it) {
-	    assert.same(it, 42, 'resolved with a correct value');
-	    assert.same(called, 1, 'onFinally function called one time');
-	    assert.same(argument, undefined, 'onFinally function called with a correct argument');
-	    start();
+	    });
 	  });
-	});
-	QUnit.asyncTest('Promise#finally, rejected', function (assert) {
-	  expect(2);
-	  var called = 0;
-	  var argument = null;
-	  Promise.reject(42)["finally"](function (it) {
-	    called++;
-	    argument = it;
-	  })["catch"](function () {
-	    assert.same(called, 1, 'onFinally function called one time');
-	    assert.same(argument, undefined, 'onFinally function called with a correct argument');
-	    start();
-	  });
-	});
-	var promise = function () {
-	  try {
-	    return Function('return (async function () { /* empty */ })()')();
-	  } catch (_unused) {/* empty */}
-	}();
-	if (promise && promise.constructor !== Promise) QUnit.test('Native Promise, patched', function (assert) {
-	  assert.isFunction(promise["finally"]);
-	  assert.arity(promise["finally"], 1);
-	  assert.looksNative(promise["finally"]);
-	  assert.nonEnumerable(promise.constructor.prototype, 'finally');
-	  function empty() {/* empty */}
-	  assert.ok(promise["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #1');
-	  assert.ok(new promise.constructor(empty)["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
-	});
+	}
+
+	if (!Promise$1.allSettled) {
+	  Promise$1.allSettled = allSettled;
+	}
 
 	QUnit.test('Promise.allSettled', function (assert) {
 	  assert.isFunction(Promise.allSettled);
@@ -1563,48 +1054,7 @@
 	  });
 	});
 
-	QUnit.test('Promise.any', function (assert) {
-	  assert.isFunction(Promise.any);
-	  assert.arity(Promise.any, 1);
-	  assert.looksNative(Promise.any);
-	  assert.nonEnumerable(Promise, 'any');
-	  assert.ok(Promise.any([1, 2, 3]) instanceof Promise, 'returns a promise');
-	});
-	QUnit.test('Promise.any, resolved', function (assert) {
-	  assert.expect(1);
-	  var async = assert.async();
-	  Promise.any([Promise.resolve(1), Promise.reject(2), Promise.resolve(3)]).then(function (it) {
-	    assert.same(it, 1, 'resolved with a correct value');
-	    async();
-	  });
-	});
-	QUnit.test('Promise.any, rejected #1', function (assert) {
-	  assert.expect(2);
-	  var async = assert.async();
-	  Promise.any([Promise.reject(1), Promise.reject(2), Promise.reject(3)])["catch"](function (error) {
-	    assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
-	    assert.deepEqual(error.errors, [1, 2, 3], 'rejected with a correct value');
-	    async();
-	  });
-	});
-	QUnit.test('Promise.any, rejected #2', function (assert) {
-	  assert.expect(1);
-	  var async = assert.async();
-	  Promise.any()["catch"](function () {
-	    assert.ok(true, 'rejected as expected');
-	    async();
-	  });
-	});
-	QUnit.test('Promise.any, rejected #3', function (assert) {
-	  assert.expect(2);
-	  var async = assert.async();
-	  Promise.any([])["catch"](function (error) {
-	    assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
-	    assert.deepEqual(error.errors, [], 'rejected with a correct value');
-	    async();
-	  });
-	});
-
+	// import "./es.promise.any";
 	// import "./es.aggregate-error";
 
 	// import "../web/web.url";

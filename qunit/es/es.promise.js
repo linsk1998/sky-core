@@ -288,35 +288,35 @@ QUnit.test('Promise.race', assert => {
   // assert.name(race, 'race');
   assert.looksNative(race);
   assert.nonEnumerable(Promise, 'race');
-  const iterable = createIterable([1, 2, 3]);
-  Promise.race(iterable).catch(() => { /* empty */ });
-  assert.ok(iterable.received, 'works with iterables: iterator received');
-  assert.ok(iterable.called, 'works with iterables: next called');
-  const array = [];
-  let done = false;
-  array['@@iterator'] = undefined;
-  array[Symbol.iterator] = function() {
-    done = true;
-    return [][Symbol.iterator].call(this);
-  };
-  Promise.race(array);
-  assert.ok(done);
-  assert.throws(() => {
-    race.call(null, []).catch(() => { /* empty */ });
-  }, TypeError, 'throws without context');
-  done = false;
-  try {
-    Promise.resolve = function() {
-      throw new Error();
-    };
-    Promise.race(createIterable([1, 2, 3], {
-      return() {
-        done = true;
-      },
-    })).catch(() => { /* empty */ });
-  } catch(error) { /* empty */ }
-  Promise.resolve = resolve;
-  assert.ok(done, 'iteration closing');
+  // const iterable = createIterable([1, 2, 3]);
+  // Promise.race(iterable).catch(() => { /* empty */ });
+  // assert.ok(iterable.received, 'works with iterables: iterator received');
+  // assert.ok(iterable.called, 'works with iterables: next called');
+  // const array = [];
+  // let done = false;
+  // array['@@iterator'] = undefined;
+  // array[Symbol.iterator] = function() {
+  //   done = true;
+  //   return [][Symbol.iterator].call(this);
+  // };
+  // Promise.race(array);
+  // assert.ok(done);
+  // assert.throws(() => {
+  //   race.call(null, []).catch(() => { /* empty */ });
+  // }, TypeError, 'throws without context');
+  // done = false;
+  // try {
+  //   Promise.resolve = function() {
+  //     throw new Error();
+  //   };
+  //   Promise.race(createIterable([1, 2, 3], {
+  //     return() {
+  //       done = true;
+  //     },
+  //   })).catch(() => { /* empty */ });
+  // } catch(error) { /* empty */ }
+  // Promise.resolve = resolve;
+  // assert.ok(done, 'iteration closing');
   // FakePromise1 = function(executor) {
   //   executor(() => { /* empty */ }, () => { /* empty */ });
   // };

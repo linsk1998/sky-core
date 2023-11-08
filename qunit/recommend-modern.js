@@ -98,10 +98,10 @@ export default [
 			//Promise
 			"Promise": "sky-core/polyfill/Promise",
 			"Promise": "sky-core/polyfill/Promise/prototype/finally",
-			// ESNext.Promise
-			// "Promise.allSettled": "sky-core/polyfill/Promise/allSettled",
-			// "Promise.any": "sky-core/polyfill/Promise/any",
-			// "AggregateError":"sky-core/polyfill/AggregateError",
+			// ES2020.Promise
+			"Promise.allSettled": "sky-core/polyfill/Promise/allSettled",
+			"Promise.any": "sky-core/polyfill/Promise/any",
+			"AggregateError": "sky-core/polyfill/AggregateError",
 			"queueMicrotask": "sky-core/polyfill/queueMicrotask",
 			//ES2015.String
 			"String.fromCodePoint": "sky-core/polyfill/String/fromCodePoint",

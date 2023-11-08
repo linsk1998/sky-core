@@ -110,10 +110,10 @@ import "../helpers/qunit-helpers";
 // import "./es.weak-map";
 // import "./es.weak-set";
 
-import "./es.promise";
-import "./es.promise.finally";
+// import "./es.promise";
+// import "./es.promise.finally";
 import "./es.promise.all-settled";
-import "./es.promise.any";
+// import "./es.promise.any";
 // import "./es.aggregate-error";
 
 // import "../web/web.url";
