@@ -6,22 +6,20 @@ QUnit.test('Promise.any', assert => {
   assert.ok(Promise.any([1, 2, 3]) instanceof Promise, 'returns a promise');
 });
 
-QUnit.test('Promise.any, resolved', assert => {
-  assert.expect(1);
-  const async = assert.async();
+QUnit.asyncTest('Promise.any, resolved', assert => {
+  expect(1);
   Promise.any([
     Promise.resolve(1),
     Promise.reject(2),
     Promise.resolve(3),
   ]).then(it => {
     assert.same(it, 1, 'resolved with a correct value');
-    async();
+    start();
   });
 });
 
-QUnit.test('Promise.any, rejected #1', assert => {
-  assert.expect(2);
-  const async = assert.async();
+QUnit.asyncTest('Promise.any, rejected #1', assert => {
+  expect(2);
   Promise.any([
     Promise.reject(1),
     Promise.reject(2),
@@ -29,25 +27,23 @@ QUnit.test('Promise.any, rejected #1', assert => {
   ]).catch(error => {
     assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
     assert.deepEqual(error.errors, [1, 2, 3], 'rejected with a correct value');
-    async();
+    start();
   });
 });
 
-QUnit.test('Promise.any, rejected #2', assert => {
-  assert.expect(1);
-  const async = assert.async();
+QUnit.asyncTest('Promise.any, rejected #2', assert => {
+  expect(1);
   Promise.any().catch(() => {
     assert.ok(true, 'rejected as expected');
-    async();
+    start();
   });
 });
 
-QUnit.test('Promise.any, rejected #3', assert => {
-  assert.expect(2);
-  const async = assert.async();
+QUnit.asyncTest('Promise.any, rejected #3', assert => {
+  expect(2);
   Promise.any([]).catch(error => {
     assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
     assert.deepEqual(error.errors, [], 'rejected with a correct value');
-    async();
+    start();
   });
 });

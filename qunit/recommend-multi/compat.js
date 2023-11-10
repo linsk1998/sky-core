@@ -977,42 +977,42 @@
 	}
 
 	function allSettled(promises) {
-	  if (!Array.isArray(promises)) {
-	    return Promise.reject(new TypeError('You must pass an array to allSettled.'));
-	  }
+	  // if(!Array.isArray(promises)) {
+	  // 	return Promise.reject(new TypeError('You must pass an array to allSettled.'));
+	  // }
 	  return new Promise(function (resolve, reject) {
-	    if (promises.length == 0) return resolve(new Array());
-	    var result = new Array(promises.length);
+	    var array = Array.from(promises);
+	    if (array.length == 0) return resolve(array);
 	    var c = 0;
-	    promises.forEach(function (one, index) {
+	    array.forEach(function (one, index, array) {
 	      if (typeof one.then === "function") {
 	        one.then(function (data) {
 	          c++;
-	          result[index] = {
+	          array[index] = {
 	            value: data,
 	            status: 'fulfilled'
 	          };
-	          if (c >= promises.length) {
-	            resolve(result);
+	          if (c >= array.length) {
+	            resolve(array);
 	          }
 	        }, function (data) {
 	          c++;
-	          result[index] = {
+	          array[index] = {
 	            reason: data,
 	            status: 'rejected'
 	          };
-	          if (c >= promises.length) {
-	            resolve(result);
+	          if (c >= array.length) {
+	            resolve(array);
 	          }
 	        });
 	      } else {
 	        c++;
-	        result[index] = {
+	        array[index] = {
 	          value: data,
 	          status: 'fulfilled'
 	        };
-	        if (c >= promises.length) {
-	          resolve(result);
+	        if (c >= array.length) {
+	          resolve(array);
 	        }
 	      }
 	    });
@@ -1054,8 +1054,431 @@
 	  });
 	});
 
-	// import "./es.promise.any";
-	// import "./es.aggregate-error";
+	var Object$1 = window.Object;
+
+	var defineProperties$1 = Object$1.defineProperties;
+
+	function keys$1() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = index;
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	if (!Array.prototype.keys) {
+	  Array.prototype.keys = keys$1;
+	}
+
+	var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
+
+	// from core-js
+	var GT = '>';
+	var LT = '<';
+	var SCRIPT = 'script';
+	function scriptTag(content) {
+	  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+	}
+
+	// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
+	function NullProtoObjectViaActiveX(activeXDocument) {
+	  activeXDocument.write(scriptTag(''));
+	  activeXDocument.close();
+	  var temp = activeXDocument.parentWindow.Object;
+	  activeXDocument = null; // avoid memory leak
+	  return temp;
+	}
+	;
+
+	// Create object with fake `null` prototype: use iframe Object with cleared prototype
+	function NullProtoObjectViaIFrame() {
+	  // Thrash, waste and sodomy: IE GC bug
+	  var iframe = documentCreateElement('iframe');
+	  var JS = 'java' + SCRIPT + ':';
+	  var iframeDocument;
+	  iframe.style.display = 'none';
+	  html.appendChild(iframe);
+	  // https://github.com/zloirock/core-js/issues/475
+	  iframe.src = String(JS);
+	  iframeDocument = iframe.contentWindow.document;
+	  iframeDocument.open();
+	  iframeDocument.write(scriptTag('document.F=Object'));
+	  iframeDocument.close();
+	  return iframeDocument.F;
+	}
+	;
+
+	// Check for document.domain and active x support
+	// No need to use active x approach when document.domain is not set
+	// see https://github.com/es-shims/es5-shim/issues/150
+	// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+	// avoid IE GC bug
+	var activeXDocument;
+	var NullProtoObject = function () {
+	  try {
+	    /* global ActiveXObject -- old IE */
+	    activeXDocument = document.domain && new ActiveXObject('htmlfile');
+	  } catch (error) {/* ignore */}
+	  NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
+	  var i = dontEnums.length;
+	  while (i--) delete NullProtoObject.prototype[dontEnums[i]];
+	  return NullProtoObject();
+	};
+
+	function isJsObject(o) {
+	  if (_typeof(o) !== "object") {
+	    return false;
+	  }
+	  if (o instanceof Object) {
+	    return true;
+	  }
+	  if (o instanceof NullProtoObject) {
+	    return true;
+	  }
+	  return false;
+	}
+
+	var hasEnumBug = !{
+	  toString: null
+	}.propertyIsEnumerable('toString');
+
+	function getPrototypeOf(obj) {
+	  if (obj == null) {
+	    throw new TypeError("Cannot convert undefined or null to object");
+	  }
+	  if (_typeof(obj) !== "object" && typeof obj !== "function") {
+	    obj = Object(obj);
+	  }
+	  if ('__proto__' in obj) {
+	    return obj.__proto__;
+	  }
+	  if (!('constructor' in obj)) {
+	    return null;
+	  }
+	  if (Object.prototype.hasOwnProperty.call(obj, 'constructor')) {
+	    if ('__proto__' in obj.constructor) {
+	      return obj.constructor.__proto__.prototype;
+	    } else if (obj === Object.prototype) {
+	      return null;
+	    } else {
+	      return Object.prototype;
+	    }
+	  }
+	  return obj.constructor.prototype;
+	}
+	;
+	getPrototypeOf.sham = true;
+
+	function keys(obj) {
+	  if (obj == null) {
+	    throw new TypeError("Cannot convert undefined or null to object");
+	  }
+	  var result = [],
+	    key;
+	  var jsObject = isJsObject(obj);
+	  if (!jsObject) {
+	    var proto = getPrototypeOf(obj);
+	    if (proto) {
+	      for (key in obj) {
+	        switch (key.substring(0, 2)) {
+	          case "__":
+	          case "@@":
+	            continue;
+	        }
+	        if (proto[key] !== obj[key]) {
+	          result.push(key);
+	        }
+	      }
+	      return result;
+	    }
+	  }
+	  for (key in obj) {
+	    switch (key.substring(0, 2)) {
+	      case "__":
+	      case "@@":
+	        continue;
+	    }
+	    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	      var desc = obj["@@desc:" + key];
+	      if (!desc || desc.enumerable) {
+	        result.push(key);
+	      }
+	    }
+	  }
+	  if (hasEnumBug) {
+	    var i = dontEnums.length;
+	    while (i-- > 0) {
+	      key = dontEnums[i];
+	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	        result.push(key);
+	      }
+	    }
+	  }
+	  return result;
+	}
+
+	if (!Object$1.keys) {
+	  Object$1.keys = keys;
+	}
+
+	var defineProperty$1 = Object$1.defineProperty;
+
+	function ie8_defineProperty(obj, prop, descriptor) {
+	  if (obj instanceof Object || obj instanceof NullProtoObject) {
+	    compat_defineProperty.apply(Object, arguments);
+	  } else if (window == obj || obj instanceof Element || obj instanceof HTMLDocument) {
+	    delete descriptor.enumerable;
+	    defineProperty$1.apply(Object, arguments);
+	  } else {
+	    compat_defineProperty.apply(Object, arguments);
+	  }
+	  return obj;
+	}
+	;
+	function defineProperty(obj, prop, description) {
+	  if (defineProperty$1) {
+	    if (obj instanceof Object || obj instanceof NullProtoObject) {
+	      compat_defineProperty.apply(Object, arguments);
+	    } else {
+	      delete description.enumerable;
+	      defineProperty$1.apply(Object, arguments);
+	    }
+	  } else {
+	    compat_defineProperty.apply(Object, arguments);
+	  }
+	  return obj;
+	}
+	;
+	function compat_defineProperty(obj, prop, description) {
+	  if (_typeof(obj) !== "object" && typeof obj !== "function") {
+	    throw new TypeError("Object.defineProperty called on non-object");
+	  }
+	  prop = String(prop);
+	  var descriptor = {
+	    configurable: true,
+	    enumerable: true,
+	    writable: true
+	  };
+	  if ('value' in description) {
+	    obj[prop] = description.value;
+	    descriptor.value = description.value;
+	  } else {
+	    descriptor.get = description.get;
+	    descriptor.set = description.set;
+	  }
+	  obj['@@desc:' + prop] = descriptor;
+	  return obj;
+	}
+	;
+
+	if (Object$1.defineProperty) {
+	  Object$1.defineProperty = ie8_defineProperty;
+	} else {
+	  Object$1.defineProperty = compat_defineProperty;
+	}
+	Object$1.defineProperty.sham = true;
+
+	function defineProperties(obj, properties) {
+	  var ownKeys = Object.keys(properties);
+	  var len = ownKeys.length;
+	  for (var i = 0; i < len; i++) {
+	    var key = ownKeys[i];
+	    Object.defineProperty(obj, key, properties[key]);
+	  }
+	  return obj;
+	}
+	;
+	defineProperties.sham = true;
+
+	if (!defineProperties$1) {
+	  Object$1.defineProperties = defineProperties;
+	}
+
+	function F() {/* empty */}
+	;
+	function create(proto, properties) {
+	  var o;
+	  if (proto !== null) {
+	    F.prototype = proto;
+	    var o = new F();
+	    F.prototype = null;
+	  } else {
+	    o = NullProtoObject();
+	  }
+	  o.__proto__ = proto;
+	  if (properties) {
+	    Object.defineProperties(o, properties);
+	  }
+	  return o;
+	}
+	;
+	create.sham = true;
+
+	if (!Object$1.create) {
+	  Object$1.create = create;
+	}
+
+	function forIn$1(obj, fn, thisArg) {
+	  if (_typeof(obj) !== "object") {
+	    return false;
+	  }
+	  var jsObject = isJsObject(obj);
+	  for (var key in obj) {
+	    if (!jsObject) {
+	      if (key === "constructor") {
+	        continue;
+	      }
+	    }
+	    switch (key.substring(0, 2)) {
+	      case "__":
+	      case "@@":
+	        continue;
+	    }
+	    if (fn.call(thisArg, obj[key], key) === false) {
+	      return false;
+	    }
+	  }
+	  if (hasEnumBug) {
+	    var i = dontEnums.length;
+	    var proto = getPrototypeOf(obj);
+	    //遍历nonEnumerableProps数组
+	    while (i--) {
+	      var prop = dontEnums[i];
+	      if (prop in obj && obj[prop] !== proto[prop]) {
+	        if (fn.call(thisArg, obj[prop], prop) === false) {
+	          return false;
+	        }
+	      }
+	    }
+	  }
+	  return true;
+	}
+	;
+
+	function inherits(subClass, superClass) {
+	  forIn(superClass, setKey, subClass);
+	  subClass.prototype = Object.create(superClass.prototype);
+	  subClass.prototype.constructor = subClass;
+	  subClass.__proto__ = superClazz.prototype;
+	}
+	;
+	function setKey(value, key) {
+	  this[key] = value;
+	}
+
+	function AggregateError$1(errors, message) {
+	  if (!(this instanceof AggregateError$1)) {
+	    return new AggregateError$1(errors, message);
+	  }
+	  this.errors = errors;
+	  this.name = "AggregateError";
+	  this.message = message;
+	}
+	inherits(AggregateError$1, Error);
+
+	if (!window.AggregateError) {
+	  window.AggregateError = AggregateError$1;
+	}
+
+	QUnit.test('AggregateError', function (assert) {
+	  assert.isFunction(AggregateError);
+	  assert.arity(AggregateError, 2);
+	  assert.name(AggregateError, 'AggregateError');
+	  assert.looksNative(AggregateError);
+	  assert.ok(new AggregateError([1]) instanceof AggregateError);
+	  assert.ok(new AggregateError([1]) instanceof Error);
+	  assert.ok(AggregateError([1]) instanceof AggregateError);
+	  assert.ok(AggregateError([1]) instanceof Error);
+	  assert.same(AggregateError([1], 'foo').message, 'foo');
+	  assert.deepEqual(AggregateError([1, 2, 3]).errors, [1, 2, 3]);
+	});
+
+	function any(promises) {
+	  // if(!Array.isArray(promises)) {
+	  // 	throw new TypeError('You must pass an array to any.');
+	  // }
+	  // if(promises.length == 0) return Promise.reject();
+	  return new Promise(function (resolve, reject) {
+	    var errors = Array.from(promises);
+	    if (errors.length === 0) {
+	      return reject(new AggregateError(errors));
+	    }
+	    var c = 0;
+	    errors.forEach(function (one, index, errors) {
+	      if (typeof one.then === "function") {
+	        one.then(function (data) {
+	          resolve(data);
+	        }, function (error) {
+	          c++;
+	          errors[index] = error;
+	          if (c >= errors.length) {
+	            reject(new AggregateError(errors));
+	          }
+	        });
+	      } else {
+	        resolve(one);
+	      }
+	    });
+	  });
+	}
+	;
+
+	if (!Promise$1.any) {
+	  Promise$1.any = any;
+	}
+
+	QUnit.test('Promise.any', function (assert) {
+	  assert.isFunction(Promise.any);
+	  assert.arity(Promise.any, 1);
+	  assert.looksNative(Promise.any);
+	  assert.nonEnumerable(Promise, 'any');
+	  assert.ok(Promise.any([1, 2, 3]) instanceof Promise, 'returns a promise');
+	});
+	QUnit.asyncTest('Promise.any, resolved', function (assert) {
+	  expect(1);
+	  Promise.any([Promise.resolve(1), Promise.reject(2), Promise.resolve(3)]).then(function (it) {
+	    assert.same(it, 1, 'resolved with a correct value');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('Promise.any, rejected #1', function (assert) {
+	  expect(2);
+	  Promise.any([Promise.reject(1), Promise.reject(2), Promise.reject(3)])["catch"](function (error) {
+	    assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
+	    assert.deepEqual(error.errors, [1, 2, 3], 'rejected with a correct value');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('Promise.any, rejected #2', function (assert) {
+	  expect(1);
+	  Promise.any()["catch"](function () {
+	    assert.ok(true, 'rejected as expected');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('Promise.any, rejected #3', function (assert) {
+	  expect(2);
+	  Promise.any([])["catch"](function (error) {
+	    assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
+	    assert.deepEqual(error.errors, [], 'rejected with a correct value');
+	    start();
+	  });
+	});
 
 	// import "../web/web.url";
 

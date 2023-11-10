@@ -1,28 +1,28 @@
 
 export function any(promises) {
-	if(!Array.isArray(promises)) {
-		throw new TypeError('You must pass an array to any.');
-	}
-	if(promises.length == 0) return Promise.reject();
+	// if(!Array.isArray(promises)) {
+	// 	throw new TypeError('You must pass an array to any.');
+	// }
+	// if(promises.length == 0) return Promise.reject();
 	return new Promise(function(resolve, reject) {
-		var errors = new Array(promises.length);
+		var errors = Array.from(promises);
+		if(errors.length === 0) {
+			return reject(new AggregateError(errors));
+		}
 		var c = 0;
-		promises.forEach(function(one, index) {
+		errors.forEach(function(one, index, errors) {
 			if(typeof one.then === "function") {
 				one.then(function(data) {
 					resolve(data);
 				}, function(error) {
 					c++;
 					errors[index] = error;
-					if(c >= promises.length) {
-						reject(new AggregateError(errors), 'No one promise resolved');
+					if(c >= errors.length) {
+						reject(new AggregateError(errors));
 					}
 				});
 			} else {
-				c++;
-				if(c >= promises.length) {
-					resolve();
-				}
+				resolve(one);
 			}
 		});
 	});
