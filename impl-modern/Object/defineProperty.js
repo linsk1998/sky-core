@@ -1,5 +1,9 @@
 
 export function defineProperty(obj, prop, descriptor) {
+	if(typeof obj !== "object" && typeof obj !== "function") {
+		throw new TypeError("Object.defineProperty called on non-object");
+	}
+	prop = String(prop);
 	if('value' in descriptor) {
 		delete obj[prop];
 		obj[prop] = descriptor.value;

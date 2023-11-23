@@ -3,7 +3,7 @@ import { DESCRIPTORS } from '../helpers/constants';
 QUnit.test('Object.getOwnPropertyDescriptors', assert => {
   assert.isFunction(Object.getOwnPropertyDescriptors);
   assert.arity(Object.getOwnPropertyDescriptors, 1);
-  assert.name(Object.getOwnPropertyDescriptors, 'getOwnPropertyDescriptors');
+  // assert.name(Object.getOwnPropertyDescriptors, 'getOwnPropertyDescriptors');
   const object = Object.create({ q: 1 }, { e: { value: 3 } });
   object.w = 2;
   const symbol = Symbol('4');

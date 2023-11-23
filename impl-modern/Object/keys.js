@@ -5,6 +5,9 @@ export function ie_keys(obj) {
 	return native_keys.call(Object, obj).filter(isNotSymbolKey);
 }
 export function nie_keys(obj) {
+	if(obj == null) {
+		throw new TypeError("Cannot convert undefined or null to object");
+	}
 	var result = [];
 	for(var key in obj) {
 		if(key.substring(0, 2) !== "@@" && Object.prototype.hasOwnProperty.call(obj, key)) {

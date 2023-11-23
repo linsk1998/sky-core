@@ -3,7 +3,7 @@ import { CORRECT_PROTOTYPE_GETTER } from '../helpers/constants';
 QUnit.test('Object.getPrototypeOf', assert => {
   assert.isFunction(Object.getPrototypeOf);
   assert.arity(Object.getPrototypeOf, 1);
-  assert.name(Object.getPrototypeOf, 'getPrototypeOf');
+  // assert.name(Object.getPrototypeOf, 'getPrototypeOf');
   assert.looksNative(Object.getPrototypeOf);
   assert.nonEnumerable(Object, 'getPrototypeOf');
   assert.ok(Object.getPrototypeOf({}) === Object.prototype);

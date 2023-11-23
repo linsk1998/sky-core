@@ -1,4 +1,5 @@
-var KEY_WM = "@@WeakMap";
+import { nonEnumerable } from "../support/nonEnumerable";
+export var KEY_WM = "@@WeakMap";
 var weakSeq = 0;
 function WeakMap() {
 	this.symbol = weakSeq++;
@@ -30,7 +31,17 @@ WeakMap.prototype.set = function(key, value) {
 	}
 	var map = key[KEY_WM];
 	if(!map) {
-		map = key[KEY_WM] = {};
+		map = {};
+		if(!nonEnumerable) {
+			key[KEY_WM] = map;
+		} else {
+			Object.defineProperty(key, KEY_WM, {
+				value: map,
+				enumerable: false,
+				configurable: true,
+				writable: true
+			});
+		}
 	}
 	map[this.symbol] = value;
 	return this;

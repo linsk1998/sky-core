@@ -40,7 +40,7 @@ export var getOwnPropertySymbols = nonEnumerable ?
 		while(i-- > 0) {
 			var key = keys[i];
 			if(key.substring(0, 2) === "@@") {
-				if(key in all_symbol) {
+				if(Object.prototype.hasOwnProperty.call(all_symbol, key)) {
 					arr.push(all_symbol[key]);
 				}
 			}

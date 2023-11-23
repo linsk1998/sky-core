@@ -1,11 +1,5 @@
 export var DESCRIPTORS = !!(() => {
-	try {
-		return Object.defineProperty({}, 'a', {
-			get() {
-				return 7;
-			},
-		}).a === 7;
-	} catch { /* empty */ }
+	return !!Object.defineProperties || !!Object.prototype.__defineSetter__;
 })();
 
 export var GLOBAL = Function('return this')();

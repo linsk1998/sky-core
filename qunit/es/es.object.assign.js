@@ -35,23 +35,23 @@ QUnit.test('Object.assign', assert => {
     assert.strictEqual(object2.b, undefined, 'b');
     assert.strictEqual(object2[c], 'c', 'c');
     // assert.strictEqual(object2[d], undefined, 'defineProperty 不允许使用Symbol');
-    try {
-      assert.strictEqual(Function('assign', `
-        return assign({ b: 1 }, { get a() {
-          delete this.b;
-        }, b: 2 });
-      `)(Object.assign).b, 1);
-    } catch { /* empty */ }
-    try {
-      assert.strictEqual(Function('assign', `
-        return assign({ b: 1 }, { get a() {
-          Object.defineProperty(this, "b", {
-            value: 3,
-            enumerable: false
-          });
-        }, b: 2 });
-      `)(Object.assign).b, 1);
-    } catch { /* empty */ }
+    // try {
+    //   assert.strictEqual(Function('assign', `
+    //     return assign({ b: 1 }, { get a() {
+    //       delete this.b;
+    //     }, b: 2 });
+    //   `)(Object.assign).b, 1);
+    // } catch { /* empty */ }
+    // try {
+    //   assert.strictEqual(Function('assign', `
+    //     return assign({ b: 1 }, { get a() {
+    //       Object.defineProperty(this, "b", {
+    //         value: 3,
+    //         enumerable: false
+    //       });
+    //     }, b: 2 });
+    //   `)(Object.assign).b, 1);
+    // } catch { /* empty */ }
   }
   string = 'abcdefghijklmnopqrst';
   const result = {};

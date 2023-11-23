@@ -6,8 +6,16 @@ export function getOwnPropertyDescriptor(obj, key) {
 		var r = new Object();
 		r.enumerable = true;
 		r.configurable = true;
-		r.set = obj.__lookupSetter__(key);
-		r.get = obj.__lookupGetter__(key);
+		var set = obj.__lookupSetter__(key);
+		var get = obj.__lookupGetter__(key);
+		if(set || get) {
+			r.writable = !!set;
+			r.set = set;
+			r.get = get;
+		} else {
+			r.writable = true;
+			r.value = obj[key];
+		}
 		return r;
 	}
 };
