@@ -112,6 +112,8 @@ export default [
 			"Set": "sky-core/polyfill/Set",
 			"WeakMap": "sky-core/polyfill/WeakMap",
 			"WeakSet": "sky-core/polyfill/WeakSet",
+			/* ES2022 */
+			"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
 			//URL 这个polyfil支持accessor，但不支持自动转string和JSON，需要用.href获取
 			"URL": "sky-core/polyfill/URL",
 			"URLSearchParams": "sky-core/polyfill/URLSearchParams",
@@ -187,6 +189,7 @@ export default [
 			".matchAll": "sky-core/polyfill/String/prototype/matchAll",
 			//ESNext.String
 			".replaceAll": "sky-core/polyfill/String/prototype/replaceAll",
+			".at": "sky-core/polyfill/Array/prototype/at",
 		},
 		exclude: [
 			"polyfill/**/*",
