@@ -1,7 +1,9 @@
+import { hasOwnProperty } from "../native/Object/prototype/hasOwnProperty";
 import { hasEnumBug } from "../utils/hasEnumBug";
 import { getPrototypeOf } from "../impl-compat/Object/getPrototypeOf";
 import { dontEnums } from "./dontEnums";
 import { isJsObject } from "./isJsObject";
+
 export function forOwn(obj, fn, thisArg) {
 	var key;
 	var jsObject = isJsObject(obj);
@@ -30,7 +32,7 @@ export function forOwn(obj, fn, thisArg) {
 			case "@@":
 				continue;
 		}
-		if(Object.prototype.hasOwnProperty.call(obj, key)) {
+		if(hasOwnProperty.call(obj, key)) {
 			if(fn.call(thisArg, obj[key], key) === false) {
 				return false;
 			}
@@ -40,7 +42,7 @@ export function forOwn(obj, fn, thisArg) {
 		var i = dontEnums.length;
 		while(i-- > 0) {
 			key = dontEnums[i];
-			if(Object.prototype.hasOwnProperty.call(obj, key)) {
+			if(hasOwnProperty.call(obj, key)) {
 				if(fn.call(thisArg, obj[key], key) === false) {
 					return false;
 				}

@@ -1,10 +1,10 @@
 
-export function getOwnPropertyDescriptor(obj,prop){
-	var key='@@desc:'+prop;
-	if(Object.prototype.hasOwnProperty.call(obj,key)){
+export function getOwnPropertyDescriptor(obj, prop) {
+	var key = '@@desc:' + prop;
+	if(Object.hasOwn(obj, key)) {
 		return obj[key];
 	}
-	if(Object.prototype.hasOwnProperty.call(obj,prop)){
-		return {value: obj[prop], writable: true, enumerable: true, configurable: true};
+	if(Object.hasOwn(obj, prop)) {
+		return { value: obj[prop], writable: true, enumerable: true, configurable: true };
 	}
 };

@@ -16,7 +16,7 @@ export function getOwnPropertyDescriptor(obj, prop) {
 		}
 		return descriptor;
 	}
-	if(Object.prototype.hasOwnProperty.call(obj, prop)) {
+	if(Object.hasOwn(obj, prop)) {
 		return {
 			value: obj[prop],
 			writable: true,

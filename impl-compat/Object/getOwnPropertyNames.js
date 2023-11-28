@@ -41,7 +41,7 @@ export function getOwnPropertyNames(obj) {
 		if(key.substring(0, 2) === "@@") {
 			continue;
 		}
-		if(Object.prototype.hasOwnProperty.call(obj, key)) {
+		if(Object.hasOwn(obj, key)) {
 			result.push(key);
 		}
 	}
@@ -49,7 +49,7 @@ export function getOwnPropertyNames(obj) {
 		var i = dontEnums.length;
 		while(i-- > 0) {
 			key = dontEnums[i];
-			if(Object.prototype.hasOwnProperty.call(obj, key)) {
+			if(Object.hasOwn(obj, key)) {
 				result.push(key);
 			}
 		}

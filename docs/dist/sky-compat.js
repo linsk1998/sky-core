@@ -143,7 +143,7 @@ var Sky = (function(exports) {
 		var arr = [];
 		for(var key in obj) {
 			if(key.startsWith("@@")) {
-				if(Object.prototype.hasOwnProperty.call(obj, key)) {
+				if(Object.hasOwn(obj, key)) {
 					arr.push(all_symbol[key]);
 				}
 			}
@@ -174,7 +174,7 @@ var Sky = (function(exports) {
 
 	var symbol_cache = {};
 	function compat_for(desc) {
-		if(Object.prototype.hasOwnProperty.call(symbol_cache, desc)) {
+		if(Object.hasOwn(symbol_cache, desc)) {
 			return symbol_cache[desc];
 		}
 		var s = Symbol$2(desc);
@@ -215,7 +215,7 @@ var Sky = (function(exports) {
 		if(!('constructor' in obj)) {
 			return null;
 		}
-		if(Object.prototype.hasOwnProperty.call(obj, 'constructor')) {
+		if(Object.hasOwn(obj, 'constructor')) {
 			if('__proto__' in obj.constructor) {
 				return obj.constructor.__proto__.prototype;
 			}
@@ -238,14 +238,14 @@ var Sky = (function(exports) {
 			}
 		}
 		for(key in obj) {
-			if(Object.prototype.hasOwnProperty.call(obj, key) && !key.startsWith("@@") && !key.startsWith("__")) {
+			if(Object.hasOwn(obj, key) && !key.startsWith("@@") && !key.startsWith("__")) {
 				result.push(key);
 			}
 		}
 		var i = dontEnums.length;
 		while(i-- > 0) {
 			key = dontEnums[i];
-			if(Object.prototype.hasOwnProperty.call(obj, key)) {
+			if(Object.hasOwn(obj, key)) {
 				result.push(key);
 			}
 		}
@@ -316,14 +316,14 @@ var Sky = (function(exports) {
 		var o = create(proto);
 		var key;
 		for(key in obj) {
-			if(Object.prototype.hasOwnProperty.call(obj, key)) {
+			if(Object.hasOwn(obj, key)) {
 				o[key] = obj[key];
 			}
 		}
 		var i = dontEnums.length;
 		while(i-- > 0) {
 			key = dontEnums[i];
-			if(Object.prototype.hasOwnProperty.call(obj, key)) {
+			if(Object.hasOwn(obj, key)) {
 				o[key] = obj[key];
 			}
 		}
@@ -336,10 +336,10 @@ var Sky = (function(exports) {
 
 	function getOwnPropertyDescriptor(obj, prop) {
 		var key = '@@desc:' + prop;
-		if(Object.prototype.hasOwnProperty.call(obj, key)) {
+		if(Object.hasOwn(obj, key)) {
 			return obj[key];
 		}
-		if(Object.prototype.hasOwnProperty.call(obj, prop)) {
+		if(Object.hasOwn(obj, prop)) {
 			return { value: obj[prop], writable: true, enumerable: true, configurable: true };
 		}
 	}

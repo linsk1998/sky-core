@@ -40,7 +40,7 @@ export var getOwnPropertySymbols = nonEnumerable ?
 		while(i-- > 0) {
 			var key = keys[i];
 			if(key.substring(0, 2) === "@@") {
-				if(Object.prototype.hasOwnProperty.call(all_symbol, key)) {
+				if(Object.hasOwn(all_symbol, key)) {
 					arr.push(all_symbol[key]);
 				}
 			}
@@ -53,7 +53,7 @@ export var getOwnPropertySymbols = nonEnumerable ?
 		}
 		for(var key in obj) {
 			if(key.substring(0, 2) === "@@") {
-				if(Object.prototype.hasOwnProperty.call(obj, key)) {
+				if(Object.hasOwn(obj, key)) {
 					arr.push(all_symbol[key]);
 				}
 			}

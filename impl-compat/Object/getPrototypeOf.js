@@ -11,7 +11,7 @@ export function getPrototypeOf(obj) {
 	if(!('constructor' in obj)) {
 		return null;
 	}
-	if(Object.prototype.hasOwnProperty.call(obj, 'constructor')) {
+	if(Object.hasOwn(obj, 'constructor')) {
 		if('__proto__' in obj.constructor) {
 			return obj.constructor.__proto__.prototype;
 		} else if(obj === Object.prototype) {

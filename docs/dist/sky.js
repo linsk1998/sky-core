@@ -1,122 +1,122 @@
-var Sky = (function (exports) {
-	exports=function Sky(){
-		return Sky.overload(arguments,this);
+var Sky = (function(exports) {
+	exports = function Sky() {
+		return Sky.overload(arguments, this);
 	};
 
-	if(typeof globalThis==="undefined"){
-		this.globalThis=this;
+	if(typeof globalThis === "undefined") {
+		this.globalThis = this;
 	}
 
-	if(!Number.isFinite){
-		Number.isFinite=function(value){
+	if(!Number.isFinite) {
+		Number.isFinite = function(value) {
 			return typeof value === 'number' && isFinite(value);
 		};
 	}
 
-	if(!Number.isNaN){
-		Number.isNaN=function(value){
+	if(!Number.isNaN) {
+		Number.isNaN = function(value) {
 			return typeof value === "number" && isNaN(value);
 		};
 	}
 
-	if(!Number.isInteger){
-		Number.isInteger=function(value){
-			return typeof value === "number" &&	isFinite(value) &&	Math.floor(value) === value;
+	if(!Number.isInteger) {
+		Number.isInteger = function(value) {
+			return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
 		};
 	}
 
-	if(!('MAX_SAFE_INTEGER' in Number)){
-		Number.MAX_SAFE_INTEGER=0x1FFFFFFFFFFFFF;
+	if(!('MAX_SAFE_INTEGER' in Number)) {
+		Number.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
 	}
 
-	if(!('MIN_SAFE_INTEGER' in Number)){
-		Number.MIN_SAFE_INTEGER=-0x1FFFFFFFFFFFFF;
+	if(!('MIN_SAFE_INTEGER' in Number)) {
+		Number.MIN_SAFE_INTEGER = -0x1FFFFFFFFFFFFF;
 	}
 
-	if(!Number.isSafeInteger){
-		Number.isSafeInteger=function(value){
+	if(!Number.isSafeInteger) {
+		Number.isSafeInteger = function(value) {
 			return Number.isInteger(value) && Math.abs(value) <= Number.MAX_SAFE_INTEGER;
 		};
 	}
 
-	if(!Number.parseFloat) Number.parseFloat=parseFloat;
+	if(!Number.parseFloat) Number.parseFloat = parseFloat;
 
-	if(!Number.parseInt) Number.parseInt=parseInt;
+	if(!Number.parseInt) Number.parseInt = parseInt;
 
-	if(!String.prototype.trim){
-		String.prototype.trim=function trim(){
-			return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,'');
+	if(!String.prototype.trim) {
+		String.prototype.trim = function trim() {
+			return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
 		};
 	}
 
-	if(!String.prototype.trimStart){
-		String.prototype.trimStart=function trimStart(){
-			return this.replace(/^[\s\uFEFF\xA0]+/g,'');
+	if(!String.prototype.trimStart) {
+		String.prototype.trimStart = function trimStart() {
+			return this.replace(/^[\s\uFEFF\xA0]+/g, '');
 		};
 	}
 
-	if(!String.prototype.trimEnd){
-		String.prototype.trimEnd=function trimEnd(){
-			return this.replace(/[\s\uFEFF\xA0]+$/g,'');
+	if(!String.prototype.trimEnd) {
+		String.prototype.trimEnd = function trimEnd() {
+			return this.replace(/[\s\uFEFF\xA0]+$/g, '');
 		};
 	}
 
-	if(!String.prototype.endsWith){
-		String.prototype.endsWith=function endsWith(prefix,position){
-			var length=prefix.length;
-			position=position<length?position:this.length;
-			return this.slice(position-length, position) === prefix;
+	if(!String.prototype.endsWith) {
+		String.prototype.endsWith = function endsWith(prefix, position) {
+			var length = prefix.length;
+			position = position < length ? position : this.length;
+			return this.slice(position - length, position) === prefix;
 		};
 	}
 
-	if(!String.prototype.startsWith){
-		String.prototype.startsWith=function startsWith(prefix,position){
-			if(prefix===null){ return false;}
-			position=position?position:0;
+	if(!String.prototype.startsWith) {
+		String.prototype.startsWith = function startsWith(prefix, position) {
+			if(prefix === null) { return false; }
+			position = position ? position : 0;
 			return this.slice(position, prefix.length) === prefix;
 		};
 	}
 
 	if(!String.prototype.includes) {
-		String.prototype.includes=function includes(search, start) {
-			if(typeof start!=='number'){
-				start=0;
+		String.prototype.includes = function includes(search, start) {
+			if(typeof start !== 'number') {
+				start = 0;
 			}
-			if(start+search.length>this.length){
+			if(start + search.length > this.length) {
 				return false;
-			}else {
-				return this.indexOf(search, start)!==-1;
+			} else {
+				return this.indexOf(search, start) !== -1;
 			}
 		};
 	}
 
-	if(!String.prototype.repeat){
-		String.prototype.repeat=function repeat(count){
-			if(count<0){
+	if(!String.prototype.repeat) {
+		String.prototype.repeat = function repeat(count) {
+			if(count < 0) {
 				throw 'RangeError repeat count must be non-negative';
 			}
-			if(count==Number.POSITIVE_INFINITY){
+			if(count == Number.POSITIVE_INFINITY) {
 				throw 'RangeError repeat count must be less than infinity';
 			}
-			return new Array(count+1).join(this);
+			return new Array(count + 1).join(this);
 		};
 	}
 
-	if(!String.prototype.padStart){
-		String.prototype.padStart=function padStart(targetLength,padString){
-			var x=targetLength-this.length;
-			if(x<0) return this+"";
-			if(!padString) padString=" ";
-			return padString.repeat(Math.ceil(x/padString.length)).substr(0,x)+this;
+	if(!String.prototype.padStart) {
+		String.prototype.padStart = function padStart(targetLength, padString) {
+			var x = targetLength - this.length;
+			if(x < 0) return this + "";
+			if(!padString) padString = " ";
+			return padString.repeat(Math.ceil(x / padString.length)).substr(0, x) + this;
 		};
 	}
 
-	if(!String.prototype.padEnd){
-		String.prototype.padEnd=function padEnd(targetLength,padString){
-			var x=targetLength-this.length;
-			if(x<0) return this+"";
-			if(!padString) padString=" ";
-			return this+padString.repeat(Math.ceil(x/padString.length)).substr(0,x);
+	if(!String.prototype.padEnd) {
+		String.prototype.padEnd = function padEnd(targetLength, padString) {
+			var x = targetLength - this.length;
+			if(x < 0) return this + "";
+			if(!padString) padString = " ";
+			return this + padString.repeat(Math.ceil(x / padString.length)).substr(0, x);
 		};
 	}
 
@@ -138,14 +138,14 @@ var Sky = (function (exports) {
 		this.description = desc;
 		symbol_sqe++;
 		all_symbol[this.__name__] = this;
-	}Symbol$2.prototype.toString = function() {
+	} Symbol$2.prototype.toString = function() {
 		return this.__name__;
 	};
 	function getOwnPropertySymbols(obj) {
 		var arr = [];
 		for(var key in obj) {
 			if(key.startsWith("@@")) {
-				if(Object.prototype.hasOwnProperty.call(obj, key)) {
+				if(Object.hasOwn(obj, key)) {
 					arr.push(all_symbol[key]);
 				}
 			}
@@ -155,7 +155,7 @@ var Sky = (function (exports) {
 
 	function Symbol$3(desc) {
 		return new Symbol$2(desc);
-	}Symbol$3.sham = true;
+	} Symbol$3.sham = true;
 	Symbol$3.asyncIterator = "@@asyncIterator";
 	Symbol$3.hasInstance = "@@hasInstance";
 	Symbol$3.isConcatSpreadable = "@@isConcatSpreadable";
@@ -181,42 +181,42 @@ var Sky = (function (exports) {
 		this.Symbol = Symbol$3;
 	} else {
 		if(String(Symbol()) !== String(Symbol(""))) {
-			Object.setPrototypeOf(Symbol$4,Symbol);
+			Object.setPrototypeOf(Symbol$4, Symbol);
 			this.Symbol = Symbol$4;
 		}
-		if(!Symbol.asyncIterator){ Symbol.asyncIterator = Symbol$1("asyncIterator");}
-		if(!Symbol.hasInstance){ Symbol.hasInstance = Symbol$1("hasInstance");}
-		if(!Symbol.isConcatSpreadable ){ Symbol.isConcatSpreadable = Symbol$1("isConcatSpreadable");}
-		if(!Symbol.iterator ){ Symbol.iterator = Symbol$1("iterator");}
-		if(!Symbol.match ){ Symbol.match = Symbol$1("match");}
-		if(!Symbol.matchAll ){ Symbol.matchAll = Symbol$1("matchAll");}
-		if(!Symbol.replace ){ Symbol.replace = Symbol$1("replace");}
-		if(!Symbol.search ){ Symbol.search = Symbol$1("search");}
-		if(!Symbol.species ){ Symbol.species = Symbol$1("species");}
-		if(!Symbol.split ){ Symbol.split = Symbol$1("split");}
-		if(!Symbol.toPrimitive ){Symbol.toPrimitive = Symbol$1("toPrimitive");}
-		if(!Symbol.toStringTag){ Symbol.toStringTag = Symbol$1("toStringTag");}
-		if(!Symbol.unscopables ){ Symbol.unscopables = Symbol$1("unscopables");}
+		if(!Symbol.asyncIterator) { Symbol.asyncIterator = Symbol$1("asyncIterator"); }
+		if(!Symbol.hasInstance) { Symbol.hasInstance = Symbol$1("hasInstance"); }
+		if(!Symbol.isConcatSpreadable) { Symbol.isConcatSpreadable = Symbol$1("isConcatSpreadable"); }
+		if(!Symbol.iterator) { Symbol.iterator = Symbol$1("iterator"); }
+		if(!Symbol.match) { Symbol.match = Symbol$1("match"); }
+		if(!Symbol.matchAll) { Symbol.matchAll = Symbol$1("matchAll"); }
+		if(!Symbol.replace) { Symbol.replace = Symbol$1("replace"); }
+		if(!Symbol.search) { Symbol.search = Symbol$1("search"); }
+		if(!Symbol.species) { Symbol.species = Symbol$1("species"); }
+		if(!Symbol.split) { Symbol.split = Symbol$1("split"); }
+		if(!Symbol.toPrimitive) { Symbol.toPrimitive = Symbol$1("toPrimitive"); }
+		if(!Symbol.toStringTag) { Symbol.toStringTag = Symbol$1("toStringTag"); }
+		if(!Symbol.unscopables) { Symbol.unscopables = Symbol$1("unscopables"); }
 	}
 
 	var Symbol$5 = (function() {
 		if(!Symbol$1) {
 			return Symbol$3;
 		} else if(String(Symbol()) !== String(Symbol(""))) {
-			Object.setPrototypeOf(Symbol$4,Symbol$1);
-			if(!Symbol$1.asyncIterator){ Symbol$4.asyncIterator = Symbol$1("asyncIterator");}
-			if(!Symbol$1.hasInstance){ Symbol$4.hasInstance = Symbol$1("hasInstance");}
-			if(!Symbol$1.isConcatSpreadable ){ Symbol$4.isConcatSpreadable = Symbol$1("isConcatSpreadable");}
-			if(!Symbol$1.iterator ){ Symbol$4.iterator = Symbol$1("iterator");}
-			if(!Symbol$1.match ){ Symbol$4.match = Symbol$1("match");}
-			if(!Symbol$1.matchAll ){ Symbol$4.matchAll = Symbol$1("matchAll");}
-			if(!Symbol$1.replace ){ Symbol$4.replace = Symbol$1("replace");}
-			if(!Symbol$1.search ){ Symbol$4.search = Symbol$1("search");}
-			if(!Symbol$1.species ){ Symbol$4.species = Symbol$1("species");}
-			if(!Symbol$1.split ){ Symbol$4.split = Symbol$1("split");}
-			if(!Symbol$1.toPrimitive ){Symbol$4.toPrimitive = Symbol$1("toPrimitive");}
-			if(!Symbol$1.toStringTag){ Symbol$4.toStringTag = Symbol$1("toStringTag");}
-			if(!Symbol$1.unscopables ){ Symbol$4.unscopables = Symbol$1("unscopables");}
+			Object.setPrototypeOf(Symbol$4, Symbol$1);
+			if(!Symbol$1.asyncIterator) { Symbol$4.asyncIterator = Symbol$1("asyncIterator"); }
+			if(!Symbol$1.hasInstance) { Symbol$4.hasInstance = Symbol$1("hasInstance"); }
+			if(!Symbol$1.isConcatSpreadable) { Symbol$4.isConcatSpreadable = Symbol$1("isConcatSpreadable"); }
+			if(!Symbol$1.iterator) { Symbol$4.iterator = Symbol$1("iterator"); }
+			if(!Symbol$1.match) { Symbol$4.match = Symbol$1("match"); }
+			if(!Symbol$1.matchAll) { Symbol$4.matchAll = Symbol$1("matchAll"); }
+			if(!Symbol$1.replace) { Symbol$4.replace = Symbol$1("replace"); }
+			if(!Symbol$1.search) { Symbol$4.search = Symbol$1("search"); }
+			if(!Symbol$1.species) { Symbol$4.species = Symbol$1("species"); }
+			if(!Symbol$1.split) { Symbol$4.split = Symbol$1("split"); }
+			if(!Symbol$1.toPrimitive) { Symbol$4.toPrimitive = Symbol$1("toPrimitive"); }
+			if(!Symbol$1.toStringTag) { Symbol$4.toStringTag = Symbol$1("toStringTag"); }
+			if(!Symbol$1.unscopables) { Symbol$4.unscopables = Symbol$1("unscopables"); }
 		} else {
 			return Symbol$1;
 		}
@@ -224,7 +224,7 @@ var Sky = (function (exports) {
 
 	var symbol_cache = {};
 	function compat_for(desc) {
-		if(Object.prototype.hasOwnProperty.call(symbol_cache, desc)) {
+		if(Object.hasOwn(symbol_cache, desc)) {
 			return symbol_cache[desc];
 		}
 		var s = Symbol$5(desc);
@@ -237,7 +237,7 @@ var Sky = (function (exports) {
 	var symbol_cache$1 = {};
 	var key_cache = {};
 	function modern_for(desc) {
-		if(Object.prototype.hasOwnProperty.call(symbol_cache$1, desc)) {
+		if(Object.hasOwn(symbol_cache$1, desc)) {
 			return symbol_cache$1[desc];
 		}
 		var s = Symbol$5(desc);
@@ -266,7 +266,7 @@ var Sky = (function (exports) {
 		Object.getOwnPropertySymbols = getOwnPropertySymbols;
 	}
 
-	var dontEnums=[
+	var dontEnums = [
 		"toString",
 		"toLocaleString",
 		"valueOf",
@@ -275,51 +275,51 @@ var Sky = (function (exports) {
 		"propertyIsEnumerable"
 	];
 
-	function getPrototypeOf(obj){
-		if(typeof obj!=="object"){
-			obj=Object(obj);
+	function getPrototypeOf(obj) {
+		if(typeof obj !== "object") {
+			obj = Object(obj);
 		}
-		if(!('constructor' in obj)){
+		if(!('constructor' in obj)) {
 			return null;
 		}
-		if(Object.prototype.hasOwnProperty.call(obj,'constructor')){
-			if('__proto__' in obj.constructor){
+		if(Object.hasOwn(obj, 'constructor')) {
+			if('__proto__' in obj.constructor) {
 				return obj.constructor.__proto__.prototype;
 			}
 		}
 		return obj.constructor.prototype;
 	}
 
-	function keys(obj){
-		var result=[],key;
-		var isJsObject=obj instanceof Object;
-		if(!isJsObject){
-			var proto=getPrototypeOf(obj);
-			if(proto){
-				for(key in obj){
-					if(!key.startsWith("@@") && !key.startsWith("__") && proto[key]!==obj[key]){
+	function keys(obj) {
+		var result = [], key;
+		var isJsObject = obj instanceof Object;
+		if(!isJsObject) {
+			var proto = getPrototypeOf(obj);
+			if(proto) {
+				for(key in obj) {
+					if(!key.startsWith("@@") && !key.startsWith("__") && proto[key] !== obj[key]) {
 						result.push(key);
 					}
 				}
 				return result;
 			}
 		}
-		for(key in obj){
-			if(Object.prototype.hasOwnProperty.call(obj,key) && !key.startsWith("@@") && !key.startsWith("__")){
+		for(key in obj) {
+			if(Object.hasOwn(obj, key) && !key.startsWith("@@") && !key.startsWith("__")) {
 				result.push(key);
 			}
 		}
-		var i=dontEnums.length;
-		while(i-->0){
-			key=dontEnums[i];
-			if(Object.prototype.hasOwnProperty.call(obj,key)){
+		var i = dontEnums.length;
+		while(i-- > 0) {
+			key = dontEnums[i];
+			if(Object.hasOwn(obj, key)) {
 				result.push(key);
 			}
 		}
 		return result;
 	}
 
-	var keys$1=Object.keys;
+	var keys$1 = Object.keys;
 
 	function ie_keys(obj) {
 		return keys$1.call(Object, obj).filter(checkSymbolKey);
@@ -330,14 +330,14 @@ var Sky = (function (exports) {
 	function nie_keys(obj) {
 		var result = [];
 		for(var key in obj) {
-			if(!key.startsWith("@@") && Object.prototype.hasOwnProperty.call(obj, key)) {
+			if(!key.startsWith("@@") && Object.hasOwn(obj, key)) {
 				result.push(key);
 			}
 		}
 		return result;
 	}
 
-	var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
+	var hasEnumBug = !{ toString: null }.propertyIsEnumerable('toString');
 
 	if(!Object.keys) {
 		if(hasEnumBug) {
@@ -360,7 +360,7 @@ var Sky = (function (exports) {
 		return obj;
 	}
 
-	var defineProperty$1=Object.defineProperty;
+	var defineProperty$1 = Object.defineProperty;
 
 	function ie8_defineProperty(obj, prop, descriptor) {
 		if(obj instanceof Object) {
@@ -419,9 +419,9 @@ var Sky = (function (exports) {
 		return o;
 	}
 
-	function setPrototypeOf(obj,proto){
-		obj.__proto__=proto;
-		return obj; 
+	function setPrototypeOf(obj, proto) {
+		obj.__proto__ = proto;
+		return obj;
 	}
 
 	if(!Object.setPrototypeOf) {
@@ -439,15 +439,15 @@ var Sky = (function (exports) {
 		return o;
 	}
 
-	if(!Object.create){
-		if('__proto__' in Object.prototype){
-			Object.create=create$1;
-		}else {
-			Object.create=create;
+	if(!Object.create) {
+		if('__proto__' in Object.prototype) {
+			Object.create = create$1;
+		} else {
+			Object.create = create;
 		}
 	}
 
-	function getPrototypeOf$1(object){
+	function getPrototypeOf$1(object) {
 		return object.__proto__;
 	}
 
@@ -459,43 +459,43 @@ var Sky = (function (exports) {
 		}
 	}
 
-	function getOwnPropertyDescriptor(obj,prop){
-		var key='@@desc:'+prop;
-		if(Object.prototype.hasOwnProperty.call(obj,key)){
+	function getOwnPropertyDescriptor(obj, prop) {
+		var key = '@@desc:' + prop;
+		if(Object.hasOwn(obj, key)) {
 			return obj[key];
 		}
-		if(Object.prototype.hasOwnProperty.call(obj,prop)){
-			return {value: obj[prop], writable: true, enumerable: true, configurable: true};
+		if(Object.hasOwn(obj, prop)) {
+			return { value: obj[prop], writable: true, enumerable: true, configurable: true };
 		}
 	}
 
-	function getOwnPropertyDescriptor$1(obj,key){
-		if(Object.prototype.hasOwnProperty.call(obj,key)){
-			var r=new Object();
-			r.enumerable=true;
-			r.configurable=true;
-			r.set=obj.__lookupSetter__(key);
-			r.get=obj.__lookupGetter__(key);
+	function getOwnPropertyDescriptor$1(obj, key) {
+		if(Object.hasOwn(obj, key)) {
+			var r = new Object();
+			r.enumerable = true;
+			r.configurable = true;
+			r.set = obj.__lookupSetter__(key);
+			r.get = obj.__lookupGetter__(key);
 			return r;
 		}
 	}
 
-	if(!Object.getOwnPropertyDescriptor){
-		if(Object.prototype.__defineSetter__){
-			Object.getOwnPropertyDescriptor=getOwnPropertyDescriptor$1;
-		}else {
-			Object.getOwnPropertyDescriptor=getOwnPropertyDescriptor;
+	if(!Object.getOwnPropertyDescriptor) {
+		if(Object.prototype.__defineSetter__) {
+			Object.getOwnPropertyDescriptor = getOwnPropertyDescriptor$1;
+		} else {
+			Object.getOwnPropertyDescriptor = getOwnPropertyDescriptor;
 		}
 	}
 
 	if(!Object.defineProperty) {
-		if(Object.prototype.__defineSetter__){
-			Object.defineProperty=defineProperty;
-		}else {
-			Object.defineProperty=compat_defineProperty;
+		if(Object.prototype.__defineSetter__) {
+			Object.defineProperty = defineProperty;
+		} else {
+			Object.defineProperty = compat_defineProperty;
 		}
-	}else if(!Object.defineProperties){
-		Object.defineProperty=ie8_defineProperty;
+	} else if(!Object.defineProperties) {
+		Object.defineProperty = ie8_defineProperty;
 	}
 
 	function assign(target, varArgs) {
@@ -516,33 +516,33 @@ var Sky = (function (exports) {
 		return to;
 	}
 
-	if(!Object.assign){
-		Object.assign=assign;
+	if(!Object.assign) {
+		Object.assign = assign;
 	}
 
 	var defineProperties$1 = Object.defineProperties;
 
-	if(!defineProperties$1){
-		if(Object.prototype.__defineSetter__){
-			Object.defineProperties=defineProperties;
+	if(!defineProperties$1) {
+		if(Object.prototype.__defineSetter__) {
+			Object.defineProperties = defineProperties;
 		}
 	}
 
-	function is(x, y){
-		if(x===y){// Steps 1-5, 7-10
+	function is(x, y) {
+		if(x === y) {// Steps 1-5, 7-10
 			// Steps 6.b-6.e: +0 != -0
-			return x!==0 || 1/x===1/y;
-		}else {
+			return x !== 0 || 1 / x === 1 / y;
+		} else {
 			// Step 6.a: NaN == NaN
-			return x!==x && y!==y;
+			return x !== x && y !== y;
 		}
 	}
 
-	if (!Object.is){
-		Object.is=is;
+	if(!Object.is) {
+		Object.is = is;
 	}
 
-	function apply(target, thisArgument, argumentsList){
+	function apply(target, thisArgument, argumentsList) {
 		return Function.prototype.apply.call(target, thisArgument, argumentsList);
 	}
 
@@ -570,30 +570,30 @@ var Sky = (function (exports) {
 
 	var getOwnPropertyDescriptor$2 = Object.getOwnPropertyDescriptor || (Object.prototype.__defineSetter__ ? getOwnPropertyDescriptor$1 : getOwnPropertyDescriptor);
 
-	function set(target,propertyKey,value,receiver){
-		if(receiver===void 0){ receiver=target;}
-		var desc=target["@@desc:"+propertyKey];
-		if(desc){
-			if(desc.set){
-				try{
-					desc.set.call(receiver,value);
+	function set(target, propertyKey, value, receiver) {
+		if(receiver === void 0) { receiver = target; }
+		var desc = target["@@desc:" + propertyKey];
+		if(desc) {
+			if(desc.set) {
+				try {
+					desc.set.call(receiver, value);
 					return true;
-				}catch(e){
+				} catch(e) {
 					return false;
 				}
 			}
-			desc.value=value;
+			desc.value = value;
 			return true;
 		}
-		target[propertyKey]=value;
+		target[propertyKey] = value;
 		return true;
 	}
 
-	function get(target,propertyKey,receiver){
-		if(receiver===void 0){ receiver=target;}
-		var desc=target["@@desc:"+propertyKey];
-		if(desc){
-			if(desc.get){
+	function get(target, propertyKey, receiver) {
+		if(receiver === void 0) { receiver = target; }
+		var desc = target["@@desc:" + propertyKey];
+		if(desc) {
+			if(desc.get) {
 				return desc.get.call(receiver);
 			}
 			return desc.value;
@@ -601,8 +601,8 @@ var Sky = (function (exports) {
 		return target[propertyKey];
 	}
 
-	function deleteProperty(target, prop){
-		delete target["@@desc:"+prop];
+	function deleteProperty(target, prop) {
+		delete target["@@desc:" + prop];
 		delete target[prop];
 	}
 
@@ -672,95 +672,95 @@ var Sky = (function (exports) {
 		};
 	}
 
-	if(!Array.prototype.indexOf){
-		Array.prototype.indexOf=function(e,fromIndex){
-			fromIndex=isNaN(fromIndex)?0:fromIndex;
-			for(var i=fromIndex,j;i<this.length; i++){
-				j=this[i];
-				if(j===e){return i;}
+	if(!Array.prototype.indexOf) {
+		Array.prototype.indexOf = function(e, fromIndex) {
+			fromIndex = isNaN(fromIndex) ? 0 : fromIndex;
+			for(var i = fromIndex, j; i < this.length; i++) {
+				j = this[i];
+				if(j === e) { return i; }
 			}
 			return -1;
 		};
 	}
 
-	if(!Array.prototype.lastIndexOf){
+	if(!Array.prototype.lastIndexOf) {
 		Array.prototype.lastIndexOf = function(e, fromIndex) {
-			var i=isNaN(fromIndex)?this.length:fromIndex+1;
-			while(i--){
-				var j=this[i];
-				if(j===e){return i;}
+			var i = isNaN(fromIndex) ? this.length : fromIndex + 1;
+			while(i--) {
+				var j = this[i];
+				if(j === e) { return i; }
 			}
 			return -1;
 		};
 	}
 
-	if(!Array.prototype.forEach){
-		Array.prototype.forEach =function(callback, thisArg){
-			var len=this.length;
-			for(var i=0,j;i<len && i<this.length; i++){
-				j=this[i];
-				callback.call(thisArg,j,i,this);
+	if(!Array.prototype.forEach) {
+		Array.prototype.forEach = function(callback, thisArg) {
+			var len = this.length;
+			for(var i = 0, j; i < len && i < this.length; i++) {
+				j = this[i];
+				callback.call(thisArg, j, i, this);
 			}
 		};
 	}
 
-	if(!Array.prototype.map){
+	if(!Array.prototype.map) {
 		Array.prototype.map = function(fn, context) {
 			var arr = [];
-			for (var k = 0, length = this.length; k < length; k++) {
+			for(var k = 0, length = this.length; k < length; k++) {
 				arr.push(fn.call(context, this[k], k, this));
 			}
 			return arr;
 		};
 	}
 
-	if(!Array.prototype.filter){
+	if(!Array.prototype.filter) {
 		Array.prototype.filter = function(fn, context) {
 			var arr = [];
-			for (var k = 0, length = this.length; k < length; k++) {
+			for(var k = 0, length = this.length; k < length; k++) {
 				fn.call(context, this[k], k, this) && arr.push(this[k]);
 			}
 			return arr;
 		};
 	}
 
-	if(!Array.prototype.some){
+	if(!Array.prototype.some) {
 		Array.prototype.some = function(fn, context) {
 			var passed = false;
-			for (var k = 0, length = this.length; k < length; k++) {
-				if (passed === true) break;
+			for(var k = 0, length = this.length; k < length; k++) {
+				if(passed === true) break;
 				passed = !!fn.call(context, this[k], k, this);
 			}
 			return passed;
 		};
 	}
 
-	if(!Array.prototype.every){
+	if(!Array.prototype.every) {
 		Array.prototype.every = function(fn, context) {
 			var passed = true;
-			for (var k = 0, length = this.length; k < length; k++) {
-				if (passed === false) break;
+			for(var k = 0, length = this.length; k < length; k++) {
+				if(passed === false) break;
 				passed = !!fn.call(context, this[k], k, this);
 			}
 			return passed;
 		};
 	}
 
-	if(!Array.prototype.reduce){
-		Array.prototype.reduce=function(callback){
-			var i,value;
-			if(arguments.length>=2){
-				value=arguments[1];
-				i=0;
-			}else if(this.length>0){
-				value=this[0];
-				i=1;
-			}else {
+	if(!Array.prototype.reduce) {
+		Array.prototype.reduce = function(callback) {
+			var i, value;
+			if(arguments.length >= 2) {
+				value = arguments[1];
+				i = 0;
+			} else if(this.length > 0) {
+				value = this[0];
+				i = 1;
+			} else {
 				throw new Error("Reduce of empty array with no initial value");
 			}
-			while(i<this.length){
-				if (i in this) {
-					value=callback(value,this[i],i,this);
+			while(i < this.length) {
+				if(i in this) {
+					value = callback(value, this[i], i, this);
 				}
 				i++;
 			}
@@ -768,13 +768,13 @@ var Sky = (function (exports) {
 		};
 	}
 
-	function isString(obj){
-		return Object.prototype.toString.call(obj)==='[object String]';
+	function isString(obj) {
+		return Object.prototype.toString.call(obj) === '[object String]';
 	}
 
-	function isArrayLike(obj){
-		var length=obj.length;
-		if(typeof length !="number" || length<0 || isNaN(length) || Math.ceil(length)!=length){
+	function isArrayLike(obj) {
+		var length = obj.length;
+		if(typeof length != "number" || length < 0 || isNaN(length) || Math.ceil(length) != length) {
 			return false;
 		}
 		return true;
@@ -814,16 +814,16 @@ var Sky = (function (exports) {
 		return arr;
 	}
 
-	if(!Array.from){
-		Array.from=from;
+	if(!Array.from) {
+		Array.from = from;
 	}
 
-	function isArray(obj){
-		return Object.prototype.toString.call(obj)==='[object Array]';
+	function isArray(obj) {
+		return Object.prototype.toString.call(obj) === '[object Array]';
 	}
 
-	if(!Array.isArray){
-		Array.isArray=isArray;
+	if(!Array.isArray) {
+		Array.isArray = isArray;
 	}
 
 	function of() {
@@ -834,18 +834,18 @@ var Sky = (function (exports) {
 		Array.of = of;
 	}
 
-	if(!Array.prototype.includes){
-		Array.prototype.includes=function(search,start){
-			return this.indexOf(search, start)!==-1;
+	if(!Array.prototype.includes) {
+		Array.prototype.includes = function(search, start) {
+			return this.indexOf(search, start) !== -1;
 		};
 	}
 
-	if(!Array.prototype.findIndex){
+	if(!Array.prototype.findIndex) {
 		Array.prototype.findIndex = function(callback, thisArg) {
-			for(var i=0,j; i<this.length; i++){
-				j=this[i];
-				var r=callback.call(thisArg,j,i,this);
-				if(r){
+			for(var i = 0, j; i < this.length; i++) {
+				j = this[i];
+				var r = callback.call(thisArg, j, i, this);
+				if(r) {
 					return i;
 				}
 			}
@@ -853,30 +853,30 @@ var Sky = (function (exports) {
 		};
 	}
 
-	if(!Array.prototype.find){
+	if(!Array.prototype.find) {
 		Array.prototype.find = function(callback, thisArg) {
-			var i=this.findIndex(callback, thisArg);
-			if(i>=0){
+			var i = this.findIndex(callback, thisArg);
+			if(i >= 0) {
 				return this[i];
 			}
 		};
 	}
 
-	function Iterator(arr){
-		this.array=arr;
-		this.i=0;
+	function Iterator(arr) {
+		this.array = arr;
+		this.i = 0;
 	}
-	Iterator.prototype.next=function(){
-		var result={};
-		result.done=this.array.length<=this.i;
-		if(!result.done){
-			result.value=this.array[this.i];
+	Iterator.prototype.next = function() {
+		var result = {};
+		result.done = this.array.length <= this.i;
+		if(!result.done) {
+			result.value = this.array[this.i];
 			this.i++;
 		}
 		return result;
 	};
-	if(!Array.prototype.entries){
-		Array.prototype.entries=function(){
+	if(!Array.prototype.entries) {
+		Array.prototype.entries = function() {
 			return new Iterator(this);
 		};
 	}
@@ -900,21 +900,21 @@ var Sky = (function (exports) {
 				return Date$1.UTC(parseInt(arr[1]), parseInt(arr[2]) - 1, parseInt(arr[3]), parseInt(arr[4]), parseInt(arr[5]), parseInt(arr[6]), parseFloat(arr[7]) * 1000);
 			}
 		}
-		switch(arguments.length){
+		switch(arguments.length) {
 			case 0:
 				return new Date$1();
 			case 1:
 				return new Date$1(str);
 			case 3:
-				return new Date$1(str,arguments[1],arguments[2]);
+				return new Date$1(str, arguments[1], arguments[2]);
 			case 4:
-				return new Date$1(str,arguments[1],arguments[2],arguments[3]);
+				return new Date$1(str, arguments[1], arguments[2], arguments[3]);
 			case 5:
-				return new Date$1(str,arguments[1],arguments[2],arguments[4],arguments[5]);
+				return new Date$1(str, arguments[1], arguments[2], arguments[4], arguments[5]);
 			case 6:
-				return new Date$1(str,arguments[1],arguments[2],arguments[4],arguments[5],arguments[6]);
+				return new Date$1(str, arguments[1], arguments[2], arguments[4], arguments[5], arguments[6]);
 			case 7:
-				return new Date$1(str,arguments[1],arguments[2],arguments[4],arguments[5],arguments[6],arguments[7]);
+				return new Date$1(str, arguments[1], arguments[2], arguments[4], arguments[5], arguments[6], arguments[7]);
 		}
 		return Date$1.apply(this, arguments);
 	}
@@ -938,33 +938,33 @@ var Sky = (function (exports) {
 	}
 
 	function prefixIntrger2(number) {
-		if(number<10){
-			return '0'+number;
+		if(number < 10) {
+			return '0' + number;
 		}
 		return number;
 	}
 
 	function prefixIntrger3(number) {
-		if(number<100){
-			return '0'+prefixIntrger2(number);
+		if(number < 100) {
+			return '0' + prefixIntrger2(number);
 		}
 		return number;
 	}
 
-	if(!Date.prototype.toISOString){
+	if(!Date.prototype.toISOString) {
 		Date.prototype.toISOString = function() {
-			return this.getUTCFullYear()+
-				'-'+prefixIntrger2(this.getUTCMonth()+1)+
-				'-'+prefixIntrger2(this.getUTCDate()) +
-				'T'+prefixIntrger2(this.getUTCHours()) +
-				':'+prefixIntrger2(this.getUTCMinutes()) +
-				':'+prefixIntrger2(this.getUTCSeconds()) +
-				'.'+prefixIntrger3(this.getUTCMilliseconds())+'Z';
+			return this.getUTCFullYear() +
+				'-' + prefixIntrger2(this.getUTCMonth() + 1) +
+				'-' + prefixIntrger2(this.getUTCDate()) +
+				'T' + prefixIntrger2(this.getUTCHours()) +
+				':' + prefixIntrger2(this.getUTCMinutes()) +
+				':' + prefixIntrger2(this.getUTCSeconds()) +
+				'.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
 		};
 	}
 
-	if(!Date.prototype.toJSON){
-		Date.prototype.toJSON=Date.prototype.toISOString;
+	if(!Date.prototype.toJSON) {
+		Date.prototype.toJSON = Date.prototype.toISOString;
 	}
 
 	function toLocaleFormat(date, format) {
@@ -1001,8 +1001,8 @@ var Sky = (function (exports) {
 	}
 
 	if(!Date.prototype.toLocaleFormat) {//部分浏览器支持
-		Date.prototype.toLocaleFormat = function(format){
-			return toLocaleFormat(this,format)
+		Date.prototype.toLocaleFormat = function(format) {
+			return toLocaleFormat(this, format);
 		};
 	}
 
@@ -1027,45 +1027,45 @@ var Sky = (function (exports) {
 		};
 	}
 
-	var symbol_sqe$1=0;
-	var all_symbol$1={};
-	function SymbolClass(desc){
-		this.__name__="@@"+desc+":"+symbol_sqe$1;
+	var symbol_sqe$1 = 0;
+	var all_symbol$1 = {};
+	function SymbolClass(desc) {
+		this.__name__ = "@@" + desc + ":" + symbol_sqe$1;
 		symbol_sqe$1++;
-		all_symbol$1[this.__name__]=this;
+		all_symbol$1[this.__name__] = this;
 	}
-	SymbolClass.prototype.toString=function(){
+	SymbolClass.prototype.toString = function() {
 		return this.__name__;
 	};
-	function Symbol$6(desc){
+	function Symbol$6(desc) {
 		return new SymbolClass(desc);
-	}Symbol$6.sham=true;
-	Symbol$6.iterator="@@iterator";
-	Symbol$6.hasInstance="@@hasInstance";
+	} Symbol$6.sham = true;
+	Symbol$6.iterator = "@@iterator";
+	Symbol$6.hasInstance = "@@hasInstance";
 
 	var Set$1 = this.Set;
 
-	function ES6Iterator(it){
-		this.iterator=it;
+	function ES6Iterator(it) {
+		this.iterator = it;
 	}
-	ES6Iterator.prototype.next=function(){
-		var r={};
-		try{
-			r.value=this.iterator.next();
-			r.done=false;
-		}catch(e){
-			r.done=true;
+	ES6Iterator.prototype.next = function() {
+		var r = {};
+		try {
+			r.value = this.iterator.next();
+			r.done = false;
+		} catch(e) {
+			r.done = true;
 		}
 		return r;
 	};
-	ES6Iterator.prototype[Symbol$5.iterator]=function(){
+	ES6Iterator.prototype[Symbol$5.iterator] = function() {
 		return this;
 	};
-	function toES6Iterator(it){
+	function toES6Iterator(it) {
 		return new ES6Iterator(it);
 	}
 
-	function fixSet(){
+	function fixSet() {
 		function Set(args) {
 			var set = new Set$1(args);
 			Object.setPrototypeOf(set, Object.getPrototypeOf(this));
@@ -1121,15 +1121,15 @@ var Sky = (function (exports) {
 				};
 			}
 		}
-		if(!Set.prototype.values){
-			Set.prototype.values=Set.prototype[Symbol$5.iterator];
+		if(!Set.prototype.values) {
+			Set.prototype.values = Set.prototype[Symbol$5.iterator];
 		}
 		return Set;
-	}function pushEach(value) {
+	} function pushEach(value) {
 		this.push(value);
 	}
 
-	function createSet(){
+	function createSet() {
 		function Set(arr) {
 			this.items = new Array();
 			if(arr) {
@@ -1144,7 +1144,7 @@ var Sky = (function (exports) {
 				}
 			}
 			this.size = this.items.length;
-		}	Set.prototype.has = function(value) {
+		} Set.prototype.has = function(value) {
 			return this.items.indexOf(value) >= 0;
 		};
 		Set.prototype.add = function(value) {
@@ -1177,11 +1177,11 @@ var Sky = (function (exports) {
 			return this.items[Symbol$5.iterator]();
 		};
 		Set.prototype[Symbol$5.iterator] = Set.prototype.values;
-		return Set
+		return Set;
 	}
 
 	if(Set$1) {
-		if(!Symbol$6 || !Set$1.prototype[Symbol$6.iterator]){
+		if(!Symbol$6 || !Set$1.prototype[Symbol$6.iterator]) {
 			this.Set = fixSet();
 		}
 	} else {
@@ -1190,7 +1190,7 @@ var Sky = (function (exports) {
 
 	var Map = this.Map;
 
-	function fixMap(){
+	function fixMap() {
 		function Map$1(args) {
 			var map = new Map(args);
 			Object.setPrototypeOf(map, Object.getPrototypeOf(this));
@@ -1249,8 +1249,8 @@ var Sky = (function (exports) {
 				};
 			}
 		}
-		if(!Map$1.prototype.entries){
-			Map$1.prototype.entries=Map$1.prototype[Symbol$5.iterator];
+		if(!Map$1.prototype.entries) {
+			Map$1.prototype.entries = Map$1.prototype[Symbol$5.iterator];
 		}
 		return Map$1;
 	}
@@ -1258,20 +1258,20 @@ var Sky = (function (exports) {
 		this.push([key, value]);
 	}
 
-	function find(arr,key,value){
-		for(var i=0; i<arr.length; i++){
-			if(arr[i][key]===value){return arr[i];}
+	function find(arr, key, value) {
+		for(var i = 0; i < arr.length; i++) {
+			if(arr[i][key] === value) { return arr[i]; }
 		}
 	}
 
-	function findIndex(arr,key,value){
-		for(var i=0; i<arr.length; i++){
-			if(arr[i][key]===value){return i;}
+	function findIndex(arr, key, value) {
+		for(var i = 0; i < arr.length; i++) {
+			if(arr[i][key] === value) { return i; }
 		}
 		return -1;
 	}
 
-	function createMap(){
+	function createMap() {
 		function Map(arr) {
 			this.items = new Array();
 			if(arr) {
@@ -1286,7 +1286,7 @@ var Sky = (function (exports) {
 				}
 			}
 			this.size = this.items.length;
-		}	Map.prototype.entries = function() {
+		} Map.prototype.entries = function() {
 			return this.items[Symbol$5.iterator]();
 		};
 		Map.prototype.clear = function() {
@@ -1336,7 +1336,7 @@ var Sky = (function (exports) {
 	}
 
 	if(Map) {
-		if(!Symbol$6 || !Map.prototype[Symbol$6.iterator]){
+		if(!Symbol$6 || !Map.prototype[Symbol$6.iterator]) {
 			this.Map = fixMap();
 		}
 	} else {
@@ -1348,22 +1348,22 @@ var Sky = (function (exports) {
 	}
 
 	var rx_escapable = /[\\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
-	function escapeString(str){//from lodash
+	function escapeString(str) {//from lodash
 		rx_escapable.lastIndex = 0;
 		return rx_escapable.test(str)
 			? str.replace(rx_escapable, function(a) {
-			var meta = {
-				"\b":"\\b","\t":"\\t","\n":"\\n","\f":"\\f","\r": "\\r",	"\"": "\\\"","\\": "\\\\"
-			};
-			var c = meta[a];
-			return typeof c === "string"
-				? c
-				: "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
-		}): str;
+				var meta = {
+					"\b": "\\b", "\t": "\\t", "\n": "\\n", "\f": "\\f", "\r": "\\r", "\"": "\\\"", "\\": "\\\\"
+				};
+				var c = meta[a];
+				return typeof c === "string"
+					? c
+					: "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+			}) : str;
 	}
 
-	function isFunction(obj){
-		return Object.prototype.toString.call(obj)==='[object Function]';
+	function isFunction(obj) {
+		return Object.prototype.toString.call(obj) === '[object Function]';
 	}
 
 	function stringify(obj) {
@@ -1441,7 +1441,7 @@ var Sky = (function (exports) {
 		this.queueMicrotask = queueMicrotask$1;
 	}
 
-	function noop(){}
+	function noop() { }
 
 	var PENDING = Symbol$5("pending");
 	var RESOLVED = Symbol$5("resolved");
@@ -1610,7 +1610,7 @@ var Sky = (function (exports) {
 				}
 			}
 		}
-	}URLSearchParams$1.prototype.append = function(key, value) {
+	} URLSearchParams$1.prototype.append = function(key, value) {
 		this._data.push([value, key]);
 	};
 	URLSearchParams$1.prototype.get = function(key) {
@@ -1667,7 +1667,7 @@ var Sky = (function (exports) {
 
 	function SearchParams(url) {
 		this.url = url;
-	}SearchParams.prototype = Object.create(URLSearchParams.prototype);
+	} SearchParams.prototype = Object.create(URLSearchParams.prototype);
 	["append", "set", "delete"].forEach(function(method) {
 		SearchParams.prototype[method] = function(key, value) {
 			var searchParams = new URLSearchParams(this.url.search.replace(/^\?/, ""));
@@ -1925,11 +1925,11 @@ var Sky = (function (exports) {
 		}
 	}
 
-	if(!('origin' in location)){
-		location.origin=location.protocol+"//"+location.host;
+	if(!('origin' in location)) {
+		location.origin = location.protocol + "//" + location.host;
 	}
 
-	if(!('head' in document)) document.head=document.getElementsByTagName("head")[0];
+	if(!('head' in document)) document.head = document.getElementsByTagName("head")[0];
 
 	if(!document.scripts) {
 		document.scripts = document.getElementsByTagName("script");
@@ -1992,94 +1992,94 @@ var Sky = (function (exports) {
 		console.clear = noop;
 	}
 
-	if(!this.localStorage){
-		this.localStorage=new function(){
-			var ele=document.createElement("localStorage");
-			if(ele.addBehavior){
+	if(!this.localStorage) {
+		this.localStorage = new function() {
+			var ele = document.createElement("localStorage");
+			if(ele.addBehavior) {
 				ele.addBehavior("#default#userData");
 				document.head.appendChild(ele);
-				this.getItem=function(key){
+				this.getItem = function(key) {
 					ele.load("localStorage");
 					return ele.getAttribute(key);
 				};
-				this.setItem=function(key,value){
-					ele.setAttribute(key,new String(value));
+				this.setItem = function(key, value) {
+					ele.setAttribute(key, new String(value));
 					ele.save("localStorage");
 				};
-				this.removeItem=function(key){
+				this.removeItem = function(key) {
 					ele.removeAttribute(key);
 					ele.save("localStorage");
 				};
-				this.sham=true;
+				this.sham = true;
 			}
 		}();
 	}
 
-	function getCookie(name){
-		var arr=document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+	function getCookie(name) {
+		var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
 		if(arr != null) return decodeURIComponent(arr[2]); return null;
 	}
 
-	function isNumber(obj){
-		return Object.prototype.toString.call(obj)==='[object Number]';
+	function isNumber(obj) {
+		return Object.prototype.toString.call(obj) === '[object Number]';
 	}
 
-	function setCookie(name,value){
-		var path="/";
+	function setCookie(name, value) {
+		var path = "/";
 		var seconds;
 		var domain;
 		var expires;
-		if(arguments.length>2){
-			for(var i=2;i<arguments.length;i++){
-				if(isNumber(arguments[i])){
-					seconds=arguments[i];
-				}else if(isString(arguments[i])){
-					if(arguments[i].indexOf(".")>=0){
-						domain=arguments[i];
-					}else if(arguments[i].indexOf("/")>=0){
-						path=arguments[i];
+		if(arguments.length > 2) {
+			for(var i = 2; i < arguments.length; i++) {
+				if(isNumber(arguments[i])) {
+					seconds = arguments[i];
+				} else if(isString(arguments[i])) {
+					if(arguments[i].indexOf(".") >= 0) {
+						domain = arguments[i];
+					} else if(arguments[i].indexOf("/") >= 0) {
+						path = arguments[i];
 					}
 				}
 			}
 		}
-		if(value==null || seconds<=0) {
-			value='';
-			seconds=-2592000;
+		if(value == null || seconds <= 0) {
+			value = '';
+			seconds = -2592000;
 		}
-		if(!isNaN(seconds)){
-			expires=new Date();
+		if(!isNaN(seconds)) {
+			expires = new Date();
 			expires.setTime(expires.getTime() + seconds * 1000);
 		}
-		document.cookie=name+'='+encodeURIComponent(value)
-			+(expires?'; expires='+expires.toGMTString():'')
-			+'; path='+path
-			+(domain?'; domain='+domain:'');
+		document.cookie = name + '=' + encodeURIComponent(value)
+			+ (expires ? '; expires=' + expires.toGMTString() : '')
+			+ '; path=' + path
+			+ (domain ? '; domain=' + domain : '');
 	}
 
-	if(!this.sessionStorage){
-		this.sessionStorage=new function(){
-			var ele=document.createElement("sessionStorage");
-			var sessionId=getCookie("JSESSIONID");
-			if(!sessionId){
-				sessionId=Math.random().toString(16).replace("0.","");
-				setCookie("JSESSIONID",sessionId);
+	if(!this.sessionStorage) {
+		this.sessionStorage = new function() {
+			var ele = document.createElement("sessionStorage");
+			var sessionId = getCookie("JSESSIONID");
+			if(!sessionId) {
+				sessionId = Math.random().toString(16).replace("0.", "");
+				setCookie("JSESSIONID", sessionId);
 			}
-			if(ele.addBehavior){
+			if(ele.addBehavior) {
 				ele.addBehavior("#default#userData");
 				document.head.appendChild(ele);
-				this.getItem=function(key){
+				this.getItem = function(key) {
 					ele.load(sessionId);
 					return ele.getAttribute(key);
 				};
-				this.setItem=function(key,value){
-					ele.setAttribute(key,new String(value));
+				this.setItem = function(key, value) {
+					ele.setAttribute(key, new String(value));
 					ele.save(sessionId);
 				};
-				this.removeItem=function(key){
+				this.removeItem = function(key) {
 					ele.removeAttribute(key);
 					ele.save(sessionId);
 				};
-				this.sham=true;
+				this.sham = true;
 			}
 		}();
 	}
@@ -2115,31 +2115,31 @@ var Sky = (function (exports) {
 		}
 	}
 
-	var rules=[];
-	function ckeck(ckeckFunc,index){
+	var rules = [];
+	function ckeck(ckeckFunc, index) {
 		return ckeckFunc(this[index]);
 	}
-	function compare(x, y){//比较函数
-		return x.checks.length-y.checks.length;
+	function compare(x, y) {//比较函数
+		return x.checks.length - y.checks.length;
 	}
-	function overload(checks,func,target){
-		if(target){
+	function overload(checks, func, target) {
+		if(target) {
 			rules.push({
-				'checks':checks,
-				'func':func,
-				'target':target
+				'checks': checks,
+				'func': func,
+				'target': target
 			});
 			rules.sort(compare);
-		}else {
-			var args=checks;
-			var thisVal=func;
-			var i=rules.length;
-			while(i--){
-				var rule=rules[i];
-				if(args.callee===rule.func){
-					if(rule.checks.length>=args.length){
-						if(rule.checks.every(ckeck,args)){
-							return rule.target.apply(thisVal,args);
+		} else {
+			var args = checks;
+			var thisVal = func;
+			var i = rules.length;
+			while(i--) {
+				var rule = rules[i];
+				if(args.callee === rule.func) {
+					if(rule.checks.length >= args.length) {
+						if(rule.checks.every(ckeck, args)) {
+							return rule.target.apply(thisVal, args);
 						}
 					}
 				}
@@ -2148,108 +2148,108 @@ var Sky = (function (exports) {
 		}
 	}
 
-	function isDate(obj){
-		return Object.prototype.toString.call(obj)==='[object Date]';
+	function isDate(obj) {
+		return Object.prototype.toString.call(obj) === '[object Date]';
 	}
 
-	function isRegExp(obj){
-		return Object.prototype.toString.call(obj)==='[object RegExp]';
+	function isRegExp(obj) {
+		return Object.prototype.toString.call(obj) === '[object RegExp]';
 	}
 
-	function isObject(obj){
-		var type=typeof obj;
-		if(type!=="object"){
+	function isObject(obj) {
+		var type = typeof obj;
+		if(type !== "object") {
 			return false;
 		}
-		type=Object.prototype.toString.call(obj);
-		switch(type){
+		type = Object.prototype.toString.call(obj);
+		switch(type) {
 			case '[object String]':
 			case '[object Number]':
 			case '[object Function]':
 			case '[object Boolean]':
 				return false;
 		}
-		if(typeof obj.toString==="function" && obj.toString().indexOf("@@")===0){
+		if(typeof obj.toString === "function" && obj.toString().indexOf("@@") === 0) {
 			return false;//symbol polyfill
 		}
 		return true;
 	}
 
-	function isDefined(obj){
-		return obj!==void 0;
+	function isDefined(obj) {
+		return obj !== void 0;
 	}
 
 	function isWindow$1(obj) {
 		return window == obj;
 	}
 
-	function isPlainObject(obj){
-		if(obj===null){
+	function isPlainObject(obj) {
+		if(obj === null) {
 			return true;
 		}
-		if(typeof obj!=="object" || obj.nodeType || isWindow(obj)){
+		if(typeof obj !== "object" || obj.nodeType || isWindow(obj)) {
 			return false;
 		}
-		return Object.getPrototypeOf(obj)===Object.prototype;
+		return Object.getPrototypeOf(obj) === Object.prototype;
 	}
 
-	function isArrayLikeObject(obj){
-		if(typeof obj==="object" && isArrayLike(obj)){
+	function isArrayLikeObject(obj) {
+		if(typeof obj === "object" && isArrayLike(obj)) {
 			return true;
 		}
 		return false;
 	}
 
-	function isNumeric(obj){
-		var n=parseFloat(obj);
+	function isNumeric(obj) {
+		var n = parseFloat(obj);
 		return !isNaN(n);
 	}
 
-	function isElement(obj){
-		return obj?obj.nodeType===1:false;
+	function isElement(obj) {
+		return obj ? obj.nodeType === 1 : false;
 	}
 
-	function isInput(obj){
-		return obj?obj.tagName==="INPUT":false;
+	function isInput(obj) {
+		return obj ? obj.tagName === "INPUT" : false;
 	}
 
-	function isDocument(obj){
-		return obj===document;
+	function isDocument(obj) {
+		return obj === document;
 	}
 
-	function times(n,iteratee,thisArg){
-		if(n<1){
+	function times(n, iteratee, thisArg) {
+		if(n < 1) {
 			return [];
 		}
 		var index = -1,
 			result = Array(n);
-		while (++index < n) {
-			result[index] = iteratee.apply(this,thisArg);
+		while(++index < n) {
+			result[index] = iteratee.apply(this, thisArg);
 		}
 		return result;
 	}
 
-	function random(a,b){
-		var length=b-a+1;
-		return Math.floor(Math.random()*length)+a;
+	function random(a, b) {
+		var length = b - a + 1;
+		return Math.floor(Math.random() * length) + a;
 	}
 
 	function escapeHtml(str) {
-		return str.replace(/&/g,'&amp;')
-			.replace(/</g,'&lt;')
-			.replace(/>/g,'&gt;');
+		return str.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
 	}
 
-	function escapeAttribute(str,quot){
-		var esc=escapeHtml(str);
-		if(!quot || quot=='"'){
-			return esc.replace(/"/g,'&quot;');
-		}else {
-			return esc.replaceAll(quot.charAt(0),'&#'+quot.charCodeAt(0)+";");
+	function escapeAttribute(str, quot) {
+		var esc = escapeHtml(str);
+		if(!quot || quot == '"') {
+			return esc.replace(/"/g, '&quot;');
+		} else {
+			return esc.replaceAll(quot.charAt(0), '&#' + quot.charCodeAt(0) + ";");
 		}
 	}
 
-	var htmlEscapes={
+	var htmlEscapes = {
 		'&': '&amp;',
 		'<': '&lt;',
 		'>': '&gt;',
@@ -2257,15 +2257,15 @@ var Sky = (function (exports) {
 		"'": '&#39;',
 		'`': '&#96;'
 	};
-	function escape(text){
-		return text.replace(/[&<>"'`]/g,function(i){
+	function escape(text) {
+		return text.replace(/[&<>"'`]/g, function(i) {
 			return htmlEscapes[i];
 		});
 	}
 
-	var div=document.createElement('div');
-	function unescape(html){
-		div.innerHTML=html;
+	var div = document.createElement('div');
+	function unescape(html) {
+		div.innerHTML = html;
 		return div.textContent || div.innerText;
 	}
 
@@ -2286,81 +2286,81 @@ var Sky = (function (exports) {
 	};
 	var reRegExpChars = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g;
 
-	function escapeRegExp(str){//from lodash
-		if(str){
+	function escapeRegExp(str) {//from lodash
+		if(str) {
 			reRegExpChars.lastIndex = 0;
 			return (reRegExpChars.test(str))
 				? str.replace(reRegExpChars, function(chr, leadingChar, whitespaceChar) {
-				if (leadingChar) {
-					chr = regexpEscapes[chr];
-				} else if (whitespaceChar) {
-					chr = stringEscapes[chr];
-				}
-				return '\\' + chr;
-			})
+					if(leadingChar) {
+						chr = regexpEscapes[chr];
+					} else if(whitespaceChar) {
+						chr = stringEscapes[chr];
+					}
+					return '\\' + chr;
+				})
 				: str;
 		}
 		return "(?:)";
 	}
 
 	function replaceAll(str, reallyDo, replaceWith, ignoreCase) {
-		return str.replace(new RegExp(escapeRegExp(reallyDo), (ignoreCase ? "gi": "g")), replaceWith);
+		return str.replace(new RegExp(escapeRegExp(reallyDo), (ignoreCase ? "gi" : "g")), replaceWith);
 	}
 
-	function toString(o){
+	function toString(o) {
 		return new String(o).valueOf();
 	}
 
-	function findLastIndex(arr,key,value){
-		for(var i=arr.length-1; i>=0; i--){
-			if(arr[i][key]===value){return i;}
+	function findLastIndex(arr, key, value) {
+		for(var i = arr.length - 1; i >= 0; i--) {
+			if(arr[i][key] === value) { return i; }
 		}
 		return -1;
 	}
 
-	function findLast(arr,key,value){
-		for(var i=arr.length-1; i>=0; i--){
-			if(arr[i][key]===value){return value;}
+	function findLast(arr, key, value) {
+		for(var i = arr.length - 1; i >= 0; i--) {
+			if(arr[i][key] === value) { return value; }
 		}
 	}
 
-	function sortBy(arr,key){
-		return arr.sort(function(a,b){
+	function sortBy(arr, key) {
+		return arr.sort(function(a, b) {
 			return a[key] > b[key];
 		});
 	}
 
-	function pluck(arr,key){
-		return arr.map(function(item){
+	function pluck(arr, key) {
+		return arr.map(function(item) {
 			return item[key];
 		});
 	}
 
-	function sortedIndex(arr,value){
-		for(var i=0; i<arr.length; i++){
-			if(arr[i]>=value){
+	function sortedIndex(arr, value) {
+		for(var i = 0; i < arr.length; i++) {
+			if(arr[i] >= value) {
 				return i;
 			}
 		}
 		return arr.length;
 	}
 
-	function sortedLastIndex(arr,value){
-		for(var i=arr.length-1; i>=0; i--){
-			if(arr[i]<=value){
-				return i+1;
+	function sortedLastIndex(arr, value) {
+		for(var i = arr.length - 1; i >= 0; i--) {
+			if(arr[i] <= value) {
+				return i + 1;
 			}
 		}
 	}
 
-	function shuffle(arr){
-		var copyArr=arr.slice();
-		var ubound=arr.length-1;
-		for(var i=0; i<ubound; i++){
-			var r=random(0,ubound);
-			var tmp=copyArr[r];
-			copyArr[r]=copyArr[i];
-			copyArr[i]=tmp;
+	function shuffle(arr) {
+		var copyArr = arr.slice();
+		var ubound = arr.length - 1;
+		for(var i = 0; i < ubound; i++) {
+			var r = random(0, ubound);
+			var tmp = copyArr[r];
+			copyArr[r] = copyArr[i];
+			copyArr[i] = tmp;
 		}
 		return copyArr;
 	}
@@ -2419,13 +2419,13 @@ var Sky = (function (exports) {
 		return Array.from(set);
 	}
 
-	function forOwn(obj,fn,thisArg){
-		if(obj){
-			thisArg=thisArg || undefined;
-			var keys=Object.keys(obj);
-			for(var i=0;i<keys.length;i++){
-				var key=keys[i];
-				if(fn.call(thisArg,obj[key],key)===false){
+	function forOwn(obj, fn, thisArg) {
+		if(obj) {
+			thisArg = thisArg || undefined;
+			var keys = Object.keys(obj);
+			for(var i = 0; i < keys.length; i++) {
+				var key = keys[i];
+				if(fn.call(thisArg, obj[key], key) === false) {
 					return false;
 				}
 			}
@@ -2434,31 +2434,31 @@ var Sky = (function (exports) {
 		return false;
 	}
 
-	function forIn$1(obj,fn,thisArg){
-		if(typeof obj!=="object"){
+	function forIn$1(obj, fn, thisArg) {
+		if(typeof obj !== "object") {
 			return false;
 		}
-		var isJsObject=obj instanceof Object;
+		var isJsObject = obj instanceof Object;
 		for(var key in obj) {
-			if(!isJsObject){
-				if(key.startsWith("__") || key==="constructor"){
-					continue ;
+			if(!isJsObject) {
+				if(key.startsWith("__") || key === "constructor") {
+					continue;
 				}
 			}
-			if(key.startsWith("@@")){
-				continue ;
+			if(key.startsWith("@@")) {
+				continue;
 			}
-			if(fn.call(thisArg,obj[key],key)===false){
+			if(fn.call(thisArg, obj[key], key) === false) {
 				return false;
 			}
 		}
-		var i=dontEnums.length;
-		var proto=getPrototypeOf(obj);
+		var i = dontEnums.length;
+		var proto = getPrototypeOf(obj);
 		//遍历nonEnumerableProps数组
-		while(i--){
-			var prop=dontEnums[i];
-			if(prop in obj && obj[prop]!==proto[prop]){
-				if(fn.call(thisArg,obj[prop],prop)===false){
+		while(i--) {
+			var prop = dontEnums[i];
+			if(prop in obj && obj[prop] !== proto[prop]) {
+				if(fn.call(thisArg, obj[prop], prop) === false) {
 					return false;
 				}
 			}
@@ -2476,7 +2476,7 @@ var Sky = (function (exports) {
 			}
 		}
 		return true;
-	}function symbol_forIn(obj, fn, thisArg) {
+	} function symbol_forIn(obj, fn, thisArg) {
 		for(var key in obj) {
 			if(fn.call(thisArg, obj[key], key) === false) {
 				return false;
@@ -2524,129 +2524,129 @@ var Sky = (function (exports) {
 		subClass.prototype = Object.create(superClass.prototype);
 		subClass.prototype.constructor = subClass;
 		subClass.__proto__ = superClazz.prototype;
-	}function setKey(value, key) {
+	} function setKey(value, key) {
 		this[key] = value;
 	}
 
 	// import "core-js/modules/es.object.set-prototype-of";
 	// import "core-js/modules/es.object.create";
-	function inherits$1(clazz,superClazz){
-		Object.setPrototypeOf(clazz,superClazz);
-		clazz.prototype=Object.create(superClazz.prototype);
-		clazz.prototype.constructor=clazz;
+	function inherits$1(clazz, superClazz) {
+		Object.setPrototypeOf(clazz, superClazz);
+		clazz.prototype = Object.create(superClazz.prototype);
+		clazz.prototype.constructor = clazz;
 	}
 
 	var inherits$2 = proto ? inherits$1 : inherits;
 
-	function getElementStyle(el, prop){
-		if(el.currentStyle){//IE
+	function getElementStyle(el, prop) {
+		if(el.currentStyle) {//IE
 			return el.currentStyle[prop] || el.style[prop];
-		}else if(window.getComputedStyle){//非IE
-			var propprop = prop.replace (/([A-Z])/g, "-$1");
+		} else if(window.getComputedStyle) {//非IE
+			var propprop = prop.replace(/([A-Z])/g, "-$1");
 			propprop = propprop.toLowerCase();
-			var style=window.getComputedStyle(el,null);
+			var style = window.getComputedStyle(el, null);
 			return style[prop] || style.getPropertyValue(propprop) || el.style[prop];
 		}
 	}
 
-	function hasClass(obj,cls){
+	function hasClass(obj, cls) {
 		if(!obj) return false;
-		return obj.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
+		return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
 	}
 
-	function addClass(obj,cls){
-		if(!hasClass(obj,cls)) obj.className=obj.className.trim()+" "+cls;
+	function addClass(obj, cls) {
+		if(!hasClass(obj, cls)) obj.className = obj.className.trim() + " " + cls;
 	}
 
-	function removeClass(obj,cls){
-		if(hasClass(obj,cls)){
-			var reg = new RegExp('(\\s+|^)'+cls+'(\\s+|$)');
-			obj.className=obj.className.replace(reg,' ');
+	function removeClass(obj, cls) {
+		if(hasClass(obj, cls)) {
+			var reg = new RegExp('(\\s+|^)' + cls + '(\\s+|$)');
+			obj.className = obj.className.replace(reg, ' ');
 		}
 	}
 
-	function toggleClass(obj,cls){
-		if(hasClass(obj,cls)){
-			var reg = new RegExp('(\\s+|^)'+cls+'(\\s+|$)');
-			obj.className=obj.className.replace(reg,' ');
-		}else {
-			obj.className=obj.className.trim()+" "+cls;
+	function toggleClass(obj, cls) {
+		if(hasClass(obj, cls)) {
+			var reg = new RegExp('(\\s+|^)' + cls + '(\\s+|$)');
+			obj.className = obj.className.replace(reg, ' ');
+		} else {
+			obj.className = obj.className.trim() + " " + cls;
 		}
 	}
 
-	function getNextElement(element){
+	function getNextElement(element) {
 		var e = element.nextSibling;
-		if(e == null){ return null;}
-		if(e.nodeType==1){
+		if(e == null) { return null; }
+		if(e.nodeType == 1) {
 			return e;
-		}else {
+		} else {
 			return getNextElement(e);
 		}
 	}
 
-	function getPrevElement(element){
+	function getPrevElement(element) {
 		var e = element.previousSibling;
-		if(e == null){ return null;}
-		if(e.nodeType==1){
+		if(e == null) { return null; }
+		if(e.nodeType == 1) {
 			return e;
-		}else {
+		} else {
 			return getPrevElement(e);
 		}
 	}
 
-	function byId(id){
+	function byId(id) {
 		return document.getElementById(id);
 	}
 
-	function getElementsByClassName(className,e){
-		e=e||document;
-		if(e.getElementsByClassName){
+	function getElementsByClassName(className, e) {
+		e = e || document;
+		if(e.getElementsByClassName) {
 			return Array.prototype.slice.call(e.getElementsByClassName(className));
 		}
-		var result=[];
-		var nodes= e.getElementsByTagName("*");
-		for(var i=0;i<nodes.length;i++){
-			if(hasClass(nodes[i],className)){
+		var result = [];
+		var nodes = e.getElementsByTagName("*");
+		for(var i = 0; i < nodes.length; i++) {
+			if(hasClass(nodes[i], className)) {
 				result.push(nodes[i]);
 			}
 		}
 		return result;
 	}
 
-	function querySelector(selector,ancestor){
-		if(!ancestor){
-			ancestor=document;
+	function querySelector(selector, ancestor) {
+		if(!ancestor) {
+			ancestor = document;
 		}
-		if(ancestor.querySelector){
+		if(ancestor.querySelector) {
 			return ancestor.querySelector(selector);
 		}
-		var a=querySelectorAll(selector,ancestor);
-		if(a.length){
+		var a = querySelectorAll(selector, ancestor);
+		if(a.length) {
 			return a[0];
 		}
 		return null;
 	}
 
-	function querySelectorAll$1(selector,ancestor){
-		if(!ancestor){
-			ancestor=document;
+	function querySelectorAll$1(selector, ancestor) {
+		if(!ancestor) {
+			ancestor = document;
 		}
-		if(ancestor.querySelectorAll){
+		if(ancestor.querySelectorAll) {
 			return ancestor.querySelectorAll(selector);
 		}
-		var a=compat_querySelectorAll(selector,ancestor);
-		if(a.length){
+		var a = compat_querySelectorAll(selector, ancestor);
+		if(a.length) {
 			return a[0];
 		}
 		return null;
 	}
 
-	function getCurrentScript(){
-		var nodes=document.getElementsByTagName('SCRIPT');
-		var i=nodes.length;
-		while(i--){
-			var node=nodes[i];
-			if(node.readyState==="interactive"){
+	function getCurrentScript() {
+		var nodes = document.getElementsByTagName('SCRIPT');
+		var i = nodes.length;
+		while(i--) {
+			var node = nodes[i];
+			if(node.readyState === "interactive") {
 				return node;
 			}
 		}
@@ -2761,39 +2761,39 @@ var Sky = (function (exports) {
 		}
 	} : getCurrentPathByStack;
 
-	function getScript(src,func,charset){
-		var script=document.createElement('script');
-		script.charset=charset || "UTF-8";
-		script.src=src;
-		script.async=true;
-		if(func){
-			var event='onreadystatechange';
-			script.attachEvent(event,function(){
-				if(script.readyState==='loaded'){
+	function getScript(src, func, charset) {
+		var script = document.createElement('script');
+		script.charset = charset || "UTF-8";
+		script.src = src;
+		script.async = true;
+		if(func) {
+			var event = 'onreadystatechange';
+			script.attachEvent(event, function() {
+				if(script.readyState === 'loaded') {
 					document.head.appendChild(script);
-				}else if(script.readyState==='complete'){
-					script.detachEvent(event,arguments.callee);
-					var evt=window.event;
-					func.call(script,evt);
-					script=null;
+				} else if(script.readyState === 'complete') {
+					script.detachEvent(event, arguments.callee);
+					var evt = window.event;
+					func.call(script, evt);
+					script = null;
 				}
 			});
-		}else {
+		} else {
 			document.head.appendChild(script);
 		}
 		return script;
 	}
 
-	function getScript$1(src,func,charset){
-		var script=document.createElement('script');
-		script.charset=charset || "UTF-8";
-		script.src=src;
-		script.async=true;
-		if(func){
-			if('onafterscriptexecute' in script){
-				script.onafterscriptexecute=func;
-			}else {
-				script.onload=func;
+	function getScript$1(src, func, charset) {
+		var script = document.createElement('script');
+		script.charset = charset || "UTF-8";
+		script.src = src;
+		script.async = true;
+		if(func) {
+			if('onafterscriptexecute' in script) {
+				script.onafterscriptexecute = func;
+			} else {
+				script.onload = func;
 			}
 		}
 		document.head.appendChild(script);
@@ -2802,261 +2802,261 @@ var Sky = (function (exports) {
 
 	var getScript$2 = ("onload" in document.scripts[document.scripts.length - 1]) ? getScript$1 : getScript;
 
-	function attachEvent(ele, type, func){
-		switch(type){
+	function attachEvent(ele, type, func) {
+		switch(type) {
 			case "load":
-				if(ele.tagName==="SCRIPT"){
-					type='readystatechange';
+				if(ele.tagName === "SCRIPT") {
+					type = 'readystatechange';
 				}
 				break;
 			case "wheel":
-				type='mousewheel';
+				type = 'mousewheel';
 				break;
 			case "DOMContentLoaded":
-				if(ele===document){
-					type='readystatechange';
-					if(window===window.top){
+				if(ele === document) {
+					type = 'readystatechange';
+					if(window === window.top) {
 						checkDomReady();
 					}
 				}
 				break;
 			case "input":
-				type='propertychange';
+				type = 'propertychange';
 				break;
 			case "mouseenter":
-				if(!('Screen' in window)){
+				if(!('Screen' in window)) {
 					//IE低版本监视是否短时间内突然移出再进入
-					ele.attachEvent( 'onmouseleave', func);
+					ele.attachEvent('onmouseleave', func);
 				}
 				break;
 		}
-		ele.attachEvent( 'on'+type, func);
+		ele.attachEvent('on' + type, func);
 	}
 
-	function checkDomReady(){
-		try{
+	function checkDomReady() {
+		try {
 			document.documentElement.doScroll('left');
 			document.readyState = "complete";
 			ele.fireEvent("onreadystatechange");
-		}catch(e){
+		} catch(e) {
 			setTimeout(arguments.callee, 0);
 		}
 	}
 
-	function attachEvent$1(ele, type, func, useCapture){
-		switch(type){
+	function attachEvent$1(ele, type, func, useCapture) {
+		switch(type) {
 			case "wheel":
-				if(!("onwheel" in document)){
-					if('onmousewheel' in document){
-						type='mousewheel';
-					}else {
-						type='DOMMouseScroll';
+				if(!("onwheel" in document)) {
+					if('onmousewheel' in document) {
+						type = 'mousewheel';
+					} else {
+						type = 'DOMMouseScroll';
 					}
 				}
 				break;
 			case "mouseenter":
-				if(!('onmouseenter' in document)){
-					type='mouseover';
+				if(!('onmouseenter' in document)) {
+					type = 'mouseover';
 				}
 				break;
 			case "mouseleave":
-				if(!('onmouseleave' in document)){
-					type='mouseout';
+				if(!('onmouseleave' in document)) {
+					type = 'mouseout';
 				}
 				break;
 		}
 		ele.addEventListener(type, func, !!useCapture);
 	}
 
-	var attachEvent$2=document.addEventListener?attachEvent$1:attachEvent;
+	var attachEvent$2 = document.addEventListener ? attachEvent$1 : attachEvent;
 
-	function detachEvent(ele, type, func){
-		switch(type){
+	function detachEvent(ele, type, func) {
+		switch(type) {
 			case "load":
-				if(ele.tagName=="SCRIPT"){
-					type='readystatechange';
+				if(ele.tagName == "SCRIPT") {
+					type = 'readystatechange';
 				}
 				break;
 			case "wheel":
-				type='mousewheel';
+				type = 'mousewheel';
 				break;
 			case "DOMContentLoaded":
-				if(ele===document){
-					type='readystatechange';
+				if(ele === document) {
+					type = 'readystatechange';
 				}
 				break;
 			case "input":
-				type='propertychange';
+				type = 'propertychange';
 				break;
 			case "mouseenter":
-				if(!('Screen' in window)){
+				if(!('Screen' in window)) {
 					//IE低版本监视是否短时间内突然移出再进入
-					ele.detachEvent( 'onmouseleave', func);
+					ele.detachEvent('onmouseleave', func);
 				}
 				break;
 		}
-		ele.detachEvent('on'+type, func);
+		ele.detachEvent('on' + type, func);
 	}
 
-	function detachEvent$1(ele, type, func, useCapture){
-		switch(type){
+	function detachEvent$1(ele, type, func, useCapture) {
+		switch(type) {
 			case "wheel":
-				if(!("onwheel" in document)){
-					if('onmousewheel' in document){
-						type='mousewheel';
-					}else {
-						type='DOMMouseScroll';
+				if(!("onwheel" in document)) {
+					if('onmousewheel' in document) {
+						type = 'mousewheel';
+					} else {
+						type = 'DOMMouseScroll';
 					}
 				}
 				break;
 			case "mouseenter":
-				if(!('onmouseenter' in document)){
-					type='mouseover';
+				if(!('onmouseenter' in document)) {
+					type = 'mouseover';
 				}
 				break;
 			case "mouseleave":
-				if(!('onmouseleave' in document)){
-					type='mouseout';
+				if(!('onmouseleave' in document)) {
+					type = 'mouseout';
 				}
 				break;
 		}
 		ele.removeEventListener(type, func, !!useCapture);
 	}
 
-	var detachEvent$2=document.addEventListener?detachEvent$1:detachEvent;
+	var detachEvent$2 = document.addEventListener ? detachEvent$1 : detachEvent;
 
-	function fixEvent(ele,type,e){
-		e=e || window.event;
-		var target=e.target=e.srcElement;
-		e.stopPropagation=stopPropagation;
-		e.preventDefault=preventDefault;
-		e.currentTarget=ele;
-		switch(type){
+	function fixEvent(ele, type, e) {
+		e = e || window.event;
+		var target = e.target = e.srcElement;
+		e.stopPropagation = stopPropagation;
+		e.preventDefault = preventDefault;
+		e.currentTarget = ele;
+		switch(type) {
 			case 'load':
-				if(target.tagName==='SCRIPT'){
-					if(target.readyState==='complete' || e.polyfill){
+				if(target.tagName === 'SCRIPT') {
+					if(target.readyState === 'complete' || e.polyfill) {
 						return e;
 					}
 				}
 				break;
 			case "DOMContentLoaded":
-				if(ele===document){
+				if(ele === document) {
 					if(document.readyState === "complete" || e.polyfill) {
 						return e;
 					}
 				}
 				break;
 			case 'input':
-				if(e.propertyName==='value'){
-					if(!target.disabled && !target.readOnly || e.polyfill){
+				if(e.propertyName === 'value') {
+					if(!target.disabled && !target.readOnly || e.polyfill) {
 						return e;
 					}
 				}
 				break;
 			case 'mouseenter':
-				if(type===e.type){
-					if(e.polyfill){
+				if(type === e.type) {
+					if(e.polyfill) {
 						return e;
 					}
-					e.relatedTarget=e.fromElement;
-					if(!('Screen' in window)){
+					e.relatedTarget = e.fromElement;
+					if(!('Screen' in window)) {
 						//IE低版本需要判断是否短时间内突然移出再进入
-						if(Date.now()-150<target.lastMouseLeave){
+						if(Date.now() - 150 < target.lastMouseLeave) {
 							//间隔时间过短，排除
 							break;
 						}
 					}
 					return e;
-				}else {
+				} else {
 					//mouseleave
-					target.lastMouseLeave=Date.now();
+					target.lastMouseLeave = Date.now();
 					break;
 				}
 			case 'mouseleave':
-				if(e.polyfill){
+				if(e.polyfill) {
 					return e;
 				}
-				if('Screen' in window){
-					e.relatedTarget=e.toElement;
+				if('Screen' in window) {
+					e.relatedTarget = e.toElement;
 					return e;
 				}
 				//IE低版本需要延迟运行
-				triggerMouseLeave(target,e);
+				triggerMouseLeave(target, e);
 				break;
 			default:
 				if(!e.polyfill) return e;
 		}
 		throw new Error();
 	}
-	function stopPropagation(){
-		this.cancelBubble=true;
+	function stopPropagation() {
+		this.cancelBubble = true;
 	}
-	function preventDefault(){
-		if(this.cancelable===false){
+	function preventDefault() {
+		if(this.cancelable === false) {
 			throw new Error("cancelable:false");
 		}
-		this.defaultPrevented=true;
-		this.returnValue=false;
+		this.defaultPrevented = true;
+		this.returnValue = false;
 	}
-	function triggerMouseLeave(ele,e){
+	function triggerMouseLeave(ele, e) {
 		var event = document.createEventObject();
-		event.polyfill=true;
-		event.type=e.type;
-		event.relatedTarget=e.toElement;
-		event.currentTarget=e.currentTarget;
-		event.target=e.target;
-		event.clientX=e.clientX;
-		event.clientY=e.clientY;
-		event.offsetX=e.offsetX;
-		event.offsetY=e.offsetY;
-		event.x=e.x;
-		event.y=e.y;
-		event.stopPropagation=stopPropagation;
-		event.preventDefault=preventDefault;
-		var t=setTimeout(function(){
-			ele.fireEvent("onmouseleave",event);
-			ele.detachEvent('onmouseenter',onenter);
-			ele.lastMouseLeave=0;
-		},50);
-		var onenter=function(){
+		event.polyfill = true;
+		event.type = e.type;
+		event.relatedTarget = e.toElement;
+		event.currentTarget = e.currentTarget;
+		event.target = e.target;
+		event.clientX = e.clientX;
+		event.clientY = e.clientY;
+		event.offsetX = e.offsetX;
+		event.offsetY = e.offsetY;
+		event.x = e.x;
+		event.y = e.y;
+		event.stopPropagation = stopPropagation;
+		event.preventDefault = preventDefault;
+		var t = setTimeout(function() {
+			ele.fireEvent("onmouseleave", event);
+			ele.detachEvent('onmouseenter', onenter);
+			ele.lastMouseLeave = 0;
+		}, 50);
+		var onenter = function() {
 			clearTimeout(t);
 		};
-		ele.attachEvent('onmouseenter',onenter);
+		ele.attachEvent('onmouseenter', onenter);
 	}
 
-	function fixEvent$1(ele,type,e){
+	function fixEvent$1(ele, type, e) {
 		var related;
-		switch(type){
+		switch(type) {
 			case 'wheel':
-				if(e.type==='DOMMouseScroll'){
-					e.wheelDelta=-e.detail*40;
+				if(e.type === 'DOMMouseScroll') {
+					e.wheelDelta = -e.detail * 40;
 				}
 				return e;
 			case 'mouseenter':
-				if(e.type==='mouseover'){
-					if(e.polyfill){
+				if(e.type === 'mouseover') {
+					if(e.polyfill) {
 						return e;
 					}
-					ele=e.currentTarget;
-					related=e.relatedTarget;
-					if(e.target===ele && related!==ele && !ele.contains(related)){
+					ele = e.currentTarget;
+					related = e.relatedTarget;
+					if(e.target === ele && related !== ele && !ele.contains(related)) {
 						return e;
 					}
-				}else {
+				} else {
 					return e;
 				}
 				break;
 			case 'mouseleave':
-				if(e.type==='mouseout'){
-					if(e.polyfill){
+				if(e.type === 'mouseout') {
+					if(e.polyfill) {
 						return e;
 					}
-					ele=e.currentTarget;
-					related=e.relatedTarget;
-					if(e.target===ele && related!==ele && !ele.contains(related) ){
+					ele = e.currentTarget;
+					related = e.relatedTarget;
+					if(e.target === ele && related !== ele && !ele.contains(related)) {
 						return e;
 					}
-				}else {
+				} else {
 					return e;
 				}
 				break;
@@ -3066,10 +3066,10 @@ var Sky = (function (exports) {
 		throw new Error();
 	}
 
-	var fixEvent$2=document.addEventListener?fixEvent$1:fixEvent;
+	var fixEvent$2 = document.addEventListener ? fixEvent$1 : fixEvent;
 
 	function trigger(ele, type, props) {
-		switch(type){
+		switch(type) {
 			case 'load':
 			case 'wheel':
 			case 'input':
@@ -3080,33 +3080,33 @@ var Sky = (function (exports) {
 				}
 		}
 		var e = document.createEventObject();
-		switch(type){
+		switch(type) {
 			case 'load':
-				if(ele.tagName=="SCRIPT"){
-					e.polyfill=true;
-					ele.fireEvent("onreadystatechange",e);
+				if(ele.tagName == "SCRIPT") {
+					e.polyfill = true;
+					ele.fireEvent("onreadystatechange", e);
 					return;
 				}
 				break;
 			case 'wheel':
-				type='mousewheel';
+				type = 'mousewheel';
 				break;
 			case "DOMContentLoaded":
-				if(ele===document){
-					e.polyfill=true;
-					ele.fireEvent("onreadystatechange",e);
+				if(ele === document) {
+					e.polyfill = true;
+					ele.fireEvent("onreadystatechange", e);
 					return;
 				}
 				break;
 			case 'input':
-				e.propertyName='value';
-				e.polyfill=true;
-				ele.fireEvent("onpropertychange",e);
+				e.propertyName = 'value';
+				e.polyfill = true;
+				ele.fireEvent("onpropertychange", e);
 				return;
 		}
 		if(props) {
-			for(var key in props){
-				e[key]=props[key];
+			for(var key in props) {
+				e[key] = props[key];
 			}
 		}
 		ele.fireEvent("on" + type, e);
@@ -3115,33 +3115,33 @@ var Sky = (function (exports) {
 	var notCapture = ["load", "unload", "scroll", "resize", "blur", "focus", "mouseenter", "mouseleave", "input", "propertychange"];
 	function trigger$1(ele, type, props) {
 		var e = document.createEvent('Event');
-		switch(type){
+		switch(type) {
 			case "mouseenter":
-				if(!('onmouseenter' in document)){
-					type='mouseover';
-					e.polyfill=true;
+				if(!('onmouseenter' in document)) {
+					type = 'mouseover';
+					e.polyfill = true;
 				}
 				break;
 			case "mouseleave":
-				if(!('onmouseleave' in document)){
-					type='mouseout';
-					e.polyfill=true;
+				if(!('onmouseleave' in document)) {
+					type = 'mouseout';
+					e.polyfill = true;
 				}
 				break;
 		}
-		var bubbles = notCapture.indexOf(type)<0;
+		var bubbles = notCapture.indexOf(type) < 0;
 		var cancelable = true;
 		if(props) {
-			for(var key in props){
-				switch(key){
+			for(var key in props) {
+				switch(key) {
 					case 'bubbles':
 						bubbles = props.bubbles;
-						break ;
+						break;
 					case 'cancelable':
 						cancelable = props.cancelable;
-						break ;
-					default :
-						e[key]=props[key];
+						break;
+					default:
+						e[key] = props[key];
 				}
 			}
 		}
@@ -3149,9 +3149,9 @@ var Sky = (function (exports) {
 		return ele.dispatchEvent(e);
 	}
 
-	var trigger$2=document.addEventListener?trigger$1:trigger;
+	var trigger$2 = document.addEventListener ? trigger$1 : trigger;
 
-	var isArray$1=Array.isArray;
+	var isArray$1 = Array.isArray;
 
 	exports.addClass = addClass;
 	exports.attachEvent = attachEvent$2;

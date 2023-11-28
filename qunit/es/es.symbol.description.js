@@ -11,7 +11,7 @@ QUnit.test('Symbol#description', assert => {
   assert.same(Object(Symbol('foo')).description, 'foo');
   assert.same(Object(Symbol()).description, undefined);
   // if (DESCRIPTORS) {
-  //   assert.ok(!Object.prototype.hasOwnProperty.call(Symbol('foo'), 'description'));
+  //   assert.ok(!Object.hasOwn(Symbol('foo'), 'description'));
   //   const descriptor = Object.getOwnPropertyDescriptor(Symbol.prototype, 'description');
   //   assert.same(descriptor.enumerable, false);
   //   assert.same(descriptor.configurable, true);

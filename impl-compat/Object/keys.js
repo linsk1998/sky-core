@@ -31,7 +31,7 @@ export function keys(obj) {
 			case "@@":
 				continue;
 		}
-		if(Object.prototype.hasOwnProperty.call(obj, key)) {
+		if(Object.hasOwn(obj, key)) {
 			var desc = obj["@@desc:" + key];
 			if(!desc || desc.enumerable) {
 				result.push(key);
@@ -42,7 +42,7 @@ export function keys(obj) {
 		var i = dontEnums.length;
 		while(i-- > 0) {
 			key = dontEnums[i];
-			if(Object.prototype.hasOwnProperty.call(obj, key)) {
+			if(Object.hasOwn(obj, key)) {
 				result.push(key);
 			}
 		}

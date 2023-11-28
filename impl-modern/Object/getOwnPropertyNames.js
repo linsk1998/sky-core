@@ -6,7 +6,7 @@ var length = 'length';
 export function ff_getOwnPropertyNames(obj) {
 	var keys = modern_keys(obj);
 	if(keys.indexOf(length) < 0) {
-		if(Object.prototype.hasOwnProperty.call(obj, length)) {
+		if(Object.hasOwn(obj, length)) {
 			keys.push(length);
 		}
 	}

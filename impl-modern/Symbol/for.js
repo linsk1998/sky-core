@@ -2,7 +2,7 @@
 var symbol_cache = {};
 export var key_cache = {};
 export default function(desc) {
-	if(Object.prototype.hasOwnProperty.call(symbol_cache, desc)) {
+	if(Object.hasOwn(symbol_cache, desc)) {
 		return symbol_cache[desc];
 	}
 	var s = Symbol(desc);

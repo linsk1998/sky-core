@@ -8,14 +8,14 @@ export function setPrototypeOf(o, proto) {
 			case "__proto__":
 				continue;
 		}
-		if(Object.prototype.hasOwnProperty.call(proto, key)) {
+		if(Object.hasOwn(proto, key)) {
 			o[key] = proto[key];
 		}
 	}
 	var i = dontEnums.length;
 	while(i-- > 0) {
 		key = dontEnums[i];
-		if(Object.prototype.hasOwnProperty.call(proto, key)) {
+		if(Object.hasOwn(proto, key)) {
 			o[key] = proto[key];
 		}
 	}
