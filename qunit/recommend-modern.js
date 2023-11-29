@@ -186,9 +186,17 @@ export default [
 			// ".trimRight": "sky-core/polyfill/String/prototype/trimRight",
 			//ES2020.String
 			".matchAll": "sky-core/polyfill/String/prototype/matchAll",
-			//ESNext.String
+			//ES2021
 			".replaceAll": "sky-core/polyfill/String/prototype/replaceAll",
+			//ES2022
 			".at": "sky-core/polyfill/Array/prototype/at",
+			// ES2023
+			".findLast": "sky-core/polyfill/Array/prototype/findLast",
+			".findLastIndex": "sky-core/polyfill/Array/prototype/findLastIndex",
+			".toReversed": "sky-core/polyfill/Array/prototype/toReversed",
+			".toSpliced": "sky-core/polyfill/Array/prototype/toSpliced",
+			".toSorted": "sky-core/polyfill/Array/prototype/toSorted",
+			".with": "sky-core/polyfill/Array/prototype/with",
 		},
 		exclude: [
 			"polyfill/**/*",

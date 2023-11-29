@@ -75,6 +75,9 @@ export default {
 				// "@babel/plugin-transform-property-literals",
 				// "@babel/plugin-transform-reserved-words",
 				// "@babel/plugin-transform-jscript"
+			],
+			include: [
+				"qunit/**/*",
 			]
 		}),
 		alias({

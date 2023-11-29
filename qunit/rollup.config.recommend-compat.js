@@ -71,6 +71,20 @@ export default {
 				// ES5
 				// "@babel/plugin-transform-property-mutators",
 				// ES3
+				// "@babel/plugin-transform-member-expression-literals",
+				// "@babel/plugin-transform-property-literals",
+				// "@babel/plugin-transform-reserved-words",
+				// "@babel/plugin-transform-jscript"
+			],
+			include: [
+				"qunit/**/*",
+			]
+		}),
+		babel({
+			babelHelpers: 'bundled',
+			babelrc: false,
+			compact: false,
+			plugins: [
 				"@babel/plugin-transform-member-expression-literals",
 				"@babel/plugin-transform-property-literals",
 				"@babel/plugin-transform-reserved-words",

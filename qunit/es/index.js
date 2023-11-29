@@ -197,8 +197,19 @@ import "./es.string.replace-all";
 import "./es.promise.any";
 import "./es.aggregate-error";
 /* ES2022 */
+/* Chrome92+ Firefox90+ Safari15.4+*/
 import "./es.array.at";
+/* Chrome93+ Firefox92+ Safari15.4+*/
 import "./es.object.has-own";
+/* ES2023 */
+/* Chrome97+ Firefox104+ Safari15.4+*/
+import "./es.array.find-last-index";
+import "./es.array.find-last";
+/* Chrome110+ Firefox115+ Safari16+*/
+import "./es.array.to-reversed";
+import "./es.array.to-sorted";
+import "./es.array.to-spliced";
+import "./es.array.with";
 
 
 
