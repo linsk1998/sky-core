@@ -190,7 +190,10 @@ export default [
 			//ES2021
 			".replaceAll": "sky-core/polyfill/String/prototype/replaceAll",
 			//ES2022
-			".at": "sky-core/polyfill/Array/prototype/at",
+			".at": [
+				"sky-core/polyfill/Array/prototype/at",
+				"sky-core/polyfill/String/prototype/at"
+			],
 			// ES2023
 			".findLast": "sky-core/polyfill/Array/prototype/findLast",
 			".findLastIndex": "sky-core/polyfill/Array/prototype/findLastIndex",

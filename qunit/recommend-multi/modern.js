@@ -96,7 +96,7 @@
 
 	var symbol_sqe = 0;
 	var all_symbol = {};
-	function Symbol$3(desc) {
+	function Symbol$4(desc) {
 		var key = "@@" + desc + ":" + symbol_sqe;
 		this.__name__ = key;
 		if(nonEnumerable) {
@@ -115,10 +115,10 @@
 		symbol_sqe++;
 		all_symbol[key] = this;
 	};
-	Symbol$3.prototype.toString = function() {
+	Symbol$4.prototype.toString = function() {
 		return this.__name__;
 	};
-	Symbol$3.prototype.toJSON = function() {
+	Symbol$4.prototype.toJSON = function() {
 		return undefined;
 	};
 	var getOwnPropertySymbols = nonEnumerable ?
@@ -153,53 +153,53 @@
 			return arr;
 		};
 
-	function Symbol$2(desc) {
-		return new Symbol$3(desc);
+	function Symbol$3(desc) {
+		return new Symbol$4(desc);
 	};
-	Symbol$2.sham = true;
+	Symbol$3.sham = true;
 
-	var Symbol$1 = window.Symbol;
+	var Symbol$2 = window.Symbol;
 
-	function Symbol(desc) {
+	function Symbol$1(desc) {
 		if(desc == undefined) {
 			desc = "";
 		}
-		return Symbol$1(desc);
+		return Symbol$2(desc);
 	};
 
-	var _Symbol = (function() {
-		var Symbol$3;
-		if(!Symbol$1) {
-			Symbol$3 = Symbol$2;
+	var Symbol = (function() {
+		var Symbol;
+		if(!Symbol$2) {
+			Symbol = Symbol$3;
 		} else {
-			if(String(Symbol$1()) !== String(Symbol$1(""))) {
-				Object.setPrototypeOf(Symbol, Symbol$1);
-				Symbol$3 = Symbol;
+			if(String(Symbol$2()) !== String(Symbol$2(""))) {
+				Object.setPrototypeOf(Symbol$1, Symbol$2);
+				Symbol = Symbol$1;
 			} else {
-				Symbol$3 = Symbol$1;
+				Symbol = Symbol$2;
 			}
 		}
-		return Symbol$3;
+		return Symbol;
 	})();
 
 	var $inject_Symbol_iterator = (function() {
-		if(!Symbol$1) {
+		if(!Symbol$2) {
 			if(nonEnumerable) {
 				defineProperty$1(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@iterator';
 		} else {
-			return Symbol$1.iterator || Symbol$1('iterator');
+			return Symbol$2.iterator || Symbol$2('iterator');
 		}
 	})();
 
 	function _typeof(obj) {
 	  "@babel/helpers - typeof";
 
-	  return _typeof = "function" == typeof _Symbol && "symbol" == typeof $inject_Symbol_iterator ? function (obj) {
+	  return _typeof = "function" == typeof Symbol && "symbol" == typeof $inject_Symbol_iterator ? function (obj) {
 	    return typeof obj;
 	  } : function (obj) {
-	    return obj && "function" == typeof _Symbol && obj.constructor === _Symbol && obj !== _Symbol.prototype ? "symbol" : typeof obj;
+	    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 	  }, _typeof(obj);
 	}
 
@@ -483,7 +483,7 @@
 		return new ES6Iterator(it);
 	};
 
-	if(!Symbol$1) {
+	if(!Symbol$2) {
 		if(!String.prototype['@@iterator']) {
 			String.prototype['@@iterator'] = iterator;
 		} else if(String.prototype.iterator) {
@@ -511,7 +511,7 @@
 	}
 
 	function _createForOfIteratorHelperLoose(o, allowArrayLike) {
-	  var it = typeof _Symbol !== "undefined" && o[$inject_Symbol_iterator] || o["@@iterator"];
+	  var it = typeof Symbol !== "undefined" && o[$inject_Symbol_iterator] || o["@@iterator"];
 	  if (it) return (it = it.call(o)).next.bind(it);
 	  if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
 	    if (it) o = it;
@@ -777,446 +777,122 @@
 	  });
 	};
 
-	function findLastIndex(callback) {
-		var thisArg = arguments[1];
-		var i = this.length;
-		if(i > 0) {
-			while(i-- > 0) {
-				var j = this[i];
-				var r = callback.call(thisArg, j, i, this);
-				if(r) {
-					return i;
+	var parseInt$1 = window.parseInt;
+
+	function trimStart() {
+		return this.replace(/^[\s\u2006\u3000\xA0]+/g, '');
+	}
+
+	if(parseInt$1("010") === 8) {
+		window.parseInt = function(number, radix) {
+			if(!radix && typeof number === 'string') {
+				number = trimStart.call(number);
+				if(number.charCodeAt(0) === 48 && number.charCodeAt(1) !== 120) {
+					return parseInt$1(number, 10);
 				}
 			}
-		}
-		return -1;
+			return parseInt$1(number, radix);
+		};
 	}
 
-	if(!Array.prototype.findLastIndex) {
-		Array.prototype.findLastIndex = findLastIndex;
+	function at$1(n) {
+		if(isNaN(n)) {
+			return this[0];
+		}
+		n = parseInt(n);
+		if(n >= 0) {
+			return this[n];
+		}
+		return this[this.length + n];
 	}
 
-	QUnit.test('Array#findLastIndex', function (assert) {
-	  var findLastIndex = Array.prototype.findLastIndex;
-	  assert.isFunction(findLastIndex);
-	  assert.arity(findLastIndex, 1);
-	  assert.name(findLastIndex, 'findLastIndex');
-	  assert.looksNative(findLastIndex);
-	  assert.nonEnumerable(Array.prototype, 'findLastIndex');
-	  var array = [1];
-	  var context = {};
-	  array.findLastIndex(function (value, key, that) {
-	    assert.same(arguments.length, 3, 'correct number of callback arguments');
-	    assert.same(value, 1, 'correct value in callback');
-	    assert.same(key, 0, 'correct index in callback');
-	    assert.same(that, array, 'correct link to array in callback');
-	    assert.same(this, context, 'correct callback context');
-	  }, context);
-	  assert.same([{}, 2, NaN, 42, 1].findLastIndex(function (it) {
-	    return !(it % 2);
-	  }), 3);
-	  assert.same([{}, 2, NaN, 42, 1].findLastIndex(function (it) {
-	    return it > 42;
-	  }), -1);
-	  var values = '';
-	  var keys = '';
-	  [1, 2, 3].findLastIndex(function (value, key) {
-	    values += value;
-	    keys += key;
-	  });
-	  assert.same(values, '321');
-	  assert.same(keys, '210');
-	  if (STRICT) {
-	    assert.throws(function () {
-	      return findLastIndex.call(null, 0);
-	    }, TypeError);
-	    assert.throws(function () {
-	      return findLastIndex.call(undefined, 0);
-	    }, TypeError);
-	  }
-	  assert.notThrows(function () {
-	    return findLastIndex.call({
-	      length: -1,
-	      0: 1
-	    }, function () {
-	      throw new Error();
-	    }) === -1;
-	  }, 'uses ToLength');
-	  // assert.equal(true, 'findLastIndex' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
-	});
+	if(!Array.prototype.at) {
+		Array.prototype.at = at$1;
+	}
 
-	function findLast(callback) {
-		var thisArg = arguments[1];
-		var i = findLastIndex.call(this, callback, thisArg);
-		if(i >= 0) {
-			return this[i];
+	var Math$1 = window.Math;
+
+	var floor = Math.floor;
+
+	var ceil = Math.ceil;
+
+	// from core-js https://github.com/zloirock/core-js
+	function trunc(it) {
+		return (it > 0 ? floor : ceil)(it);
+	}
+
+	if(!Math$1.trunc) {
+		Math$1.trunc = trunc;
+	}
+
+	function at(index) {
+		// 检查索引是否有效  
+		var len = this.length;
+		var relativeIndex = toIntegerOrInfinity(index);
+		var k = relativeIndex >= 0 ? relativeIndex : len + relativeIndex;
+		// 确保索引在字符串范围内  
+		if(k < 0 || k >= len) {
+			return;
 		}
+		return this.charAt(k);
+	}
+	function toIntegerOrInfinity(argument) {
+		var number = +argument;
+		return number !== number || number === 0 ? 0 : Math.trunc(number);
 	};
 
-	if(!Array.prototype.findLast) {
-		Array.prototype.findLast = findLast;
+	if(!String.prototype.at) {
+		String.prototype.at = at;
 	}
 
-	QUnit.test('Array#findLast', function (assert) {
-	  var findLast = Array.prototype.findLast;
-	  assert.isFunction(findLast);
-	  assert.arity(findLast, 1);
-	  assert.name(findLast, 'findLast');
-	  assert.looksNative(findLast);
-	  assert.nonEnumerable(Array.prototype, 'findLast');
-	  var array = [1];
-	  var context = {};
-	  array.findLast(function (value, key, that) {
-	    assert.same(arguments.length, 3, 'correct number of callback arguments');
-	    assert.same(value, 1, 'correct value in callback');
-	    assert.same(key, 0, 'correct index in callback');
-	    assert.same(that, array, 'correct link to array in callback');
-	    assert.same(this, context, 'correct callback context');
-	  }, context);
-	  assert.same([{}, 2, NaN, 42, 1].findLast(function (it) {
-	    return !(it % 2);
-	  }), 42);
-	  assert.same([{}, 2, NaN, 42, 1].findLast(function (it) {
-	    return it === 43;
-	  }), undefined);
-	  var values = '';
-	  var keys = '';
-	  [1, 2, 3].findLast(function (value, key) {
-	    values += value;
-	    keys += key;
-	  });
-	  assert.same(values, '321');
-	  assert.same(keys, '210');
+	QUnit.test('String#at', function (assert) {
+	  var at = String.prototype.at;
+	  assert.isFunction(at);
+	  assert.arity(at, 1);
+	  assert.name(at, 'at');
+	  assert.looksNative(at);
+	  assert.nonEnumerable(String.prototype, 'at');
+	  assert.same('1', '123'.at(0));
+	  assert.same('2', '123'.at(1));
+	  assert.same('3', '123'.at(2));
+	  assert.same(undefined, '123'.at(3));
+	  assert.same('3', '123'.at(-1));
+	  assert.same('2', '123'.at(-2));
+	  assert.same('1', '123'.at(-3));
+	  assert.same(undefined, '123'.at(-4));
+	  assert.same('1', '123'.at(0.4));
+	  assert.same('1', '123'.at(0.5));
+	  assert.same('1', '123'.at(0.6));
+	  assert.same('1', '1'.at(NaN));
+	  assert.same('1', '1'.at());
+	  assert.same('1', '123'.at(-0));
+	  // TODO: disabled by default because of the conflict with old proposal
+	  // assert.same('\uD842', '𠮷'.at());
+	  // assert.same('1', at.call({ toString() { return '123'; } }, 0));
+
+	  // assert.throws(() => at.call(Symbol('at-alternative test'), 0), 'throws on symbol context');
+
 	  if (STRICT) {
 	    assert.throws(function () {
-	      return findLast.call(null, 0);
+	      return at.call(null, 0);
 	    }, TypeError);
 	    assert.throws(function () {
-	      return findLast.call(undefined, 0);
+	      return at.call(undefined, 0);
 	    }, TypeError);
 	  }
-	  assert.notThrows(function () {
-	    return findLast.call({
-	      length: -1,
-	      0: 1
-	    }, function () {
-	      throw new Error();
-	    }) === undefined;
-	  }, 'uses ToLength');
-	  // assert.equal(true, 'find' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
 
-	function toReversed() {
-		var arr = Array.prototype.slice.call(this);
-		arr.reverse();
-		return arr;
-	}
-
-	if(!Array.prototype.toReversed) {
-		Array.prototype.toReversed = toReversed;
-	}
-
-	QUnit.test('Array#toReversed', function (assert) {
-	  var _array$constructor;
-	  var toReversed = Array.prototype.toReversed;
-	  assert.isFunction(toReversed);
-	  assert.arity(toReversed, 0);
-	  assert.name(toReversed, 'toReversed');
-	  assert.looksNative(toReversed);
-	  assert.nonEnumerable(Array.prototype, 'toReversed');
-	  var array = [1, 2];
-	  assert.ok(array.toReversed() !== array, 'immutable');
-	  assert.deepEqual([1, 2.2, 3.3].toReversed(), [3.3, 2.2, 1], 'basic');
-	  var object = {};
-	  array = {
-	    0: undefined,
-	    1: 2,
-	    2: 1,
-	    3: 'X',
-	    4: -1,
-	    5: 'a',
-	    6: true,
-	    7: object,
-	    8: NaN,
-	    10: Infinity,
-	    length: 11
-	  };
-	  var expected = [Infinity, undefined, NaN, object, true, 'a', -1, 'X', 1, 2, undefined];
-	  assert.deepEqual(toReversed.call(array), expected, 'non-array target');
-	  array = [1];
-	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[_Symbol.species] = function () {
-	    return {
-	      foo: 1
-	    };
-	  }, _array$constructor);
-	  assert.equal(true, array.toReversed() instanceof Array, 'non-generic');
-	  if (STRICT) {
-	    assert.throws(function () {
-	      return toReversed.call(null, function () {/* empty */}, 1);
-	    }, TypeError);
-	    assert.throws(function () {
-	      return toReversed.call(undefined, function () {/* empty */}, 1);
-	    }, TypeError);
-	  }
-
-	  // assert.equal(true, 'toReversed' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
-	});
-
-	function toSorted(fn) {
-		var arr = Array.prototype.slice.call(this);
-		arr.sort.apply(arr, arguments);
-		return arr;
-	}
-
-	if(!Array.prototype.toSorted) {
-		Array.prototype.toSorted = toSorted;
-	}
-
-	QUnit.test('Array#toSorted', function (assert) {
-	  var _array$constructor;
-	  var toSorted = Array.prototype.toSorted;
-	  assert.isFunction(toSorted);
-	  assert.arity(toSorted, 1);
-	  assert.name(toSorted, 'toSorted');
-	  assert.looksNative(toSorted);
-	  assert.nonEnumerable(Array.prototype, 'toSorted');
-	  var array = [1];
-	  assert.ok(array.toSorted() !== array, 'immutable');
-	  assert.deepEqual([1, 3, 2].toSorted(), [1, 2, 3], '#1');
-	  assert.deepEqual([1, 3, 2, 11].toSorted(), [1, 11, 2, 3], '#2');
-	  assert.deepEqual([1, -1, 3, NaN, 2, 0, 11, -0].toSorted(), [-1, 0, -0, 1, 11, 2, 3, NaN], '#1');
-	  array = Array(5);
-	  array[0] = 1;
-	  array[2] = 3;
-	  array[4] = 2;
-	  var expected = Array(5);
-	  expected[0] = 1;
-	  expected[1] = 2;
-	  expected[2] = 3;
-	  assert.deepEqual(array.toSorted(), expected, 'holes');
-	  array = 'zyxwvutsrqponMLKJIHGFEDCBA'.split('');
-	  expected = 'ABCDEFGHIJKLMnopqrstuvwxyz'.split('');
-	  assert.deepEqual(array.toSorted(), expected, 'alpha #1');
-	  array = 'ёяюэьыъщшчцхфутсрПОНМЛКЙИЗЖЕДГВБА'.split('');
-	  expected = 'АБВГДЕЖЗИЙКЛМНОПрстуфхцчшщъыьэюяё'.split('');
-	  assert.deepEqual(array.toSorted(), expected, 'alpha #2');
-	  array = [undefined, 1];
-	  assert.notThrows(function () {
-	    return array = array.toSorted(function () {
-	      throw 1;
-	    });
-	  }, 'undefined #1');
-	  assert.deepEqual(array, [1, undefined], 'undefined #2');
-	  var object = {
-	    valueOf: function () {
-	      return 1;
-	    },
-	    toString: function () {
-	      return -1;
-	    }
-	  };
-	  array = {
-	    0: undefined,
-	    1: 2,
-	    2: 1,
-	    3: 'X',
-	    4: -1,
-	    5: 'a',
-	    6: true,
-	    7: object,
-	    8: NaN,
-	    10: Infinity,
-	    length: 11
-	  };
-	  expected = [-1, object, 1, 2, Infinity, NaN, 'X', 'a', true, undefined, undefined];
-
-	  // assert.deepEqual(toSorted.call(array), expected, 'non-array target');
-
-	  var index, mod, code, chr, value;
-	  expected = Array(516);
-	  array = Array(516);
-	  for (index = 0; index < 516; index++) {
-	    mod = index % 4;
-	    array[index] = 515 - index;
-	    expected[index] = index - 2 * mod + 3;
-	  }
-
-	  // assert.arrayEqual(array.toSorted((a, b) => (a / 4 | 0) - (b / 4 | 0)), expected, 'stable #1');
-
-	  // assert.equal(true, 1 / [0, -0].toSorted()[0] > 0, '-0');
-
-	  var result = '';
-	  array = [];
-
-	  // generate an array with more 512 elements (Chakra and old V8 fails only in this case)
-	  for (code = 65; code < 76; code++) {
-	    chr = String.fromCharCode(code);
-	    switch (code) {
-	      case 66:
-	      case 69:
-	      case 70:
-	      case 72:
-	        value = 3;
-	        break;
-	      case 68:
-	      case 71:
-	        value = 4;
-	        break;
-	      default:
-	        value = 2;
-	    }
-	    for (index = 0; index < 47; index++) {
-	      array.push({
-	        k: chr + index,
-	        v: value
-	      });
-	    }
-	  }
-	  array = array.toSorted(function (a, b) {
-	    return b.v - a.v;
-	  });
-	  for (index = 0; index < array.length; index++) {
-	    chr = array[index].k.charAt(0);
-	    if (result.charAt(result.length - 1) !== chr) result += chr;
-	  }
-
-	  // assert.same(result, 'DGBEFHACIJK', 'stable #2');
-
-	  assert.notThrows(function () {
-	    return [1, 2, 3].toSorted(undefined).length === 3;
-	  }, 'works with undefined');
-	  assert.throws(function () {
-	    return [1, 2, 3].toSorted(null);
-	  }, 'throws on null');
-	  assert.throws(function () {
-	    return [1, 2, 3].toSorted({});
-	  }, 'throws on {}');
-	  if (typeof _Symbol == 'function' && !_Symbol.sham) {
-	    assert.throws(function () {
-	      return [_Symbol(1), _Symbol(2)].toSorted();
-	    }, 'w/o cmp throws on symbols');
-	  }
-	  array = [1];
-	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[_Symbol.species] = function () {
-	    return {
-	      foo: 1
-	    };
-	  }, _array$constructor);
-	  assert.equal(true, array.toSorted() instanceof Array, 'non-generic');
-	  if (STRICT) {
-	    assert.throws(function () {
-	      return toSorted.call(null);
-	    }, TypeError, 'ToObject(this)');
-	    assert.throws(function () {
-	      return toSorted.call(undefined);
-	    }, TypeError, 'ToObject(this)');
-	  }
-
-	  // assert.equal(true, 'toSorted' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
-	});
-
-	function toSpliced(a1, a2) {
-		var arr = Array.prototype.slice.call(this);
-		arr.splice.apply(arr, arguments);
-		return arr;
-	}
-
-	if(!Array.prototype.toSpliced) {
-		Array.prototype.toSpliced = toSpliced;
-	}
-
-	QUnit.test('Array#toSpliced', function (assert) {
-	  var _array$constructor;
-	  var toSpliced = Array.prototype.toSpliced;
-	  assert.isFunction(toSpliced);
-	  assert.arity(toSpliced, 2);
-	  assert.name(toSpliced, 'toSpliced');
-	  assert.looksNative(toSpliced);
-	  assert.nonEnumerable(Array.prototype, 'toSpliced');
-	  var array = [1, 2, 3, 4, 5];
-	  assert.ok(array.toSpliced(2) !== array, 'immutable');
-	  assert.deepEqual([1, 2, 3, 4, 5].toSpliced(2), [1, 2]);
-	  assert.deepEqual([1, 2, 3, 4, 5].toSpliced(-2), [1, 2, 3]);
-	  assert.deepEqual([1, 2, 3, 4, 5].toSpliced(2, 2), [1, 2, 5]);
-	  assert.deepEqual([1, 2, 3, 4, 5].toSpliced(2, -2), [1, 2, 3, 4, 5]);
-	  assert.deepEqual([1, 2, 3, 4, 5].toSpliced(2, 2, 6, 7), [1, 2, 6, 7, 5]);
-	  if (STRICT) {
-	    assert.throws(function () {
-	      return toSpliced.call(null);
-	    }, TypeError);
-	    assert.throws(function () {
-	      return toSpliced.call(undefined);
-	    }, TypeError);
-	  }
-	  array = [];
-	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[_Symbol.species] = function () {
-	    return {
-	      foo: 1
-	    };
-	  }, _array$constructor);
-	  assert.equal(true, array.toSpliced() instanceof Array, 'non-generic');
-
-	  // assert.equal(true, 'toSpliced' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
-	});
-
-	function withAt(index, value) {
-		if(this == null) {
-			throw new TypeError("Cannot convert undefined or null to object");
-		}
-		if(index < 0) {
-			index += this.length;
-		}
-		if(index < 0 || index >= this.length) {
-			throw new RangeError("Invalid index: " + index);
-		}
-		var arr = Array.prototype.slice.call(this);
-		arr[index] = value;
-		return arr;
-	}
-
-	if(!Array.prototype.with) {
-		Array.prototype.with = withAt;
-	}
-
-	QUnit.test('Array#with', function (assert) {
-	  var _array$constructor;
-	  var withAt = Array.prototype.with;
-	  assert.isFunction(withAt);
-	  assert.arity(withAt, 2);
-	  // assert.name(withAt, 'with');
-	  assert.looksNative(withAt);
-	  assert.nonEnumerable(Array.prototype, 'with');
-	  var array = [1, 2, 3, 4, 5];
-	  assert.ok(array.with(2, 1) !== array, 'immutable');
-	  assert.deepEqual([1, 2, 3, 4, 5].with(2, 6), [1, 2, 6, 4, 5]);
-	  assert.deepEqual([1, 2, 3, 4, 5].with(-2, 6), [1, 2, 3, 6, 5]);
-	  assert.deepEqual([1, 2, 3, 4, 5].with('1', 6), [1, 6, 3, 4, 5]);
-	  assert.throws(function () {
-	    return [1, 2, 3, 4, 5].with(5, 6);
-	  }, RangeError);
-	  assert.throws(function () {
-	    return [1, 2, 3, 4, 5].with(-6, 6);
-	  }, RangeError);
-	  if (STRICT) {
-	    assert.throws(function () {
-	      return withAt.call(null, 1, 2);
-	    }, TypeError);
-	    assert.throws(function () {
-	      return withAt.call(undefined, 1, 2);
-	    }, TypeError);
-	  }
-	  array = [1, 2];
-	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[_Symbol.species] = function () {
-	    return {
-	      foo: 1
-	    };
-	  }, _array$constructor);
-	  // assert.true(array.with(1, 2) instanceof Array, 'non-generic');
-	});
+	// /* Chrome93+ Firefox92+ Safari15.4+*/
+	// import "./es.object.has-own";
+	// /* ES2023 */
+	// /* Chrome97+ Firefox104+ Safari15.4+*/
+	// import "./es.array.find-last-index";
+	// import "./es.array.find-last";
+	// /* Chrome110+ Firefox115+ Safari16+*/
+	// import "./es.array.to-reversed";
+	// import "./es.array.to-sorted";
+	// import "./es.array.to-spliced";
+	// import "./es.array.with";
 
 	// import "../web/web.url";
 

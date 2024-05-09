@@ -199,6 +199,7 @@ import "./es.aggregate-error";
 /* ES2022 */
 /* Chrome92+ Firefox90+ Safari15.4+*/
 import "./es.array.at";
+import "./es.string.at";
 /* Chrome93+ Firefox92+ Safari15.4+*/
 import "./es.object.has-own";
 /* ES2023 */
