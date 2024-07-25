@@ -1,0 +1,1 @@
+export { loadCSS as getCSS } from "./loadCSS";

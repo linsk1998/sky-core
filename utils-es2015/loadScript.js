@@ -1,38 +1,36 @@
-export function loadScript(src, charset) {
-	return new Promise(function(resolve, reject) {
-		var script = document.createElement('script');
-		script.charset = charset || "UTF-8";
-		script.src = src;
-		script.async = true;
-		var success = true;
-		var windowError = function(e) {
-			window.removeEventListener('error', windowError, false);
-			if(document.currentScript === script) {
-				success = false;
-				script.onerror = null;
+export function loadScript(src, resolve, reject) {
+	var script = document.createElement('SCRIPT');
+	script.src = src;
+	script.async = true;
+	var success = true;
+	var windowError = function(e) {
+		window.removeEventListener('error', windowError, false);
+		if(document.currentScript === script) {
+			success = false;
+			script.onerror = null;
+			if(reject) {
 				if(e.error) {
 					reject(e.error);
 				} else if(e.message) {
 					reject(e);
 				} else {
-					reject(new URIError("Fail to exec script: " + src));
+					reject(new Error("Fail to exec script: " + src));
 				}
 			}
-		};
-		script.onerror = function(e) {
-			window.removeEventListener('error', windowError, false);
-			success = false;
-			script.onerror = null;
-			reject(new URIError("Fail to load: " + src));
-		};
-		window.addEventListener('error', windowError, false);
+		}
+	};
+	window.addEventListener('error', windowError, false);
 
-		script.onload = function(e) {
-			window.removeEventListener('error', windowError, false);
-			script.onload = null;
-			script = null;
-			if(success) resolve();
-		};
-		document.head.appendChild(script);
-	});
-}
+	script.onerror = function(e) {
+		window.removeEventListener('error', windowError, false);
+		success = false;
+		if(reject) reject(new Error("Fail to load: " + src));
+	};
+
+	script.onload = function(e) {
+		window.removeEventListener('error', windowError, false);
+		if(success && resolve) resolve();
+	};
+	document.head.appendChild(script);
+	return script;
+};

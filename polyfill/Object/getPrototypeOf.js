@@ -4,7 +4,7 @@ import { getPrototypeOf } from "../../native/Object/getPrototypeOf";
 import { getPrototypeOf as compat_getPrototypeOf } from "../../impl-compat/Object/getPrototypeOf";
 import { ff_getPrototypeOf, ie_getPrototypeOf } from "../../impl-modern/Object/getPrototypeOf";
 if(!getPrototypeOf) {
-	if(Object.prototype.__proto__) {
+	if(Object.__proto__) {
 		Object.getPrototypeOf = ff_getPrototypeOf;
 	} else {
 		Object.getPrototypeOf = compat_getPrototypeOf;

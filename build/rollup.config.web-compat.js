@@ -2,7 +2,6 @@
 import alias from "@rollup/plugin-alias";
 import importPlugin from 'rollup-plugin-import';
 import inject from "@rollup/plugin-inject";
-import polyfill from "rollup-plugin-polyfill-inject";
 import es3ify from 'rollup-plugin-es3ify';
 import { modules, polyfills, pures, utils } from "./alias-compat.mjs";
 export default {

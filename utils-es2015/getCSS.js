@@ -1,19 +1,11 @@
-export function loadCSS(href, resolve, reject) {
+export function getCSS(href, resolve, reject) {
 	var link = document.createElement('LINK');
 	link.href = href;
 	link.rel = 'stylesheet';
 	link.type = 'text/css';
-	if(resolve || reject) {
+	if(resolve) {
 		link.onload = function() {
-			var sheet = this.sheet;
-			if(sheet) {
-				var cssRules = sheet.cssRules;
-				if(cssRules && cssRules.length) {
-					if(resolve) resolve();
-					return;
-				}
-			}
-			if(reject) reject(new Error("Fail to load CSS:" + this.href));
+			resolve();
 		};
 	}
 	if(reject) {

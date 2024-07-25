@@ -68,6 +68,7 @@ export default [
 			"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
 			"Object.getOwnPropertyDescriptors": "sky-core/polyfill/Object/getOwnPropertyDescriptors",
 			"Object.getOwnPropertyNames": "sky-core/polyfill/Object/getOwnPropertyNames",
+			"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
 			//Object 原型相关
 			"Object.create": "sky-core/polyfill/Object/create",
 			"Object.getPrototypeOf": "sky-core/polyfill/Object/getPrototypeOf",

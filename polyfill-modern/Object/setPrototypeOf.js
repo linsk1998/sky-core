@@ -2,7 +2,7 @@ import { ff_setPrototypeOf, ie_setPrototypeOf } from "../../impl-modern/Object/s
 import { Object } from "../../native/Object";
 import { setPrototypeOf } from "../../native/Object/setPrototypeOf";
 if(!setPrototypeOf) {
-	if(Object.prototype.__proto__) {
+	if(Object.__proto__) {
 		Object.setPrototypeOf = ff_setPrototypeOf;
 	} else {
 		Object.setPrototypeOf = ie_setPrototypeOf;

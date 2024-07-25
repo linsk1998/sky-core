@@ -3,7 +3,7 @@ import alias from "@rollup/plugin-alias";
 import importPlugin from 'rollup-plugin-import';
 import path from "path";
 export default {
-	input: './utils.js',
+	input: './index.js',
 	output: {
 		strict: false,
 		file: './dist/utils.esm.js',

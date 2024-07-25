@@ -8,9 +8,9 @@ export function loadCSS(href, resolve, reject) {
 		if('onload' in link) {
 			link.onload = function() {
 				clearTimeout(timer);
-				var sheet = this.sheet || this.styleSheet;
+				var sheet = this.sheet;
 				if(sheet) {
-					var cssRules = sheet.cssRules || sheet.rules;
+					var cssRules = sheet.cssRules;
 					if(cssRules && cssRules.length) {
 						if(resolve) resolve();
 						return;

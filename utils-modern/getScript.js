@@ -1,15 +1,9 @@
-export function getScript(src,func,charset){
-	var script=document.createElement('script');
-	script.charset=charset || "UTF-8";
-	script.src=src;
-	script.async=true;
-	if(func){
-		if('onafterscriptexecute' in script){
-			script.onafterscriptexecute=func;
-		}else{
-			script.onload=func;
-		}
-	}
+export function getScript(src, resolve, reject) {
+	var script = document.createElement('script');
+	script.src = src;
+	script.async = true;
+	if(resolve) script.onload = resolve;
+	if(reject) script.onerror = reject;
 	document.head.appendChild(script);
 	return script;
 };

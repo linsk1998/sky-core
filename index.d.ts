@@ -54,9 +54,10 @@ declare module "sky-core" {
 
 	export function getCurrentScript(): HTMLScriptElement;
 	export function getCurrentPath(): string;
-	export function getScript(src: string, func: Function, charset?: string): HTMLScriptElement;
-	export function loadCSS(href: string): Promise<void>;
-	export function loadScript(src: string, charset?: string): Promise<void>;
+	export function getScript(src: string, resolve?: Function, reject?: Function): HTMLScriptElement;
+	export function loadScript(src: string, resolve?: Function, reject?: Function): HTMLScriptElement;
+	export function getCSS(href: string, resolve?: Function, reject?: Function): HTMLLinkElement;
+	export function loadCSS(href: string, resolve?: Function, reject?: Function): HTMLLinkElement;
 
 	export function getElementsByClassName(className: string, ancestor?: ParentNode | Element | Document): Element[];
 	export function getElementStyle(el: Element, prop: string): string;

@@ -8,32 +8,33 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<meta name="renderer" content="webkit" />
-	<title>getScript</title>
+	<title>loadCSS</title>
 	<link href="../../ting-quirks.css" rel="stylesheet" />
+	<script>
+		window.onerror = function(message, url, line) {
+			alert("Message : " + message + "\nURL : " + url + "\nLine Number : " + line);
+			return true;
+		}
+	</script>
 	<script src="../../../dist/sky.js"></script>
 	<script src="../../demo.js"></script>
 </head>
 
 <body>
 	<div class="container-fluid">
-		<h3>Sky.getScript</h3>
-		<p>获取JS数据</p>
-		<pre class="code">Sky.getScript("./city.js",function(){alert(returnCitySN.cname)},function(e){alert(e.message)});</pre>
+		<h3>Sky.loadCSS</h3>
+		<p>获取JSONP数据</p>
+		<pre class="code">Sky.loadCSS("./theme.css",function(){alert("成功")},function(e){alert(e.message)});</pre>
 		<div class="btn-toolbar">
 			<a class="btn btn-primary" href="javascript:void 0;" onclick="run(this)">运行</a>
 		</div>
 		<p>响应网络错误</p>
-		<pre class="code">Sky.getScript("./404",function(){alert("成功")},function(e){alert(e.message)});</pre>
+		<pre class="code">Sky.loadCSS("./404",function(){alert("成功")},function(e){alert(e.message)});</pre>
 		<div class="btn-toolbar">
 			<a class="btn btn-primary" href="javascript:void 0;" onclick="run(this)">运行</a>
 		</div>
-		<p>解析脚本错误</p>
-		<pre class="code">Sky.getScript("./getScript.html",function(){alert("成功")},function(e){alert(e.message)});</pre>
-		<div class="btn-toolbar">
-			<a class="btn btn-primary" href="javascript:void 0;" onclick="run(this)">运行</a>
-		</div>
-		<p>运行脚本错误</p>
-		<pre class="code">Sky.getScript("./throw.js",function(){alert("成功")},function(e){alert(e.message)});</pre>
+		<p>解析CSS错误</p>
+		<pre class="code">Sky.loadCSS("./loadCSS.html",function(){alert("成功")},function(e){alert(e.message)});</pre>
 		<div class="btn-toolbar">
 			<a class="btn btn-primary" href="javascript:void 0;" onclick="run(this)">运行</a>
 		</div>

@@ -5,7 +5,7 @@ import { getPrototypeOf as compat_getPrototypeOf } from "../../impl-compat/Objec
 import { ff_getPrototypeOf, ie_getPrototypeOf } from "../../impl-modern/Object/getPrototypeOf";
 
 export default !getPrototypeOf ?
-	Object.prototype.__proto__ ?
+	Object.__proto__ ?
 		ff_getPrototypeOf :
 		compat_getPrototypeOf
 	:

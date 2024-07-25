@@ -4,7 +4,7 @@ import { setPrototypeOf as compat_setPrototypeOf } from "../../impl-compat/Objec
 import { Object } from "../../native/Object";
 import { setPrototypeOf } from "../../native/Object/setPrototypeOf";
 if(!setPrototypeOf) {
-	if(Object.prototype.__proto__) {
+	if(Object.__proto__) {
 		Object.setPrototypeOf = ff_setPrototypeOf;
 	} else if(hasEnumBug) {
 		Object.setPrototypeOf = compat_setPrototypeOf;

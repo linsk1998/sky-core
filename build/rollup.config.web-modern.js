@@ -1,8 +1,6 @@
 
 import alias from "@rollup/plugin-alias";
 import importPlugin from 'rollup-plugin-import';
-import inject from "@rollup/plugin-inject";
-import polyfill from "rollup-plugin-polyfill-inject";
 import { modules, polyfills, pures, utils } from "./alias-modern.mjs";
 export default {
 	input: './web.js',

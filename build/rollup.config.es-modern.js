@@ -44,6 +44,7 @@ export default {
 				"Object.fromEntries": "sky-core/polyfill/Object/fromEntries",
 				"Object.defineProperties": "sky-core/polyfill/Object/defineProperties",
 				"Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
+				"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
 				"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
 				"Object.getOwnPropertyDescriptors": "sky-core/polyfill/Object/getOwnPropertyDescriptors",
 				"Object.getOwnPropertyNames": "sky-core/polyfill/Object/getOwnPropertyNames",
