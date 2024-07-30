@@ -13,7 +13,6 @@ export default {
 		file: 'qunit/recommend-multi/compat.js',
 		format: 'iife'
 	},
-	context: "window",
 	treeshake: false,
 	plugins: [
 		nodeResolve(),

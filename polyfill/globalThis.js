@@ -1,4 +1,4 @@
 import { globalThis } from "../native/globalThis";
 if(!globalThis) {
-	window.globalThis = this;
+	window.globalThis = window;
 }

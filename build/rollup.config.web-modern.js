@@ -9,7 +9,6 @@ export default {
 		file: './dist/web-modern.js',
 		format: 'iife'
 	},
-	context: "window",
 	plugins: [
 		importPlugin({
 			libraryName: "sky-core",

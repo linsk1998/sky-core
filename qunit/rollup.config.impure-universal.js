@@ -11,7 +11,6 @@ export default {
 		file: 'qunit/impure-universal/universal.js',
 		format: 'iife'
 	},
-	context: "window",
 	treeshake: true,
 	plugins: [
 		importPlugin({

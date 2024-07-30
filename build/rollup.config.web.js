@@ -11,7 +11,6 @@ export default {
 		interop: false,
 		format: 'iife'
 	},
-	context: "window",
 	plugins: [
 		importPlugin({
 			libraryName: "sky-core",

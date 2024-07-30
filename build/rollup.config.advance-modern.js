@@ -10,7 +10,6 @@ export default {
 		file: './dist/advance-modern.js',
 		format: 'esm'
 	},
-	context: "window",
 	plugins: [
 		importPlugin({
 			libraryName: "sky-core",

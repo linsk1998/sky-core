@@ -11,7 +11,6 @@ export default {
 		file: './dist/web-compat.js',
 		format: 'iife'
 	},
-	context: "window",
 	plugins: [
 		importPlugin({
 			libraryName: "sky-core",

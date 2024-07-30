@@ -12,7 +12,6 @@ export default {
 		file: 'qunit/impure-multi/compat.js',
 		format: 'iife'
 	},
-	context: "window",
 	treeshake: true,
 	plugins: [
 		importPlugin({

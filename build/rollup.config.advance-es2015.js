@@ -10,7 +10,6 @@ export default {
 		file: './dist/advance-es2015.js',
 		format: 'esm'
 	},
-	context: "window",
 	plugins: [
 		importPlugin({
 			libraryName: "sky-core",

@@ -20,7 +20,7 @@ export function loadCSS(href, resolve, reject) {
 			};
 			if(resolve) {
 				var t1 = Date.now();
-				function checkLoaded() {
+				var checkLoaded = function() {
 					var sheet = this.sheet;
 					if(sheet && sheet.cssRules.length) {
 						if(resolve) resolve();
@@ -29,7 +29,7 @@ export function loadCSS(href, resolve, reject) {
 					} else {
 						setTimeout(resolve);
 					}
-				}
+				};
 				timer = setTimeout(checkLoaded);
 			}
 		} else {
