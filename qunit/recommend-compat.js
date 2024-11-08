@@ -3,130 +3,164 @@ import inject from "@rollup/plugin-inject";
 export default [
 	polyfill({
 		modules: {
-			// breaking change
-			'parseInt': "sky-core/polyfill/parseInt",
-			// ES5
-			"JSON.stringify": "sky-core/polyfill/Date/prototype/toJSON",
+			'Event': "sky-core/polyfill/Event",
+			'Error': "sky-core/polyfill/Error",
+			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
 			//简易版的实现，仅适用于解析内容安全的json
+			// IE8+ Chrome4+ Safari4+ Firfox3.5+ Opera11.5+
 			"JSON": "sky-core/polyfill/JSON",
-			// ES5 Date
+			//其他对象的自动转JSON
+			"JSON.stringify": [
+				// IE8+ Chrome4+ Safari4+ Firfox2+ Opera11.5+
+				"sky-core/polyfill/Date/prototype/toJSON"
+			],
+			// IE8+ Chrome4+ Safari4+ Firfox3.5+ Opera11.5+
+			"localStorage": "sky-core/polyfill/localStorage",
+			"sessionStorage": "sky-core/polyfill/sessionStorage",
+			// IE10+ Chrome4+ Safari3.1+ Firfox4+ Opera11.5+
+			// "console": "sky-core/polyfill/console",
+			// IE9+ Chrome4+ Safari5.1+ Firfox4+ Opera11.5+
+			'document.head': "sky-core/polyfill/document/head",
+			// Edge12+ Safari4+ Chrome4+ Firfox4+ Opera11.5+
+			'document.baseURI': "sky-core/polyfill/document/baseURI",
+			// IE9+ Safari4+ Chrome4+ Firfox2+ Opera11.5+
 			"Date.now": "sky-core/polyfill/Date/now",
+			// IE9+ Safari5.1+ Chrome6+ Firfox4+ Opera11.5+
 			// "Date": "sky-core/polyfill/Date/constructor",
 			// "Date.parse": "sky-core/polyfill/Date/parse",
-
-			'globalThis': "sky-core/polyfill/globalThis",
-			// "Symbol.for": "sky-core/polyfill/Symbol/for",
-			// "Symbol.keyFor": "sky-core/polyfill/Symbol/keyFor",
-			// "Symbol.hasInstance": "sky-core/polyfill/Function/prototype/@@hasInstance",
-			// "Symbol.iterator": [
-			// 	"sky-core/polyfill/Array/prototype/@@iterator",
-			// 	"sky-core/polyfill/String/prototype/@@iterator"
-			// ],
-			// "Symbol": "sky-core/polyfill/Symbol",
-			"Array.from": [
-				"sky-core/polyfill/Array/from",
-				"sky-core/polyfill/Array/prototype/@@iterator",
-				"sky-core/polyfill/String/prototype/@@iterator"
-			],
+			/* IE9+ Firefox4+ Safari5+ Opera11.5+ */
 			"Array.isArray": "sky-core/polyfill/Array/isArray",
-			"Array.of": "sky-core/polyfill/Array/of",
-			// Math
-			"Math.acosh": "sky-core/polyfill/Math/acosh",
-			"Math.asinh": "sky-core/polyfill/Math/asinh",
-			"Math.atanh": "sky-core/polyfill/Math/atanh",
-			"Math.cbrt": "sky-core/polyfill/Math/cbrt",
-			"Math.clz32": "sky-core/polyfill/Math/clz32",
-			"Math.cosh": "sky-core/polyfill/Math/cosh",
-			"Math.expm1": "sky-core/polyfill/Math/expm1",
-			"Math.fround": "sky-core/polyfill/Math/fround",
-			"Math.hypot": "sky-core/polyfill/Math/hypot",
-			"Math.imul": "sky-core/polyfill/Math/imul",
-			"Math.log1p": "sky-core/polyfill/Math/log1p",
-			"Math.log2": "sky-core/polyfill/Math/log2",
-			"Math.log10": "sky-core/polyfill/Math/log10",
-			"Math.sign": "sky-core/polyfill/Math/sign",
-			"Math.sinh": "sky-core/polyfill/Math/sinh",
-			"Math.tanh": "sky-core/polyfill/Math/tanh",
-			"Math.trunc": "sky-core/polyfill/Math/trunc",
-			//ES2015.Core Number
-			"Number.EPSILON": "sky-core/polyfill/Number/EPSILON",
-			"Number.isFinite": "sky-core/polyfill/Number/isFinite",
-			"Number.isInteger": "sky-core/polyfill/Number/isInteger",
-			"Number.isNaN": "sky-core/polyfill/Number/isNaN",
-			"Number.isSafeInteger": "sky-core/polyfill/Number/isSafeInteger",
-			"Number.MAX_SAFE_INTEGER": "sky-core/polyfill/Number/MAX_SAFE_INTEGER",
-			"Number.MIN_SAFE_INTEGER": "sky-core/polyfill/Number/MIN_SAFE_INTEGER",
-			"Number.parseFloat": "sky-core/polyfill/Number/parseFloat",
-			"Number.parseInt": "sky-core/polyfill/Number/parseInt",
-			// Object 遍历
-			"Object.assign": "sky-core/polyfill/Object/assign",
-			"Object.keys": "sky-core/polyfill/Object/keys",
-			"Object.values": "sky-core/polyfill/Object/values",
-			"Object.entries": "sky-core/polyfill/Object/entries",
-			"Object.fromEntries": "sky-core/polyfill/Object/fromEntries",
-			"Object.getOwnPropertySymbols": "sky-core/polyfill/Object/getOwnPropertySymbols",
-			// Object property
-			//由于ES3不支持 accessor，但是许多工具会生成defineProperty，且defineProperty不能判断是否支持支持accessor，可以污染全局的Object
-			// 使用前应使用sham判断
-			"Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
-			// 使用前应使用sham判断
-			"Object.defineProperties": "sky-core/polyfill/Object/defineProperties",
-			"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
-			"Object.getOwnPropertyDescriptors": "sky-core/polyfill/Object/getOwnPropertyDescriptors",
-			"Object.getOwnPropertyNames": "sky-core/polyfill/Object/getOwnPropertyNames",
-			"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
-			//Object 原型相关
-			"Object.create": "sky-core/polyfill/Object/create",
-			"Object.getPrototypeOf": "sky-core/polyfill/Object/getPrototypeOf",
-			//ES3不能真正实现setPrototypeOf，只允许在继承时使用
-			"Object.setPrototypeOf": "sky-core/polyfill/Object/setPrototypeOf",
-			//Object 动态相关
+			// breaking change
+			// IE9+ Chrome23+ Safari6+ Firfox21+ Opera15+
+			'parseInt': "sky-core/polyfill/parseInt",
+
+			/* IE9+ Chrome6+ Firefox4+ Safari5.1+ Opera12.1+ */
 			"Object.preventExtensions": "sky-core/polyfill/Object/preventExtensions",
 			"Object.seal": "sky-core/polyfill/Object/seal",
 			"Object.freeze": "sky-core/polyfill/Object/freeze",
 			"Object.isExtensible": "sky-core/polyfill/Object/isExtensible",
 			"Object.isSealed": "sky-core/polyfill/Object/isSealed",
 			"Object.isFrozen": "sky-core/polyfill/Object/isFrozen",
+
+			/* IE9+ Firefox3.5+ Safari5+ Opera12.1+ */
+			"Object.getPrototypeOf": "sky-core/polyfill/Object/getPrototypeOf",
+			/* IE9+ Firefox4+ Safari5+ Opera12.5+ */
+			"Object.create": "sky-core/polyfill/Object/create",
+			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
+			"Object.keys": "sky-core/polyfill/Object/keys",
+			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
+			// "Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
+			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
+			"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
+			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
+			"Object.getOwnPropertyNames": "sky-core/polyfill/Object/getOwnPropertyNames",
+			/* IE9+ Firefox4+ Safari5.1+ Opera12.1+ */
+			// "Object.defineProperties": "sky-core/polyfill/Object/defineProperties",
+			/* IE11+ Chrome34+ Firefox31+ Safari9+ Opera12.1+ */
+			// "Object.setPrototypeOf": "sky-core/polyfill/Object/setPrototypeOf",
+			/* Edge12+ Chrome19 Firefox22+ Safari9+ */
 			"Object.is": "sky-core/polyfill/Object/is",
-			//Reflect
-			// "Reflect.apply": "sky-core/polyfill/Reflect/apply",
-			// "Reflect.construct": "sky-core/polyfill/Reflect/construct",
-			// "Reflect.defineProperty": "sky-core/polyfill/Reflect/defineProperty",
-			// "Reflect.deleteProperty": "sky-core/polyfill/Reflect/deleteProperty",
-			// "Reflect.get": "sky-core/polyfill/Reflect/get",
-			// "Reflect.set": "sky-core/polyfill/Reflect/set",
-			// "Reflect.getOwnPropertyDescriptor": "sky-core/polyfill/Reflect/getOwnPropertyDescriptor",
-			// "Reflect.getPrototypeOf": "sky-core/polyfill/Reflect/getPrototypeOf",
-			//Promise
+
+			// IE11+ Chrome8+ Safari5.1+ Firfox21+ Opera15+
+			'location.origin': "sky-core/polyfill/location",
+
+			// Chrome41+ Edge12 Safari9+ Firfox32+ Opera32+
+			"Array.from": [
+				"sky-core/polyfill/Array/from",
+				"sky-core/polyfill/Array/prototype/@@iterator",
+				"sky-core/polyfill/String/prototype/@@iterator"
+			],
+			"Symbol.iterator": [
+				"sky-core/polyfill/Array/prototype/@@iterator",
+				"sky-core/polyfill/String/prototype/@@iterator"
+			],
+
+			/* Edge12+ Chrome32 Firefox27+ Safari7+ */
 			"Promise": "sky-core/polyfill/Promise",
-			"Promise": "sky-core/polyfill/Promise/prototype/finally",
-			// ESNext.Promise
-			"Promise.allSettled": "sky-core/polyfill/Promise/allSettled",
-			"Promise.any": "sky-core/polyfill/Promise/any",
-			"AggregateError": "sky-core/polyfill/AggregateError",
-			"queueMicrotask": "sky-core/polyfill/queueMicrotask",
-			//ES2015.String
-			"String.fromCodePoint": "sky-core/polyfill/String/fromCodePoint",
-			"String.raw": "sky-core/polyfill/String/raw",
-			//ES2015.Collection
+			/* Edge12+ Chrome19+ Firefox16+ Safari9+ */
+			"Number.isNaN": "sky-core/polyfill/Number/isNaN",
+			"Number.isFinite": "sky-core/polyfill/Number/isFinite",
+			/* Edge12+ Chrome34+ Firefox16+ Safari9+ */
+			"Number.isInteger": "sky-core/polyfill/Number/isInteger",
+			/* Edge12+ Chrome34+ Firefox25+ Safari9+ */
+			"Number.EPSILON": "sky-core/polyfill/Number/EPSILON",
+			"Number.parseFloat": "sky-core/polyfill/Number/parseFloat",
+			"Number.parseInt": "sky-core/polyfill/Number/parseInt",
+			/* Edge12+ Chrome34+ Firefox31+ Safari9+ */
+			"Number.isSafeInteger": "sky-core/polyfill/Number/isSafeInteger",
+			/* Edge12+ Chrome34+ Firefox32+ Safari9+ */
+			"Number.MAX_SAFE_INTEGER": "sky-core/polyfill/Number/MAX_SAFE_INTEGER",
+			"Number.MIN_SAFE_INTEGER": "sky-core/polyfill/Number/MIN_SAFE_INTEGER",
+			/* IE11+ Chrome36 Firefox6+ Safari8+ */
+			"WeakMap": "sky-core/polyfill/WeakMap",
+			/* IE11+ Chrome36 Firefox34+ Safari9+ */
+			"WeakSet": "sky-core/polyfill/WeakSet",
+			/* IE11+ Chrome38 Firefox13+ Safari8+ */
 			"Map": "sky-core/polyfill/Map",
 			"Set": "sky-core/polyfill/Set",
-			"WeakMap": "sky-core/polyfill/WeakMap",
-			"WeakSet": "sky-core/polyfill/WeakSet",
-			/* ES2022 */
+			/* Edge12+ Chrome28 Firefox20+ Safari7+ */
+			"Math.imul": "sky-core/polyfill/Math/imul",
+			/* Edge12+ Chrome38 Firefox31+ Safari7+ */
+			"Math.acosh": "sky-core/polyfill/Math/acosh",
+			"Math.asinh": "sky-core/polyfill/Math/asinh",
+			"Math.atanh": "sky-core/polyfill/Math/atanh",
+			"Math.cbrt": "sky-core/polyfill/Math/cbrt",
+			"Math.cosh": "sky-core/polyfill/Math/cosh",
+			"Math.expm1": "sky-core/polyfill/Math/expm1",
+			"Math.log10": "sky-core/polyfill/Math/log10",
+			"Math.log1p": "sky-core/polyfill/Math/log1p",
+			"Math.log2": "sky-core/polyfill/Math/log2",
+			"Math.sinh": "sky-core/polyfill/Math/sinh",
+			"Math.tanh": "sky-core/polyfill/Math/tanh",
+			"Math.trunc": "sky-core/polyfill/Math/trunc",
+			/* Edge12+ Chrome38 Firefox25+ Safari9+ */
+			"Math.sign": "sky-core/polyfill/Math/sign",
+			/* Edge12+ Chrome38 Firefox26+ Safari8+ */
+			"Math.fround": "sky-core/polyfill/Math/fround",
+			/* Edge12+ Chrome38 Firefox27+ Safari8+ */
+			"Math.hypot": "sky-core/polyfill/Math/hypot",
+			/* Edge12+ Chrome38 Firefox31+ Safari7+ */
+			"Math.clz32": "sky-core/polyfill/Math/clz32",
+			/* Edge12+ Chrome41 Firefox29+ Safari9+ */
+			"String.fromCodePoint": "sky-core/polyfill/String/fromCodePoint",
+			/* Edge12+ Chrome41 Firefox34+ Safari9+ */
+			"String.raw": "sky-core/polyfill/String/raw",
+			/* Edge12+ Chrome45 Firefox25+ Safari9+ */
+			"Array.of": "sky-core/polyfill/Array/of",
+			/* Edge12+ Chrome45 Firefox34+ Safari9+ */
+			"Object.assign": "sky-core/polyfill/Object/assign",
+			/* Edge12+ Chrome38+ Firefox36+ Safari9+ */
+			"Object.getOwnPropertySymbols": "sky-core/polyfill/Object/getOwnPropertySymbols",
+			//ES2017.Object
+			/* Chrome54+ Firefox47+ Safari10.1+ Edge14+ */
+			"Object.entries": "sky-core/polyfill/Object/entries",
+			"Object.values": "sky-core/polyfill/Object/values",
+			/* Chrome54+ Firefox50+ Safari10+ Edge15+ */
+			"Object.getOwnPropertyDescriptors": "sky-core/polyfill/Object/getOwnPropertyDescriptors",
+			//Web API
+			/* Chrome71+ Firefox69+ Safari12.1+ */
+			"queueMicrotask": "sky-core/polyfill/queueMicrotask",
+			//ES2019
+			/* Chrome73+ Firefox63+ Safari12.1+ */
+			"Object.fromEntries": "sky-core/polyfill/Object/fromEntries",
+			/* ES2020 */
+			/* Chrome71+ Firefox65+ Safari12.1+*/
+			'globalThis': "sky-core/polyfill/globalThis",
+			//ES2021
+			/* Chrome76+ Firefox71+ Safari13+*/
+			'Promise.allSettled': "sky-core/polyfill/Promise/allSettled",
+			/* Chrome85+ Firefox79+ Safari14+*/
+			'Promise.any': "sky-core/polyfill/Promise/any",
+			'AggregateError': "sky-core/polyfill/AggregateError",
+			/* Chrome93+ Firefox92+ Safari15.4+*/
 			"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
+			// ES2024
+			/* Chrome119+ Firefox121+ Safari17.4+ */
+			"Promise.withResolvers": "sky-core/polyfill/Promise/withResolvers",
 			//URL 这个polyfil支持accessor，但不支持自动转string和JSON，需要用.href获取
 			"URL": "sky-core/polyfill/URL",
 			"URLSearchParams": "sky-core/polyfill/URLSearchParams",
 
-			'location.origin': "sky-core/polyfill/location",
-			'document.head': "sky-core/polyfill/document/head",
-			'document.contains': "sky-core/polyfill/document/contains",
-			// "console": "sky-core/polyfill/console",
-			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
-			"localStorage": "sky-core/polyfill/localStorage",
-			"sessionStorage": "sky-core/polyfill/sessionStorage",
-			// 'Event': "sky-core/polyfill/Event",
 		},
 		exclude: [
 			"qunit/helpers/*"
@@ -137,70 +171,99 @@ export default [
 		modules: {
 			// breaking change
 			'.toFixed': "sky-core/polyfill/Number/prototype/toFixed",
-			//ES5 Date
-			//toLocaleFormat 这个只有火狐支持，非标准
-			".toLocaleFormat": "sky-core/polyfill/Date/prototype/toLocaleFormat",
-			".toISOString": "sky-core/polyfill/Date/prototype/toISOString",
-			".toJSON": "sky-core/polyfill/Date/prototype/toJSON",
-			//ES5 Function
-			".bind": "sky-core/polyfill/Function/prototype/bind",
-			// ".name": "sky-core/polyfill/Function/prototype/name",
+			".toJSON": [
+				"sky-core/polyfill/Date/prototype/toJSON"
+			],
+			'.at': [
+				/* Chrome41+ Firefox34+ Safari9.1+*/
+				"sky-core/polyfill/String/prototype/at",
+				/* Chrome92+ Firefox90+ Safari15.4+*/
+				"sky-core/polyfill/Array/prototype/at",
+			],
+			'.includes': [
+				/* Edge12+ Chrome41 Firefox40+ Safari9+ */
+				"sky-core/polyfill/String/prototype/includes",
+				/* Chrome47 Firefox43+ Safari9+ Edge14+ */
+				"sky-core/polyfill/Array/prototype/includes",
+			],
+			//DOM
+			// ".contains": "sky-core/polyfill/Element/prototype/contains",
+			// ".children": "sky-core/polyfill/Element/prototype/children",
+			// ".innerText": "sky-core/polyfill/Element/prototype/innerText",
+
 			//ES5 Array
-			".every": "sky-core/polyfill/Array/prototype/every",
-			".filter": "sky-core/polyfill/Array/prototype/filter",
-			".forEach": "sky-core/polyfill/Array/prototype/forEach",
 			".indexOf": "sky-core/polyfill/Array/prototype/indexOf",
 			".lastIndexOf": "sky-core/polyfill/Array/prototype/lastIndexOf",
+			".forEach": "sky-core/polyfill/Array/prototype/forEach",
+			".filter": "sky-core/polyfill/Array/prototype/filter",
 			".map": "sky-core/polyfill/Array/prototype/map",
+			".some": "sky-core/polyfill/Array/prototype/some",
+			".every": "sky-core/polyfill/Array/prototype/every",
+			// toLocaleFormat 这个只有火狐支持，非标准
+			".toLocaleFormat": "sky-core/polyfill/Date/prototype/toLocaleFormat",
+			//toISOString的兼容性还过的去，可以不要
+			".toISOString": "sky-core/polyfill/Date/prototype/toISOString",
+			//部分版本chrome，toLocaleString只支持英文，这里给替换成了一个全球可读性都比较好的格式
+			".toLocaleDateString": "sky-core/polyfill/Date/prototype/toLocaleDateString",
+			".toLocaleString": "sky-core/polyfill/Date/prototype/toLocaleString",
+			".toLocaleTimeString": "sky-core/polyfill/Date/prototype/toLocaleTimeString",
+			/* IE9+ Firefox3+ Safari4+ Opera11.5+ */
 			".reduce": "sky-core/polyfill/Array/prototype/reduce",
 			".reduceRight": "sky-core/polyfill/Array/prototype/reduceRight",
-			".some": "sky-core/polyfill/Array/prototype/some",
-			//String/Array includes
-			'.includes': [
-				"sky-core/polyfill/Array/prototype/includes",
-				"sky-core/polyfill/String/prototype/includes",
-			],
-			//ES6 Array
-			".copyWithin": "sky-core/polyfill/Array/prototype/copyWithin",
-			".fill": "sky-core/polyfill/Array/prototype/fill",
-			".find": "sky-core/polyfill/Array/prototype/find",
-			".findIndex": "sky-core/polyfill/Array/prototype/findIndex",
+			/* IE10+ Firefox3.5+ Safari5+ Opera11.5+ */
+			".trim": "sky-core/polyfill/String/prototype/trim",
+			/* IE11+ Firefox4+ Chrome7+ Safari5.1+ Opera12.1+ */
+			".bind": "sky-core/polyfill/Function/prototype/bind",
+			/* Edge15+ Chrome38+ Firefox28+ Safari8+ */
 			".entries": "sky-core/polyfill/Array/prototype/entries",
 			".keys": "sky-core/polyfill/Array/prototype/keys",
-			".values": "sky-core/polyfill/Array/prototype/values",
-			//ES2019 Array
-			".flat": "sky-core/polyfill/Array/prototype/flat",
-			".flatMap": "sky-core/polyfill/Array/prototype/flatMap",
-			//ES5 String
-			".trim": "sky-core/polyfill/String/prototype/trim",
-			//ES6 String
+			/* Edge15+ Chrome41 Firefox17+ Safari9+ */
 			".startsWith": "sky-core/polyfill/String/prototype/startsWith",
 			".endsWith": "sky-core/polyfill/String/prototype/endsWith",
+			/* Edge12+ Chrome41 Firefox24+ Safari9+ */
 			".repeat": "sky-core/polyfill/String/prototype/repeat",
+			/* Edge12+ Chrome41 Firefox34+ Safari9+ */
 			".codePointAt": "sky-core/polyfill/String/prototype/codePointAt",
-			//ES2017.String
-			".padStart": "sky-core/polyfill/String/prototype/padStart",
+			/* Edge12+ Chrome45 Firefox25+ Safari7.1+ */
+			".find": "sky-core/polyfill/Array/prototype/find",
+			".findIndex": "sky-core/polyfill/Array/prototype/findIndex",
+			/* Edge12+ Chrome45 Firefox32+ Safari9+ */
+			".fill": "sky-core/polyfill/Array/prototype/fill",
+			/* Edge12+ Chrome45 Firefox32+ Safari9+ */
+			".copyWithin": "sky-core/polyfill/Array/prototype/copyWithin",
+			/* Edge12+ Chrome46 Firefox34+ Safari9.1+ */
+			".name": "sky-core/polyfill/Function/prototype/name",
+			// ES2017.String
+			/* Chrome57+ Firefox40+ Safari9+ Edge15+ */
 			".padEnd": "sky-core/polyfill/String/prototype/padEnd",
-			//ES2019.String
-			".trimStart": "sky-core/polyfill/String/prototype/trimStart",
+			".padStart": "sky-core/polyfill/String/prototype/padStart",
+			/* ES2018 */
+			/* Chrome63+ Firefox58+ Safari11.1+ Edge18+ */
+			".finally": "sky-core/polyfill/Promise/prototype/finally",
+			/* ES2019 */
+			/* Chrome66+ Firefox61+ Safari12+ */
 			".trimEnd": "sky-core/polyfill/String/prototype/trimEnd",
-			// ".trimLeft": "sky-core/polyfill/String/prototype/trimLeft",
-			// ".trimRight": "sky-core/polyfill/String/prototype/trimRight",
-			//ES2020.String
+			".trimStart": "sky-core/polyfill/String/prototype/trimStart",
+			/* Chrome69+ Firefox62+ Safari12+*/
+			".flat": "sky-core/polyfill/Array/prototype/flat",
+			".flatMap": "sky-core/polyfill/Array/prototype/flatMap",
+			/* Chrome70+ Firefox63+ Safari12+*/
+			// ".description": "sky-core/polyfill/Symbol/prototype/description",
+			//ES2020
+			/* Chrome73+ Firefox67+ Safari13+*/
 			".matchAll": "sky-core/polyfill/String/prototype/matchAll",
 			//ES2021
+			/* Chrome85+ Firefox77+ Safari13.1+*/
 			".replaceAll": "sky-core/polyfill/String/prototype/replaceAll",
-			//ES2022
-			".at": [
-				"sky-core/polyfill/Array/prototype/at",
-				"sky-core/polyfill/String/prototype/at"
-			],
-			// ES2023
-			".findLast": "sky-core/polyfill/Array/prototype/findLast",
+			/* ES2023 */
+			/* Chrome97+ Firefox104+ Safari15.4+*/
 			".findLastIndex": "sky-core/polyfill/Array/prototype/findLastIndex",
+			/* Chrome97+ Firefox104+ Safari15.4+*/
+			".findLast": "sky-core/polyfill/Array/prototype/findLast",
+			/* Chrome110+ Firefox115+ Safari16+*/
 			".toReversed": "sky-core/polyfill/Array/prototype/toReversed",
-			".toSpliced": "sky-core/polyfill/Array/prototype/toSpliced",
 			".toSorted": "sky-core/polyfill/Array/prototype/toSorted",
+			".toSpliced": "sky-core/polyfill/Array/prototype/toSpliced",
 			".with": "sky-core/polyfill/Array/prototype/with",
 		},
 		exclude: [
@@ -211,6 +274,9 @@ export default [
 	}),
 	inject({
 		modules: {
+			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
+			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
+			"Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
 			"Symbol.asyncIterator": "sky-core/pure/Symbol/asyncIterator",
 			"Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
 			"Symbol.iterator": "sky-core/pure/Symbol/iterator",
@@ -220,7 +286,10 @@ export default [
 			// 由于有比较多的库使用XMLHttpRequest来判断浏览器版本，污染全局变量会导致判断错误，因此建议只在需要用的地方注入
 			"XMLHttpRequest": "sky-core/pure/XMLHttpRequest"
 		},
-		exclude: [
+		include: [
+			"impl/**/*",
+			"impl-*/**/*",
+			"qunit/es/*"
 		]
 	})
 ];

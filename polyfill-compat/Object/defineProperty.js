@@ -6,4 +6,3 @@ if(Object.defineProperty) {
 } else {
 	Object.defineProperty = compat_defineProperty;
 }
-Object.defineProperty.sham = true;

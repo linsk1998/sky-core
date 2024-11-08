@@ -11,6 +11,7 @@ export function ie8_defineProperty(obj, prop, descriptor) {
 	}
 	return obj;
 };
+ie8_defineProperty.sham = true;
 export function defineProperty(obj, prop, description) {
 	if(native_defineProperty) {
 		if(obj instanceof Object || obj instanceof NullProtoObject) {
@@ -45,3 +46,4 @@ export function compat_defineProperty(obj, prop, description) {
 	obj['@@desc:' + prop] = descriptor;
 	return obj;
 };
+compat_defineProperty.sham = true;

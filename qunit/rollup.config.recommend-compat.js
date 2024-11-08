@@ -35,14 +35,14 @@ export default {
 					version: "7.20.1"
 				}],
 				// ES2019
-				"@babel/plugin-proposal-optional-catch-binding",
-				"@babel/plugin-proposal-json-strings",
+				"@babel/plugin-transform-optional-catch-binding",
+				"@babel/plugin-transform-json-strings",
 				// ES2018
-				"@babel/plugin-proposal-async-generator-functions",
+				"@babel/plugin-transform-async-generator-functions",
 				// "@babel/plugin-transform-dotall-regex"
 				"@babel/plugin-transform-named-capturing-groups-regex",
-				["@babel/plugin-proposal-object-rest-spread", { loose: true, "useBuiltIns": true }],
-				// "@babel/plugin-proposal-unicode-property-regex"
+				["@babel/plugin-transform-object-rest-spread", { loose: true, "useBuiltIns": true }],
+				// "@babel/plugin-transform-unicode-property-regex"
 				// ES2017
 				// "@babel/plugin-transform-async-to-generator",
 				// ES2016

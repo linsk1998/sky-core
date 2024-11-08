@@ -163,7 +163,7 @@ import "./es.object.get-own-property-descriptors";
 import "./es.string.pad-start";
 import "./es.string.pad-end";
 /* Chrome61+ Firefox60+ Safari10.1+ Edge16+ */
-/* ====================module==================== */
+/* ==================== module ==================== */
 /* ES2018 */
 /* Chrome63+ Firefox57+ Safari11.1+ */
 import "./es.symbol.async-iterator";
@@ -211,10 +211,7 @@ import "./es.array.to-reversed";
 import "./es.array.to-sorted";
 import "./es.array.to-spliced";
 import "./es.array.with";
-
-
-
-
-
+/* ES2024 */
+import "./es.promise.with-resolvers";
 
 // import "../web/web.url";
