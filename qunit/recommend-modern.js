@@ -1,6 +1,7 @@
-import polyfill from "rollup-plugin-polyfill-inject";
-import inject from "@rollup/plugin-inject";
-export default [
+const polyfill = require("rollup-plugin-polyfill-inject");
+const inject = require("@rollup/plugin-inject");
+
+module.exports = [
 	polyfill({
 		modules: {
 			'Event': "sky-core/polyfill/Event",
@@ -157,8 +158,11 @@ export default [
 			/* Chrome93+ Firefox92+ Safari15.4+*/
 			"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
 			// ES2024
+			/* Chrome117+ Firefox119+ Safari17.4+ */
+			"Object.groupBy": "sky-core/polyfill/Object/groupBy",
+			"Map.groupBy": "sky-core/polyfill/Map/groupBy",
 			/* Chrome119+ Firefox121+ Safari17.4+ */
-			"Promise.withResolvers": "sky-core/polyfill/Promise/withResolvers",
+			"Object.withResolvers": "sky-core/polyfill/Object/withResolvers",
 
 			// "console": "sky-core/polyfill/console",
 			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
@@ -281,7 +285,8 @@ export default [
 		include: [
 			"impl/**/*",
 			"impl-*/**/*",
-			"qunit/es/*"
+			"qunit/es/*",
+			"qunit/helpers/*"
 		]
 	})
 ];

@@ -54,7 +54,6 @@
 		"build:advance": "rollup --config build/rollup.config.advance-es2015.js && rollup --config build/rollup.config.advance-modern.js && rollup --config build/rollup.config.advance-compat.js",
 		"test": "rollup --config qunit/rollup.config.recommend-compat.js && rollup --config qunit/rollup.config.recommend-modern.js"
 	},
-	"type": "module",
 	"keywords": [
 		"polyfill",
 		"core-js",

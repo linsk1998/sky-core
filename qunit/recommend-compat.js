@@ -1,6 +1,7 @@
-import polyfill from "rollup-plugin-polyfill-inject";
-import inject from "@rollup/plugin-inject";
-export default [
+const polyfill = require("rollup-plugin-polyfill-inject");
+const inject = require("@rollup/plugin-inject");
+
+module.exports = [
 	polyfill({
 		modules: {
 			'Event': "sky-core/polyfill/Event",
@@ -155,11 +156,15 @@ export default [
 			/* Chrome93+ Firefox92+ Safari15.4+*/
 			"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
 			// ES2024
+			/* Chrome117+ Firefox119+ Safari17.4+ */
+			"Object.groupBy": "sky-core/polyfill/Object/groupBy",
+			"Map.groupBy": "sky-core/polyfill/Map/groupBy",
 			/* Chrome119+ Firefox121+ Safari17.4+ */
 			"Promise.withResolvers": "sky-core/polyfill/Promise/withResolvers",
+
 			//URL 这个polyfil支持accessor，但不支持自动转string和JSON，需要用.href获取
-			"URL": "sky-core/polyfill/URL",
-			"URLSearchParams": "sky-core/polyfill/URLSearchParams",
+			// "URL": "sky-core/polyfill/URL",
+			// "URLSearchParams": "sky-core/polyfill/URLSearchParams",
 
 		},
 		exclude: [
@@ -289,7 +294,8 @@ export default [
 		include: [
 			"impl/**/*",
 			"impl-*/**/*",
-			"qunit/es/*"
+			"qunit/es/*",
+			"qunit/helpers/*"
 		]
 	})
 ];

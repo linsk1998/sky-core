@@ -1,12 +1,12 @@
 
-import path from "path";
-import alias from "@rollup/plugin-alias";
-import babel from '@rollup/plugin-babel';
-import importPlugin from 'rollup-plugin-import';
-import nodeResolve from '@rollup/plugin-node-resolve';
-import { polyfills, pures, utils } from "../build/alias-modern";
-import recommend from "./recommend-modern";
-export default {
+const path = require("path");
+const { babel } = require("@rollup/plugin-babel");
+const importPlugin = require("rollup-plugin-import");
+const nodeResolve = require("@rollup/plugin-node-resolve");
+const recommend = require("./recommend-modern");
+const sky = require("../createRollupPlugin");
+
+module.exports = {
 	input: 'qunit/es/index.js',
 	output: {
 		strict: false,
@@ -15,6 +15,7 @@ export default {
 	},
 	treeshake: false,
 	plugins: [
+		sky('modern'),
 		nodeResolve(),
 		importPlugin({
 			libraryName: "sky-core",
@@ -78,10 +79,6 @@ export default {
 			include: [
 				"qunit/**/*",
 			]
-		}),
-		alias({
-			entries: [
-			].concat(pures).concat(polyfills).concat(utils)
 		}),
 	]
 };
