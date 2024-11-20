@@ -270,6 +270,8 @@ module.exports = [
 			".toSorted": "sky-core/polyfill/Array/prototype/toSorted",
 			".toSpliced": "sky-core/polyfill/Array/prototype/toSpliced",
 			".with": "sky-core/polyfill/Array/prototype/with",
+			/* Chrome111+ Firefox119+ Safari16.4+ */
+			".isWellFormed": "sky-core/polyfill/String/prototype/isWellFormed",
 		},
 		exclude: [
 			"polyfill/**/*",

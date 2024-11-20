@@ -45,9 +45,10 @@ export var FREEZING = !function() {
 }();
 
 export var CORRECT_PROTOTYPE_GETTER = !function() {
+	function F() { /* empty */ }
+	F.prototype.constructor = null;
+
 	try {
-		function F() { /* empty */ }
-		F.prototype.constructor = null;
 		return Object.getPrototypeOf(new F()) !== F.prototype;
 	} catch {
 		return true;

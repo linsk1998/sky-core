@@ -9,7 +9,7 @@ const sky = require("../createRollupPlugin");
 module.exports = {
 	input: 'qunit/es/index.js',
 	output: {
-		strict: false,
+		strict: true,
 		file: 'qunit/recommend-multi/modern.js',
 		format: 'iife'
 	},

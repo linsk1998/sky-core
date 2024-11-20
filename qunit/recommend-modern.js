@@ -162,7 +162,7 @@ module.exports = [
 			"Object.groupBy": "sky-core/polyfill/Object/groupBy",
 			"Map.groupBy": "sky-core/polyfill/Map/groupBy",
 			/* Chrome119+ Firefox121+ Safari17.4+ */
-			"Object.withResolvers": "sky-core/polyfill/Object/withResolvers",
+			"Promise.withResolvers": "sky-core/polyfill/Promise/withResolvers",
 
 			// "console": "sky-core/polyfill/console",
 			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
@@ -264,6 +264,8 @@ module.exports = [
 			".toSorted": "sky-core/polyfill/Array/prototype/toSorted",
 			".toSpliced": "sky-core/polyfill/Array/prototype/toSpliced",
 			".with": "sky-core/polyfill/Array/prototype/with",
+			/* Chrome111+ Firefox119+ Safari16.4+ */
+			".isWellFormed": "sky-core/polyfill/String/prototype/isWellFormed",
 		},
 		exclude: [
 			"polyfill/**/*",

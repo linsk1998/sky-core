@@ -38,12 +38,6 @@ Object.defineProperties(Symbol, {
 		},
 		configurable: false
 	},
-	replace: {
-		get() {
-			throw new TypeError("Symbol.replace is unsafe");
-		},
-		configurable: false
-	},
 	search: {
 		get() {
 			throw new TypeError("Symbol.search is unsafe");
