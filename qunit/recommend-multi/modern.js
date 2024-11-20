@@ -689,32 +689,19 @@
 	  });
 	};
 
-	var parseInt$1 = window.parseInt;
-
-	function trimStart() {
-		return this.replace(/^[\s\u2006\u3000\xA0]+/g, '');
-	}
-
-	if(parseInt$1("010") === 8) {
-		window.parseInt = function(number, radix) {
-			if(!radix && typeof number === 'string') {
-				number = trimStart.call(number);
-				if(number.charCodeAt(0) === 48 && number.charCodeAt(1) !== 120) {
-					return parseInt$1(number, 10);
-				}
-			}
-			return parseInt$1(number, radix);
-		};
-	}
-
 	function repeat$1(count) {
+		if(this == null) {
+			throw new TypeError("repeat called on null or undefined");
+		}
 		if(count < 0) {
 			throw new RangeError("RangeError repeat count must be non-negative");
 		}
-		if(count == Number.POSITIVE_INFINITY) {
+		if(count === Number.POSITIVE_INFINITY) {
 			throw new RangeError("RangeError repeat count must be less than infinity");
 		}
-		return new Array(parseInt(count + 1)).join(this);
+		count = Math.floor(count);
+		if(isNaN(count)) return "";
+		return new Array(count + 1).join(this);
 	}
 
 	function toInteger(n) {
@@ -2677,6 +2664,24 @@
 	  assert.same(parseFloat(null), NaN);
 	  assert.same(parseFloat(undefined), NaN);
 	});
+
+	var parseInt$1 = window.parseInt;
+
+	function trimStart() {
+		return this.replace(/^[\s\u2006\u3000\xA0]+/g, '');
+	}
+
+	if(parseInt$1("010") === 8) {
+		window.parseInt = function(number, radix) {
+			if(!radix && typeof number === 'string') {
+				number = trimStart.call(number);
+				if(number.charCodeAt(0) === 48 && number.charCodeAt(1) !== 120) {
+					return parseInt$1(number, 10);
+				}
+			}
+			return parseInt$1(number, radix);
+		};
+	}
 
 	if(!Number$1.parseInt) Number$1.parseInt = parseInt;
 
@@ -7541,6 +7546,9 @@
 	});
 
 	function matchAll(regExp) {
+		if(this == null) {
+			throw new TypeError("matchAll called on null or undefined");
+		}
 		var string = this;
 		if(typeof regExp === "string") {
 			regExp = new RegExp(regExp, 'g');

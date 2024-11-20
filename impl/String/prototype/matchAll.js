@@ -1,5 +1,8 @@
 
 function matchAll(regExp) {
+	if(this == null) {
+		throw new TypeError("matchAll called on null or undefined");
+	}
 	var string = this;
 	if(typeof regExp === "string") {
 		regExp = new RegExp(regExp, 'g');
