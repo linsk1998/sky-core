@@ -214,6 +214,7 @@ import "./es.array.with";
 // /* ES2024 */
 /* Chrome111+ Firefox119+ Safari16.4+ */
 import "./es.string.is-well-formed";
+import "./es.string.to-well-formed";
 /* Chrome117+ Firefox119+ Safari17.4+ */
 import "./es.object.group-by";
 import "./es.map.group-by";

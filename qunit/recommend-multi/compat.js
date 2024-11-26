@@ -8863,6 +8863,76 @@
 	  }, 'throws on symbol context');
 	});
 
+	function toWellFormed() {
+	  if (this == null) {
+	    throw new TypeError("toWellFormed called on null or undefined");
+	  }
+	  if (isSymbol(this)) {
+	    throw new TypeError("Cannot convert a Symbol value to a string");
+	  }
+	  var S = String(this);
+	  var len = S.length;
+	  var r = new Array(S.length);
+	  // https://tc39.es/ecma262/#sec-string.prototype.towellformed
+	  for (var i = 0; i < len; i++) {
+	    var charCode = S.charCodeAt(i);
+	    // single UTF-16 code unit
+	    if ((charCode & 0xF800) !== 0xD800) r[i] = S.charAt(i);
+	    // unpaired surrogate
+	    else if (charCode >= 0xDC00 || i + 1 >= len || (S.charCodeAt(i + 1) & 0xFC00) !== 0xDC00) r[i] = "\uFFFD";
+	    // surrogate pair
+	    else {
+	      r[i] = S.charAt(i);
+	      r[++i] = S.charAt(i);
+	    }
+	  }
+	  return r.join('');
+	}
+
+	if (!String.prototype.toWellFormed) {
+	  String.prototype.toWellFormed = toWellFormed;
+	}
+
+	QUnit.test('String#toWellFormed', function (assert) {
+	  var toWellFormed = String.prototype.toWellFormed;
+	  assert.isFunction(toWellFormed);
+	  assert.arity(toWellFormed, 0);
+	  assert.name(toWellFormed, 'toWellFormed');
+	  assert.looksNative(toWellFormed);
+	  assert.nonEnumerable(String.prototype, 'toWellFormed');
+	  assert.same(toWellFormed.call('a'), 'a', 'a');
+	  assert.same(toWellFormed.call('abc'), 'abc', 'abc');
+	  assert.same(toWellFormed.call('💩'), '💩', '💩');
+	  assert.same(toWellFormed.call('💩b'), '💩b', '💩b');
+	  assert.same(toWellFormed.call('a💩'), 'a💩', '💩');
+	  assert.same(toWellFormed.call('a💩b'), 'a💩b', 'a💩b');
+	  assert.same(toWellFormed.call('💩a💩'), '💩a💩');
+	  assert.same(toWellFormed.call("\uD83D"), "\uFFFD", "\uD83D");
+	  assert.same(toWellFormed.call("\uDCA9"), "\uFFFD", "\uDCA9");
+	  assert.same(toWellFormed.call("\uDCA9\uD83D"), "\uFFFD\uFFFD", "\uDCA9\uD83D");
+	  assert.same(toWellFormed.call("a\uD83D"), "a\uFFFD", "a\uFFFD");
+	  assert.same(toWellFormed.call("\uDCA9a"), "\uFFFDa", "\uDCA9a");
+	  assert.same(toWellFormed.call("a\uD83Da"), "a\uFFFDa", "a\uD83Da");
+	  assert.same(toWellFormed.call("a\uDCA9a"), "a\uFFFDa", "a\uDCA9a");
+	  assert.same(toWellFormed.call({
+	    toString: function () {
+	      return 'abc';
+	    }
+	  }), 'abc', 'conversion #1');
+	  assert.same(toWellFormed.call(1), '1', 'conversion #2');
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return toWellFormed.call(null);
+	    }, TypeError, 'coercible #1');
+	    assert["throws"](function () {
+	      return toWellFormed.call(undefined);
+	    }, TypeError, 'coercible #2');
+	  }
+	  assert["throws"](function () {
+	    return toWellFormed.call(Symbol$3('toWellFormed test'));
+	  }, 'throws on symbol context');
+	});
+
 	function groupBy$1(iterable, keySelector) {
 	  var entries = iterable[iterator$1];
 	  if (!entries) {

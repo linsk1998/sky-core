@@ -266,6 +266,7 @@ module.exports = [
 			".with": "sky-core/polyfill/Array/prototype/with",
 			/* Chrome111+ Firefox119+ Safari16.4+ */
 			".isWellFormed": "sky-core/polyfill/String/prototype/isWellFormed",
+			".toWellFormed": "sky-core/polyfill/String/prototype/toWellFormed",
 		},
 		exclude: [
 			"polyfill/**/*",
