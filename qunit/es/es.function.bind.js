@@ -1,5 +1,5 @@
 QUnit.test('Function#bind', assert => {
-  const { bind } = Function.prototype;
+  const bind = Function.prototype.bind;
   assert.isFunction(bind);
   assert.arity(bind, 1);
   assert.name(bind, 'bind');

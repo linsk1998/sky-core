@@ -1,5 +1,5 @@
 QUnit.test('Array.isArray', assert => {
-	const { isArray } = Array;
+	const isArray = Array.isArray;
 	assert.isFunction(isArray);
 	assert.arity(isArray, 1);
 	assert.name(isArray, 'isArray');

@@ -33,7 +33,7 @@ QUnit.test('Set', assert => {
   assert.strictEqual(new Set([NaN, NaN, NaN]).size, 1);
   assert.deepEqual(Array.from(new Set([3, 4]).add(2).add(1)), [3, 4, 2, 1]);
   let done = false;
-  const { add } = Set.prototype;
+  const add = Set.prototype.add;
   // eslint-disable-next-line no-extend-native -- required for testing
   Set.prototype.add = function() {
     throw new Error();
@@ -246,7 +246,7 @@ QUnit.test('Set#size', assert => {
   assert.nonEnumerable(Set.prototype, 'size');
   const set = new Set();
   set.add(1);
-  const { size } = set;
+  const size = set.size;;
   assert.strictEqual(typeof size, 'number', 'size is number');
   assert.strictEqual(size, 1, 'size is correct');
   // if(DESCRIPTORS) {

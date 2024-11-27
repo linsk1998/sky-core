@@ -1,7 +1,7 @@
 import { DESCRIPTORS } from '../helpers/constants';
 
 QUnit.test('Array.of', assert => {
-	const { defineProperty } = Object;
+	const defineProperty = Object.defineProperty;
 	assert.isFunction(Array.of);
 	assert.arity(Array.of, 0);
 	assert.name(Array.of, 'of');

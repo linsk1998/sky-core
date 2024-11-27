@@ -2,8 +2,8 @@ import { DESCRIPTORS, GLOBAL } from '../helpers/constants';
 import { createIterable } from '../helpers/helpers';
 
 QUnit.test('Array.from', assert => {
-	const { from } = Array;
-	const { defineProperty } = Object;
+	const from = Array.from;
+	const defineProperty = Object.defineProperty;
 	assert.isFunction(from);
 	assert.arity(from, 1);
 	assert.name(from, 'from');

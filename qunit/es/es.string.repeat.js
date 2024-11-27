@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('String#repeat', assert => {
-	const { repeat } = String.prototype;
+	const repeat = String.prototype.repeat;
 	assert.isFunction(repeat);
 	assert.arity(repeat, 1);
 	assert.name(repeat, 'repeat');

@@ -3,7 +3,7 @@ import { GLOBAL, STRICT } from '../helpers/constants';
 const Symbol = GLOBAL.Symbol || {};
 
 QUnit.test('String#endsWith', assert => {
-	const { endsWith } = String.prototype;
+	const endsWith = String.prototype.endsWith;
 	assert.isFunction(endsWith);
 	assert.arity(endsWith, 1);
 	assert.name(endsWith, 'endsWith');

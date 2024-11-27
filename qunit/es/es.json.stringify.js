@@ -1,8 +1,8 @@
 import { GLOBAL } from '../helpers/constants';
 
-if (GLOBAL.JSON) {
+if(GLOBAL.JSON) {
   QUnit.test('Well‑formed JSON.stringify', assert => {
-    const { stringify } = JSON;
+    const stringify = JSON.stringify;
     assert.isFunction(stringify);
     assert.arity(stringify, 3);
     assert.name(stringify, 'stringify');

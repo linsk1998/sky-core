@@ -1,5 +1,5 @@
 QUnit.test('Number#toPrecision', assert => {
-  const { toPrecision } = Number.prototype;
+  const toPrecision = Number.prototype.toPrecision;
   assert.isFunction(toPrecision);
   assert.name(toPrecision, 'toPrecision');
   assert.arity(toPrecision, 1);

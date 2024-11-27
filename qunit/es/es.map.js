@@ -262,7 +262,7 @@ QUnit.test('Map#size', assert => {
   assert.nonEnumerable(Map.prototype, 'size');
   const map = new Map();
   map.set(2, 1);
-  const { size } = map;
+  const size = map.size;
   assert.strictEqual(typeof size, 'number', 'size is number');
   assert.strictEqual(size, 1, 'size is correct');
   // if(DESCRIPTORS) {

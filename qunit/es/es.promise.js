@@ -153,7 +153,7 @@ QUnit.test('Promise#catch', assert => {
 
 
 QUnit.test('Promise.resolve', assert => {
-  const { resolve } = Promise;
+  const resolve = Promise.resolve;
   assert.isFunction(resolve);
   if(NATIVE) assert.arity(resolve, 1);
   assert.name(resolve, 'resolve');
@@ -185,7 +185,7 @@ QUnit.test('Promise.resolve', assert => {
 });
 
 QUnit.test('Promise.reject', assert => {
-  const { reject } = Promise;
+  const reject = Promise.reject;
   assert.isFunction(reject);
   if(NATIVE) assert.arity(reject, 1);
   assert.name(reject, 'reject');

@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('String#codePointAt', assert => {
-	const { codePointAt } = String.prototype;
+	const codePointAt = String.prototype.codePointAt;
 	assert.isFunction(codePointAt);
 	assert.arity(codePointAt, 1);
 	assert.name(codePointAt, 'codePointAt');

@@ -1,5 +1,5 @@
 QUnit.test('Date#toString', assert => {
-  const { toString } = Date.prototype;
+  const toString = Date.prototype.toString;
   assert.isFunction(toString);
   assert.arity(toString, 0);
   assert.name(toString, 'toString');

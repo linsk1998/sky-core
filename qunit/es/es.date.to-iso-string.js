@@ -1,5 +1,5 @@
 QUnit.test('Date#toISOString', assert => {
-  const { toISOString } = Date.prototype;
+  const toISOString = Date.prototype.toISOString;
   assert.isFunction(toISOString);
   assert.name(toISOString, 'toISOString');
   assert.looksNative(toISOString);

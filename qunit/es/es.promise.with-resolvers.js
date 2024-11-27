@@ -1,5 +1,5 @@
 QUnit.test('Promise.withResolvers', assert => {
-	const { withResolvers } = Promise;
+	const withResolvers = Promise.withResolvers;
 	assert.isFunction(withResolvers);
 	assert.arity(withResolvers, 0);
 	assert.name(withResolvers, 'withResolvers');
