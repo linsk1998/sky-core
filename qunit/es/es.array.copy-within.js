@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('Array#copyWithin', assert => {
-	const { copyWithin } = Array.prototype;
+	const copyWithin = Array.prototype.copyWithin;
 	assert.isFunction(copyWithin);
 	assert.arity(copyWithin, 2);
 	assert.name(copyWithin, 'copyWithin');

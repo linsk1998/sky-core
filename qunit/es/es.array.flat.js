@@ -1,7 +1,7 @@
 import { DESCRIPTORS, STRICT } from '../helpers/constants';
 
 QUnit.test('Array#flat', assert => {
-	const { flat } = Array.prototype;
+	const flat = Array.prototype.flat;
 	assert.isFunction(flat);
 	assert.name(flat, 'flat');
 	assert.arity(flat, 0);

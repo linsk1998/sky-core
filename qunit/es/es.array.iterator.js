@@ -1,7 +1,7 @@
 import "sky-core/polyfill/Symbol";
 
 QUnit.test('Array#keys', assert => {
-	const { keys } = Array.prototype;
+	const keys = Array.prototype.keys;
 	assert.isFunction(keys);
 	assert.arity(keys, 0);
 	assert.name(keys, 'keys');
@@ -33,7 +33,7 @@ QUnit.test('Array#keys', assert => {
 });
 
 QUnit.test('Array#values', assert => {
-	const { values } = Array.prototype;
+	const values = Array.prototype.values;
 	assert.isFunction(values);
 	assert.arity(values, 0);
 	assert.name(values, 'values');
@@ -65,7 +65,7 @@ QUnit.test('Array#values', assert => {
 });
 
 QUnit.test('Array#entries', assert => {
-	const { entries } = Array.prototype;
+	const entries = Array.prototype.entries;
 	assert.isFunction(entries);
 	assert.arity(entries, 0);
 	assert.name(entries, 'entries');

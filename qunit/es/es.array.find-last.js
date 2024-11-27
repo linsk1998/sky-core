@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants.js';
 
 QUnit.test('Array#findLast', assert => {
-  const { findLast } = Array.prototype;
+  const findLast = Array.prototype.findLast;
   assert.isFunction(findLast);
   assert.arity(findLast, 1);
   assert.name(findLast, 'findLast');

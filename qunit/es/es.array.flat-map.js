@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('Array#flatMap', assert => {
-	const { flatMap } = Array.prototype;
+	const flatMap = Array.prototype.flatMap;
 	assert.isFunction(flatMap);
 	assert.name(flatMap, 'flatMap');
 	assert.arity(flatMap, 1);

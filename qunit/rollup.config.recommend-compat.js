@@ -3,7 +3,7 @@ const path = require("path");
 const { babel } = require("@rollup/plugin-babel");
 const importPlugin = require("rollup-plugin-import");
 const nodeResolve = require("@rollup/plugin-node-resolve");
-const recommend = require("./recommend-modern");
+const recommend = require("./recommend-compat");
 const sky = require("../createRollupPlugin");
 
 module.exports = {

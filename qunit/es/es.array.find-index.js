@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('Array#findIndex', assert => {
-	const { findIndex } = Array.prototype;
+	const findIndex = Array.prototype.findIndex;
 	assert.isFunction(findIndex);
 	assert.arity(findIndex, 1);
 	assert.name(findIndex, 'findIndex');

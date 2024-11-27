@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants.js';
 
 QUnit.test('Array#toReversed', assert => {
-  const { toReversed } = Array.prototype;
+  const toReversed = Array.prototype.toReversed;
 
   assert.isFunction(toReversed);
   assert.arity(toReversed, 0);

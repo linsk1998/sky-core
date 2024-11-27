@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('Array#forEach', assert => {
-	const { forEach } = Array.prototype;
+	const forEach = Array.prototype.forEach;
 	assert.isFunction(forEach);
 	assert.arity(forEach, 1);
 	assert.name(forEach, 'forEach');

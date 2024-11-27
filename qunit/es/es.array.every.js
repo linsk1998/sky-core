@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('Array#every', assert => {
-	const { every } = Array.prototype;
+	const every = Array.prototype.every;
 	assert.isFunction(every);
 	assert.arity(every, 1);
 	assert.name(every, 'every');

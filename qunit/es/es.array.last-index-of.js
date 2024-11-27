@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('Array#lastIndexOf', assert => {
-	const { lastIndexOf } = Array.prototype;
+	const lastIndexOf = Array.prototype.lastIndexOf;
 	assert.isFunction(lastIndexOf);
 	assert.arity(lastIndexOf, 1);
 	assert.name(lastIndexOf, 'lastIndexOf');

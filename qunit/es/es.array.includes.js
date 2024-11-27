@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('Array#includes', assert => {
-	const { includes } = Array.prototype;
+	const includes = Array.prototype.includes;
 	assert.isFunction(includes);
 	assert.name(includes, 'includes');
 	assert.arity(includes, 1);

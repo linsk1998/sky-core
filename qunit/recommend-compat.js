@@ -298,7 +298,6 @@ module.exports = [
 			"impl/**/*",
 			"impl-*/**/*",
 			"qunit/es/*",
-			"qunit/helpers/*"
 		]
 	})
 ];

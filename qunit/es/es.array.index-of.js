@@ -1,7 +1,7 @@
 import { STRICT } from '../helpers/constants';
 
 QUnit.test('Array#indexOf', assert => {
-	const { indexOf } = Array.prototype;
+	const indexOf = Array.prototype.indexOf;
 	assert.isFunction(indexOf);
 	assert.arity(indexOf, 1);
 	assert.name(indexOf, 'indexOf');
