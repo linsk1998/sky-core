@@ -211,7 +211,7 @@ import "./es.array.to-reversed";
 import "./es.array.to-sorted";
 import "./es.array.to-spliced";
 import "./es.array.with";
-// /* ES2024 */
+/* ES2024 */
 /* Chrome111+ Firefox119+ Safari16.4+ */
 import "./es.string.is-well-formed";
 import "./es.string.to-well-formed";
@@ -221,4 +221,3 @@ import "./es.map.group-by";
 /* Chrome119+ Firefox121+ Safari17.4+ */
 import "./es.promise.with-resolvers";
 
-// import "../web/web.url";

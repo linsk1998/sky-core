@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { indexOf } from "../../../impl/Array/prototype/indexOf";
-if(!Array.prototype.indexOf) {
-	Array.prototype.indexOf = indexOf;
-}
+
+definePrototype(Array, 'indexOf', indexOf);

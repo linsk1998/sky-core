@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { includes } from "../../../impl/Array/prototype/includes";
-if(!Array.prototype.includes) {
-	Array.prototype.includes = includes;
-}
+
+definePrototype(Array, 'includes', includes);

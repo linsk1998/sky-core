@@ -4,6 +4,8 @@ QUnit.test('Object.fromEntries', assert => {
   assert.isFunction(Object.fromEntries);
   assert.arity(Object.fromEntries, 1);
   assert.name(Object.fromEntries, 'fromEntries');
+  assert.looksNative(Object.fromEntries);
+  // assert.nonEnumerable(Object, 'fromEntries');
 
   assert.ok(Object.fromEntries([]) instanceof Object);
   assert.same(Object.fromEntries([['foo', 1]]).foo, 1);

@@ -7,6 +7,8 @@ QUnit.test('Array.from', assert => {
 	assert.isFunction(from);
 	assert.arity(from, 1);
 	assert.name(from, 'from');
+	assert.looksNative(from);
+	// assert.nonEnumerable(Array, 'from');
 	let types = {
 		'array-like': {
 			length: '3',

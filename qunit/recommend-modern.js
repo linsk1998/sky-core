@@ -269,8 +269,6 @@ module.exports = [
 			".toWellFormed": "sky-core/polyfill/String/prototype/toWellFormed",
 		},
 		exclude: [
-			"polyfill/**/*",
-			"polyfill-*/**/*",
 			"qunit/helpers/*"
 		]
 	}),

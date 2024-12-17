@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { copyWithin } from "../../../impl/Array/prototype/copyWithin";
-if(!Array.prototype.copyWithin) {
-	Array.prototype.copyWithin = copyWithin;
-}
+
+definePrototype(Array, 'copyWithin', copyWithin);

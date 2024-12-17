@@ -7,6 +7,8 @@ QUnit.test('String#endsWith', assert => {
 	assert.isFunction(endsWith);
 	assert.arity(endsWith, 1);
 	assert.name(endsWith, 'endsWith');
+	assert.looksNative(endsWith);
+	assert.nonEnumerable(String.prototype, 'endsWith');
 	assert.ok('undefined'.endsWith());
 	assert.ok(!'undefined'.endsWith(null));
 	assert.ok('abc'.endsWith(''));

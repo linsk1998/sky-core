@@ -1,5 +1,5 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { Promise } from "../../Promise";
 import promise_finally from "../../../impl/Promise/finally";
-if(!Promise.prototype.finally) {
-	Promise.prototype.finally = promise_finally;
-}
+
+definePrototype(Promise, 'finally', promise_finally);

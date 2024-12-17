@@ -7,6 +7,8 @@ QUnit.test('Array#copyWithin', assert => {
 	assert.name(copyWithin, 'copyWithin');
 	const array = [1];
 	assert.strictEqual(array.copyWithin(0), array);
+	assert.nonEnumerable(Array.prototype, 'copyWithin');
+	assert.strictEqual(array.copyWithin(0), array);
 	assert.deepEqual([1, 2, 3, 4, 5].copyWithin(-2), [1, 2, 3, 1, 2]);
 	assert.deepEqual([1, 2, 3, 4, 5].copyWithin(0, 3), [4, 5, 3, 4, 5]);
 	assert.deepEqual([1, 2, 3, 4, 5].copyWithin(1, 3), [1, 4, 5, 4, 5]);

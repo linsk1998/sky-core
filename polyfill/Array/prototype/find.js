@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { find } from "../../../impl/Array/prototype/find";
-if(!Array.prototype.find) {
-	Array.prototype.find = find;
-}
+
+definePrototype(Array, 'find', find);

@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { toSorted } from "../../../impl/Array/prototype/toSorted";
-if(!Array.prototype.toSorted) {
-	Array.prototype.toSorted = toSorted;
-}
+
+definePrototype(Array, 'toSorted', toSorted);

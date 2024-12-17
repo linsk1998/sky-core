@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { fill } from "../../../impl/Array/prototype/fill";
-if(!Array.prototype.fill) {
-	Array.prototype.fill = fill;
-}
+
+definePrototype(Array, 'fill', fill);

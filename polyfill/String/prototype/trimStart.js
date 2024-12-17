@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { trimStart } from "../../../impl/String/prototype/trimStart";
-if(!String.prototype.trimStart) {
-	String.prototype.trimStart = trimStart;
-}
+
+definePrototype(String, 'trimStart', trimStart);

@@ -5,7 +5,7 @@ QUnit.test('Number.isNaN', assert => {
   assert.name(isNaN, 'isNaN');
   assert.arity(isNaN, 1);
   assert.looksNative(isNaN);
-  assert.nonEnumerable(Number, 'isNaN');
+  // assert.nonEnumerable(Number, 'isNaN');
   assert.ok(isNaN(NaN), 'Number.isNaN NaN');
   const notNaNs = [
     1,

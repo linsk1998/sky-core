@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { toWellFormed } from "../../../impl/String/prototype/toWellFormed";
-if(!String.prototype.toWellFormed) {
-	String.prototype.toWellFormed = toWellFormed;
-}
+
+definePrototype(String, 'toWellFormed', toWellFormed);

@@ -7,6 +7,7 @@ QUnit.test('String#startsWith', assert => {
 	assert.isFunction(startsWith);
 	assert.arity(startsWith, 1);
 	assert.name(startsWith, 'startsWith');
+	assert.nonEnumerable(String.prototype, 'startsWith');
 	assert.ok('undefined'.startsWith());
 	assert.ok(!'undefined'.startsWith(null));
 	assert.ok('abc'.startsWith(''));

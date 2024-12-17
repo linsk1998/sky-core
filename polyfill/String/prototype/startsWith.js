@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { startsWith } from "../../../impl/String/prototype/startsWith";
-if(!String.prototype.startsWith) {
-	String.prototype.startsWith = startsWith;
-}
+
+definePrototype(String, 'startsWith', startsWith);

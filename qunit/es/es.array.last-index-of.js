@@ -5,6 +5,7 @@ QUnit.test('Array#lastIndexOf', assert => {
 	assert.isFunction(lastIndexOf);
 	assert.arity(lastIndexOf, 1);
 	assert.name(lastIndexOf, 'lastIndexOf');
+	assert.nonEnumerable(Array.prototype, 'lastIndexOf');
 	assert.same(2, [1, 1, 1].lastIndexOf(1));
 	assert.same(-1, [1, 2, 3].lastIndexOf(3, 1));
 	assert.same(1, [1, 2, 3].lastIndexOf(2, 1));

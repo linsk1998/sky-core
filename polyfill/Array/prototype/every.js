@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { every } from "../../../impl/Array/prototype/every";
-if(!Array.prototype.every) {
-	Array.prototype.every = every;
-}
+
+definePrototype(Array, 'every', every);

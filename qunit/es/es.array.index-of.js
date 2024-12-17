@@ -5,6 +5,7 @@ QUnit.test('Array#indexOf', assert => {
 	assert.isFunction(indexOf);
 	assert.arity(indexOf, 1);
 	assert.name(indexOf, 'indexOf');
+	assert.nonEnumerable(Array.prototype, 'indexOf');
 	assert.same(0, [1, 1, 1].indexOf(1));
 	assert.same(-1, [1, 2, 3].indexOf(1, 1));
 	assert.same(1, [1, 2, 3].indexOf(2, 1));

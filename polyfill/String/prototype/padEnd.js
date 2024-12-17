@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { padEnd } from "../../../impl/String/prototype/padEnd";
-if(!String.prototype.padEnd) {
-	String.prototype.padEnd = padEnd;
-}
+
+definePrototype(String, 'padEnd', padEnd);

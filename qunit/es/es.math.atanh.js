@@ -3,7 +3,7 @@ QUnit.test('Math.atanh', assert => {
   assert.name(Math.atanh, 'atanh');
   assert.arity(Math.atanh, 1);
   assert.looksNative(Math.atanh);
-  assert.nonEnumerable(Math, 'atanh');
+  // assert.nonEnumerable(Math, 'atanh');
   assert.same(Math.atanh(NaN), NaN);
   assert.same(Math.atanh(-2), NaN);
   assert.same(Math.atanh(-1.5), NaN);

@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { map } from "../../../impl/Array/prototype/map";
-if(!Array.prototype.map) {
-	Array.prototype.map = map;
-}
+
+definePrototype(Array, 'map', map);

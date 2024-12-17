@@ -5,6 +5,8 @@ QUnit.test('Array#forEach', assert => {
 	assert.isFunction(forEach);
 	assert.arity(forEach, 1);
 	assert.name(forEach, 'forEach');
+	assert.looksNative(forEach);
+	assert.nonEnumerable(Array.prototype, 'forEach');
 	let array = [1];
 	const context = {};
 	array.forEach(function(value, key, that) {

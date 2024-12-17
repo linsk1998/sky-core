@@ -6,6 +6,8 @@ QUnit.test('String#matchAll', assert => {
 	assert.isFunction(matchAll);
 	assert.arity(matchAll, 1);
 	assert.name(matchAll, 'matchAll');
+	assert.looksNative(matchAll);
+	assert.nonEnumerable(String.prototype, 'matchAll');
 	let data = ['aabc', { toString() { return 'aabc'; } }];
 	for(const target of data) {
 		const iterator = matchAll.call(target, /[ac]/g);

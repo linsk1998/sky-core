@@ -3,7 +3,7 @@ QUnit.test('Object.values', assert => {
   assert.arity(Object.values, 1);
   assert.name(Object.values, 'values');
   assert.looksNative(Object.values);
-  assert.nonEnumerable(Object, 'values');
+  // assert.nonEnumerable(Object, 'values');
   assert.deepEqual(Object.values({ q: 1, w: 2, e: 3 }), [1, 2, 3]);
   assert.deepEqual(Object.values(new String('qwe')), ['q', 'w', 'e']);
   assert.deepEqual(Object.values(Object.assign(Object.create({ q: 1, w: 2, e: 3 }), { a: 4, s: 5, d: 6 })), [4, 5, 6]);

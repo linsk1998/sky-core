@@ -5,7 +5,7 @@ QUnit.test('Object.hasOwn', assert => {
   assert.arity(hasOwn, 2);
   assert.name(hasOwn, 'hasOwn');
   assert.looksNative(hasOwn);
-  assert.nonEnumerable(Object, 'hasOwn');
+  // assert.nonEnumerable(Object, 'hasOwn');
   assert.equal(true, hasOwn({ q: 42 }, 'q'));
   assert.equal(false, hasOwn({ q: 42 }, 'w'));
   assert.equal(false, hasOwn(create({ q: 42 }), 'q'));

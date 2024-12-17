@@ -5,6 +5,7 @@ QUnit.test('Array#filter', assert => {
 	assert.isFunction(filter);
 	assert.arity(filter, 1);
 	assert.name(filter, 'filter');
+	assert.nonEnumerable(Array.prototype, 'filter');
 	let array = [1];
 	const context = {};
 	array.filter(function(value, key, that) {

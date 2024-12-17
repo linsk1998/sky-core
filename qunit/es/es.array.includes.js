@@ -5,6 +5,8 @@ QUnit.test('Array#includes', assert => {
 	assert.isFunction(includes);
 	assert.name(includes, 'includes');
 	assert.arity(includes, 1);
+	assert.looksNative(includes);
+	assert.nonEnumerable(Array.prototype, 'includes');
 	const object = {};
 	const array = [1, 2, 3, -0, object];
 	assert.ok(array.includes(1));

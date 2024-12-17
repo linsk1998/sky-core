@@ -5,6 +5,8 @@ QUnit.test('String#codePointAt', assert => {
 	assert.isFunction(codePointAt);
 	assert.arity(codePointAt, 1);
 	assert.name(codePointAt, 'codePointAt');
+	assert.looksNative(codePointAt);
+	assert.nonEnumerable(String.prototype, 'codePointAt');
 	assert.strictEqual('abc\uD834\uDF06def'.codePointAt(''), 0x61);
 	assert.strictEqual('abc\uD834\uDF06def'.codePointAt('_'), 0x61);
 	assert.strictEqual('abc\uD834\uDF06def'.codePointAt(), 0x61);

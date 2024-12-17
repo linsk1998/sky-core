@@ -5,6 +5,8 @@ QUnit.test('Array#reduce', assert => {
 	assert.isFunction(reduce);
 	assert.arity(reduce, 1);
 	assert.name(reduce, 'reduce');
+	assert.looksNative(reduce);
+	assert.nonEnumerable(Array.prototype, 'reduce');
 	const array = [1];
 	const accumulator = {};
 	array.reduce(function(memo, value, key, that) {

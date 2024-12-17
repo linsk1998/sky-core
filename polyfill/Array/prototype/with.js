@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { withAt } from "../../../impl/Array/prototype/with";
-if(!Array.prototype.with) {
-	Array.prototype.with = withAt;
-}
+
+definePrototype(Array, 'with', withAt);

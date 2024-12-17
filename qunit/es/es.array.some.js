@@ -5,6 +5,8 @@ QUnit.test('Array#some', assert => {
 	assert.isFunction(some);
 	assert.arity(some, 1);
 	assert.name(some, 'some');
+	assert.looksNative(some);
+	assert.nonEnumerable(Array.prototype, 'some');
 	let array = [1];
 	const context = {};
 	array.some(function(value, key, that) {

@@ -4,6 +4,8 @@ QUnit.test('Object.assign', assert => {
   assert.isFunction(Object.assign);
   assert.arity(Object.assign, 2);
   assert.name(Object.assign, 'assign');
+  assert.looksNative(Object.assign);
+  // assert.nonEnumerable(Object, 'assign');
   let object = { q: 1 };
   assert.strictEqual(object, Object.assign(object, { bar: 2 }), 'assign return target');
   assert.strictEqual(object.bar, 2, 'assign define properties');

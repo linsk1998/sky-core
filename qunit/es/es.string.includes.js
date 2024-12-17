@@ -5,6 +5,8 @@ QUnit.test('String#includes', assert => {
 	assert.isFunction(includes);
 	assert.arity(includes, 1);
 	assert.name(includes, 'includes');
+	assert.looksNative(includes);
+	assert.nonEnumerable(String.prototype, 'includes');
 	assert.ok(!'abc'.includes());
 	assert.ok('aundefinedb'.includes());
 	assert.ok('abcd'.includes('b', 1));

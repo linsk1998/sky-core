@@ -3,6 +3,8 @@ QUnit.test('String.fromCodePoint', assert => {
 	assert.isFunction(fromCodePoint);
 	assert.arity(fromCodePoint, 1);
 	assert.name(fromCodePoint, 'fromCodePoint');
+	assert.looksNative(fromCodePoint);
+	// assert.nonEnumerable(String, 'fromCodePoint');
 	assert.strictEqual(fromCodePoint(''), '\0');
 	assert.strictEqual(fromCodePoint(), '');
 	assert.strictEqual(fromCodePoint(-0), '\0');

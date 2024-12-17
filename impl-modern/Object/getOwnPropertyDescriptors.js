@@ -1,5 +1,5 @@
 import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
-export function ff_getOwnPropertyDescriptors(obj) {
+export function getOwnPropertyDescriptors$ff(obj) {
 	var ownKeys = Object.keys(obj);
 	var i = ownKeys.length;
 	var descs = {};
@@ -19,7 +19,7 @@ export function ff_getOwnPropertyDescriptors(obj) {
 	}
 	return descs;
 }
-export function ie_getOwnPropertyDescriptors(obj) {
+export function getOwnPropertyDescriptors$ie(obj) {
 	var ownKeys = getOwnPropertyNames(obj);
 	var i = ownKeys.length;
 	var descs = {};

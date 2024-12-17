@@ -5,6 +5,8 @@ QUnit.test('Array.of', assert => {
 	assert.isFunction(Array.of);
 	assert.arity(Array.of, 0);
 	assert.name(Array.of, 'of');
+	assert.looksNative(Array.of);
+	// assert.nonEnumerable(Array, 'of');
 	assert.deepEqual(Array.of(1), [1]);
 	assert.deepEqual(Array.of(1, 2, 3), [1, 2, 3]);
 	class C { /* empty */ }

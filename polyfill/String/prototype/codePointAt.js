@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { codePointAt } from "../../../impl/String/prototype/codePointAt";
-if(!String.prototype.codePointAt) {
-	String.prototype.codePointAt = codePointAt;
-}
+
+definePrototype(String, 'codePointAt', codePointAt);

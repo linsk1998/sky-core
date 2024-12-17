@@ -11,6 +11,8 @@ QUnit.test('String#trimStart', assert => {
 	assert.isFunction(trimStart);
 	assert.arity(trimStart, 0);
 	assert.name(trimStart, 'trimStart');
+	assert.looksNative(trimStart);
+	assert.nonEnumerable(String.prototype, 'trimStart');
 	assert.strictEqual(' \n  q w e \n  '.trimStart(), 'q w e \n  ', 'removes whitespaces at left & right side of string');
 	assert.strictEqual("\u0009".trimStart(), '', '\\u0009');
 	assert.strictEqual("\u000A".trimStart(), '', '\\u000A');

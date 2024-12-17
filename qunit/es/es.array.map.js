@@ -5,6 +5,8 @@ QUnit.test('Array#map', assert => {
 	assert.isFunction(map);
 	assert.arity(map, 1);
 	assert.name(map, 'map');
+	assert.looksNative(map);
+	assert.nonEnumerable(Array.prototype, 'map');
 	let array = [1];
 	const context = {};
 	array.map(function(value, key, that) {

@@ -5,6 +5,8 @@ QUnit.test('String#replaceAll', assert => {
 	assert.isFunction(replaceAll);
 	assert.arity(replaceAll, 2);
 	assert.name(replaceAll, 'replaceAll');
+	assert.looksNative(replaceAll);
+	assert.nonEnumerable(String.prototype, 'replaceAll');
 	assert.same('q=query+string+parameters'.replaceAll('+', ' '), 'q=query string parameters');
 	assert.same('foo'.replaceAll('o', {}), 'f[object Object][object Object]');
 	assert.same('[object Object]x[object Object]'.replaceAll({}, 'y'), 'yxy');

@@ -206,12 +206,11 @@ module.exports = [
 			".every": "sky-core/polyfill/Array/prototype/every",
 			// toLocaleFormat 这个只有火狐支持，非标准
 			".toLocaleFormat": "sky-core/polyfill/Date/prototype/toLocaleFormat",
-			//toISOString的兼容性还过的去，可以不要
 			".toISOString": "sky-core/polyfill/Date/prototype/toISOString",
 			//部分版本chrome，toLocaleString只支持英文，这里给替换成了一个全球可读性都比较好的格式
-			".toLocaleDateString": "sky-core/polyfill/Date/prototype/toLocaleDateString",
-			".toLocaleString": "sky-core/polyfill/Date/prototype/toLocaleString",
-			".toLocaleTimeString": "sky-core/polyfill/Date/prototype/toLocaleTimeString",
+			// ".toLocaleDateString": "sky-core/polyfill/Date/prototype/toLocaleDateString",
+			// ".toLocaleString": "sky-core/polyfill/Date/prototype/toLocaleString",
+			// ".toLocaleTimeString": "sky-core/polyfill/Date/prototype/toLocaleTimeString",
 			/* IE9+ Firefox3+ Safari4+ Opera11.5+ */
 			".reduce": "sky-core/polyfill/Array/prototype/reduce",
 			".reduceRight": "sky-core/polyfill/Array/prototype/reduceRight",
@@ -275,8 +274,6 @@ module.exports = [
 			".toWellFormed": "sky-core/polyfill/String/prototype/toWellFormed",
 		},
 		exclude: [
-			"polyfill/**/*",
-			"polyfill-*/**/*",
 			"qunit/helpers/*"
 		]
 	}),

@@ -5,6 +5,8 @@ QUnit.test('Array#reduceRight', assert => {
 	assert.isFunction(reduceRight);
 	assert.arity(reduceRight, 1);
 	assert.name(reduceRight, 'reduceRight');
+	assert.looksNative(reduceRight);
+	assert.nonEnumerable(Array.prototype, 'reduceRight');
 	const array = [1];
 	const accumulator = {};
 	array.reduceRight(function(memo, value, key, that) {

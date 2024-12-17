@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { trimEnd } from "../../../impl/String/prototype/trimEnd";
-if(!String.prototype.trimEnd) {
-	String.prototype.trimEnd = trimEnd;
-}
+
+definePrototype(String, 'trimEnd', trimEnd);

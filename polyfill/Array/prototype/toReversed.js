@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { toReversed } from "../../../impl/Array/prototype/toReversed";
-if(!Array.prototype.toReversed) {
-	Array.prototype.toReversed = toReversed;
-}
+
+definePrototype(Array, 'toReversed', toReversed);

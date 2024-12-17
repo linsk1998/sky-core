@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { forEach } from "../../../impl/Array/prototype/forEach";
-if(!Array.prototype.forEach) {
-	Array.prototype.forEach = forEach;
-}
+
+definePrototype(Array, 'forEach', forEach);

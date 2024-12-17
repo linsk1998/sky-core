@@ -5,6 +5,8 @@ QUnit.test('Array#fill', assert => {
 	assert.isFunction(fill);
 	assert.arity(fill, 1);
 	assert.name(fill, 'fill');
+	assert.looksNative(fill);
+	assert.nonEnumerable(Array.prototype, 'fill');
 	const array = new Array(5);
 	assert.strictEqual(array.fill(5), array);
 	assert.deepEqual(Array(5).fill(5), [5, 5, 5, 5, 5]);

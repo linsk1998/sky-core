@@ -5,6 +5,8 @@ QUnit.test('String#padEnd', assert => {
 	assert.isFunction(padEnd);
 	assert.arity(padEnd, 1);
 	assert.name(padEnd, 'padEnd');
+	assert.looksNative(padEnd);
+	assert.nonEnumerable(String.prototype, 'padEnd');
 	assert.strictEqual('abc'.padEnd(5), 'abc  ');
 	assert.strictEqual('abc'.padEnd(4, 'de'), 'abcd');
 	assert.strictEqual('abc'.padEnd(), 'abc');

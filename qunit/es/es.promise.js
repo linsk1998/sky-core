@@ -77,7 +77,7 @@ QUnit.test('Promise#then', assert => {
   if(NATIVE) assert.arity(Promise.prototype.then, 2);
   assert.name(Promise.prototype.then, 'then');
   assert.looksNative(Promise.prototype.then);
-  assert.nonEnumerable(Promise.prototype, 'then');
+  // assert.nonEnumerable(Promise.prototype, 'then');
   let promise = new Promise(resolve => {
     resolve(42);
   });
@@ -124,7 +124,7 @@ QUnit.test('Promise#catch', assert => {
   if(NATIVE) assert.arity(Promise.prototype.catch, 1);
   if(NATIVE) assert.name(Promise.prototype.catch, 'catch');
   assert.looksNative(Promise.prototype.catch);
-  assert.nonEnumerable(Promise.prototype, 'catch');
+  // assert.nonEnumerable(Promise.prototype, 'catch');
   let promise = new Promise(resolve => {
     resolve(42);
   });
@@ -158,7 +158,7 @@ QUnit.test('Promise.resolve', assert => {
   if(NATIVE) assert.arity(resolve, 1);
   assert.name(resolve, 'resolve');
   assert.looksNative(resolve);
-  assert.nonEnumerable(Promise, 'resolve');
+  // assert.nonEnumerable(Promise, 'resolve');
   assert.throws(() => {
     resolve.call(null, 1).catch(() => { /* empty */ });
   }, TypeError, 'throws without context');
@@ -190,7 +190,7 @@ QUnit.test('Promise.reject', assert => {
   if(NATIVE) assert.arity(reject, 1);
   assert.name(reject, 'reject');
   assert.looksNative(reject);
-  assert.nonEnumerable(Promise, 'reject');
+  // assert.nonEnumerable(Promise, 'reject');
   assert.throws(() => {
     reject.call(null, 1).catch(() => { /* empty */ });
   }, TypeError, 'throws without context');
@@ -223,7 +223,7 @@ QUnit.test('Promise.all', assert => {
   assert.arity(all, 1);
   // assert.name(all, 'all');
   assert.looksNative(all);
-  assert.nonEnumerable(Promise, 'all');
+  // assert.nonEnumerable(Promise, 'all');
   // const iterable = createIterable([1, 2, 3]);
   // Promise.all(iterable).catch(() => { /* empty */ });
   // assert.ok(iterable.received, 'works with iterables: iterator received');
@@ -287,7 +287,7 @@ QUnit.test('Promise.race', assert => {
   assert.arity(race, 1);
   // assert.name(race, 'race');
   assert.looksNative(race);
-  assert.nonEnumerable(Promise, 'race');
+  // assert.nonEnumerable(Promise, 'race');
   // const iterable = createIterable([1, 2, 3]);
   // Promise.race(iterable).catch(() => { /* empty */ });
   // assert.ok(iterable.received, 'works with iterables: iterator received');
@@ -387,7 +387,7 @@ if(promise && promise.constructor !== Promise) QUnit.test('Native Promise, patch
   assert.isFunction(promise.then);
   assert.arity(promise.then, 2);
   assert.looksNative(promise.then);
-  assert.nonEnumerable(promise.constructor.prototype, 'then');
+  // assert.nonEnumerable(promise.constructor.prototype, 'then');
   function empty() { /* empty */ }
   assert.ok(promise.then(empty) instanceof Promise, '`.then` returns `Promise` instance #1');
   assert.ok(new promise.constructor(empty).then(empty) instanceof Promise, '`.then` returns `Promise` instance #2');

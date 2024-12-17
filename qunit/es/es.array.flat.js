@@ -5,6 +5,8 @@ QUnit.test('Array#flat', assert => {
 	assert.isFunction(flat);
 	assert.name(flat, 'flat');
 	assert.arity(flat, 0);
+	assert.looksNative(flat);
+	assert.nonEnumerable(Array.prototype, 'flat');
 	assert.deepEqual([].flat(), []);
 	const array = [1, [2, 3], [4, [5, 6]]];
 	assert.deepEqual(array.flat(0), array);

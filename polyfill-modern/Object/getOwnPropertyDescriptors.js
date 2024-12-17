@@ -1,10 +1,10 @@
 import { Object } from "../../native/Object";
 import { defineProperty } from "../../native/Object/defineProperty";
-import { ff_getOwnPropertyDescriptors, ie_getOwnPropertyDescriptors } from "../../impl-modern/Object/getOwnPropertyDescriptors";
+import { getOwnPropertyDescriptors$ff, getOwnPropertyDescriptors$ie } from "../../impl-modern/Object/getOwnPropertyDescriptors";
 if(!Object.getOwnPropertyDescriptors) {
 	if(defineProperty) {
-		Object.getOwnPropertyDescriptors = ie_getOwnPropertyDescriptors;
+		Object.getOwnPropertyDescriptors = getOwnPropertyDescriptors$ie;
 	} else if(Object.prototype.__defineSetter__) {
-		Object.getOwnPropertyDescriptors = ff_getOwnPropertyDescriptors;
+		Object.getOwnPropertyDescriptors = getOwnPropertyDescriptors$ff;
 	}
 }

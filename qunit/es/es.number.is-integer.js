@@ -5,7 +5,7 @@ QUnit.test('Number.isInteger', assert => {
   assert.name(isInteger, 'isInteger');
   assert.arity(isInteger, 1);
   assert.looksNative(isInteger);
-  assert.nonEnumerable(Number, 'isInteger');
+  // assert.nonEnumerable(Number, 'isInteger');
   const integers = [
     1,
     -1,

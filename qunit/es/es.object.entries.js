@@ -2,6 +2,8 @@ QUnit.test('Object.entries', assert => {
   assert.isFunction(Object.entries);
   assert.arity(Object.entries, 1);
   assert.name(Object.entries, 'entries');
+  assert.looksNative(Object.entries);
+  // assert.nonEnumerable(Object, 'entries');
   assert.deepEqual(Object.entries({ q: 1, w: 2, e: 3 }), [['q', 1], ['w', 2], ['e', 3]]);
   assert.deepEqual(Object.entries(new String('qwe')), [['0', 'q'], ['1', 'w'], ['2', 'e']]);
   assert.deepEqual(Object.entries(Object.assign(Object.create({ q: 1, w: 2, e: 3 }), { a: 4, s: 5, d: 6 })), [['a', 4], ['s', 5], ['d', 6]]);

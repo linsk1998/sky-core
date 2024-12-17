@@ -5,6 +5,8 @@ QUnit.test('Array#flatMap', assert => {
 	assert.isFunction(flatMap);
 	assert.name(flatMap, 'flatMap');
 	assert.arity(flatMap, 1);
+	assert.looksNative(flatMap);
+	assert.nonEnumerable(Array.prototype, 'flatMap');
 	assert.deepEqual([].flatMap(it => it), []);
 	assert.deepEqual([1, 2, 3].flatMap(it => it), [1, 2, 3]);
 	assert.deepEqual([1, 2, 3].flatMap(it => [it, it]), [1, 1, 2, 2, 3, 3]);

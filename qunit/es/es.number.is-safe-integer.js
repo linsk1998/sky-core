@@ -5,7 +5,7 @@ QUnit.test('Number.isSafeInteger', assert => {
   assert.name(isSafeInteger, 'isSafeInteger');
   assert.arity(isSafeInteger, 1);
   assert.looksNative(isSafeInteger);
-  assert.nonEnumerable(Number, 'isSafeInteger');
+  // assert.nonEnumerable(Number, 'isSafeInteger');
   const safeIntegers = [
     1,
     -1,

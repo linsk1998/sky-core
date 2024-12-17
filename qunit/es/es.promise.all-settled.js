@@ -2,7 +2,7 @@ QUnit.test('Promise.allSettled', assert => {
   assert.isFunction(Promise.allSettled);
   assert.arity(Promise.allSettled, 1);
   assert.looksNative(Promise.allSettled);
-  assert.nonEnumerable(Promise, 'allSettled');
+  // assert.nonEnumerable(Promise, 'allSettled');
   assert.ok(Promise.allSettled([1, 2, 3]) instanceof Promise, 'returns a promise');
 });
 

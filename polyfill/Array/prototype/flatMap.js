@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { flatMap } from "../../../impl/Array/prototype/flatMap";
-if(!Array.prototype.flatMap) {
-	Array.prototype.flatMap = flatMap;
-}
+
+definePrototype(Array, 'flatMap', flatMap);

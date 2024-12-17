@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { repeat } from "../../../impl/String/prototype/repeat";
-if(!String.prototype.repeat) {
-	String.prototype.repeat = repeat;
-}
+
+definePrototype(String, 'repeat', repeat);

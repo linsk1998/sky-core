@@ -1,5 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { bind } from "../../../impl/Function/prototype/bind";
 
-if(!Function.prototype.bind) {
-	Function.prototype.bind = bind;
-}
+definePrototype(Function, 'bind', bind);

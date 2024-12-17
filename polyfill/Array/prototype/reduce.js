@@ -1,4 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { reduce } from "../../../impl/Array/prototype/reduce";
-if(!Array.prototype.reduce) {
-	Array.prototype.reduce = reduce;
-}
+
+definePrototype(Array, 'reduce', reduce);
