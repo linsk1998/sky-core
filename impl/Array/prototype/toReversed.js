@@ -1,5 +1,7 @@
+import { slice } from "../../../native/Array/prototype/slice";
+
 export function toReversed() {
-	var arr = Array.prototype.slice.call(this);
+	var arr = slice.call(this);
 	arr.reverse();
 	return arr;
 }

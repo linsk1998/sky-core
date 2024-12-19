@@ -1,3 +1,4 @@
+import { slice } from "../../../native/String/prototype/slice";
 import { isSymbol } from "../../utils-compat/isSymbol";
 import { isFunction } from "../../utils/isFunction";
 
@@ -12,7 +13,7 @@ export function escapeString(str) {//from lodash
 			var c = meta[a];
 			return typeof c === "string"
 				? c
-				: "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+				: "\\u" + slice.call("0000" + a.charCodeAt(0).toString(16), -4);
 		}) : str;
 };
 export function stringify(obj) {

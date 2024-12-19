@@ -228,6 +228,34 @@
 	  Array$1.from = from;
 	}
 
+	var k$2 = 'slice';
+	var slice_native = Array.prototype[k$2];
+	function slice$1(start, end) {
+	  if (this instanceof Object) {
+	    if (end === undefined) {
+	      return slice_native.call(this, start);
+	    }
+	    return slice_native.call(this, start, end);
+	  }
+	  var i,
+	    r = [];
+	  var len = this.length;
+	  if (start < 0) start += len;
+	  if (end === undefined) end = len;else if (end < 0) end += len;
+	  if (start < end) {
+	    len = end - start;
+	    r = new Array(len);
+	    i = len;
+	    while (i-- > 0) {
+	      r[i] = this[i + start];
+	    }
+	  }
+	  return r;
+	}
+	if (![1][k$2](0, undefined).length) {
+	  Array.prototype[k$2] = slice$1;
+	}
+
 	var Object$1 = window.Object;
 
 	var defineProperties$1 = Object$1.defineProperties;
@@ -537,6 +565,107 @@
 	    message: message
 	  });
 	};
+
+	var _arguments = typeof arguments === "undefined" ? void 0 : arguments;
+	QUnit.test('Array#slice', function (assert) {
+	  var slice = Array.prototype.slice;
+	  var isArray = Array.isArray;
+	  assert.isFunction(slice);
+	  assert.arity(slice, 2);
+	  assert.name(slice, 'slice');
+	  assert.looksNative(slice);
+	  assert.nonEnumerable(Array.prototype, 'slice');
+	  var array = ['1', '2', '3', '4', '5'];
+	  assert.deepEqual(array.slice(), array);
+	  assert.deepEqual(array.slice(1, 3), ['2', '3']);
+	  assert.deepEqual(array.slice(1), ['2', '3', '4', '5']);
+	  assert.deepEqual(array.slice(1, undefined), ['2', '3', '4', '5']);
+	  assert.deepEqual(array.slice(1, -1), ['2', '3', '4']);
+	  assert.deepEqual(array.slice(-2, -1), ['4']);
+	  assert.deepEqual(array.slice(-2, -3), []);
+	  // const string = '12345';
+	  // assert.deepEqual(slice.call(string), array);
+	  // assert.deepEqual(slice.call(string, 1, 3), ['2', '3']);
+	  // assert.deepEqual(slice.call(string, 1, undefined), ['2', '3', '4', '5']);
+	  // assert.deepEqual(slice.call(string, 1, -1), ['2', '3', '4']);
+	  // assert.deepEqual(slice.call(string, -2, -1), ['4']);
+	  // assert.deepEqual(slice.call(string, -2, -3), []);
+	  assert.notThrows(function () {
+	    return isArray(slice.call(_arguments));
+	  }, 'works on arguments');
+	  var list = GLOBAL.document && document.body && document.body.childNodes;
+	  if (list) {
+	    assert.notThrows(function () {
+	      return isArray(slice.call(list));
+	    }, 'works on NodeList');
+	  }
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return slice.call(null);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return slice.call(undefined);
+	    }, TypeError);
+	  }
+	  // array = [];
+	  // // eslint-disable-next-line object-shorthand -- constructor
+	  // array.constructor = {
+	  //   [Symbol.species]: function() {
+	  //     return { foo: 1 };
+	  //   }
+	  // };
+	  // assert.same(array.slice().foo, 1, '@@species');
+	});
+
+	var k$1 = 'splice';
+	var splice_native = Array.prototype[k$1];
+	function splice(index, count) {
+	  if (arguments.length < 2) {
+	    return splice_native.call(this, index, this.length - index);
+	  }
+	  return splice_native.apply(this, arguments);
+	}
+	if (![1][k$1](0).length) {
+	  Array.prototype[k$1] = splice;
+	}
+
+	QUnit.test('Array#splice', function (assert) {
+	  var splice = Array.prototype.splice;
+	  assert.isFunction(splice);
+	  assert.arity(splice, 2);
+	  assert.name(splice, 'splice');
+	  assert.looksNative(splice);
+	  assert.nonEnumerable(Array.prototype, 'splice');
+	  var array = [1, 2, 3, 4, 5];
+	  assert.deepEqual(array.splice(2), [3, 4, 5]);
+	  assert.deepEqual(array, [1, 2]);
+	  array = [1, 2, 3, 4, 5];
+	  assert.deepEqual(array.splice(-2), [4, 5]);
+	  assert.deepEqual(array, [1, 2, 3]);
+	  array = [1, 2, 3, 4, 5];
+	  assert.deepEqual(array.splice(2, 2), [3, 4]);
+	  assert.deepEqual(array, [1, 2, 5]);
+	  array = [1, 2, 3, 4, 5];
+	  assert.deepEqual(array.splice(2, -2), []);
+	  assert.deepEqual(array, [1, 2, 3, 4, 5]);
+	  array = [1, 2, 3, 4, 5];
+	  assert.deepEqual(array.splice(2, 2, 6, 7), [3, 4]);
+	  assert.deepEqual(array, [1, 2, 6, 7, 5]);
+	  if (STRICT) {
+	    assert["throws"](function () {
+	      return splice.call(null);
+	    }, TypeError);
+	    assert["throws"](function () {
+	      return splice.call(undefined);
+	    }, TypeError);
+	  }
+	  // array = [];
+	  // // eslint-disable-next-line object-shorthand -- constructor
+	  // array.constructor = { [Symbol.species]: function () {
+	  //   return { foo: 1 };
+	  // } };
+	  // assert.same(array.splice().foo, 1, '@@species');
+	});
 
 	function repeat$1(count) {
 	  if (this == null) {

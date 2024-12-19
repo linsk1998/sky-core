@@ -1,3 +1,4 @@
+import { slice } from "../native/Array/prototype/slice";
 
 var ticks = null;
 var nextTick = setTimeout;
@@ -10,7 +11,7 @@ export function next() {
 		for(var i = 0; i < ticks.length; i++) {
 			var args = ticks[i];
 			var fn = args[0];
-			args = Array.prototype.slice.call(args, 1);
+			args = slice.call(args, 1);
 			try {
 				fn.apply(this, args);
 			} catch(e) {

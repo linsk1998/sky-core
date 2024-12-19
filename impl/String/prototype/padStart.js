@@ -1,4 +1,5 @@
 import repeat from "sky-core/pure/String/prototype/repeat";
+
 export function padStart(targetLength) {
 	var x = targetLength - this.length;
 	if(x > 0) {

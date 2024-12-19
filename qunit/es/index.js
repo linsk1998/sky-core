@@ -1,5 +1,8 @@
 import "../helpers/qunit-helpers";
 
+import "./es.array.slice";
+import "./es.array.splice";
+
 import "./es.number.to-fixed";
 import "./es.number.to-precision";
 

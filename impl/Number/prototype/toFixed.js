@@ -1,4 +1,4 @@
-
+import { slice } from "../../../native/String/prototype/slice";
 import { repeat } from "../../String/prototype/repeat";
 import { toInteger } from "../../../utils/toInteger";
 
@@ -100,7 +100,7 @@ export function toFixed(fractionDigits) {
 		k = result.length;
 		result = sign + (k <= fractDigits
 			? '0.' + repeat.call('0', fractDigits - k) + result
-			: result.slice(0, k - fractDigits) + '.' + result.slice(k - fractDigits));
+			: slice.call(result, 0, k - fractDigits) + '.' + slice.call(result, k - fractDigits));
 	} else {
 		result = sign + result;
 	} return result;

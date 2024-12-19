@@ -195,6 +195,9 @@ module.exports = [
 			// ".contains": "sky-core/polyfill/Element/prototype/contains",
 			// ".children": "sky-core/polyfill/Element/prototype/children",
 			// ".innerText": "sky-core/polyfill/Element/prototype/innerText",
+			// ES3
+			".slice": "sky-core/polyfill/Array/prototype/slice",
+			".splice": "sky-core/polyfill/Array/prototype/splice",
 
 			//ES5 Array
 			".indexOf": "sky-core/polyfill/Array/prototype/indexOf",
