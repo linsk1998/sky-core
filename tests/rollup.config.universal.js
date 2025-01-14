@@ -1,27 +1,28 @@
 
-const path = require("path");
-const { babel } = require("@rollup/plugin-babel");
-const importPlugin = require("rollup-plugin-import");
-const nodeResolve = require("@rollup/plugin-node-resolve");
-const recommend = require("./recommend-modern");
-const sky = require("../createRollupPlugin");
+import path from "path";
+import babel from '@rollup/plugin-babel';
+import importPlugin from 'rollup-plugin-import';
 
-module.exports = {
-	input: 'qunit/es/index.js',
+var babelRuntimePath = require.resolve("@babel/runtime/package.json", {
+	paths: [process.cwd()]
+});
+var babelRuntimePackage = require(babelRuntimePath);
+var babelRuntimeVersion = babelRuntimePackage.version;
+export default {
+	input: 'tests/corejs/es/index.js',
 	output: {
 		strict: true,
-		file: 'qunit/recommend-multi/modern.js',
+		file: 'tests/corejs/universal/universal.js',
 		format: 'iife'
 	},
-	treeshake: false,
+	treeshake: true,
 	plugins: [
-		sky('modern'),
+		sky('compat'),
 		nodeResolve(),
 		importPlugin({
 			libraryName: "sky-core",
 			libraryDirectory: "utils"
 		}),
-		...recommend,
 		babel({
 			babelHelpers: 'runtime',
 			babelrc: false,
@@ -33,7 +34,7 @@ module.exports = {
 					helpers: true,
 					regenerator: true,
 					useESModules: true,
-					version: "7.20.1"
+					version: babelRuntimeVersion
 				}],
 				// ES2019
 				"@babel/plugin-transform-optional-catch-binding",
@@ -77,8 +78,19 @@ module.exports = {
 				// "@babel/plugin-transform-jscript"
 			],
 			include: [
-				"qunit/**/*",
+				"tests/corejs/**/*",
 			]
 		}),
+		babel({
+			babelHelpers: 'bundled',
+			babelrc: false,
+			compact: false,
+			plugins: [
+				"@babel/plugin-transform-member-expression-literals",
+				"@babel/plugin-transform-property-literals",
+				"@babel/plugin-transform-reserved-words",
+				"@babel/plugin-transform-jscript"
+			]
+		})
 	]
 };

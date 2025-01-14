@@ -1,4 +1,4 @@
-import { slice } from "../../../native/String/prototype/slice";
+import { slice } from "../../native/String/prototype/slice";
 import { isSymbol } from "../../utils-compat/isSymbol";
 import { isFunction } from "../../utils/isFunction";
 
