@@ -46,6 +46,10 @@
     return _construct.apply(null, arguments);
   }
 
+  function isFunction(obj) {
+  	return typeof obj === 'function';
+  };
+
   var Proxy$3 = window.Proxy;
 
   var Reflect$1 = window.Reflect;
@@ -117,6 +121,29 @@
 
   var $inject_Reflect_set = Reflect$1 ? Reflect$1.set : set;
 
+  var Object$1 = window.Object;
+
+  function defineProperty(obj, prop, descriptor) {
+  	if(typeof obj !== "object" && typeof obj !== "function") {
+  		throw new TypeError("Object.defineProperty called on non-object");
+  	}
+  	prop = String(prop);
+  	if('value' in descriptor) {
+  		delete obj[prop];
+  		obj[prop] = descriptor.value;
+  	} else {
+  		if(descriptor.get) obj.__defineGetter__(prop, descriptor.get);
+  		if(descriptor.set) obj.__defineSetter__(prop, descriptor.set);
+  	}
+  	return obj;
+  };
+
+  if(!Object$1.defineProperty) {
+  	if(Object$1.prototype.__defineSetter__) {
+  		Object$1.defineProperty = defineProperty;
+  	}
+  }
+
   function isNotNullObject(obj) {
   	return typeof obj === 'object' ? obj !== null : typeof obj === 'function';
   };
@@ -132,10 +159,12 @@
   function Proxy$2(target, handler) {
   	if(this instanceof Proxy$2) {
   		if(!target || !handler) throw new TypeError("Cannot create proxy with a non-object as target or handler");
-  		if(typeof target === "function") {
+  		if(isFunction(target)) {
   			return proxyFunction(this, target, handler);
+  		} else if(Array.isArray(target)) {
+  			return proxyArray(this, target, handler);
   		} else {
-  			proxyObject(this, target, handler);
+  			return proxyObject(this, target, handler);
   		}
   	} else {
   		throw TypeError("Constructor Proxy requires 'new'");
@@ -164,9 +193,11 @@
   	return ProxyFunction;
   }
   function proxyObject(me, target, handler) {
+  	me = Object.create(target);
   	for(var key in target) {
   		proxyProperty(key, me, target, handler);
   	}
+  	return me;
   }
   function proxyProperty(key, me, target, handler) {
   	Object.defineProperty(me, key, {
@@ -189,14 +220,26 @@
   		}
   	});
   }
-
-  var Proxy$1 = Proxy$3 || Proxy$2;
-
-  function isInteger(value) {
-  	return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
+  function proxyArray(me, target, handler) {
+  	me = Object.create(target);
+  	var keys = Object.getOwnPropertyNames(Array.prototype);
+  	// [
+  	// 	'entries', 'every', 'forEach', 'keys', 'values',
+  	// 	'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some',
+  	// 	'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString',
+  	// 	'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with',
+  	// 	'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift',
+  	// 	'length', 'constructor'
+  	// ];
+  	var i = keys.length;
+  	while(i--) {
+  		proxyProperty(keys[i], me, target, handler);
+  	}
+  	return me;
   }
 
-  var $inject_Number_isInteger = Number.isInteger || isInteger;
+  // 火狐低版本内置了一个Proxy对象，可以通过typeof来区分
+  var Proxy$1 = isFunction(Proxy$3) ? Proxy$3 : Proxy$2;
 
   function revokedHandle() {
   	throw new TypeError('Proxy has been revoked');
@@ -226,6 +269,57 @@
   };
 
   var $inject_Proxy_revocable = Proxy$3 && Proxy$3.revocable || revocable;
+
+  var Number$1 = window.Number;
+
+  function isInteger(value) {
+  	return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
+  }
+
+  if(!Number$1.isInteger) {
+  	Number$1.isInteger = isInteger;
+  }
+
+  function definePrototype(target, property, value) {
+  	var prototype = target.prototype;
+  	if(!(property in prototype)) {
+  		Object.defineProperty(prototype, property, {
+  			configurable: true,
+  			writable: true,
+  			enumerable: false,
+  			value: value
+  		});
+  	}
+  }
+
+  var Math$1 = window.Math;
+
+  var floor = Math.floor;
+
+  var ceil = Math.ceil;
+
+  // from core-js https://github.com/zloirock/core-js
+  function trunc(it) {
+  	return (it > 0 ? floor : ceil)(it);
+  }
+
+  if(!Math$1.trunc) {
+  	Math$1.trunc = trunc;
+  }
+
+  function at(n) {
+  	var len = this.length;
+  	if(isNaN(n)) {
+  		return this[0];
+  	}
+  	n = Math.trunc(n);
+  	if(n >= 0) {
+  		return this[n];
+  	}
+  	return this[len + n];
+  }
+
+  definePrototype(Array, 'at', at);
 
   QUnit.test('Proxy', function (assert) {
     var p = new Proxy$1({
@@ -257,7 +351,7 @@
     }, {
       set: function (obj, prop, value) {
         if (prop === "age") {
-          if (!$inject_Number_isInteger(value)) {
+          if (!Number.isInteger(value)) {
             throw new TypeError("The age is not an integer");
           }
           if (value > 200) {
@@ -521,6 +615,41 @@
       proxy.foo = 1;
     }, TypeError);
     assert.equal(_typeof(proxy), "object"); //因为 typeof 不属于可代理操作
+  });
+
+  QUnit.test('Proxy#array', function (assert) {
+    var getTime = 0;
+    var setTime = 0;
+    var arr = new Proxy$1([1, 2, 3], {
+      get: function (target, prop, receiver) {
+        if (prop === 'length') {
+          getTime++;
+        }
+        return $inject_Reflect_get.apply(void 0, arguments);
+      },
+      set: function (target, prop, value, receiver) {
+        if (prop === 'length') {
+          setTime++;
+        }
+        return $inject_Reflect_set.apply(void 0, arguments);
+      }
+    });
+    assert.ok(arr instanceof Array, "instanceof");
+    assert.equal(arr.at(NaN), 1);
+    assert.equal(arr.at(0), 1);
+    assert.equal(arr.at(1), 2);
+    assert.equal(arr.at(2), 3);
+    assert.equal(getTime, 4);
+    assert.equal(arr.length, 3);
+    assert.equal(getTime, 5);
+    arr.splice(1, 1);
+    assert.equal(arr.length, 2);
+    assert.equal(getTime, 7);
+    assert.equal(setTime, 1);
+    arr.length = 1;
+    assert.equal(setTime, 2);
+    assert.equal(arr.length, 1);
+    assert.equal(arr.at(0), 1);
   });
 
 })();

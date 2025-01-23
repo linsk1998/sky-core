@@ -4,6 +4,7 @@ const { babel } = require("@rollup/plugin-babel");
 const importPlugin = require("rollup-plugin-import");
 const nodeResolve = require("@rollup/plugin-node-resolve");
 const inject = require("@rollup/plugin-inject");
+const polyfill = require("rollup-plugin-polyfill-inject");
 const sky = require("../../createRollupPlugin");
 
 var babelRuntimePath = require.resolve("@babel/runtime/package.json", {
@@ -27,9 +28,16 @@ module.exports = [{
 			libraryName: "sky-core",
 			libraryDirectory: "utils"
 		}),
+		polyfill({
+			modules: {
+				".at": "sky-core/polyfill/Array/prototype/at",
+				"Math.trunc": "sky-core/polyfill/Math/trunc",
+				"Number.isInteger": "sky-core/polyfill/Number/isInteger",
+				"Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
+			},
+		}),
 		inject({
 			modules: {
-				"Number.isInteger": "sky-core/pure/Number/isInteger",
 				"Reflect.construct": "sky-core/pure/Reflect/construct",
 				"Reflect.get": "sky-core/pure/Reflect/get",
 				"Reflect.set": "sky-core/pure/Reflect/set",
@@ -38,6 +46,8 @@ module.exports = [{
 			},
 			include: [
 				"impl/**/*",
+				"impl-compat/**/*",
+				"impl-modern/**/*",
 				"tests/pure/unit/*",
 			]
 		}),
