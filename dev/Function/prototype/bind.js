@@ -1,4 +1,4 @@
-const slice = Array.prototype.slice;
+import { slice } from "../../../native/Array/prototype/slice";
 
 Function.prototype.bind = function bind(context) {
 	var self = this, args = slice.call(arguments, 1);

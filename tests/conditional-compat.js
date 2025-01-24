@@ -172,7 +172,7 @@ module.exports = [
 			"polyfill/**/*",
 			"polyfill-compat/**/*",
 			"polyfill-modern/**/*",
-			"qunit/helpers/*"
+			"tests/corejs/helpers/*"
 		]
 	}),
 	//以下是prototype的修改
@@ -281,7 +281,7 @@ module.exports = [
 			".toWellFormed": "sky-core/polyfill/String/prototype/toWellFormed",
 		},
 		exclude: [
-			"qunit/helpers/*"
+			"tests/corejs/helpers/*"
 		]
 	}),
 	inject({
@@ -301,7 +301,7 @@ module.exports = [
 		include: [
 			"impl/**/*",
 			"impl-*/**/*",
-			"qunit/es/*",
+			"tests/corejs/es/*",
 		]
 	})
 ];
