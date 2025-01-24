@@ -19,6 +19,7 @@
 				"polyfill/*"
 			]
 		},
-		"allowJs": true
+		"allowJs": true,
+		"module": "ES2020"
 	}
 }

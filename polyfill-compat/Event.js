@@ -1,9 +1,13 @@
+import { isFunction } from "../utils/isFunction";
+import { Event } from "../native/Event";
 
-if(typeof Event !== "function") {
+// IE 有个全局对象 Event
+if(!isFunction(Event)) {
 	if(document.createEventObject) {
-		window.Event = function(evt, init) {
+		window.Event = function(type, init) {
 			var e = document.createEventObject();
-			e.type = evt;
+			e.type = type;
+			e.isTrusted = false;
 			if(init) {
 				e.bubbles = init.bubbles;
 				e.cancelable = init.cancelable;

@@ -1,3 +1,5 @@
+import "sky-core/polyfill/String/prototype/trim";
+
 if(window.HTMLElement) {
 	if(!('innerText' in document.head)) {
 		HTMLElement.prototype.__defineGetter__("innerText", function() {
