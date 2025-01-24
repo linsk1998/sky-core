@@ -1,3 +1,4 @@
+import { isFunction } from "../../utils/isFunction";
 
 export function any(promises) {
 	// if(!Array.isArray(promises)) {
@@ -11,7 +12,7 @@ export function any(promises) {
 		}
 		var c = 0;
 		errors.forEach(function(one, index, errors) {
-			if(typeof one.then === "function") {
+			if(one != null && isFunction(one.then)) {
 				one.then(function(data) {
 					resolve(data);
 				}, function(error) {

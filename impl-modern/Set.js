@@ -1,4 +1,4 @@
-
+import { isFunction } from "../utils/isFunction";
 import { Set as GSet } from "../native/Set";
 import { toES6Iterator } from "../utils-modern/toES6Iterator";
 export function createSubSet() {
@@ -16,7 +16,7 @@ export function createSubSet() {
 export function fixSet() {
 	var Set = createSubSet();
 	var s = new GSet();
-	if(typeof s.size === "function") {
+	if(isFunction(s.size)) {
 		// firefox 18-
 		Object.defineProperty(Set.prototype, 'size', {
 			get: function() {

@@ -1,8 +1,9 @@
+import { isNotNullObject } from "../utils/isNotNullObject";
 import { detachEvent } from "./detachEvent";
 
 export function removeEvent(el, ev, cb, options) {
 	var bubble;
-	if(typeof options === "object") {
+	if(isNotNullObject(options)) {
 		bubble = !options.capture;
 	} else {
 		bubble = !options;

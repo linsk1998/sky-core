@@ -1,4 +1,6 @@
 import { nonEnumerable } from "../support/nonEnumerable";
+import { isNotNullObject } from "../utils/isNotNullObject";
+
 export var KEY_WM = "@@WeakMap";
 var weakSeq = 0;
 function WeakMap() {
@@ -26,7 +28,7 @@ function WeakMap() {
 	}
 }
 WeakMap.prototype.set = function(key, value) {
-	if(typeof key !== "object" && typeof key !== "function") {
+	if(!isNotNullObject(key)) {
 		throw new TypeError("Invalid value used in weak");
 	}
 	var map = key[KEY_WM];
@@ -60,7 +62,7 @@ WeakMap.prototype.has = function(key) {
 	return false;
 };
 WeakMap.prototype.delete = function(key) {
-	if(typeof key !== "object" && typeof key !== "function") {
+	if(!isNotNullObject(key)) {
 		return false;
 	}
 	var map = key[KEY_WM];

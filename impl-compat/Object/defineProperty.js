@@ -1,3 +1,4 @@
+import { isNotNullObject } from "../../utils/isNotNullObject";
 import { NullProtoObject } from "../../impl-compat/Object/NullProtoObject";
 import { defineProperty as native_defineProperty } from "../../native/Object/defineProperty";
 export function ie8_defineProperty(obj, prop, descriptor) {
@@ -27,7 +28,7 @@ export function defineProperty(obj, prop, description) {
 };
 
 export function compat_defineProperty(obj, prop, description) {
-	if(typeof obj !== "object" && typeof obj !== "function") {
+	if(!isNotNullObject(obj)) {
 		throw new TypeError("Object.defineProperty called on non-object");
 	}
 	prop = String(prop);

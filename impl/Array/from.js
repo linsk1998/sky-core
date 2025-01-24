@@ -1,4 +1,5 @@
 import { isString } from "../../utils/isString";
+import { isFunction } from "../../utils/isFunction";
 import { iterator } from "../String/prototype/@@iterator";
 
 var push = Array.prototype.push;
@@ -8,13 +9,13 @@ export function from(arrayLike) {
 		throw new TypeError("Array.from requires an array-like object - not null or undefined");
 	}
 	var ArrayLike = this;
-	if(typeof ArrayLike !== "function") {
+	if(!isFunction(ArrayLike)) {
 		ArrayLike = Array;
 	}
 	var mapFn = arguments[1];
 	var thisArg;
 	if(mapFn !== undefined) {
-		if(typeof mapFn !== "function") {
+		if(!isFunction(mapFn)) {
 			throw new TypeError(mapFn + " is not a function");
 		}
 		thisArg = arguments[2];

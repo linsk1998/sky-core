@@ -1,3 +1,4 @@
+import { isFunction } from "../../utils/isFunction";
 
 export function allSettled(promises) {
 	// if(!Array.isArray(promises)) {
@@ -8,7 +9,7 @@ export function allSettled(promises) {
 		if(array.length == 0) return resolve(array);
 		var c = 0;
 		array.forEach(function(one, index, array) {
-			if(typeof one.then === "function") {
+			if(one != null && isFunction(one.then)) {
 				one.then(function(data) {
 					c++;
 					array[index] = { value: data, status: 'fulfilled' };

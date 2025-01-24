@@ -1,10 +1,11 @@
+import { isNotNullObject } from "../utils/isNotNullObject";
 import { notCapture } from "../impl/Event";
 import { attachEvent } from "./attachEvent";
 import { fixEvent } from "./fixEvent";
 
 export function addEvent(el, type, cb, options) {
 	var bubble;
-	if(typeof options === "object") {
+	if(isNotNullObject(options)) {
 		bubble = !options.capture;
 	} else {
 		bubble = !options;

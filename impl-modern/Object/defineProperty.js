@@ -1,6 +1,7 @@
+import { isNotNullObject } from "../../utils/isNotNullObject";
 
 export function defineProperty(obj, prop, descriptor) {
-	if(typeof obj !== "object" && typeof obj !== "function") {
+	if(!isNotNullObject(obj)) {
 		throw new TypeError("Object.defineProperty called on non-object");
 	}
 	prop = String(prop);
