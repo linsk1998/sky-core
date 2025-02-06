@@ -1,7 +1,6 @@
 
 import { isFunction } from "../utils/isFunction";
 import forEach from "sky-core/pure/Array/prototype/forEach";
-import { isFunction } from "../utils/isFunction";
 
 var PENDING = 1;
 var RESOLVED = 2;
