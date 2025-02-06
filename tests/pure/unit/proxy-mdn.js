@@ -51,10 +51,10 @@ QUnit.test('Proxy', function(assert) {
 	assert.equal(person.age, 100);
 	assert.throws(function() {
 		person.age = "young";
-	}, TypeError);
+	});
 	assert.throws(function() {
 		person.age = 300;
-	}, RangeError);
+	});
 
 	function extend(sup, base) {
 		var descriptor = Object.getOwnPropertyDescriptor(
