@@ -1,3 +1,4 @@
+import { isFunction } from "../utils/isFunction";
 import { loadScript as loadScriptIE } from "../utils-compat/loadScript";
 import { loadScript as loadScriptST } from "../utils-es2015/loadScript";
 var loadScript;
@@ -21,13 +22,13 @@ if(document.currentScript !== void 0) {
 			charset = arguments[3];
 		} else if(arguments.length > 2) {
 			resolve = arguments[1];
-			if(typeof last === "function") {
+			if(isFunction(last)) {
 				reject = last;
 			} else {
 				charset = last;
 			}
 		} else {
-			if(typeof last === "function") {
+			if(isFunction(last)) {
 				resolve = last;
 			} else {
 				charset = last;

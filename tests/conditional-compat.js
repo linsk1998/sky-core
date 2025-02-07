@@ -168,6 +168,10 @@ module.exports = [
 
 		},
 		exclude: [
+			"native/**/*",
+			"polyfill/**/*",
+			"polyfill-compat/**/*",
+			"polyfill-modern/**/*",
 			"tests/corejs/helpers/*"
 		]
 	}),

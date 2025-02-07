@@ -1,5 +1,5 @@
 
-import { isObject } from "../utils/isObject";
+import { isFunction } from "../utils/isFunction";
 import forEach from "sky-core/pure/Array/prototype/forEach";
 import { isFunction } from "../utils/isFunction";
 
@@ -67,7 +67,7 @@ function nextPromise(before, after, resolve, reject) {
 	return function(value) {
 		try {
 			var x = before(value);
-			if(x && (typeof x.then === "function")) {
+			if(x != null && isFunction(x.then)) {
 				x.then(resolve, reject);
 			} else {
 				after(x);
@@ -122,7 +122,7 @@ Promise.resolve = function resolve(value) {
 	if(!this) {
 		throw TypeError("Promise.resolve called on non-object");
 	}
-	if(typeof this !== "function") {
+	if(!isFunction(this)) {
 		throw TypeError(this + " is not a constructor");
 	}
 	return new ResolvePromise(value);
@@ -141,7 +141,7 @@ Promise.reject = function reject(value) {
 	if(!this) {
 		throw TypeError("Promise.resolve called on non-object");
 	}
-	if(typeof this !== "function") {
+	if(!isFunction(this)) {
 		throw TypeError(this + " is not a constructor");
 	}
 	return new RejectPromise(value);
@@ -156,7 +156,7 @@ Promise.all = function(promises) {
 		var result = new Array(promises.length);
 		var c = 0;
 		forEach.call(promises, function(one, index) {
-			if(one && typeof one.then === "function") {
+			if(one && typeof isFunction(one.then)) {
 				one.then(function(data) {
 					c++;
 					result[index] = data;

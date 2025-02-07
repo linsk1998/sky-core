@@ -9,6 +9,7 @@ declare module "sky-core" {
 	export function isFunction(arg: any): arg is Function;
 	export function isNumber(arg: any): arg is (Number | number);
 	export function isObject(arg: any): arg is Object;
+	export function isNotNullObject(arg: any): arg is object;
 	export function isDefined(arg?: any): arg is any;
 	export function isWindow(arg: any): arg is Window;
 	export function isPlainObject(arg: any): arg is Record<any, any>;
@@ -32,10 +33,15 @@ declare module "sky-core" {
 	export function replaceAll(value: string): string;
 	export function toString(value: string): string;
 
+	/** @deprecated 建议用原生的 */
 	export function findIndex(arr: Record<string, any>[], key: string, value: any): number;
+	/** @deprecated 建议用原生的 */
 	export function findLastIndex(arr: Record<string, any>[], key: string, value: any): number;
+	/** @deprecated 建议用原生的 */
 	export function findLast(arr: Record<string, any>[], key: string, value: any): any;
+	/** @deprecated 建议用原生的 */
 	export function find(arr: Record<string, any>[], key: string, value: any): any;
+	/** @deprecated 建议用原生的 */
 	export function sortBy(arr: Record<string, any>[], key: string): Record<string, any>[];
 	export function pluck(arr: Record<string, any>[], key: string): Record<string, any>[];
 	export function sortedIndex(arr: any[], value: any): number;
@@ -59,7 +65,6 @@ declare module "sky-core" {
 	export function getCSS(href: string, resolve?: Function, reject?: Function): HTMLLinkElement;
 	export function loadCSS(href: string, resolve?: Function, reject?: Function): HTMLLinkElement;
 
-	export function getElementsByClassName(className: string, ancestor?: ParentNode | Element | Document): Element[];
 	export function getElementStyle(el: Element, prop: string): string;
 	export function hasClass(el: Element, className: string): boolean;
 	export function addClass(el: Element, className: string): void;
@@ -67,6 +72,7 @@ declare module "sky-core" {
 	export function toggleClass(el: Element, className: string): void;
 	export function getNextElement(el: Element): Element | null;
 	export function getPrevElement(el: Element): Element | null;
+	export function getElementsByClassName(className: string, ancestor?: ParentNode | Element | Document): Element[];
 	export function querySelector(selector: string, ancestor?: ParentNode | Element | Document): Element | null;
 	export function querySelectorAll(selector: string, ancestor?: ParentNode | Element | Document): Element[];
 
@@ -78,9 +84,7 @@ declare module "sky-core" {
 	export function detachEvent(ele: EventTarget, type: string, func: Function, useCapture?: boolean): void;
 	export function fixEvent(ele: EventTarget, type: 'click' | 'mousedown' | 'mouseup' | 'mouseover' | 'mouseout', e: MouseEvent): MouseEvent;
 	export function fixEvent<T = Event>(ele: EventTarget, type: string, e: T): T;
-	export function fireEvent(currentTarget: EventTarget, type: string, props: Record<string, any>): void;
-	/** @deprecated change to fireEvent */
-	export function trigger(currentTarget: EventTarget, type: string, props: Record<string, any>): void;
+	export function fireEvent(ele: EventTarget, type: string, props: Record<string, any>): void;
 
 
 	export function getCookie(key: string): string;

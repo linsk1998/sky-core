@@ -1,0 +1,1 @@
+export var quirks = document.compatMode != "BackCompat";

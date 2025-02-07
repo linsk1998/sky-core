@@ -1,12 +1,15 @@
+import { Event } from "../native/Event";
+import { isFunction } from "../utils/isFunction";
 
-if(typeof window.Event !== "function") {
+if(isFunction(Event)) {
 	if(document.createEvent) {
-		window.Event = function(evt, init) {
+		window.Event = function(type, init) {
 			var e = document.createEvent('Event');
+			e.isTrusted = false;
 			if(init) {
-				e.initEvent(evt, init.bubbles, init.cancelable);
+				e.initEvent(type, init.bubbles, init.cancelable);
 			} else {
-				e.initEvent(evt, false, false);
+				e.initEvent(type, false, false);
 			}
 			return e;
 		};

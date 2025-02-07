@@ -1,4 +1,5 @@
 
+import { isFunction } from "../utils/isFunction";
 import { Map as GMap } from "../native/Map";
 import { toES6Iterator } from "../utils-modern/toES6Iterator";
 
@@ -16,7 +17,7 @@ export function createSubMap() {
 export function fixMap() {
 	var Map = createSubMap();
 	var m = new GMap();
-	if(typeof m.size === "function") {
+	if(isFunction(m.size)) {
 		// firefox 18-
 		Object.defineProperty(Map.prototype, 'size', {
 			get: function() {

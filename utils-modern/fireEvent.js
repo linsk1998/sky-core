@@ -1,4 +1,5 @@
-var notCapture = ["load", "unload", "scroll", "resize", "blur", "focus", "mouseenter", "mouseleave", "input", "propertychange"];
+import { notCapture } from "../impl/Event";
+
 export function fireEvent(ele, type, props) {
 	var e = document.createEvent('Event');
 	switch(type) {
