@@ -46,6 +46,22 @@ function createRollupPlugin(browser) {
 					return path.resolve(__dirname, "./pure/" + suffix + ".js");
 				}
 			}
+			prefix = "@babel/runtime/helpers/";
+			if(id.startsWith(prefix)) {
+				suffix = id.substring(prefix.length, id.length);
+				if(suffix.startsWith("esm/")) {
+					suffix = suffix.substring(4, suffix.length);
+				}
+				bid = path.resolve(__dirname, "./helpers-" + browser + "/" + suffix + ".js");
+				if(fs.existsSync(bid)) {
+					return bid;
+				} else {
+					bid = path.resolve(__dirname, "./helpers/" + suffix + ".js");
+					if(fs.existsSync(bid)) {
+						return bid;
+					}
+				}
+			}
 		}
 	};
 }

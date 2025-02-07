@@ -34,7 +34,7 @@ export function compat_defineProperty(obj, prop, description) {
 	var descriptor = {
 		configurable: true,
 		enumerable: true,
-		writable: true,
+		writable: true
 	};
 	if('value' in description) {
 		obj[prop] = description.value;

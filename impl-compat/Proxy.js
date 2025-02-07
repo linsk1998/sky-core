@@ -1,3 +1,4 @@
+import { slice } from "../native/Array/prototype/slice";
 import { isFunction } from "../utils/isFunction";
 import { proxyFunction } from "../impl-modern/Proxy";
 import { set } from "../impl-compat/Reflect/set";
@@ -64,9 +65,18 @@ window.VBProxyGetter = function(target, key, receiver, handler) {
 		VBProxyVal = get(target, key, receiver);
 	}
 };
+// window.VBProxyMethod = function(args, target, key, receiver, handler) {
+// 	var method;
+// 	if(handler.get) {
+// 		method = handler.get(target, key, receiver);
+// 	} else {
+// 		method = get(target, key, receiver);
+// 	}
+// 	return method.apply(receiver, args);
+// };
 
 function createVBProxyFactory(keys) {
-	var className = "VBProxyClass_" + (seq++);
+	var className = "VBProxyObject_" + (seq++);
 	var buffer = ["Class " + className];
 	buffer.push('	Public [__proto__]');
 	buffer.push('	Public [constructor]');
@@ -111,6 +121,90 @@ function createVBProxyFactory(keys) {
 	window.execScript(buffer.join('\n'), 'VBScript');
 	return factoryName;
 }
+
+var arrayMethods = [
+	'entries', 'every', 'forEach', 'keys', 'values', '@@iterator',
+	'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some',
+	'join', 'map', 'reduce', 'reduceRight',
+	'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with',
+	'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift',
+];
+
 export function proxyArrayVB(me, target, handler) {
-	// TODO
+	me = VBProxyArrayFactory();
+	me.__proto__ = getPrototypeOf(target);
+	me.constructor = target.constructor;
+	me['@@Target'] = target;
+	me['@@Handler'] = handler;
+	arrayMethods.forEach(function(key) {
+		me[key] = function() {
+			var method = VBProxyArrayGetter(target, key, me, handler);
+			return method.apply(target, arguments);
+		};
+	});
+	return me;
 }
+
+window.VBProxyArraySetter = function(target, key, value, receiver, handler) {
+	if(handler.set) {
+		if(handler.set(target, key, value, receiver) === false) {
+			throw new TypeError("'set' on proxy: trap returned falsish for property '" + key + "'");
+		}
+	} else {
+		target[key] = value;
+	}
+};
+window.VBProxyArrayGetter = function(target, key, receiver, handler) {
+	if(handler.get) {
+		return handler.get(target, key, receiver);
+	} else {
+		return get(target, key, receiver);
+	}
+};
+window.VBProxyArrayMethod = function(target, key, receiver, handler) {
+	var method = VBProxyArrayGetter(target, key, receiver, handler);
+	var args = slice.call(arguments, 4);
+	return method.apply(target, args);
+};
+
+
+var buffer = [
+	"Class VBProxyArray",
+	'	Public [__proto__]',
+	'	Public [constructor]',
+	'	Public [@@WeakMap]',
+	'	Public [@@Target]',
+	'	Public [@@Handler]'
+];
+var i = arrayMethods.length;
+while(i--) {
+	buffer.push('	Public [' + arrayMethods[i] + ']');
+}
+buffer = buffer.concat([
+	'	Public Function valueOf()',
+	'		valueOf = VBProxyArrayMethod([@@Target], "valueOf", Me, [@@Handler])',
+	'	End Function',
+	'	Public Function toLocaleString()',
+	'		toLocaleString = VBProxyArrayMethod([@@Target], "toLocaleString", Me, [@@Handler])',
+	'	End Function',
+	'	Public Function toString()',
+	'		toString = VBProxyArrayMethod([@@Target], "toString", Me, [@@Handler])',
+	'	End Function',
+	'	Public Property Get Default()',
+	'		Default = Me.toString()',
+	'	End Property',
+
+	'	Public Property Let [length](val)',
+	'		Call VBProxySetter([@@Target], "length", val, Me, [@@Handler])',
+	'	End Property',
+	'	Public Property Get [length]',
+	'		[length] = VBProxyArrayGetter([@@Target], "length", Me, [@@Handler])',
+	'	End Property',
+	'End Class',
+	'Function VBProxyArrayFactory()',
+	'	Dim o',
+	'	Set o = New VBProxyArray',
+	'	Set VBProxyArrayFactory = o',
+	'End Function'
+]);
+window.execScript(buffer.join('\n'), 'VBScript');

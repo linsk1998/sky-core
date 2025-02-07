@@ -10,79 +10,6 @@
     }, _typeof(o);
   }
 
-  function definePrototype(target, property, value) {
-  	var prototype = target.prototype;
-  	if(!(property in prototype)) prototype[property] = value;
-  }
-
-  var slice = Array.prototype.slice;
-
-  function bind(context) {
-  	var self = this, args = slice.call(arguments, 1);
-  	var Bind = function() {
-  		if(this instanceof Bind) {
-  			self.apply(this, args.concat(slice.call(arguments)));
-  			return;
-  		}
-  		return self.apply(context, args.concat(slice.call(arguments)));
-  	};
-  	return Bind;
-  }
-
-  definePrototype(Function, 'bind', bind);
-
-  function _setPrototypeOf(o, p) {
-    _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
-      o.__proto__ = p;
-      return o;
-    };
-    return _setPrototypeOf(o, p);
-  }
-
-  function _isNativeReflectConstruct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-    try {
-      Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function _construct(Parent, args, Class) {
-    if (_isNativeReflectConstruct()) {
-      _construct = Reflect.construct.bind();
-    } else {
-      _construct = function _construct(Parent, args, Class) {
-        var a = [null];
-        a.push.apply(a, args);
-        var Constructor = Function.bind.apply(Parent, a);
-        var instance = new Constructor();
-        if (Class) _setPrototypeOf(instance, Class.prototype);
-        return instance;
-      };
-    }
-    return _construct.apply(null, arguments);
-  }
-
-  function isFunction(obj) {
-  	return typeof obj === 'function';
-  };
-
-  var Proxy$4 = window.Proxy;
-
-  var Array$1 = window.Array;
-
-  function isArray(obj){
-  	return Object.prototype.toString.call(obj)==='[object Array]';
-  }
-
-  if(!Array$1.isArray) {
-  	Array$1.isArray = isArray;
-  }
-
   var Object$1 = window.Object;
 
   var dontEnums=[
@@ -168,8 +95,8 @@
   	Object$1.create = create;
   }
 
-  function apply(target, thisArgument, argumentsList){
-  	return Function.prototype.apply.call(target, thisArgument, argumentsList);
+  function apply(target, thisArgument, argumentsList) {
+  	return Function.apply.call(target, thisArgument, argumentsList);
   };
 
   function construct(target, argumentsList, NewTarget) {
@@ -183,6 +110,44 @@
   };
   construct.sham = true;
 
+  function isFunction(obj) {
+  	return typeof obj === 'function';
+  };
+
+  var Proxy$3 = window.Proxy;
+
+  var Array$1 = window.Array;
+
+  function isArray(obj) {
+  	if(obj == null) return false;
+  	var p = obj.__proto__;
+  	return p ?
+  		p === Array.prototype || p instanceof Array :
+  		Object.prototype.toString.call(obj) === '[object Array]';
+  }
+
+  if(!Array$1.isArray) {
+  	Array$1.isArray = isArray;
+  }
+
+  function definePrototype(target, property, value) {
+  	var prototype = target.prototype;
+  	if(!(property in prototype)) prototype[property] = value;
+  }
+
+  function forEach(callback) {
+  	var thisArg = arguments[1];
+  	for(var i = 0; i < this.length; i++) {
+  		if(i in this) {
+  			callback.call(thisArg, this[i], i, this);
+  		}
+  	}
+  }
+
+  definePrototype(Array, 'forEach', forEach);
+
+  var slice = Array.prototype.slice;
+
   function get(target,propertyKey,receiver){
   	if(receiver===void 0){ receiver=target;}
   	var desc=target["@@desc:"+propertyKey];
@@ -195,22 +160,22 @@
   	return target[propertyKey];
   };
 
-  function set(target,propertyKey,value,receiver){
-  	if(receiver===void 0){ receiver=target;}
-  	var desc=target["@@desc:"+propertyKey];
-  	if(desc){
-  		if(desc.set){
-  			try{
-  				desc.set.call(receiver,value);
+  function set(target, propertyKey, value, receiver) {
+  	if(receiver === void 0) { receiver = target; }
+  	var desc = target["@@desc:" + propertyKey];
+  	if(desc) {
+  		if(desc.set) {
+  			try {
+  				desc.set.call(receiver, value);
   				return true;
-  			}catch(e){
+  			} catch(e) {
   				return false;
   			}
   		}
-  		desc.value=value;
+  		desc.value = value;
   		return true;
   	}
-  	target[propertyKey]=value;
+  	target[propertyKey] = value;
   	return true;
   };
 
@@ -250,7 +215,7 @@
   	var descriptor = {
   		configurable: true,
   		enumerable: true,
-  		writable: true,
+  		writable: true
   	};
   	if('value' in description) {
   		obj[prop] = description.value;
@@ -280,8 +245,8 @@
   	} return it;
   }
 
-  function Proxy$3(target, handler) {
-  	if(this instanceof Proxy$3) {
+  function Proxy$2(target, handler) {
+  	if(this instanceof Proxy$2) {
   		if(!target || !handler) throw new TypeError("Cannot create proxy with a non-object as target or handler");
   		if(isFunction(target)) {
   			return proxyFunction(this, target, handler);
@@ -420,8 +385,8 @@
   };
   getPrototypeOf.sham = true;
 
-  function Proxy$2(target, handler) {
-  	if(this instanceof Proxy$2) {
+  function Proxy$1(target, handler) {
+  	if(this instanceof Proxy$1) {
   		if(!target || !handler) throw new TypeError("Cannot create proxy with a non-object as target or handler");
   		if(isFunction(target)) {
   			return proxyFunction(this, target, handler);
@@ -480,9 +445,18 @@
   		VBProxyVal = get(target, key, receiver);
   	}
   };
+  // window.VBProxyMethod = function(args, target, key, receiver, handler) {
+  // 	var method;
+  // 	if(handler.get) {
+  // 		method = handler.get(target, key, receiver);
+  // 	} else {
+  // 		method = get(target, key, receiver);
+  // 	}
+  // 	return method.apply(receiver, args);
+  // };
 
   function createVBProxyFactory(keys) {
-  	var className = "VBProxyClass_" + (seq++);
+  	var className = "VBProxyObject_" + (seq++);
   	var buffer = ["Class " + className];
   	buffer.push('	Public [__proto__]');
   	buffer.push('	Public [constructor]');
@@ -527,12 +501,96 @@
   	window.execScript(buffer.join('\n'), 'VBScript');
   	return factoryName;
   }
+
+  var arrayMethods = [
+  	'entries', 'every', 'forEach', 'keys', 'values', '@@iterator',
+  	'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some',
+  	'join', 'map', 'reduce', 'reduceRight',
+  	'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with',
+  	'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift',
+  ];
+
   function proxyArrayVB(me, target, handler) {
-  	// TODO
+  	me = VBProxyArrayFactory();
+  	me.__proto__ = getPrototypeOf(target);
+  	me.constructor = target.constructor;
+  	me['@@Target'] = target;
+  	me['@@Handler'] = handler;
+  	arrayMethods.forEach(function(key) {
+  		me[key] = function() {
+  			var method = VBProxyArrayGetter(target, key, me, handler);
+  			return method.apply(target, arguments);
+  		};
+  	});
+  	return me;
   }
 
+  window.VBProxyArraySetter = function(target, key, value, receiver, handler) {
+  	if(handler.set) {
+  		if(handler.set(target, key, value, receiver) === false) {
+  			throw new TypeError("'set' on proxy: trap returned falsish for property '" + key + "'");
+  		}
+  	} else {
+  		target[key] = value;
+  	}
+  };
+  window.VBProxyArrayGetter = function(target, key, receiver, handler) {
+  	if(handler.get) {
+  		return handler.get(target, key, receiver);
+  	} else {
+  		return get(target, key, receiver);
+  	}
+  };
+  window.VBProxyArrayMethod = function(target, key, receiver, handler) {
+  	var method = VBProxyArrayGetter(target, key, receiver, handler);
+  	var args = slice.call(arguments, 4);
+  	return method.apply(target, args);
+  };
+
+
+  var buffer = [
+  	"Class VBProxyArray",
+  	'	Public [__proto__]',
+  	'	Public [constructor]',
+  	'	Public [@@WeakMap]',
+  	'	Public [@@Target]',
+  	'	Public [@@Handler]'
+  ];
+  var i = arrayMethods.length;
+  while(i--) {
+  	buffer.push('	Public [' + arrayMethods[i] + ']');
+  }
+  buffer = buffer.concat([
+  	'	Public Function valueOf()',
+  	'		valueOf = VBProxyArrayMethod([@@Target], "valueOf", Me, [@@Handler])',
+  	'	End Function',
+  	'	Public Function toLocaleString()',
+  	'		toLocaleString = VBProxyArrayMethod([@@Target], "toLocaleString", Me, [@@Handler])',
+  	'	End Function',
+  	'	Public Function toString()',
+  	'		toString = VBProxyArrayMethod([@@Target], "toString", Me, [@@Handler])',
+  	'	End Function',
+  	'	Public Property Get Default()',
+  	'		Default = Me.toString()',
+  	'	End Property',
+
+  	'	Public Property Let [length](val)',
+  	'		Call VBProxySetter([@@Target], "length", val, Me, [@@Handler])',
+  	'	End Property',
+  	'	Public Property Get [length]',
+  	'		[length] = VBProxyArrayGetter([@@Target], "length", Me, [@@Handler])',
+  	'	End Property',
+  	'End Class',
+  	'Function VBProxyArrayFactory()',
+  	'	Dim o',
+  	'	Set o = New VBProxyArray',
+  	'	Set VBProxyArrayFactory = o',
+  	'End Function'
+  ]);
+  window.execScript(buffer.join('\n'), 'VBScript');
+
   // 火狐低版本内置了一个Proxy对象，可以通过typeof来区分
-  var Proxy$1 = isFunction(Proxy$4) ? Proxy$4 : Proxy$2;
+  var Proxy = isFunction(Proxy$3) ? Proxy$3 : Proxy$1;
 
   function revokedHandle() {
   	throw new TypeError('Proxy has been revoked');
@@ -540,7 +598,7 @@
 
   function revocable(target, handler) {
   	var trapHandler = {};
-  	var proxy = new Proxy$1(target, handler);
+  	var proxy = new Proxy(target, handler);
   	var revoke = function() {
   		trapHandler.has =
   			trapHandler.get =
@@ -557,11 +615,11 @@
   			trapHandler.getOwnPropertyDescriptor =
   			revokedHandle;
   	};
-  	proxy = new Proxy$1(proxy, trapHandler);
+  	proxy = new Proxy(proxy, trapHandler);
   	return { proxy: proxy, revoke: revoke };
   };
 
-  var $inject_Proxy_revocable = Proxy$4 && Proxy$4.revocable || revocable;
+  var $inject_Proxy_revocable = Proxy$3 && Proxy$3.revocable || revocable;
 
   var Number$1 = window.Number;
 
@@ -621,37 +679,8 @@
   	Object$1.getOwnPropertyDescriptor = getOwnPropertyDescriptor;
   }
 
-  var Math$1 = window.Math;
-
-  var floor = Math.floor;
-
-  var ceil = Math.ceil;
-
-  // from core-js https://github.com/zloirock/core-js
-  function trunc(it) {
-  	return (it > 0 ? floor : ceil)(it);
-  }
-
-  if(!Math$1.trunc) {
-  	Math$1.trunc = trunc;
-  }
-
-  function at(n) {
-  	var len = this.length;
-  	if(isNaN(n)) {
-  		return this[0];
-  	}
-  	n = Math.trunc(n);
-  	if(n >= 0) {
-  		return this[n];
-  	}
-  	return this[len + n];
-  }
-
-  definePrototype(Array, 'at', at);
-
   QUnit.test('Proxy', function (assert) {
-    var p = new Proxy$1({
+    var p = new Proxy({
       a: undefined,
       b: undefined,
       c: undefined
@@ -669,13 +698,12 @@
     var target = {
       a: undefined
     };
-    var p2 = new Proxy$1(target, {});
+    var p2 = new Proxy(target, {});
     p2.a = 37; // 操作转发到目标
 
-    console.log(target.a);
     assert.equal(target.a, 37); // 操作已经被正确地转发
 
-    var person = new Proxy$1({
+    var person = new Proxy({
       age: undefined
     }, {
       set: function (obj, prop, value) {
@@ -717,7 +745,7 @@
           base.apply(that, args);
         }
       };
-      var proxy = new Proxy$1(base, handler);
+      var proxy = new Proxy(base, handler);
       descriptor.value = proxy;
       Object.defineProperty(base.prototype, "constructor", descriptor);
       return proxy;
@@ -733,7 +761,7 @@
     assert.equal(Peter.sex, "M");
     assert.equal(Peter.name, "Peter");
     assert.equal(Peter.age, 13);
-    var view = new Proxy$1({
+    var view = new Proxy({
       selected: null
     }, {
       set: function (obj, prop, newval) {
@@ -759,7 +787,7 @@
     var i2 = view.selected = document.getElementById("item-2");
     assert.equal(i1.getAttribute("aria-selected"), "false");
     assert.equal(i2.getAttribute("aria-selected"), "true");
-    var products = new Proxy$1({
+    var products = new Proxy({
       latestBrowser: undefined,
       browsers: ["Internet Explorer", "Netscape"]
     }, {
@@ -801,21 +829,19 @@
   });
   QUnit.test('Proxy#construct', function (assert) {
     function Cat() {}
-    var PCat = new Proxy$1(Cat, {});
+    var PCat = new Proxy(Cat, {});
     assert.ok(Cat.prototype === PCat.prototype);
     function monster1(disposition) {
       this.disposition = disposition;
     }
     var handler1 = {
       construct: function (target, args) {
-        console.log("Creating a " + target.name);
-        // Expected output: "Creating a monster1"
-        return _construct(target, args);
+        return construct(target, args);
       }
     };
-    var proxy1 = new Proxy$1(monster1, handler1);
+    var proxy1 = new Proxy(monster1, handler1);
     assert.equal(new proxy1('fierce').disposition, "fierce");
-    var p = new Proxy$1(function () {}, {
+    var p = new Proxy(function () {}, {
       construct: function (target, argumentsList, newTarget) {
         assert.equal(argumentsList.join(", "), "1");
         return {
@@ -824,7 +850,7 @@
       }
     });
     assert.equal(new p(1).value, 10, "下面代码演示如何拦截 new 操作。");
-    var p2 = new Proxy$1(function () {}, {
+    var p2 = new Proxy(function () {}, {
       construct: function (target, argumentsList, newTarget) {
         return 1;
       }
@@ -832,7 +858,7 @@
     assert.throws(function () {
       new p2();
     }, TypeError, "下面的代码违反了约定。");
-    var p3 = new Proxy$1({}, {
+    var p3 = new Proxy({}, {
       construct: function (target, argumentsList, newTarget) {
         return {};
       }
@@ -847,16 +873,14 @@
     }
     var handler = {
       apply: function (target, thisArg, argumentsList) {
-        console.log("Calculate sum: " + argumentsList);
-        // Expected output: "Calculate sum: 1,2"
-
+        assert.deepEqual(argumentsList, [1, 2]);
         return target(argumentsList[0], argumentsList[1]) * 10;
       }
     };
-    var proxy1 = new Proxy$1(sum, handler);
+    var proxy1 = new Proxy(sum, handler);
     assert.equal(sum(1, 2), 3);
     assert.equal(proxy1(1, 2), 30);
-    var p = new Proxy$1(function () {}, {
+    var p = new Proxy(function () {}, {
       apply: function (target, thisArg, argumentsList) {
         assert.equal(argumentsList.join(", "), "1, 2, 3");
         return argumentsList[0] + argumentsList[1] + argumentsList[2];
@@ -877,12 +901,12 @@
         return get.apply(void 0, arguments);
       }
     };
-    var proxy1 = new Proxy$1(monster1, handler1);
+    var proxy1 = new Proxy(monster1, handler1);
     assert.equal(proxy1.eyeCount, 4);
     // Expected output: 4
 
     assert.equal(proxy1.secret, "easi ... shhhh!");
-    var p = new Proxy$1({
+    var p = new Proxy({
       a: undefined
     }, {
       get: function (target, prop, receiver) {
@@ -899,25 +923,22 @@
     var handler1 = {
       set: function (obj, prop, value) {
         if (prop === 'eyeCount' && value % 2 !== 0) {
-          console.log('Monsters must have an even number of eyes');
+          assert.deepEqual(value, 1);
         } else {
           return set.apply(void 0, arguments);
         }
       }
     };
-    var proxy1 = new Proxy$1(monster1, handler1);
+    var proxy1 = new Proxy(monster1, handler1);
     proxy1.eyeCount = 1;
-    // Expected output: "Monsters must have an even number of eyes"
-
     assert.equal(proxy1.eyeCount, 4);
     proxy1.eyeCount = 2;
     assert.equal(proxy1.eyeCount, 2);
-    var p = new Proxy$1({
+    var p = new Proxy({
       a: undefined
     }, {
       set: function (target, prop, value, receiver) {
         target[prop] = value;
-        console.log("property set: " + prop + " = " + value);
         return true;
       }
     });
@@ -946,10 +967,51 @@
     assert.equal(_typeof(proxy), "object"); //因为 typeof 不属于可代理操作
   });
 
+  var hasInstance = '@@hasInstance';
+
+  function _instanceof(n, e) {
+  	return null != e && e[hasInstance] ? !!e[Symbol.hasInstance](n) : __instanceof(n, e);
+  }
+
+  function __instanceof(n, e) {
+  	var p = n.__proto__;
+  	return p ? __instanceof(p, e) : n === e.prototype || n instanceof e;
+  }
+
+  var Math$1 = window.Math;
+
+  var floor = Math.floor;
+
+  var ceil = Math.ceil;
+
+  // from core-js https://github.com/zloirock/core-js
+  function trunc(it) {
+  	return (it > 0 ? floor : ceil)(it);
+  }
+
+  if(!Math$1.trunc) {
+  	Math$1.trunc = trunc;
+  }
+
+  function at(n) {
+  	var len = this.length;
+  	if(isNaN(n)) {
+  		return this[0];
+  	}
+  	n = Math.trunc(n);
+  	if(n >= 0) {
+  		return this[n];
+  	}
+  	return this[len + n];
+  }
+
+  definePrototype(Array, 'at', at);
+
   QUnit.test('Proxy#array', function (assert) {
     var getTime = 0;
     var setTime = 0;
-    var arr = new Proxy$1([1, 2, 3], {
+    var target = [1, 2, 3];
+    var arr = new Proxy(target, {
       get: function (target, prop, receiver) {
         if (prop === 'length') {
           getTime++;
@@ -963,22 +1025,43 @@
         return set.apply(void 0, arguments);
       }
     });
-    assert.ok(arr instanceof Array, "instanceof");
-    assert.equal(arr.at(NaN), 1);
+    assert.ok(_instanceof(arr, Array), "instanceof");
+    assert.ok(Array.isArray(arr), "isArray");
+    assert.equal(arr.join(","), "1,2,3", "join");
+    assert.equal(arr.join(), "1,2,3", "join");
+    assert.equal(arr.toString(), "1,2,3", "toString");
+    assert.equal(arr.at(NaN), 1, "at");
     assert.equal(arr.at(0), 1);
     assert.equal(arr.at(1), 2);
     assert.equal(arr.at(2), 3);
-    assert.equal(getTime, 4);
-    assert.equal(arr.length, 3);
-    assert.equal(getTime, 5);
+    getTime = 0;
+    assert.equal(arr.length, 3, "length");
+    assert.equal(getTime, 1, "get length");
     arr.splice(1, 1);
-    assert.equal(arr.length, 2);
-    assert.equal(getTime, 7);
-    assert.equal(setTime, 1);
+    assert.equal(arr.length, 2, "splice");
+    setTime = 0;
     arr.length = 1;
-    assert.equal(setTime, 2);
+    assert.equal(setTime, 1, "set length");
     assert.equal(arr.length, 1);
     assert.equal(arr.at(0), 1);
+    assert.deepEqual(target, [1]);
+    arr.push(2);
+    assert.deepEqual(arr.at(1), 2, "push");
+    assert.deepEqual(arr.length, 2, "push");
+    arr.unshift(3);
+    assert.deepEqual(arr.at(0), 3, "unshift");
+    assert.deepEqual(arr.at(2), 2, "unshift");
+    assert.deepEqual(arr.length, 3, "unshift");
+    arr.reverse();
+    assert.deepEqual(arr.at(0), 2, "reverse");
+    assert.deepEqual(arr.at(1), 1, "reverse");
+    assert.deepEqual(arr.at(2), 3, "reverse");
+    assert.deepEqual(arr.length, 3, "reverse");
+    arr.sort();
+    assert.deepEqual(arr.at(0), 1, "sort");
+    assert.deepEqual(arr.at(1), 2, "sort");
+    assert.deepEqual(arr.at(2), 3, "sort");
+    assert.deepEqual(arr.length, 3, "sort");
   });
 
 })();

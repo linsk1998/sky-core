@@ -87,7 +87,7 @@ module.exports = [{
 				["@babel/plugin-transform-destructuring", { loose: true, "useBuiltIns": true }],
 				"@babel/plugin-transform-duplicate-keys",
 				["@babel/plugin-transform-for-of", { loose: true }],
-				// "@babel/plugin-transform-instanceof",
+				"@babel/plugin-transform-instanceof",
 				"@babel/plugin-transform-literals",
 				"@babel/plugin-transform-new-target",
 				// "@babel/plugin-transform-object-super",
@@ -123,6 +123,7 @@ module.exports = [{
 		polyfill({
 			modules: {
 				".at": "sky-core/polyfill/Array/prototype/at",
+				".forEach": "sky-core/polyfill/Array/prototype/forEach",
 				".bind": "sky-core/polyfill/Function/prototype/bind",
 				"Math.trunc": "sky-core/polyfill/Math/trunc",
 				"Number.isInteger": "sky-core/polyfill/Number/isInteger",
@@ -184,7 +185,7 @@ module.exports = [{
 				["@babel/plugin-transform-destructuring", { loose: true, "useBuiltIns": true }],
 				"@babel/plugin-transform-duplicate-keys",
 				["@babel/plugin-transform-for-of", { loose: true }],
-				// "@babel/plugin-transform-instanceof",
+				"@babel/plugin-transform-instanceof",
 				"@babel/plugin-transform-literals",
 				"@babel/plugin-transform-new-target",
 				// "@babel/plugin-transform-object-super",
