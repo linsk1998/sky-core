@@ -1,6 +1,6 @@
-
+import "sky-core/polyfill/Array/prototype/forEach";
+import { isNotNullObject } from "../utils/isNotNullObject";
 import { isFunction } from "../utils/isFunction";
-import forEach from "sky-core/pure/Array/prototype/forEach";
 
 var PENDING = 1;
 var RESOLVED = 2;
@@ -38,7 +38,9 @@ function Promise(executor) {
 			me._value = value;
 			me._state = RESOLVED;
 			queueMicrotask(function() {
-				forEach.call(me._resolveds, callAll, me);
+				var a = me._resolveds, len = a.length, i;
+				for(i = 0; i < len; i++)
+					a[i].call(me, me._value);
 				me._resolveds = null;
 			});
 		}
@@ -48,7 +50,9 @@ function Promise(executor) {
 			me._value = reason;
 			me._state = REJECTED;
 			queueMicrotask(function() {
-				forEach.call(me._rejecteds, callAll, me);
+				var a = me._rejecteds, len = a.length, i;
+				for(i = 0; i < len; i++)
+					a[i].call(me, me._value);
 				me._rejecteds = null;
 			});
 		}
@@ -58,9 +62,6 @@ function Promise(executor) {
 	} catch(e) {
 		reject(e);
 	}
-}
-function callAll(fn) {
-	fn.call(this, this._value);
 }
 function nextPromise(before, after, resolve, reject) {
 	return function(value) {
@@ -154,17 +155,15 @@ Promise.all = function(promises) {
 	return new Promise(function(resolve, reject) {
 		var result = new Array(promises.length);
 		var c = 0;
-		forEach.call(promises, function(one, index) {
-			if(one && typeof isFunction(one.then)) {
+		promises.forEach.call(function(one, index) {
+			if(isNotNullObject(one) && isFunction(one.then)) {
 				one.then(function(data) {
 					c++;
 					result[index] = data;
 					if(c >= promises.length) {
 						resolve(result);
 					}
-				}, function(error) {
-					reject(error);
-				});
+				}, reject);
 			} else {
 				c++;
 				if(c >= promises.length) {
@@ -179,13 +178,10 @@ Promise.race = function(promises) {
 		throw new TypeError('You must pass an array to all.');
 	}
 	return new Promise(function(resolve, reject) {
-		forEach.call(promises, function(one) {
-			one.then(function() {
-				resolve();
-			}, function() {
-				reject();
-			});
-		});
+		var i = promises.length;
+		while(i--) {
+			promises[i].then(resolve, reject);
+		}
 	});
 };
 

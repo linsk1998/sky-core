@@ -674,7 +674,7 @@
 
 	var slice = String.prototype['slice'];
 
-	function repeat$1(count) {
+	function repeat(count) {
 	  if (this == null) {
 	    throw new TypeError("repeat called on null or undefined");
 	  }
@@ -735,7 +735,7 @@
 	  while (--index >= 0) {
 	    if (s !== '' || index === 0 || data[index] !== 0) {
 	      var t = String(data[index]);
-	      s = s === '' ? t : s + repeat$1.call('0', 7 - t.length) + t;
+	      s = s === '' ? t : s + repeat.call('0', 7 - t.length) + t;
 	    }
 	  }
 	  return s;
@@ -780,12 +780,12 @@
 	    } else {
 	      multiply(data, 0, z);
 	      multiply(data, 1 << -e, 0);
-	      result = dataToString(data) + repeat$1.call('0', fractDigits);
+	      result = dataToString(data) + repeat.call('0', fractDigits);
 	    }
 	  }
 	  if (fractDigits > 0) {
 	    k = result.length;
-	    result = sign + (k <= fractDigits ? '0.' + repeat$1.call('0', fractDigits - k) + result : slice.call(result, 0, k - fractDigits) + '.' + slice.call(result, k - fractDigits));
+	    result = sign + (k <= fractDigits ? '0.' + repeat.call('0', fractDigits - k) + result : slice.call(result, 0, k - fractDigits) + '.' + slice.call(result, k - fractDigits));
 	  } else {
 	    result = sign + result;
 	  }
@@ -1090,7 +1090,7 @@
 	  }
 	});
 
-	function forEach$2(callback) {
+	function forEach$1(callback) {
 	  var thisArg = arguments[1];
 	  for (var i = 0; i < this.length; i++) {
 	    if (i in this) {
@@ -1099,7 +1099,7 @@
 	  }
 	}
 
-	definePrototype(Array, 'forEach', forEach$2);
+	definePrototype(Array, 'forEach', forEach$1);
 
 	QUnit.test('Array#forEach', function (assert) {
 	  var forEach = Array.prototype.forEach;
@@ -1193,7 +1193,7 @@
 	  }
 	});
 
-	function map$1(fn) {
+	function map(fn) {
 	  var thisArg = arguments[1];
 	  var arr = [];
 	  for (var k = 0, length = this.length; k < length; k++) {
@@ -1202,7 +1202,7 @@
 	  return arr;
 	}
 
-	definePrototype(Array, 'map', map$1);
+	definePrototype(Array, 'map', map);
 
 	QUnit.test('Array#map', function (assert) {
 	  var map = Array.prototype.map;
@@ -2303,8 +2303,6 @@
 
 	var Promise$3 = window.Promise;
 
-	var forEach$1 = Array.prototype.forEach || forEach$2;
-
 	var queueMicrotask$2 = window.queueMicrotask;
 
 	var ticks = null;
@@ -2376,7 +2374,10 @@
 	      me._value = value;
 	      me._state = RESOLVED;
 	      queueMicrotask(function () {
-	        forEach$1.call(me._resolveds, callAll, me);
+	        var a = me._resolveds,
+	          len = a.length,
+	          i;
+	        for (i = 0; i < len; i++) a[i].call(me, me._value);
 	        me._resolveds = null;
 	      });
 	    }
@@ -2386,7 +2387,10 @@
 	      me._value = reason;
 	      me._state = REJECTED;
 	      queueMicrotask(function () {
-	        forEach$1.call(me._rejecteds, callAll, me);
+	        var a = me._rejecteds,
+	          len = a.length,
+	          i;
+	        for (i = 0; i < len; i++) a[i].call(me, me._value);
 	        me._rejecteds = null;
 	      });
 	    }
@@ -2396,9 +2400,6 @@
 	  } catch (e) {
 	    reject(e);
 	  }
-	}
-	function callAll(fn) {
-	  fn.call(this, this._value);
 	}
 	function nextPromise(before, after, resolve, reject) {
 	  return function (value) {
@@ -2497,17 +2498,15 @@
 	  return new Promise$2(function (resolve, reject) {
 	    var result = new Array(promises.length);
 	    var c = 0;
-	    forEach$1.call(promises, function (one, index) {
-	      if (one && typeof isFunction(one.then)) {
+	    promises.forEach.call(function (one, index) {
+	      if (isNotNullObject(one) && isFunction(one.then)) {
 	        one.then(function (data) {
 	          c++;
 	          result[index] = data;
 	          if (c >= promises.length) {
 	            resolve(result);
 	          }
-	        }, function (error) {
-	          reject(error);
-	        });
+	        }, reject);
 	      } else {
 	        c++;
 	        if (c >= promises.length) {
@@ -2522,13 +2521,10 @@
 	    throw new TypeError('You must pass an array to all.');
 	  }
 	  return new Promise$2(function (resolve, reject) {
-	    forEach$1.call(promises, function (one) {
-	      one.then(function () {
-	        resolve();
-	      }, function () {
-	        reject();
-	      });
-	    });
+	    var i = promises.length;
+	    while (i--) {
+	      promises[i].then(resolve, reject);
+	    }
 	  });
 	};
 
@@ -6148,7 +6144,7 @@
 	  });
 	});
 
-	definePrototype(String, 'repeat', repeat$1);
+	definePrototype(String, 'repeat', repeat);
 
 	QUnit.test('String#repeat', function (assert) {
 	  var repeat = String.prototype.repeat;
@@ -7369,8 +7365,6 @@
 	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);
 	});
 
-	var repeat = String.prototype.repeat || repeat$1;
-
 	function padStart(targetLength) {
 	  var x = targetLength - this.length;
 	  if (x > 0) {
@@ -7380,7 +7374,7 @@
 	    }
 	    var len = padString.length;
 	    if (len) {
-	      return repeat.call(padString, Math.ceil(x / len)).substr(0, x) + this;
+	      return padString.repeat(Math.ceil(x / len)).substr(0, x) + this;
 	    }
 	  }
 	  return String(this);
@@ -7421,7 +7415,7 @@
 	    }
 	    var len = padString.length;
 	    if (len) {
-	      return this + repeat.call(padString, Math.ceil(x / len)).substr(0, x);
+	      return this + padString.repeat(Math.ceil(x / len)).substr(0, x);
 	    }
 	  }
 	  return String(this);
@@ -7667,10 +7661,8 @@
 	  // }
 	});
 
-	var map = Array.prototype.map || map$1;
-
 	function flatMap(fn) {
-	  return flat.call(map.call(this, fn, arguments[1]), 1);
+	  return flat.call(this.map(fn, arguments[1]), 1);
 	}
 
 	definePrototype(Array, 'flatMap', flatMap);

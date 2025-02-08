@@ -1,9 +1,3 @@
-
-import map from "sky-core/pure/Array/prototype/map";
-import findIndex from "sky-core/pure/Array/prototype/findIndex";
-import forEach from "sky-core/pure/Array/prototype/forEach";
-import some from "sky-core/pure/Array/prototype/some";
-
 function URLSearchParams(paramsString) {
 	this._data = new Array();
 	if(paramsString) {
@@ -31,18 +25,22 @@ URLSearchParams.prototype.append = function(key, value) {
 	this._data.push([value, key]);
 };
 URLSearchParams.prototype.get = function(key) {
-	var index = findIndex.call(this._data, function(item) {
-		return item[1] == key;
-	});
-	if(index < 0) return null;
-	return this._data[index][0];
+	var data = this._data,
+		len = data.length, i, item;
+	for(i = 0; i < len; i++) {
+		item = data[i];
+		if(item[1] == key) {
+			return item[0];
+		}
+	}
+	return null;
 };
 URLSearchParams.prototype.getAll = function(key) {
 	var data = this._data,
-		len = data.length;
+		len = data.length, i, item;
 	var r = [];
-	for(var i = 0; i < len; i++) {
-		var item = data[i];
+	for(i = 0; i < len; i++) {
+		item = data[i];
 		if(item[1] == key) {
 			r.push(item[0]);
 		}
@@ -50,14 +48,16 @@ URLSearchParams.prototype.getAll = function(key) {
 	return r;
 };
 URLSearchParams.prototype.set = function(key, value) {
-	var index = findIndex.call(this._data, function(item) {
-		return item[1] == key;
-	});
-	if(index < 0) {
-		this.append(key, value);
-	} else {
-		this._data[index][0] = value;
+	var data = this._data,
+		len = data.length, i, item;
+	for(i = 0; i < len; i++) {
+		item = data[i];
+		if(item[1] == key) {
+			item[0] = value;
+			return;
+		}
 	}
+	this.append(key, value);
 };
 URLSearchParams.prototype.delete = function(key) {
 	var data = this._data,
@@ -70,9 +70,14 @@ URLSearchParams.prototype.delete = function(key) {
 	}
 };
 URLSearchParams.prototype.has = function(key) {
-	return some.call(this._data, function(item) {
-		return item[1] == key;
-	});
+	var arr = this._data;
+	var i = arr.length;
+	while(i--) {
+		if(arr[i][1] == key) {
+			return true;
+		}
+	}
+	return false;
 };
 URLSearchParams.prototype.toString = function() {
 	return this._data.map.call(this._data, function(item) {
@@ -85,6 +90,7 @@ URLSearchParams.prototype.sort = function() {
 	});
 };
 URLSearchParams.prototype.forEach = function(fn) {
-	forEach.apply(this._data, fn, arguments[1]);
+	// 如果业务中使用了.forEach则会自动依赖Array 的forEach,因此不必手动引入依赖。
+	this._data.forEach(fn, arguments[1]);
 };
 export { URLSearchParams };
