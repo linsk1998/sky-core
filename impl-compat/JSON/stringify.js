@@ -1,3 +1,4 @@
+import { toString } from "../../native/Object/prototype/toString";
 import { slice } from "../../native/String/prototype/slice";
 import { isSymbol } from "../../utils-compat/isSymbol";
 import { isFunction } from "../../utils/isFunction";
@@ -25,7 +26,7 @@ export function stringify(obj) {
 		case true:
 			return obj;
 		default:
-			var type = Object.prototype.toString.call(obj);
+			var type = toString.call(obj);
 			switch(type) {
 				case '[object String]':
 					return '"' + escapeString(obj) + '"';

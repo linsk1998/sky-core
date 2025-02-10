@@ -1,6 +1,7 @@
 import { isFunction } from "../utils/isFunction";
 import { anObject } from "../utils/anObject";
 import { slice } from "../native/Array/prototype/slice";
+import { defineProperty } from "../native/Object/defineProperty";
 
 export function Proxy(target, handler) {
 	if(this instanceof Proxy) {
@@ -66,20 +67,49 @@ function proxyProperty(key, me, target, handler) {
 		}
 	});
 }
+function proxyPropertyMethod(key, me, target, handler) {
+	Object.defineProperty(me, key, {
+		enumerable: false,
+		configurable: false,
+		writable: false,
+		value: function() {
+			if(handler.get) {
+				var method = handler.get(target, key, this);
+				if(method === target[key]) {
+					return method.apply(target, arguments);
+				}
+				return method.apply(this, arguments);
+			} else {
+				return target[key].apply(target, arguments);
+			}
+		}
+	});
+}
 export function proxyArray(me, target, handler) {
-	me = Object.create(target);
-	var keys = Object.getOwnPropertyNames(Array.prototype);
-	// [
-	// 	'entries', 'every', 'forEach', 'keys', 'values',
-	// 	'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some',
-	// 	'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString',
-	// 	'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with',
-	// 	'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift',
-	// 	'length', 'constructor'
-	// ];
+	if(defineProperty) {
+		me = Object.create(Array.prototype);
+		proxyProperty('length', me, target, handler);
+	} else {
+		me = {};
+		proxyProperty('length', me, target, handler);
+		me.__proto__ = target;
+	}
+	me.constructor = target.constructor;
+	// var keys = Object.getOwnPropertyNames(Array.prototype);
+	var keys = [
+		'entries', 'every', 'forEach', 'keys', 'values',
+		'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some',
+		'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString', 'valueOf',
+		'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with',
+		'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift',
+		// 'length'
+	];
 	var i = keys.length;
 	while(i--) {
-		proxyProperty(keys[i], me, target, handler);
+		proxyPropertyMethod(keys[i], me, target, handler);
 	}
+	// proxyPropertyMethod('toString', me, target, handler);
+	// proxyPropertyMethod('toLocaleString', me, target, handler);
+	// proxyPropertyMethod('valueOf', me, target, handler);
 	return me;
 }

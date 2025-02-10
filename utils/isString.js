@@ -1,4 +1,5 @@
+import { toString } from "../native/Object/prototype/toString";
 
-export function isString(obj){
-	return Object.prototype.toString.call(obj)==='[object String]';
+export function isString(obj) {
+	return toString.call(obj) === '[object String]';
 };

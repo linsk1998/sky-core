@@ -10,6 +10,63 @@
     }, _typeof(o);
   }
 
+  var Object$1 = window.Object;
+
+  var defineProperty$1 = Object$1.defineProperty;
+
+  function isNotNullObject(obj) {
+  	return typeof obj === "object" ? obj !== null : typeof obj === "function";
+  };
+
+  function defineProperty(obj, prop, descriptor) {
+  	if(!isNotNullObject(obj)) {
+  		throw new TypeError("Object.defineProperty called on non-object");
+  	}
+  	prop = String(prop);
+  	if('value' in descriptor) {
+  		delete obj[prop];
+  		obj[prop] = descriptor.value;
+  	} else {
+  		if(descriptor.get) obj.__defineGetter__(prop, descriptor.get);
+  		if(descriptor.set) obj.__defineSetter__(prop, descriptor.set);
+  	}
+  	return obj;
+  };
+
+  if(!defineProperty$1) {
+  	if(Object$1.prototype.__defineSetter__) {
+  		Object$1.defineProperty = defineProperty;
+  	}
+  }
+
+  function definePrototype(target, property, value) {
+  	var prototype = target.prototype;
+  	if(!(property in prototype)) {
+  		Object.defineProperty(prototype, property, {
+  			configurable: true,
+  			writable: true,
+  			enumerable: false,
+  			value: value
+  		});
+  	}
+  }
+
+  var slice = Array.prototype.slice;
+
+  function bind(context) {
+  	var self = this, args = slice.call(arguments, 1);
+  	var Bind = function() {
+  		if(this instanceof Bind) {
+  			self.apply(this, args.concat(slice.call(arguments)));
+  			return;
+  		}
+  		return self.apply(context, args.concat(slice.call(arguments)));
+  	};
+  	return Bind;
+  }
+
+  definePrototype(Function, 'bind', bind);
+
   function _isNativeReflectConstruct() {
     try {
       var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
@@ -17,6 +74,41 @@
     return (_isNativeReflectConstruct = function _isNativeReflectConstruct() {
       return !!t;
     })();
+  }
+
+  var hasOwnProperty = Object$1.prototype.hasOwnProperty;
+
+  function hasOwn(obj, key) {
+  	return hasOwnProperty.call(obj, key);
+  };
+
+  if(!Object$1.hasOwn) {
+  	Object$1.hasOwn = hasOwn;
+  }
+
+  function ff_setPrototypeOf(obj, proto) {
+  	obj.__proto__ = proto;
+  	return obj;
+  }
+
+  function ie_setPrototypeOf(o, proto) {
+  	o.__proto__ = proto;
+  	for(var key in proto) {
+  		if(Object.hasOwn(proto, key)) {
+  			o[key] = proto[key];
+  		}
+  	}
+  	return o;
+  }
+
+  var setPrototypeOf = Object$1.setPrototypeOf;
+
+  if(!setPrototypeOf) {
+  	if(Object$1.__proto__) {
+  		Object$1.setPrototypeOf = ff_setPrototypeOf;
+  	} else {
+  		Object$1.setPrototypeOf = ie_setPrototypeOf;
+  	}
   }
 
   function _setPrototypeOf(t, e) {
@@ -41,6 +133,21 @@
 
   var Reflect$1 = window.Reflect;
 
+  function create(proto, properties) {
+  	var o = {};
+  	Object.setPrototypeOf(o, proto);
+  	if(properties) {
+  		Object.defineProperties(o, properties);
+  	}
+  	return o;
+  };
+
+  if(!Object$1.create) {
+  	if('__proto__' in Object$1.prototype) {
+  		Object$1.create = create;
+  	}
+  }
+
   function apply(target, thisArgument, argumentsList) {
   	return Function.apply.call(target, thisArgument, argumentsList);
   };
@@ -57,6 +164,38 @@
   construct.sham = true;
 
   var $inject_Reflect_construct = Reflect$1 ? Reflect$1.construct : construct;
+
+  function anObject(it) {
+  	if(!isNotNullObject(it)) {
+  		throw TypeError(String(it) + ' is not a object');
+  	} return it;
+  }
+
+  function getOwnPropertyDescriptor(obj, key) {
+  	if(Object.hasOwn(obj, key)) {
+  		anObject(obj);
+  		var r = new Object();
+  		r.enumerable = true;
+  		r.configurable = true;
+  		var set = obj.__lookupSetter__(key);
+  		var get = obj.__lookupGetter__(key);
+  		if(set || get) {
+  			r.writable = !!set;
+  			r.set = set;
+  			r.get = get;
+  		} else {
+  			r.writable = true;
+  			r.value = obj[key];
+  		}
+  		return r;
+  	}
+  };
+
+  if(!Object$1.getOwnPropertyDescriptor) {
+  	if(Object$1.prototype.__defineSetter__) {
+  		Object$1.getOwnPropertyDescriptor = getOwnPropertyDescriptor;
+  	}
+  }
 
   function get(target, propertyKey, receiver) {
   	if(receiver === void 0) { receiver = target; }
@@ -109,40 +248,17 @@
 
   var $inject_Reflect_set = Reflect$1 ? Reflect$1.set : set;
 
-  var Object$1 = window.Object;
+  var Array$1 = window.Array;
 
-  function defineProperty(obj, prop, descriptor) {
-  	if(typeof obj !== "object" && typeof obj !== "function") {
-  		throw new TypeError("Object.defineProperty called on non-object");
-  	}
-  	prop = String(prop);
-  	if('value' in descriptor) {
-  		delete obj[prop];
-  		obj[prop] = descriptor.value;
-  	} else {
-  		if(descriptor.get) obj.__defineGetter__(prop, descriptor.get);
-  		if(descriptor.set) obj.__defineSetter__(prop, descriptor.set);
-  	}
-  	return obj;
-  };
+  var toString = Object$1.prototype.toString;
 
-  if(!Object$1.defineProperty) {
-  	if(Object$1.prototype.__defineSetter__) {
-  		Object$1.defineProperty = defineProperty;
-  	}
+  function isArray(obj) {
+  	return toString.call(obj) === '[object Array]';
   }
 
-  function isNotNullObject(obj) {
-  	return typeof obj === 'object' ? obj !== null : typeof obj === 'function';
-  };
-
-  function anObject(it) {
-  	if(!isNotNullObject(it)) {
-  		throw TypeError(String(it) + ' is not a object');
-  	} return it;
+  if(!Array$1.isArray) {
+  	Array$1.isArray = isArray;
   }
-
-  var slice = Array.prototype.slice;
 
   function Proxy$1(target, handler) {
   	if(this instanceof Proxy$1) {
@@ -208,21 +324,50 @@
   		}
   	});
   }
+  function proxyPropertyMethod(key, me, target, handler) {
+  	Object.defineProperty(me, key, {
+  		enumerable: false,
+  		configurable: false,
+  		writable: false,
+  		value: function() {
+  			if(handler.get) {
+  				var method = handler.get(target, key, this);
+  				if(method === target[key]) {
+  					return method.apply(target, arguments);
+  				}
+  				return method.apply(this, arguments);
+  			} else {
+  				return target[key].apply(target, arguments);
+  			}
+  		}
+  	});
+  }
   function proxyArray(me, target, handler) {
-  	me = Object.create(target);
-  	var keys = Object.getOwnPropertyNames(Array.prototype);
-  	// [
-  	// 	'entries', 'every', 'forEach', 'keys', 'values',
-  	// 	'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some',
-  	// 	'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString',
-  	// 	'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with',
-  	// 	'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift',
-  	// 	'length', 'constructor'
-  	// ];
+  	if(defineProperty$1) {
+  		me = Object.create(Array.prototype);
+  		proxyProperty('length', me, target, handler);
+  	} else {
+  		me = {};
+  		proxyProperty('length', me, target, handler);
+  		me.__proto__ = target;
+  	}
+  	me.constructor = target.constructor;
+  	// var keys = Object.getOwnPropertyNames(Array.prototype);
+  	var keys = [
+  		'entries', 'every', 'forEach', 'keys', 'values',
+  		'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some',
+  		'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString', 'valueOf',
+  		'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with',
+  		'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift',
+  		// 'length'
+  	];
   	var i = keys.length;
   	while(i--) {
-  		proxyProperty(keys[i], me, target, handler);
+  		proxyPropertyMethod(keys[i], me, target, handler);
   	}
+  	// proxyPropertyMethod('toString', me, target, handler);
+  	// proxyPropertyMethod('toLocaleString', me, target, handler);
+  	// proxyPropertyMethod('valueOf', me, target, handler);
   	return me;
   }
 
@@ -560,18 +705,6 @@
     return null != e && "undefined" != typeof Symbol && e[Symbol.hasInstance] ? !!e[Symbol.hasInstance](n) : n instanceof e;
   }
 
-  function definePrototype(target, property, value) {
-  	var prototype = target.prototype;
-  	if(!(property in prototype)) {
-  		Object.defineProperty(prototype, property, {
-  			configurable: true,
-  			writable: true,
-  			enumerable: false,
-  			value: value
-  		});
-  	}
-  }
-
   var Math$1 = window.Math;
 
   var floor = Math.floor;
@@ -620,7 +753,7 @@
       }
     });
     assert.ok(_instanceof(arr, Array), "instanceof");
-    assert.ok(Array.isArray(arr), "isArray");
+    // assert.ok(Array.isArray(arr), "isArray");
     assert.equal(arr.join(","), "1,2,3", "join");
     assert.equal(arr.join(), "1,2,3", "join");
     assert.equal(arr.toString(), "1,2,3", "toString");

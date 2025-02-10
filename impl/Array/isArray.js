@@ -1,3 +1,5 @@
+import { toString } from "../../native/Object/prototype/toString";
+
 export function isArray(obj) {
-	return Object.prototype.toString.call(obj) === '[object Array]';
+	return toString.call(obj) === '[object Array]';
 }

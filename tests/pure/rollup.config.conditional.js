@@ -31,9 +31,15 @@ module.exports = [{
 		polyfill({
 			modules: {
 				".at": "sky-core/polyfill/Array/prototype/at",
+				".bind": "sky-core/polyfill/Function/prototype/bind",
+				"Array.isArray": "sky-core/polyfill/Array/isArray",
 				"Math.trunc": "sky-core/polyfill/Math/trunc",
 				"Number.isInteger": "sky-core/polyfill/Number/isInteger",
+				"Object.create": "sky-core/polyfill/Object/create",
+				"Object.setPrototypeOf": "sky-core/polyfill/Object/setPrototypeOf",
 				"Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
+				"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
+				"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
 			},
 		}),
 		inject({

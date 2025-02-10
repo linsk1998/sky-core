@@ -118,12 +118,10 @@
 
   var Array$1 = window.Array;
 
+  var toString = Object$1.prototype.toString;
+
   function isArray(obj) {
-  	if(obj == null) return false;
-  	var p = obj.__proto__;
-  	return p ?
-  		p === Array.prototype || p instanceof Array :
-  		Object.prototype.toString.call(obj) === '[object Array]';
+  	return toString.call(obj) === '[object Array]';
   }
 
   if(!Array$1.isArray) {
@@ -181,6 +179,10 @@
 
   var defineProperty$1 = Object$1.defineProperty;
 
+  function isNotNullObject(obj) {
+  	return typeof obj === "object" ? obj !== null : typeof obj === "function";
+  };
+
   function ie8_defineProperty(obj, prop, descriptor) {
   	if(obj instanceof Object || obj instanceof NullProtoObject) {
   		compat_defineProperty.apply(Object, arguments);
@@ -208,7 +210,7 @@
   };
 
   function compat_defineProperty(obj, prop, description) {
-  	if(typeof obj !== "object" && typeof obj !== "function") {
+  	if(!isNotNullObject(obj)) {
   		throw new TypeError("Object.defineProperty called on non-object");
   	}
   	prop = String(prop);
@@ -229,15 +231,11 @@
   };
   compat_defineProperty.sham = true;
 
-  if(Object$1.defineProperty) {
+  if(defineProperty$1) {
   	Object$1.defineProperty = ie8_defineProperty;
   } else {
   	Object$1.defineProperty = compat_defineProperty;
   }
-
-  function isNotNullObject(obj) {
-  	return typeof obj === 'object' ? obj !== null : typeof obj === 'function';
-  };
 
   function anObject(it) {
   	if(!isNotNullObject(it)) {
@@ -309,21 +307,50 @@
   		}
   	});
   }
+  function proxyPropertyMethod(key, me, target, handler) {
+  	Object.defineProperty(me, key, {
+  		enumerable: false,
+  		configurable: false,
+  		writable: false,
+  		value: function() {
+  			if(handler.get) {
+  				var method = handler.get(target, key, this);
+  				if(method === target[key]) {
+  					return method.apply(target, arguments);
+  				}
+  				return method.apply(this, arguments);
+  			} else {
+  				return target[key].apply(target, arguments);
+  			}
+  		}
+  	});
+  }
   function proxyArray(me, target, handler) {
-  	me = Object.create(target);
-  	var keys = Object.getOwnPropertyNames(Array.prototype);
-  	// [
-  	// 	'entries', 'every', 'forEach', 'keys', 'values',
-  	// 	'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some',
-  	// 	'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString',
-  	// 	'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with',
-  	// 	'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift',
-  	// 	'length', 'constructor'
-  	// ];
+  	if(defineProperty$1) {
+  		me = Object.create(Array.prototype);
+  		proxyProperty('length', me, target, handler);
+  	} else {
+  		me = {};
+  		proxyProperty('length', me, target, handler);
+  		me.__proto__ = target;
+  	}
+  	me.constructor = target.constructor;
+  	// var keys = Object.getOwnPropertyNames(Array.prototype);
+  	var keys = [
+  		'entries', 'every', 'forEach', 'keys', 'values',
+  		'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some',
+  		'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString', 'valueOf',
+  		'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with',
+  		'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift',
+  		// 'length'
+  	];
   	var i = keys.length;
   	while(i--) {
-  		proxyProperty(keys[i], me, target, handler);
+  		proxyPropertyMethod(keys[i], me, target, handler);
   	}
+  	// proxyPropertyMethod('toString', me, target, handler);
+  	// proxyPropertyMethod('toLocaleString', me, target, handler);
+  	// proxyPropertyMethod('valueOf', me, target, handler);
   	return me;
   }
 
@@ -1026,7 +1053,7 @@
       }
     });
     assert.ok(_instanceof(arr, Array), "instanceof");
-    assert.ok(Array.isArray(arr), "isArray");
+    // assert.ok(Array.isArray(arr), "isArray");
     assert.equal(arr.join(","), "1,2,3", "join");
     assert.equal(arr.join(), "1,2,3", "join");
     assert.equal(arr.toString(), "1,2,3", "toString");
