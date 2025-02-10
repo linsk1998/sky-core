@@ -7,6 +7,7 @@ export function fixEvent(ele, type, e) {
 	e.stopPropagation = stopPropagation;
 	e.preventDefault = preventDefault;
 	e.currentTarget = ele;
+	if(e.isTrusted !== false) e.isTrusted = true;
 	switch(type) {
 		case 'load':
 			if(target.tagName === 'SCRIPT') {
