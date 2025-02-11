@@ -15,30 +15,30 @@
 			padding: 10px;
 		}
 	</style>
+	<script src="./polyfill.js"></script>
 </head>
 
 <body>
+	<pre id="output"></pre>
 	<div id="container">
 		<button id="btn" type="button">按钮</button>
 	</div>
-	<pre id="output"></pre>
-	<script src="../polyfill.js"></script>
 	<button type="button" onclick="clearOutput()">清除输出</button>
-	<button type="button" onclick="addEvent()">添加事件</button>
-	<button type="button" onclick="removeEvent()">移除事件</button>
-	<button type="button" onclick="dispatchEvent()">触发事件</button>
+	<button type="button" onclick="onAddEvent()">添加事件</button>
+	<button type="button" onclick="onRemoveEvent()">移除事件</button>
+	<button type="button" onclick="onDispatchEvent()">触发事件</button>
 	<script>
 		function onclick(e) {
 			document.getElementById("output").textContent += "点击了按钮";
 		}
-		function addEvent() {
+		function onAddEvent() {
 			document.getElementById("btn").addEventListener('click', onclick);
 		}
-		function removeEvent() {
+		function onRemoveEvent() {
 			document.getElementById("btn").removeEventListener('click', onclick);
 		}
-		function dispatchEvent() {
-			document.getElementById("btn").dispatchEvent('click', onclick);
+		function onDispatchEvent() {
+			document.getElementById("btn").dispatchEvent(new Event('click'));
 		}
 		function clearOutput() {
 			document.getElementById("output").textContent = "";

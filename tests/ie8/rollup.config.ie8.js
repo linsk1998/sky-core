@@ -9,7 +9,7 @@ module.exports = {
 	input: 'tests/ie8/polyfill.es',
 	output: {
 		strict: true,
-		file: 'tests/ie8/polyfill.js',
+		file: 'tests/ie8/web/polyfill.js',
 		format: 'iife'
 	},
 	plugins: [

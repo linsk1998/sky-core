@@ -8,7 +8,11 @@
 
 	var Element = window.Element;
 
-	var slice = Array.prototype['slice'];
+	var slice = Array.prototype.slice;
+
+	function isNotNullObject(obj) {
+	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
+	}
 
 	var notCapture = ["load", "unload", "scroll", "resize", "blur", "focus", "mouseenter", "mouseleave", "input", "propertychange"];
 
@@ -59,6 +63,7 @@
 	  e.stopPropagation = stopPropagation;
 	  e.preventDefault = preventDefault;
 	  e.currentTarget = ele;
+	  if (e.isTrusted !== false) e.isTrusted = true;
 	  switch (type) {
 	    case 'load':
 	      if (target.tagName === 'SCRIPT') {
@@ -178,7 +183,7 @@
 
 	function addEvent(el, type, cb, options) {
 	  var bubble;
-	  if (typeof options === "object") {
+	  if (isNotNullObject(options)) {
 	    bubble = !options.capture;
 	  } else {
 	    bubble = !options;
@@ -306,7 +311,7 @@
 
 	function removeEvent(el, ev, cb, options) {
 	  var bubble;
-	  if (typeof options === "object") {
+	  if (isNotNullObject(options)) {
 	    bubble = !options.capture;
 	  } else {
 	    bubble = !options;
@@ -368,6 +373,31 @@
 	    args.unshift(this);
 	    dispatchEvent.apply(this, args);
 	  });
+	}
+
+	function isFunction(obj) {
+	  return typeof obj === 'function';
+	}
+
+	var Event = window.Event;
+
+	// IE 有个全局对象 Event
+	if (!isFunction(Event)) {
+	  if (document.createEventObject) {
+	    window.Event = function (type, init) {
+	      var e = document.createEventObject();
+	      e.type = type;
+	      e.isTrusted = false;
+	      if (init) {
+	        e.bubbles = init.bubbles;
+	        e.cancelable = init.cancelable;
+	      } else {
+	        e.bubbles = false;
+	        e.cancelable = false;
+	      }
+	      return e;
+	    };
+	  }
 	}
 
 	function getElementText(el) {
