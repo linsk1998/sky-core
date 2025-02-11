@@ -1,18 +1,18 @@
-export function set(target,propertyKey,value,receiver){
-	if(receiver===void 0){ receiver=target}
-	var desc=target["@@desc:"+propertyKey];
-	if(desc){
-		if(desc.set){
-			try{
-				desc.set.call(receiver,value);
+export function set(target, propertyKey, value, receiver) {
+	if(receiver === void 0) { receiver = target; }
+	var desc = target["@@desc:" + propertyKey];
+	if(desc) {
+		if(desc.set) {
+			try {
+				desc.set.call(receiver, value);
 				return true;
-			}catch(e){
+			} catch(e) {
 				return false;
 			}
 		}
-		desc.value=value;
+		desc.value = value;
 		return true;
 	}
-	target[propertyKey]=value;
+	target[propertyKey] = value;
 	return true;
 };

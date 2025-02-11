@@ -10,3 +10,4 @@ export function construct(target, argumentsList, NewTarget) {
 	}
 	return o;
 };
+construct.sham = true;
