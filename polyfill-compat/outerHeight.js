@@ -1,0 +1,1 @@
+window.outerHeight = screen.availHeight;

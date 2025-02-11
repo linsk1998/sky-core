@@ -1,7 +1,5 @@
-import scrollingElement from "sky-core/pure/document/scrollingElement";
-
-export var getInnerHeight = 'innerHeight' in document ? function() {
-	return document.innerHeight;
+export var getInnerHeight = 'innerHeight' in window ? function() {
+	return window.innerHeight;
 } : function() {
-	return scrollingElement.clientHeight;
+	return document.scrollingElement.clientHeight;
 };
