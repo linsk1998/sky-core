@@ -8,7 +8,9 @@ declare module "sky-core" {
 	export function isString(arg: any): arg is (String | string);
 	export function isFunction(arg: any): arg is Function;
 	export function isNumber(arg: any): arg is (Number | number);
+	/** @deprecated isNotNullObject */
 	export function isObject(arg: any): arg is Object;
+	/** @deprecated isObject */
 	export function isNotNullObject(arg: any): arg is object;
 	export function isDefined(arg?: any): arg is any;
 	export function isWindow(arg: any): arg is Window;
@@ -41,7 +43,6 @@ declare module "sky-core" {
 	export function findLast(arr: Record<string, any>[], key: string, value: any): any;
 	/** @deprecated 建议用原生的 */
 	export function find(arr: Record<string, any>[], key: string, value: any): any;
-	/** @deprecated 建议用原生的 */
 	export function sortBy(arr: Record<string, any>[], key: string): Record<string, any>[];
 	export function pluck(arr: Record<string, any>[], key: string): Record<string, any>[];
 	export function sortedIndex(arr: any[], value: any): number;

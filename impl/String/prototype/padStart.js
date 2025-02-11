@@ -1,4 +1,4 @@
-import repeat from "sky-core/pure/String/prototype/repeat";
+import "sky-core/polyfill/String/prototype/repeat";
 
 export function padStart(targetLength) {
 	var x = targetLength - this.length;
@@ -9,7 +9,7 @@ export function padStart(targetLength) {
 		}
 		var len = padString.length;
 		if(len) {
-			return repeat.call(padString, Math.ceil(x / len)).substr(0, x) + this;
+			return padString.repeat(Math.ceil(x / len)).substr(0, x) + this;
 		}
 	}
 	return String(this);

@@ -1,5 +1,3 @@
-
-import includes from "sky-core/pure/Array/prototype/includes";
 export function omit(obj, keys) {
 	var rest = {};
 	if(obj) {
@@ -7,7 +5,7 @@ export function omit(obj, keys) {
 		var i = ownKeys.length;
 		while(i--) {
 			var key = ownKeys[i];
-			if(!includes.call(keys, key)) {
+			if(!keys.includes(key)) {
 				rest[key] = obj[key];
 			}
 		}

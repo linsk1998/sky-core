@@ -53,7 +53,8 @@
 		"build:web": "rollup --config build/rollup.config.web.js && rollup --config build/rollup.config.web-compat.js && rollup --config build/rollup.config.web-modern.js",
 		"build:sky": "rollup --config build/rollup.config.sky.js && rollup --config build/rollup.config.sky-compat.js && rollup --config build/rollup.config.sky-modern.js",
 		"build:advance": "rollup --config build/rollup.config.advance-es2015.js && rollup --config build/rollup.config.advance-modern.js && rollup --config build/rollup.config.advance-compat.js",
-		"test": "rollup --config tests/pure/rollup.config.conditional.js",
+		"test": "rollup --config tests/rollup.config.conditional.js",
+		"test:ie8": "rollup --config tests/ie8/rollup.config.ie8.js",
 		"publish:npm": "npm publish --registry=https://registry.npmjs.org"
 	},
 	"keywords": [

@@ -1,5 +1,6 @@
+import "sky-core/polyfill/Array/prototype/map";
 import { flat } from "./flat";
-import map from "sky-core/pure/Array/prototype/map";
+
 export function flatMap(fn) {
-	return flat.call(map.call(this, fn, arguments[1]), 1);
+	return flat.call(this.map(fn, arguments[1]), 1);
 }
