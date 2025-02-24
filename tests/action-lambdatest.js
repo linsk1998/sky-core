@@ -53,7 +53,7 @@ async function seleniumTest(url, capabilities) {
 			throw new Error("tests failed");
 		}
 	} catch(err) {
-		console.log("test failed with reason " + err.error);
+		console.log("test failed with reason " + err.message);
 		await driver.executeScript('lambda-status=failed');
 		throw err;
 	} finally {

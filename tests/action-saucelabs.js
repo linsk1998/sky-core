@@ -11,6 +11,12 @@ const SAUCE_ACCESS_KEY = process.env.SAUCE_ACCESS_KEY;
 
 const hubUrl = `https://${SAUCE_USERNAME}:${SAUCE_ACCESS_KEY}@ondemand.us-west-1.saucelabs.com/wd/hub`;
 
+function sleep(ms) {
+	return new Promise(function(resolve) {
+		setTimeout(resolve, ms);
+	});
+}
+
 async function corejsTest(capabilities) {
 	return seleniumTest(
 		'http://raw.githack.com/linsk1998/sky-core/master/docs/tests/corejs/2.html',
@@ -54,6 +60,8 @@ async function seleniumTest(url, capabilities) {
 }
 Promise.resolve().then(
 	() => corejsTest({ browserName: "Internet Explorer", browserVersion: "11", platformName: 'Windows 10', "sauce:options": sauceOption })
+).then(
+	() => sleep(3000)
 ).then(
 	() => corejsTest({ browserName: 'Chrome', browserVersion: '87', platformName: 'Windows 10', 'sauce:options': sauceOption })
 ).then(() => {
