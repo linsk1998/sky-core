@@ -3,7 +3,7 @@ const path = require("path");
 const { babel } = require("@rollup/plugin-babel");
 const importPlugin = require("rollup-plugin-import");
 const nodeResolve = require("@rollup/plugin-node-resolve");
-const sky = require("../createRollupPlugin");
+const sky = require("../../createRollupPlugin");
 
 var babelRuntimePath = require.resolve("@babel/runtime/package.json", {
 	paths: [process.cwd()]
@@ -14,7 +14,7 @@ module.exports = [{
 	input: 'tests/corejs/es/index.js',
 	output: {
 		strict: false,
-		file: 'tests/corejs/conditional/compat.js',
+		file: 'docs/tests/corejs/compat.js',
 		format: 'iife'
 	},
 	treeshake: false,
@@ -25,7 +25,7 @@ module.exports = [{
 			libraryName: "sky-core",
 			libraryDirectory: "utils"
 		}),
-		...require("./conditional-compat"),
+		...require("../conditional-compat"),
 		babel({
 			babelHelpers: 'runtime',
 			babelrc: false,
@@ -100,7 +100,7 @@ module.exports = [{
 	input: 'tests/corejs/es/index.js',
 	output: {
 		strict: false,
-		file: 'tests/corejs/conditional/modern.js',
+		file: 'docs/tests/corejs/modern.js',
 		format: 'iife'
 	},
 	treeshake: false,
@@ -111,7 +111,7 @@ module.exports = [{
 			libraryName: "sky-core",
 			libraryDirectory: "utils"
 		}),
-		...require("./conditional-modern"),
+		...require("../conditional-modern"),
 		babel({
 			babelHelpers: 'runtime',
 			babelrc: false,

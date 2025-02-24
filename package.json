@@ -42,7 +42,8 @@
 		"rollup": "^2.45.2",
 		"rollup-plugin-es3ify": "0.0.4",
 		"rollup-plugin-import": "^1.0.2",
-		"rollup-plugin-polyfill-inject": "^1.0.3"
+		"rollup-plugin-polyfill-inject": "^1.0.3",
+		"selenium-webdriver": "^4.29.0"
 	},
 	"license": "MIT",
 	"module": "dist/utils.esm.js",
@@ -53,8 +54,10 @@
 		"build:web": "rollup --config build/rollup.config.web.js && rollup --config build/rollup.config.web-compat.js && rollup --config build/rollup.config.web-modern.js",
 		"build:sky": "rollup --config build/rollup.config.sky.js && rollup --config build/rollup.config.sky-compat.js && rollup --config build/rollup.config.sky-modern.js",
 		"build:advance": "rollup --config build/rollup.config.advance-es2015.js && rollup --config build/rollup.config.advance-modern.js && rollup --config build/rollup.config.advance-compat.js",
-		"test": "rollup --config tests/rollup.config.conditional.js",
+		"test:corejs": "rollup --config tests/corejs/rollup.config.js",
 		"test:ie8": "rollup --config tests/ie8/rollup.config.ie8.js",
+		"test:lambdatest": "node tests/action-lambdatest.js",
+		"test:saucelabs": "node tests/action-saucelabs.js",
 		"publish:npm": "npm publish --registry=https://registry.npmjs.org"
 	},
 	"keywords": [
@@ -62,5 +65,5 @@
 		"core-js",
 		"shim"
 	],
-	"version": "0.16.0"
+	"version": "0.17.0"
 }

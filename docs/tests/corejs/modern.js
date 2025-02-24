@@ -2,11 +2,13 @@
 
 	var Object$1 = window.Object;
 
+	var defineProperty$1 = Object$1.defineProperty;
+
 	function isNotNullObject(obj) {
 		return typeof obj === "object" ? obj !== null : typeof obj === "function";
 	};
 
-	function defineProperty$1(obj, prop, descriptor) {
+	function defineProperty(obj, prop, descriptor) {
 		if(!isNotNullObject(obj)) {
 			throw new TypeError("Object.defineProperty called on non-object");
 		}
@@ -21,9 +23,9 @@
 		return obj;
 	};
 
-	if(!Object$1.defineProperty) {
+	if(!defineProperty$1) {
 		if(Object$1.prototype.__defineSetter__) {
-			Object$1.defineProperty = defineProperty$1;
+			Object$1.defineProperty = defineProperty;
 		}
 	}
 
@@ -65,8 +67,6 @@
 
 	var Symbol$6 = window.Symbol;
 
-	var defineProperty = Object$1.defineProperty;
-
 	var defineProperties$1 = Object$1.defineProperties;
 
 	var nonEnumerable = !!defineProperties$1;
@@ -74,7 +74,7 @@
 	var iterator$1 = (function() {
 		if(!Symbol$6) {
 			if(nonEnumerable) {
-				defineProperty(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
+				defineProperty$1(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@iterator';
 		} else {
@@ -215,27 +215,60 @@
 	}();
 	var WHITESPACES = "\t\n\x0B\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
 
-	function _arrayLikeToArray(r, a) {
-	  (null == a || a > r.length) && (a = r.length);
-	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-	  return n;
+	var slice$1 = Array.prototype.slice;
+
+	function bind(context) {
+		var self = this, args = slice$1.call(arguments, 1);
+		var Bind = function() {
+			if(this instanceof Bind) {
+				self.apply(this, args.concat(slice$1.call(arguments)));
+				return;
+			}
+			return self.apply(context, args.concat(slice$1.call(arguments)));
+		};
+		return Bind;
 	}
+
+	definePrototype(Function, 'bind', bind);
 
 	var Array$1 = window.Array;
 
-	function isString(obj){
-		return Object.prototype.toString.call(obj)==='[object String]';
-	};
+	var toString$1 = Object$1.prototype.toString;
 
-	function isFunction(obj) {
-		return typeof obj === 'function';
-	};
+	function isArray(obj) {
+		return toString$1.call(obj) === '[object Array]';
+	}
+
+	if(!Array$1.isArray) {
+		Array$1.isArray = isArray;
+	}
+
+	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
+
+	if(accessor) {
+		if(!('name' in Function.prototype)) {
+			Object.defineProperty(Function.prototype, 'name', {
+				enumerable: false, configurable: true,
+				get: function() {
+					return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
+				}
+			});
+		}
+	}
 
 	var Number$1 = window.Number;
 
 	if(!('MAX_SAFE_INTEGER' in Number$1)) {
 		Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
 	}
+
+	function isString(obj) {
+		return toString$1.call(obj) === '[object String]';
+	};
+
+	function isFunction(obj) {
+		return typeof obj === 'function';
+	};
 
 	var push = Array.prototype.push;
 
@@ -311,17 +344,10 @@
 		Array$1.from = from;
 	}
 
-	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
-
-	if(accessor) {
-		if(!('name' in Function.prototype)) {
-			Object.defineProperty(Function.prototype, 'name', {
-				enumerable: false, configurable: true,
-				get: function() {
-					return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
-				}
-			});
-		}
+	function _arrayLikeToArray(r, a) {
+	  (null == a || a > r.length) && (a = r.length);
+	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+	  return n;
 	}
 
 	function _unsupportedIterableToArray(r, a) {
@@ -331,25 +357,6 @@
 	    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
 	  }
 	}
-
-	function isArray(obj){
-		return Object.prototype.toString.call(obj)==='[object Array]';
-	}
-
-	if(!Array$1.isArray) {
-		Array$1.isArray = isArray;
-	}
-
-	var slice$1 = Array.prototype.slice;
-
-	function bind(context) {
-		var self = this, args = slice$1.call(arguments, 1);
-		return function() {
-			return self.apply(context, args.concat(slice$1.call(arguments)));
-		};
-	}
-
-	definePrototype(Function, 'bind', bind);
 
 	function _createForOfIteratorHelperLoose(r, e) {
 	  var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
@@ -1485,7 +1492,7 @@
 		Object$1.getPrototypeOf = ie_getPrototypeOf;
 	}
 
-	var $inject_Object_defineProperty = Object.defineProperty || defineProperty$1;
+	var $inject_Object_defineProperty = Object.defineProperty || defineProperty;
 
 	function keys$3() {
 		var array = this;
@@ -1511,12 +1518,6 @@
 
 	definePrototype(Array, 'keys', keys$3);
 
-	var keys$2 = Object$1.keys;
-
-	function isNotSymbolKey(key) {
-		return key.substring(0, 2) !== "@@";
-	}
-
 	var hasOwnProperty = Object$1.prototype.hasOwnProperty;
 
 	function hasOwn(obj, key) {
@@ -1525,6 +1526,12 @@
 
 	if(!Object$1.hasOwn) {
 		Object$1.hasOwn = hasOwn;
+	}
+
+	var keys$2 = Object$1.keys;
+
+	function isNotSymbolKey(key) {
+		return key.substring(0, 2) !== "@@";
 	}
 
 	function ie_keys(obj) {
@@ -1896,6 +1903,10 @@
 	  assert.same(result.w, 33);
 	});
 
+	// QUnit.test('Object.defineProperties.sham flag', assert => {
+	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
+	// });
+
 	QUnit.test('Function#bind', function (assert) {
 	  var bind = Function.prototype.bind;
 	  assert.isFunction(bind);
@@ -2210,14 +2221,6 @@
 		Promise$2 = window.Promise = Promise$3;
 	}
 
-	var Error$2 = window.Error;
-
-	function Error$1(message) {
-		this.message = message;
-	}
-	Error$1.prototype = Error$2.prototype;
-	window.Error = Error$1;
-
 	function promise_finally(onCompleted) {
 		return this.then(function(value) {
 			var r = onCompleted();
@@ -2235,6 +2238,14 @@
 	};
 
 	definePrototype(Promise$2, 'finally', promise_finally);
+
+	var Error$2 = window.Error;
+
+	function Error$1(message) {
+		this.message = message;
+	}
+	Error$1.prototype = Error$2.prototype;
+	window.Error = Error$1;
 
 	var _Symbol$3 = GLOBAL.Symbol || {};
 	var setPrototypeOf = Object.setPrototypeOf,
@@ -2961,10 +2972,10 @@
 		var key = "@@" + desc + ":" + symbol_sqe$1;
 		this.__name__ = key;
 		if(nonEnumerable) {
-			defineProperty(Object.prototype, key, {
+			defineProperty$1(Object.prototype, key, {
 				enumerable: false, configurable: true,
 				set: function(value) {
-					defineProperty(this, key, {
+					defineProperty$1(this, key, {
 						enumerable: false, configurable: true, writable: true, value: value
 					});
 				}
@@ -3186,6 +3197,11 @@
 	  // assert.same(weakmap.get(object2), undefined, 'works with frozen objects #4');
 	});
 
+	// QUnit.test('WeakMap#@@toStringTag', assert => {
+	//   assert.strictEqual(WeakMap.prototype[Symbol.toStringTag], 'WeakMap', 'WeakMap::@@toStringTag is `WeakMap`');
+	//   assert.strictEqual(String(new WeakMap()), '[object WeakMap]', 'correct stringification');
+	// });
+
 	var WeakSet$2 = window.WeakSet;
 
 	function WeakSet$1() {
@@ -3329,7 +3345,10 @@
 	  }, 'return false on primitive');
 	});
 
-	var Map$2 = window.Map;
+	// QUnit.test('WeakSet::@@toStringTag', assert => {
+	//   assert.strictEqual(WeakSet.prototype[Symbol.toStringTag], 'WeakSet', 'WeakSet::@@toStringTag is `WeakSet`');
+	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
+	// });
 
 	function entries$2() {
 		var array = this;
@@ -3354,6 +3373,8 @@
 	}
 
 	definePrototype(Array, 'entries', entries$2);
+
+	var Map$2 = window.Map;
 
 	function createSubMap() {
 		function Map() {
@@ -4872,7 +4893,7 @@
 	var $inject_Symbol_hasInstance = (function() {
 		if(!Symbol$6) {
 			if(nonEnumerable) {
-				defineProperty(Object.prototype, '@@hasInstance', { enumerable: false, configurable: false, writable: true });
+				defineProperty$1(Object.prototype, '@@hasInstance', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@hasInstance';
 		} else {
@@ -4883,7 +4904,7 @@
 	var $inject_Symbol_asyncIterator = (function() {
 		if(!Symbol$6) {
 			if(nonEnumerable) {
-				defineProperty(Object.prototype, '@@asyncIterator', { enumerable: false, configurable: false, writable: true });
+				defineProperty$1(Object.prototype, '@@asyncIterator', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@asyncIterator';
 		} else {
@@ -4996,7 +5017,7 @@
 			case true:
 				return obj;
 			default:
-				var type = Object.prototype.toString.call(obj);
+				var type = toString$1.call(obj);
 				switch(type) {
 					case '[object String]':
 						return '"' + escapeString(obj) + '"';
@@ -7167,7 +7188,7 @@
 	}
 
 	if(!Object$1.getOwnPropertyDescriptors) {
-		if(defineProperty) {
+		if(defineProperty$1) {
 			Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors$ie;
 		} else if(Object$1.prototype.__defineSetter__) {
 			Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors$ff;
@@ -7904,8 +7925,8 @@
 	  });
 	});
 
-	function isRegExp(obj){
-		return Object.prototype.toString.call(obj)==='[object RegExp]';
+	function isRegExp(obj) {
+		return toString$1.call(obj) === '[object RegExp]';
 	};
 
 	var stringEscapes = {
