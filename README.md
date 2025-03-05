@@ -138,3 +138,7 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 * 不支持function .prototype .name。
 * 不支持不可枚举
 * Symbol WellKnow 只支持hasInstance、iterator
+
+# Core-js
+
+本项目的部分实现和测试用例取自 [core-js](https://github.com/zloirock/core-js)
