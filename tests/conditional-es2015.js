@@ -22,6 +22,8 @@ module.exports = [
 			'AggregateError': "sky-core/polyfill/AggregateError",
 			/* Chrome93+ Firefox92+ Safari15.4+*/
 			"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
+			/* Chrome98+ Firefox94+ Safari15.4+*/
+			"structuredClone": "sky-core/polyfill/structuredClone",
 			// ES2024
 			/* Chrome117+ Firefox119+ Safari17.4+ */
 			"Object.groupBy": "sky-core/polyfill/Object/groupBy",
