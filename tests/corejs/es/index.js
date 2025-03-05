@@ -209,6 +209,8 @@ import "./es.object.has-own";
 /* Chrome97+ Firefox104+ Safari15.4+*/
 import "./es.array.find-last-index";
 import "./es.array.find-last";
+/* Chrome98+ Firefox94+ Safari15.4+*/
+import "./web.structured-clone";
 /* Chrome110+ Firefox115+ Safari16+*/
 import "./es.array.to-reversed";
 import "./es.array.to-sorted";
@@ -223,4 +225,5 @@ import "./es.object.group-by";
 import "./es.map.group-by";
 /* Chrome119+ Firefox121+ Safari17.4+ */
 import "./es.promise.with-resolvers";
-
+// /* Chrome126+ Firefox126+ Safari18+ */
+// import "./web.url-parse";

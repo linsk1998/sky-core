@@ -1,7 +1,7 @@
 import { Event } from "../native/Event";
 import { isFunction } from "../utils/isFunction";
 
-if(isFunction(Event)) {
+if(!isFunction(Event)) {
 	if(document.createEvent) {
 		window.Event = function(type, init) {
 			var e = document.createEvent('Event');

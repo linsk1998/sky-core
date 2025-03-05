@@ -22,9 +22,14 @@ function createRollupPlugin(browser) {
 				bid = path.resolve(__dirname, "./utils-" + browser + "/" + suffix + ".js");
 				if(fs.existsSync(bid)) {
 					return bid;
-				} else {
-					return path.resolve(__dirname, "./utils/" + suffix + ".js");
 				}
+				if(browser == "es2015") {
+					bid = path.resolve(__dirname, "./utils-modern/" + suffix + ".js");
+					if(fs.existsSync(bid)) {
+						return bid;
+					}
+				}
+				return path.resolve(__dirname, "./utils/" + suffix + ".js");
 			}
 			prefix = "sky-core/polyfill/";
 			if(id.startsWith(prefix)) {

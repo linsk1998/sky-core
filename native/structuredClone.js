@@ -1,0 +1,1 @@
+export var structuredClone = window.structuredClone;

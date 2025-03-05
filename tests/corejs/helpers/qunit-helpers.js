@@ -177,3 +177,12 @@ QUnit.assert.same = function(a, b, message) {
 		message,
 	});
 };
+
+QUnit.assert.notSame = function(a, b, message) {
+	this.pushResult({
+		result: !is(a, b),
+		actual: a,
+		expected: b,
+		message,
+	});
+};

@@ -47,7 +47,9 @@ export var NullProtoObject = function() {
 		activeXDocument = document.domain && new ActiveXObject('htmlfile');
 	} catch(error) { /* ignore */ }
 	NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
+	var proto = NullProtoObject.prototype;
 	var i = dontEnums.length;
-	while(i--) delete NullProtoObject.prototype[dontEnums[i]];
+	while(i--) delete proto[dontEnums[i]];
+	delete proto.constructor;
 	return NullProtoObject();
 };

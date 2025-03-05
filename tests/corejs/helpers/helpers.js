@@ -88,3 +88,18 @@ return class extends Parent { /* empty */ };
 // 		}
 // 	};
 // }
+
+export function fromSource(source) {
+	try {
+		return Function(`return ${source}`)();
+	} catch { /* empty */ }
+}
+
+export function bufferToArray(buffer) {
+	const array = [];
+	const view = new DataView(buffer);
+	for(let i = 0, { byteLength } = view; i < byteLength; ++i) {
+		array.push(view.getUint8(i));
+	}
+	return array;
+}
