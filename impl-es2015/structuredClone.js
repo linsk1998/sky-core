@@ -34,7 +34,7 @@ export function structuredClone(obj) {
 				r.cause = obj.cause;
 			}
 			if('errors' in obj) {
-				r.errors = obj.errors.map(structuredClone$fix);
+				r.errors = arrayClone(obj.errors);
 			}
 			return r;
 		}
@@ -58,6 +58,29 @@ export function structuredClone(obj) {
 				return new DataView(new Uint8Array(obj.buffer).buffer);
 			case '[object Blob]':
 				return obj.slice(0, obj.size, obj.type);
+			case '[object BigInt]':
+				return new Object(obj.valueOf());
+			case '[object File]':
+				return new File([obj], obj.name, {
+					type: obj.type,
+					lastModified: obj.lastModified
+				});
+			case '[object FileList]':
+				const transfer = new DataTransfer();
+				for(let it of obj) {
+					transfer.items.add(it);
+				}
+				return transfer.files;
+			case '[object DOMRectReadOnly]':
+				return new DOMRectReadOnly(obj.x, obj.y, obj.width, obj.height);
+			case '[object DOMRect]':
+				return new DOMRect(obj.x, obj.y, obj.width, obj.height);
+			case '[object DOMPointReadOnly]':
+				return new DOMPointReadOnly(obj.x, obj.y, obj.z, obj.w);
+			case '[object DOMPoint]':
+				return new DOMPoint(obj.x, obj.y, obj.z, obj.w);
+			case '[object DOMQuad]':
+				return new DOMQuad(obj.p1, obj.p2, obj.p3, obj.p4);
 			default:
 				throw new Error("Failed to execute 'structuredClone' on " + type);
 		}
@@ -102,10 +125,21 @@ export function structuredClone$fix(obj) {
 				r.cause = obj.cause;
 			}
 			if('errors' in obj) {
-				r.errors = obj.errors.map(structuredClone$fix);
+				r.errors = arrayClone$fix(obj.errors);
 			}
 			return r;
 		}
 	}
-	return native_structuredClone(obj);
+	return native_structuredClone.apply(this, arguments);
+}
+function arrayClone$fix(obj) {
+	var r, keys, len, i, key;
+	r = new Array(obj.length);
+	keys = Object.keys(obj);
+	len = keys.length;
+	for(i = 0; i < len; i++) {
+		key = keys[i];
+		r[key] = structuredClone$fix(obj[key]);
+	}
+	return r;
 }

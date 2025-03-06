@@ -1,1 +1,1 @@
-export { default as Promise } from "../native/Promise";
+export { Promise as default } from "../native/Promise";

@@ -10,7 +10,7 @@ export function withAt(index, value) {
 	if(index < 0 || index >= this.length) {
 		throw new RangeError("Invalid index: " + index);
 	}
-	var arr = Array.from(this);
+	var arr = slice.call(this);
 	arr[index] = value;
 	return arr;
 }

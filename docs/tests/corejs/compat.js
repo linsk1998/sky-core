@@ -135,86 +135,17 @@
 	}();
 	var WHITESPACES = "\t\n\x0B\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
 
-	var k$2 = 'slice';
-	var slice_native = Array.prototype[k$2];
-	function slice$2(start, end) {
-	  if (this instanceof Object) {
-	    if (end === undefined) {
-	      return slice_native.call(this, start);
-	    }
-	    return slice_native.call(this, start, end);
-	  }
-	  var i,
-	    r = [];
-	  var len = this.length;
-	  if (start < 0) start += len;
-	  if (end === undefined) end = len;else if (end < 0) end += len;
-	  if (start < end) {
-	    len = end - start;
-	    r = new Array(len);
-	    i = len;
-	    while (i-- > 0) {
-	      r[i] = this[i + start];
-	    }
-	  }
-	  return r;
+	function _arrayLikeToArray(r, a) {
+	  (null == a || a > r.length) && (a = r.length);
+	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+	  return n;
 	}
-	if (![1][k$2](0, undefined).length) {
-	  Array.prototype[k$2] = slice$2;
-	}
-
-	var slice$1 = Array.prototype.slice;
-
-	function bind(context) {
-	  var self = this,
-	    args = slice$1.call(arguments, 1);
-	  var Bind = function () {
-	    if (this instanceof Bind) {
-	      self.apply(this, args.concat(slice$1.call(arguments)));
-	      return;
-	    }
-	    return self.apply(context, args.concat(slice$1.call(arguments)));
-	  };
-	  return Bind;
-	}
-
-	definePrototype(Function, 'bind', bind);
 
 	var Array$1 = window.Array;
 
 	var Object$1 = window.Object;
 
 	var toString$1 = Object$1.prototype.toString;
-
-	function isArray(obj) {
-	  return toString$1.call(obj) === '[object Array]';
-	}
-
-	if (!Array$1.isArray) {
-	  Array$1.isArray = isArray;
-	}
-
-	var defineProperties$1 = Object$1.defineProperties;
-
-	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
-
-	if (accessor) {
-	  if (!('name' in Function.prototype)) {
-	    Object.defineProperty(Function.prototype, 'name', {
-	      enumerable: false,
-	      configurable: true,
-	      get: function () {
-	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
-	      }
-	    });
-	  }
-	}
-
-	var Number$1 = window.Number;
-
-	if (!('MAX_SAFE_INTEGER' in Number$1)) {
-	  Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
-	}
 
 	function isString(obj) {
 	  return toString$1.call(obj) === '[object String]';
@@ -226,8 +157,14 @@
 	}
 	;
 
+	var Number$1 = window.Number;
+
+	if (!('MAX_SAFE_INTEGER' in Number$1)) {
+	  Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
+	}
+
 	var push = Array.prototype.push;
-	function from(arrayLike) {
+	function from$1(arrayLike) {
 	  if (arrayLike == null) {
 	    throw new TypeError("Array.from requires an array-like object - not null or undefined");
 	  }
@@ -297,13 +234,51 @@
 	;
 
 	if (!Array$1.from) {
-	  Array$1.from = from;
+	  Array$1.from = from$1;
 	}
 
-	function _arrayLikeToArray(r, a) {
-	  (null == a || a > r.length) && (a = r.length);
-	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-	  return n;
+	var k$2 = 'slice';
+	var slice_native = Array.prototype[k$2];
+	function slice$2(start, end) {
+	  if (this instanceof Object) {
+	    if (end === undefined) {
+	      return slice_native.call(this, start);
+	    }
+	    return slice_native.call(this, start, end);
+	  }
+	  var i,
+	    r = [];
+	  var len = this.length;
+	  if (start < 0) start += len;
+	  if (end === undefined) end = len;else if (end < 0) end += len;
+	  if (start < end) {
+	    len = end - start;
+	    r = new Array(len);
+	    i = len;
+	    while (i-- > 0) {
+	      r[i] = this[i + start];
+	    }
+	  }
+	  return r;
+	}
+	if (![1][k$2](0, undefined).length) {
+	  Array.prototype[k$2] = slice$2;
+	}
+
+	var defineProperties$1 = Object$1.defineProperties;
+
+	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
+
+	if (accessor) {
+	  if (!('name' in Function.prototype)) {
+	    Object.defineProperty(Function.prototype, 'name', {
+	      enumerable: false,
+	      configurable: true,
+	      get: function () {
+	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
+	      }
+	    });
+	  }
 	}
 
 	function _unsupportedIterableToArray(r, a) {
@@ -313,6 +288,31 @@
 	    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
 	  }
 	}
+
+	function isArray(obj) {
+	  return toString$1.call(obj) === '[object Array]';
+	}
+
+	if (!Array$1.isArray) {
+	  Array$1.isArray = isArray;
+	}
+
+	var slice$1 = Array.prototype.slice;
+
+	function bind(context) {
+	  var self = this,
+	    args = slice$1.call(arguments, 1);
+	  var Bind = function () {
+	    if (this instanceof Bind) {
+	      self.apply(this, args.concat(slice$1.call(arguments)));
+	      return;
+	    }
+	    return self.apply(context, args.concat(slice$1.call(arguments)));
+	  };
+	  return Bind;
+	}
+
+	definePrototype(Function, 'bind', bind);
 
 	function _createForOfIteratorHelperLoose(r, e) {
 	  var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
@@ -414,6 +414,20 @@
 	// 		}
 	// 	};
 	// }
+
+	function fromSource(source) {
+	  try {
+	    return Function("return " + source)();
+	  } catch (_unused2) {/* empty */}
+	}
+	function bufferToArray(buffer) {
+	  var array = [];
+	  var view = new DataView(buffer);
+	  for (var i = 0, byteLength = view.byteLength; i < byteLength; ++i) {
+	    array.push(view.getUint8(i));
+	  }
+	  return array;
+	}
 
 	function isIterable(it) {
 	  var O = Object(it);
@@ -572,6 +586,14 @@
 	QUnit.assert.same = function (a, b, message) {
 	  this.pushResult({
 	    result: is$1(a, b),
+	    actual: a,
+	    expected: b,
+	    message: message
+	  });
+	};
+	QUnit.assert.notSame = function (a, b, message) {
+	  this.pushResult({
+	    result: !is$1(a, b),
 	    actual: a,
 	    expected: b,
 	    message: message
@@ -1374,7 +1396,13 @@
 	var Error$2 = window.Error;
 
 	function Error$1(message) {
-	  this.message = message;
+	  this.message = message === undefined ? "" : String(message);
+	  var options = arguments[1];
+	  if (typeof options === "object" && options !== null) {
+	    if ('cause' in options) {
+	      this.cause = options.cause;
+	    }
+	  }
 	}
 	Error$1.prototype = Error$2.prototype;
 	window.Error = Error$1;
@@ -1625,8 +1653,10 @@
 	    activeXDocument = document.domain && new ActiveXObject('htmlfile');
 	  } catch (error) {/* ignore */}
 	  NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
+	  var proto = NullProtoObject.prototype;
 	  var i = dontEnums.length;
-	  while (i--) delete NullProtoObject.prototype[dontEnums[i]];
+	  while (i--) delete proto[dontEnums[i]];
+	  delete proto.constructor;
 	  return NullProtoObject();
 	};
 
@@ -1663,7 +1693,7 @@
 	  Object$1.hasOwn = hasOwn;
 	}
 
-	function getPrototypeOf(obj) {
+	function getPrototypeOf$1(obj) {
 	  if (obj == null) {
 	    throw new TypeError("Cannot convert undefined or null to object");
 	  }
@@ -1688,10 +1718,10 @@
 	  return obj.constructor.prototype;
 	}
 	;
-	getPrototypeOf.sham = true;
+	getPrototypeOf$1.sham = true;
 
 	if (!Object$1.getPrototypeOf) {
-	  Object$1.getPrototypeOf = getPrototypeOf;
+	  Object$1.getPrototypeOf = getPrototypeOf$1;
 	}
 
 	function isNotNullObject(obj) {
@@ -1753,31 +1783,6 @@
 
 	var $inject_Object_defineProperty = Object.defineProperty ? ie8_defineProperty : compat_defineProperty;
 
-	function keys$2() {
-	  var array = this;
-	  var index = 0;
-	  return {
-	    next: function () {
-	      var value;
-	      var done = array.length <= index;
-	      if (!done) {
-	        value = index;
-	        index++;
-	      }
-	      return {
-	        done: done,
-	        value: value
-	      };
-	    },
-	    '@@iterator': function () {
-	      return this;
-	    },
-	    '@@toStringTag': 'Array Iterator'
-	  };
-	}
-
-	definePrototype(Array, 'keys', keys$2);
-
 	function isJsObject(o) {
 	  if (typeof o !== "object") {
 	    return false;
@@ -1795,7 +1800,7 @@
 	  toString: null
 	}.propertyIsEnumerable('toString');
 
-	function keys$1(obj) {
+	function keys$3(obj) {
 	  if (obj == null) {
 	    throw new TypeError("Cannot convert undefined or null to object");
 	  }
@@ -1803,7 +1808,7 @@
 	    key;
 	  var jsObject = isJsObject(obj);
 	  if (!jsObject) {
-	    var proto = getPrototypeOf(obj);
+	    var proto = getPrototypeOf$1(obj);
 	    if (proto) {
 	      for (key in obj) {
 	        switch (key.substring(0, 2)) {
@@ -1843,8 +1848,33 @@
 	  return result;
 	}
 
+	function keys$2() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = index;
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	definePrototype(Array, 'keys', keys$2);
+
 	if (!Object$1.keys) {
-	  Object$1.keys = keys$1;
+	  Object$1.keys = keys$3;
 	}
 
 	function defineProperties(obj, properties) {
@@ -1938,7 +1968,7 @@
 	  }
 	  var jsObject = isJsObject(obj);
 	  if (!jsObject) {
-	    var proto = getPrototypeOf(obj);
+	    var proto = getPrototypeOf$1(obj);
 	    if (proto) {
 	      for (key in obj) {
 	        switch (key.substring(0, 2)) {
@@ -2217,10 +2247,6 @@
 	  assert.same(result.q, 42);
 	  assert.same(result.w, 33);
 	});
-
-	// QUnit.test('Object.defineProperties.sham flag', assert => {
-	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
-	// });
 
 	QUnit.test('Function#bind', function (assert) {
 	  var bind = Function.prototype.bind;
@@ -3490,11 +3516,6 @@
 	  // assert.same(weakmap.get(object2), undefined, 'works with frozen objects #4');
 	});
 
-	// QUnit.test('WeakMap#@@toStringTag', assert => {
-	//   assert.strictEqual(WeakMap.prototype[Symbol.toStringTag], 'WeakMap', 'WeakMap::@@toStringTag is `WeakMap`');
-	//   assert.strictEqual(String(new WeakMap()), '[object WeakMap]', 'correct stringification');
-	// });
-
 	var WeakSet$2 = window.WeakSet;
 
 	function WeakSet$1() {
@@ -3638,10 +3659,7 @@
 	  }, 'return false on primitive');
 	});
 
-	// QUnit.test('WeakSet::@@toStringTag', assert => {
-	//   assert.strictEqual(WeakSet.prototype[Symbol.toStringTag], 'WeakSet', 'WeakSet::@@toStringTag is `WeakSet`');
-	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
-	// });
+	var Map$2 = window.Map;
 
 	function entries$2() {
 	  var array = this;
@@ -3667,8 +3685,6 @@
 	}
 
 	definePrototype(Array, 'entries', entries$2);
-
-	var Map$2 = window.Map;
 
 	function createMap() {
 	  function Map() {
@@ -3704,7 +3720,7 @@
 	  Map.prototype.clear = clear;
 	  Map.prototype.forEach = forEach;
 	  Map.prototype.entries = entries$1;
-	  Map.prototype.keys = keys;
+	  Map.prototype.keys = keys$1;
 	  Map.prototype.values = values$1;
 	  Map.prototype['@@iterator'] = entries$1;
 	  return Map;
@@ -3895,7 +3911,7 @@
 	function getKey(item) {
 	  return item.key;
 	}
-	function keys() {
+	function keys$1() {
 	  return createIterable(this, getKey);
 	}
 	;
@@ -6942,7 +6958,7 @@
 	  var key;
 	  var jsObject = isJsObject(obj);
 	  if (!jsObject) {
-	    var proto = getPrototypeOf(obj);
+	    var proto = getPrototypeOf$1(obj);
 	    if (proto) {
 	      for (key in obj) {
 	        switch (key.substring(0, 2)) {
@@ -6987,7 +7003,7 @@
 	}
 	;
 
-	function assign(target, varArgs) {
+	function assign$1(target, varArgs) {
 	  if (target == null) {
 	    throw new TypeError('Cannot convert undefined or null to object');
 	  }
@@ -7016,7 +7032,7 @@
 	}
 
 	if (!Object$1.assign) {
-	  Object$1.assign = assign;
+	  Object$1.assign = assign$1;
 	}
 
 	QUnit.test('Object.assign', function (assert) {
@@ -8185,7 +8201,7 @@
 	  }
 	  if (hasEnumBug) {
 	    var i = dontEnums.length;
-	    var proto = getPrototypeOf(obj);
+	    var proto = getPrototypeOf$1(obj);
 	    //遍历nonEnumerableProps数组
 	    while (i--) {
 	      var prop = dontEnums[i];
@@ -8202,8 +8218,10 @@
 
 	function inherits(subClass, superClass) {
 	  forIn(superClass, setKey, subClass);
-	  subClass.prototype = Object.create(superClass.prototype);
-	  subClass.prototype.constructor = subClass;
+	  var prototype = Object.create(superClass.prototype);
+	  prototype.constructor = subClass;
+	  prototype.__proto__ = prototype;
+	  subClass.prototype = prototype;
 	  subClass.__proto__ = superClass.prototype;
 	}
 	;
@@ -8216,10 +8234,16 @@
 	    return new AggregateError$1(errors, message);
 	  }
 	  this.errors = errors;
-	  this.name = "AggregateError";
-	  this.message = message;
+	  this.message = message === undefined ? "" : String(message);
+	  var options = arguments[2];
+	  if (typeof options === "object" && options !== null) {
+	    if ('cause' in options) {
+	      this.cause = options.cause;
+	    }
+	  }
 	}
-	inherits(AggregateError$1, Error);
+	inherits(AggregateError$1, Error$2);
+	AggregateError$1.prototype.name = "AggregateError";
 
 	if (!window.AggregateError) {
 	  window.AggregateError = AggregateError$1;
@@ -8571,6 +8595,536 @@
 	    }) === undefined;
 	  }, 'uses ToLength');
 	  // assert.equal(true, 'find' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
+	});
+
+	function structuredClone$1(obj) {
+	  var r;
+	  if (arguments.length === 0) {
+	    throw new Error("Failed to execute 'structuredClone': 1 argumnet required.");
+	  }
+	  if (typeof obj === "object") {
+	    if (obj === null) {
+	      return obj;
+	    }
+	    if (Array.isArray(obj)) {
+	      return arrayClone(obj);
+	    } else if (obj instanceof NullProtoObject) {
+	      return objectClone({}, obj);
+	    } else if (!(obj instanceof Object)) {
+	      throw new Error("Failed to execute 'structuredClone' on DOM");
+	    } else if (obj.constructor === Object) {
+	      return objectClone({}, obj);
+	    } else if (obj instanceof Set) {
+	      return new Set(obj);
+	    } else if (obj instanceof Map) {
+	      return new Map(obj);
+	    } else if (obj instanceof Array) {
+	      return arrayClone(obj);
+	    } else if (obj instanceof Error) {
+	      r = Object.create(Object.getPrototypeOf(obj));
+	      r.message = obj.message;
+	      r.stack = obj.stack;
+	      if ('cause' in obj) {
+	        r.cause = obj.cause;
+	      }
+	      if ('errors' in obj) {
+	        r.errors = obj.errors;
+	      }
+	      return r;
+	    } else if (obj instanceof Symbol$4) {
+	      throw new Error("Failed to execute 'structuredClone' on Symbol");
+	    }
+	    var type = toString$1.call(obj);
+	    switch (type) {
+	      case '[object Object]':
+	        return objectClone(Object.create(Object.getPrototypeOf(obj)), obj);
+	      case '[object Date]':
+	        return new Date(obj);
+	      case '[object Number]':
+	        return new Number(obj);
+	      case '[object String]':
+	        return new String(obj);
+	      case '[object Boolean]':
+	        return new Boolean(obj.valueOf());
+	      case '[object RegExp]':
+	        return new RegExp(obj);
+	      default:
+	        throw new Error("Failed to execute 'structuredClone' on " + type);
+	    }
+	  } else if (typeof obj === "function") {
+	    throw new Error("Failed to execute 'structuredClone' on Function");
+	  } else {
+	    return obj;
+	  }
+	}
+	function arrayClone(obj) {
+	  var r, keys, len, i, key;
+	  r = new Array(obj.length);
+	  keys = Object.keys(obj);
+	  len = keys.length;
+	  for (i = 0; i < len; i++) {
+	    key = keys[i];
+	    r[key] = structuredClone$1(obj[key]);
+	  }
+	  return r;
+	}
+	function objectClone(r, obj) {
+	  var keys, len, i, key;
+	  keys = Object.keys(obj);
+	  len = keys.length;
+	  for (i = 0; i < len; i++) {
+	    key = keys[i];
+	    r[key] = structuredClone$1(obj[key]);
+	  }
+	  return r;
+	}
+
+	window.structuredClone = structuredClone$1;
+
+	var Event$1 = window.Event;
+
+	// IE 有个全局对象 Event
+	if (!isFunction(Event$1)) {
+	  if (document.createEventObject) {
+	    window.Event = function (type, init) {
+	      var e = document.createEventObject();
+	      e.type = type;
+	      e.isTrusted = false;
+	      if (init) {
+	        e.bubbles = init.bubbles;
+	        e.cancelable = init.cancelable;
+	      } else {
+	        e.bubbles = false;
+	        e.cancelable = false;
+	      }
+	      return e;
+	    };
+	  }
+	}
+
+	var from = Array.from;
+	var assign = Object.assign;
+	var getPrototypeOf = Object.getPrototypeOf;
+	var keys = Object.keys;
+	QUnit.test('structuredClone#identity', function (assert) {
+	  assert.isFunction(structuredClone, 'structuredClone is a function');
+	  assert.name(structuredClone, 'structuredClone');
+	  assert.arity(structuredClone, 1);
+	  assert["throws"](function () {
+	    return structuredClone();
+	  }, 'throws without arguments');
+	  assert.same(structuredClone(1, null), 1, 'null as options');
+	  assert.same(structuredClone(1, undefined), 1, 'undefined as options');
+	});
+	function cloneTest(value, verifyFunc) {
+	  verifyFunc(value, structuredClone(value));
+	}
+
+	// Specialization of cloneTest() for objects, with common asserts.
+	function cloneObjectTest(assert, value, verifyFunc) {
+	  cloneTest(value, function (orig, clone) {
+	    assert.notSame(orig, clone, 'clone should have different reference');
+	    assert.same(_typeof(clone), 'object', 'clone should be an object');
+	    // https://github.com/qunitjs/node-qunit/issues/146
+	    assert.ok(getPrototypeOf(orig) === getPrototypeOf(clone), 'clone should have same prototype');
+	    verifyFunc(orig, clone);
+	  });
+	}
+
+	// ECMAScript types
+
+	// Primitive values: Undefined, Null, Boolean, Number, BigInt, String
+	var booleans = [false, true];
+	var numbers = [NaN, -Infinity, -Number.MAX_VALUE, -0xFFFFFFFF, -0x80000000, -0x7FFFFFFF, -1, -Number.MIN_VALUE, -0, 0, 1, Number.MIN_VALUE, 0x7FFFFFFF, 0x80000000, 0xFFFFFFFF, Number.MAX_VALUE, Infinity];
+	var bigints = window.BigInt ? [BigInt('-12345678901234567890'), BigInt('-1'), BigInt('0'), BigInt('1'), BigInt('12345678901234567890')] : [];
+	var strings = ['', 'this is a sample string', 'null(\0)'];
+	QUnit.test('structuredClone#primitives', function (assert) {
+	  var primitives = [undefined, null].concat(booleans, numbers, bigints, strings);
+	  for (var _iterator = _createForOfIteratorHelperLoose(primitives), _step; !(_step = _iterator()).done;) {
+	    var value = _step.value;
+	    cloneTest(value, function (orig, clone) {
+	      assert.same(orig, clone, 'primitives should be same after cloned');
+	    });
+	  }
+	});
+
+	// "Primitive" Objects (Boolean, Number, BigInt, String)
+	QUnit.test('structuredClone#primitive objects', function (assert) {
+	  var primitives = [].concat(booleans, numbers, bigints, strings);
+	  for (var _iterator2 = _createForOfIteratorHelperLoose(primitives), _step2; !(_step2 = _iterator2()).done;) {
+	    var value = _step2.value;
+	    cloneObjectTest(assert, Object(value), function (orig, clone) {
+	      assert.same(orig.valueOf(), clone.valueOf(), 'primitive wrappers should have same value');
+	    });
+	  }
+	});
+
+	// Dates
+	QUnit.test('structuredClone#Date', function (assert) {
+	  var dates = [new Date(-1e13), new Date(-1e12), new Date(-1e9), new Date(-1e6), new Date(-1e3), new Date(0), new Date(1e3), new Date(1e6), new Date(1e9), new Date(1e12), new Date(1e13)];
+	  for (var _i = 0, _dates = dates; _i < _dates.length; _i++) {
+	    var date = _dates[_i];
+	    cloneTest(date, function (orig, clone) {
+	      assert.notSame(orig, clone);
+	      assert.same(_typeof(clone), 'object');
+	      assert.same(getPrototypeOf(orig), getPrototypeOf(clone));
+	      assert.same(orig.valueOf(), clone.valueOf());
+	    });
+	  }
+	});
+
+	// Regular Expressions
+	QUnit.test('structuredClone#RegExp', function (assert) {
+	  var regexes = [new RegExp(), /abc/, /abc/g, /abc/i, /abc/gi, /abc/, /abc/g, /abc/i, /abc/gi];
+	  var giuy = fromSource('/abc/giuy');
+	  if (giuy) regexes.push(giuy);
+	  var _loop = function (regex) {
+	    cloneObjectTest(assert, regex, function (orig, clone) {
+	      assert.same(orig.toString(), clone.toString(), "regex " + regex);
+	    });
+	  };
+	  for (var _i2 = 0, _regexes = regexes; _i2 < _regexes.length; _i2++) {
+	    var regex = _regexes[_i2];
+	    _loop(regex);
+	  }
+	});
+	if (fromSource('structuredClone#ArrayBuffer.prototype.slice || DataView')) {
+	  // ArrayBuffer
+	  if (typeof Uint8Array == 'function') QUnit.test('ArrayBuffer', function (assert) {
+	    // Crashes
+	    cloneObjectTest(assert, new Uint8Array([0, 1, 254, 255]).buffer, function (orig, clone) {
+	      assert.arrayEqual(new Uint8Array(orig), new Uint8Array(clone));
+	    });
+	  });
+
+	  // TODO SharedArrayBuffer
+
+	  // Array Buffer Views
+	  if (typeof Int8Array != 'undefined') {
+	    QUnit.test('%TypedArray%', function (assert) {
+	      var arrays = [new Uint8Array([]), new Uint8Array([0, 1, 254, 255]), new Uint16Array([0x0000, 0x0001, 0xFFFE, 0xFFFF]), new Uint32Array([0x00000000, 0x00000001, 0xFFFFFFFE, 0xFFFFFFFF]), new Int8Array([0, 1, 254, 255]), new Int16Array([0x0000, 0x0001, 0xFFFE, 0xFFFF]), new Int32Array([0x00000000, 0x00000001, 0xFFFFFFFE, 0xFFFFFFFF]), new Float32Array([-Infinity, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, Infinity, NaN]), new Float64Array([-Infinity, -Number.MAX_VALUE, -Number.MIN_VALUE, 0, Number.MIN_VALUE, Number.MAX_VALUE, Infinity, NaN])];
+	      if (typeof Uint8ClampedArray != 'undefined') {
+	        arrays.push(new Uint8ClampedArray([0, 1, 254, 255]));
+	      }
+	      for (var _i3 = 0, _arrays = arrays; _i3 < _arrays.length; _i3++) {
+	        var array = _arrays[_i3];
+	        cloneObjectTest(assert, array, function (orig, clone) {
+	          assert.arrayEqual(orig, clone);
+	        });
+	      }
+	    });
+	    if (typeof DataView != 'undefined') QUnit.test('DataView', function (assert) {
+	      var array = new Int8Array([1, 2, 3, 4]);
+	      var view = new DataView(array.buffer);
+	      cloneObjectTest(assert, array, function (orig, clone) {
+	        assert.same(orig.byteLength, clone.byteLength);
+	        assert.same(orig.byteOffset, clone.byteOffset);
+	        assert.arrayEqual(new Int8Array(view.buffer), array);
+	      });
+	    });
+	  }
+	  if ('resizable' in ArrayBuffer.prototype) {
+	    QUnit.test('Resizable ArrayBuffer', function (assert) {
+	      var array = [1, 2, 3, 4, 5, 6, 7, 8];
+	      var buffer = new ArrayBuffer(8, {
+	        maxByteLength: 16
+	      });
+	      new Int8Array(buffer).set(array);
+	      var copy = structuredClone(buffer);
+	      assert.arrayEqual(bufferToArray(copy), array, 'resizable-ab-1');
+	      assert["true"](copy.resizable, 'resizable-ab-1');
+	      buffer = new ArrayBuffer(8);
+	      new Int8Array(buffer).set(array);
+	      copy = structuredClone(buffer);
+	      assert.arrayEqual(bufferToArray(copy), array, 'non-resizable-ab-1');
+	      assert["false"](copy.resizable, 'non-resizable-ab-1');
+	      buffer = new ArrayBuffer(8, {
+	        maxByteLength: 16
+	      });
+	      var tarray = new Int8Array(buffer);
+	      tarray.set(array);
+	      copy = structuredClone(tarray).buffer;
+	      assert.arrayEqual(bufferToArray(copy), array, 'resizable-ab-2');
+	      assert["true"](copy.resizable, 'resizable-ab-2');
+	      buffer = new ArrayBuffer(8);
+	      tarray = new Int8Array(buffer);
+	      tarray.set(array);
+	      copy = structuredClone(tarray).buffer;
+	      assert.arrayEqual(bufferToArray(copy), array, 'non-resizable-ab-2');
+	      assert["false"](copy.resizable, 'non-resizable-ab-2');
+	    });
+	  }
+	}
+
+	// Map
+	QUnit.test('structuredClone#Map', function (assert) {
+	  cloneObjectTest(assert, new Map([[1, 2], [3, 4]]), function (orig, clone) {
+	    assert.deepEqual(from(orig.keys()), from(clone.keys()));
+	    assert.deepEqual(from(orig.values()), from(clone.values()));
+	  });
+	});
+
+	// Set
+	QUnit.test('structuredClone#Set', function (assert) {
+	  cloneObjectTest(assert, new Set([1, 2, 3, 4]), function (orig, clone) {
+	    assert.deepEqual(from(orig.values()), from(clone.values()));
+	  });
+	});
+
+	// Error
+	QUnit.test('structuredClone#Error', function (assert) {
+	  var errors = [['Error', new Error()], ['Error', new Error('msg', {
+	    cause: 42
+	  })], ['EvalError', new EvalError()], ['EvalError', new EvalError('msg', {
+	    cause: 42
+	  })], ['RangeError', new RangeError()], ['RangeError', new RangeError('msg', {
+	    cause: 42
+	  })], ['ReferenceError', new ReferenceError()], ['ReferenceError', new ReferenceError('msg', {
+	    cause: 42
+	  })], ['SyntaxError', new SyntaxError()], ['SyntaxError', new SyntaxError('msg', {
+	    cause: 42
+	  })], ['TypeError', new TypeError()], ['TypeError', new TypeError('msg', {
+	    cause: 42
+	  })], ['URIError', new URIError()], ['URIError', new URIError('msg', {
+	    cause: 42
+	  })], ['AggregateError', new AggregateError([1, 2])], ['AggregateError', new AggregateError([1, 2], 'msg', {
+	    cause: 42
+	  })]];
+	  var compile = fromSource('WebAssembly.CompileError()');
+	  var link = fromSource('WebAssembly.LinkError()');
+	  var runtime = fromSource('WebAssembly.RuntimeError()');
+	  if (compile && compile.name === 'CompileError') errors.push(['CompileError', compile]);
+	  if (link && link.name === 'LinkError') errors.push(['LinkError', link]);
+	  if (runtime && runtime.name === 'RuntimeError') errors.push(['RuntimeError', runtime]);
+	  var _loop2 = function (name) {
+	    cloneObjectTest(assert, error, function (orig, clone) {
+	      assert.same(orig.constructor, clone.constructor, name + "#constructor");
+	      assert.same(orig.name, clone.name, name + "#name");
+	      assert.same(orig.message, clone.message, name + "#message");
+	      assert.same(orig.stack, clone.stack, name + "#stack");
+	      assert.same(orig.cause, clone.cause, name + "#cause");
+	      assert.deepEqual(orig.errors, clone.errors, name + "#errors");
+	    });
+	  };
+	  for (var _i4 = 0, _errors = errors; _i4 < _errors.length; _i4++) {
+	    var _ref = _errors[_i4];
+	    var name = _ref[0];
+	    var error = _ref[1];
+	    _loop2(name);
+	  }
+	});
+
+	// Arrays
+	QUnit.test('structuredClone#Array', function (assert) {
+	  var arrays = [[], [1, 2, 3], Array(1), assign(['foo', 'bar'], {
+	    10: true,
+	    11: false,
+	    20: 123,
+	    21: 456,
+	    30: null
+	  }), assign(['foo', 'bar'], {
+	    a: true,
+	    b: false,
+	    foo: 123,
+	    bar: 456,
+	    '': null
+	  })];
+	  var _loop3 = function (array) {
+	    cloneObjectTest(assert, array, function (orig, clone) {
+	      assert.deepEqual(orig, clone, "array content should be same: " + array);
+	      assert.deepEqual(orig.length, clone.length, "array length should be same: " + array);
+	      assert.deepEqual(keys(orig), keys(clone), "array key should be same: " + array);
+	      for (var _iterator3 = _createForOfIteratorHelperLoose(keys(orig)), _step3; !(_step3 = _iterator3()).done;) {
+	        var key = _step3.value;
+	        assert.same(orig[key], clone[key], "Property " + key);
+	      }
+	    });
+	  };
+	  for (var _i5 = 0, _arrays2 = arrays; _i5 < _arrays2.length; _i5++) {
+	    var array = _arrays2[_i5];
+	    _loop3(array);
+	  }
+	});
+
+	// Objects
+	QUnit.test('Object', function (assert) {
+	  cloneObjectTest(assert, {
+	    foo: true,
+	    bar: false
+	  }, function (orig, clone) {
+	    assert.deepEqual(keys(orig), keys(clone));
+	    for (var _iterator4 = _createForOfIteratorHelperLoose(keys(orig)), _step4; !(_step4 = _iterator4()).done;) {
+	      var key = _step4.value;
+	      assert.same(orig[key], clone[key], "Property " + key);
+	    }
+	  });
+	});
+
+	// [Serializable] Platform objects
+
+	// Geometry types
+	// if(typeof DOMMatrix == 'function') {
+	// 	QUnit.test('Geometry types, DOMMatrix', assert => {
+	// 		cloneObjectTest(assert, new DOMMatrix(), (orig, clone) => {
+	// 			for(const key of keys(getPrototypeOf(orig))) {
+	// 				assert.same(orig[key], clone[key], `Property ${key}`);
+	// 			}
+	// 		});
+	// 	});
+	// }
+
+	// if(typeof DOMMatrixReadOnly == 'function' && typeof DOMMatrixReadOnly.fromMatrix == 'function') {
+	// 	QUnit.test('Geometry types, DOMMatrixReadOnly', assert => {
+	// 		cloneObjectTest(assert, new DOMMatrixReadOnly(), (orig, clone) => {
+	// 			for(const key of keys(getPrototypeOf(orig))) {
+	// 				assert.same(orig[key], clone[key], `Property ${key}`);
+	// 			}
+	// 		});
+	// 	});
+	// }
+
+	if (typeof DOMPoint == 'function') {
+	  QUnit.test('Geometry types, DOMPoint', function (assert) {
+	    cloneObjectTest(assert, new DOMPoint(1, 2, 3, 4), function (orig, clone) {
+	      for (var _iterator5 = _createForOfIteratorHelperLoose(keys(getPrototypeOf(orig))), _step5; !(_step5 = _iterator5()).done;) {
+	        var key = _step5.value;
+	        assert.same(orig[key], clone[key], "Property " + key);
+	      }
+	    });
+	  });
+	}
+	if (typeof DOMPointReadOnly == 'function' && typeof DOMPointReadOnly.fromPoint == 'function') {
+	  QUnit.test('Geometry types, DOMPointReadOnly', function (assert) {
+	    cloneObjectTest(assert, new DOMPointReadOnly(1, 2, 3, 4), function (orig, clone) {
+	      for (var _iterator6 = _createForOfIteratorHelperLoose(keys(getPrototypeOf(orig))), _step6; !(_step6 = _iterator6()).done;) {
+	        var key = _step6.value;
+	        assert.same(orig[key], clone[key], "Property " + key);
+	      }
+	    });
+	  });
+	}
+	if (typeof DOMQuad == 'function' && typeof DOMPoint == 'function') {
+	  QUnit.test('Geometry types, DOMQuad', function (assert) {
+	    cloneObjectTest(assert, new DOMQuad(new DOMPoint(1, 2, 3, 4), new DOMPoint(2, 2, 3, 4), new DOMPoint(1, 3, 3, 4), new DOMPoint(1, 2, 4, 4)), function (orig, clone) {
+	      for (var _iterator7 = _createForOfIteratorHelperLoose(keys(getPrototypeOf(orig))), _step7; !(_step7 = _iterator7()).done;) {
+	        var key = _step7.value;
+	        assert.deepEqual(orig[key], clone[key], "Property " + key);
+	      }
+	    });
+	  });
+	}
+	if (window.DOMRect) {
+	  QUnit.test('Geometry types, DOMRect', function (assert) {
+	    cloneObjectTest(assert, new DOMRect(1, 2, 3, 4), function (orig, clone) {
+	      for (var _iterator8 = _createForOfIteratorHelperLoose(keys(getPrototypeOf(orig))), _step8; !(_step8 = _iterator8()).done;) {
+	        var key = _step8.value;
+	        assert.same(orig[key], clone[key], "Property " + key);
+	      }
+	    });
+	  });
+	}
+	if (typeof DOMRectReadOnly == 'function' && typeof DOMRectReadOnly.fromRect == 'function') {
+	  QUnit.test('Geometry types, DOMRectReadOnly', function (assert) {
+	    cloneObjectTest(assert, new DOMRectReadOnly(1, 2, 3, 4), function (orig, clone) {
+	      for (var _iterator9 = _createForOfIteratorHelperLoose(keys(getPrototypeOf(orig))), _step9; !(_step9 = _iterator9()).done;) {
+	        var key = _step9.value;
+	        assert.same(orig[key], clone[key], "Property " + key);
+	      }
+	    });
+	  });
+	}
+
+	// Safari 8- does not support `{ colorSpace }` option
+	// if(fromSource('new ImageData(new ImageData(8, 8).data, 8, 8, { colorSpace: new ImageData(8, 8).colorSpace })')) {
+	// 	QUnit.test('ImageData', assert => {
+	// 		const imageData = new ImageData(8, 8);
+	// 		for(let i = 0; i < 256; ++i) {
+	// 			imageData.data[i] = i;
+	// 		}
+	// 		cloneObjectTest(assert, imageData, (orig, clone) => {
+	// 			assert.same(orig.width, clone.width);
+	// 			assert.same(orig.height, clone.height);
+	// 			assert.same(orig.colorSpace, clone.colorSpace);
+	// 			assert.arrayEqual(orig.data, clone.data);
+	// 		});
+	// 	});
+	// }
+
+	if (window.Blob) QUnit.test('Blob', function (assert) {
+	  cloneObjectTest(assert, new Blob(['This is a test.'], {
+	    type: 'a/b'
+	  }), function (orig, clone) {
+	    assert.same(orig.size, clone.size);
+	    assert.same(orig.type, clone.type);
+	    // TODO: async
+	    // assert.same(await orig.text(), await clone.text());
+	  });
+	});
+
+	// QUnit.test('structuredClone#DOMException', assert => {
+	// 	const errors = [
+	// 		new DOMException(),
+	// 		new DOMException('foo', 'DataCloneError'),
+	// 	];
+
+	// 	for(const error of errors) cloneObjectTest(assert, error, (orig, clone) => {
+	// 		assert.same(orig.name, clone.name);
+	// 		assert.same(orig.message, clone.message);
+	// 		assert.same(orig.code, clone.code);
+	// 		assert.same(orig.stack, clone.stack);
+	// 	});
+	// });
+
+	// https://github.com/oven-sh/bun/issues/11696
+	if (typeof window.File === "function") QUnit.test('File', function (assert) {
+	  cloneObjectTest(assert, new File(['This is a test.'], 'foo.txt', {
+	    type: 'c/d'
+	  }), function (orig, clone) {
+	    assert.same(orig.size, clone.size);
+	    assert.same(orig.type, clone.type);
+	    assert.same(orig.name, clone.name);
+	    assert.same(orig.lastModified, clone.lastModified);
+	    // TODO: async
+	    // assert.same(await orig.text(), await clone.text());
+	  });
+	});
+
+	// FileList
+	if (typeof window.File === "function" && window.DataTransfer) QUnit.test('FileList', function (assert) {
+	  var transfer = new DataTransfer();
+	  transfer.items.add(new File(['test'], 'foo.txt'));
+	  cloneObjectTest(assert, transfer.files, function (orig, clone) {
+	    assert.same(1, clone.length);
+	    assert.same(orig[0].size, clone[0].size);
+	    assert.same(orig[0].type, clone[0].type);
+	    assert.same(orig[0].name, clone[0].name);
+	    assert.same(orig[0].lastModified, clone[0].lastModified);
+	  });
+	});
+
+	// Non-serializable types
+	QUnit.test('structuredClone#Non-serializable types', function (assert) {
+	  var nons = [function () {
+	    return 1;
+	  }, Symbol$2('desc'), GLOBAL];
+	  var event = new Event("");
+	  // NodeJS events are simple objects
+	  if (event) nons.push(event);
+	  if (window.MessageChannel) {
+	    var port = new MessageChannel().port1;
+	    if (port) nons.push(port);
+	  }
+	  var _loop4 = function (it) {
+	    // native NodeJS `structuredClone` throws a `TypeError` on transferable non-serializable instead of `DOMException`
+	    // https://github.com/nodejs/node/issues/40841
+	    assert["throws"](function () {
+	      return structuredClone(it);
+	    });
+	  };
+	  for (var _i6 = 0, _nons = nons; _i6 < _nons.length; _i6++) {
+	    var it = _nons[_i6];
+	    _loop4(it);
+	  }
 	});
 
 	function toReversed() {
@@ -9227,5 +9781,8 @@
 	    start();
 	  });
 	});
+
+	// /* Chrome126+ Firefox126+ Safari18+ */
+	// import "./web.url-parse";
 
 })();

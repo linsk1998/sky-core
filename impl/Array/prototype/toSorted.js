@@ -1,7 +1,5 @@
-import { slice } from "../../../native/Array/prototype/slice";
-
 export function toSorted(fn) {
-	var arr = slice.call(this);
+	var arr = Array.from(this);
 	arr.sort.apply(arr, arguments);
 	return arr;
 }

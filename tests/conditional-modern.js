@@ -249,7 +249,7 @@ module.exports = [
 			".flat": "sky-core/polyfill/Array/prototype/flat",
 			".flatMap": "sky-core/polyfill/Array/prototype/flatMap",
 			/* Chrome70+ Firefox63+ Safari12+*/
-			// ".description": "sky-core/polyfill/Symbol/prototype/description",
+			".description": "sky-core/polyfill/Symbol/prototype/description",
 			//ES2020
 			/* Chrome73+ Firefox67+ Safari13+*/
 			".matchAll": "sky-core/polyfill/String/prototype/matchAll",

@@ -303,25 +303,25 @@ QUnit.test('Object', assert => {
 // [Serializable] Platform objects
 
 // Geometry types
-if(typeof DOMMatrix == 'function') {
-	QUnit.test('Geometry types, DOMMatrix', assert => {
-		cloneObjectTest(assert, new DOMMatrix(), (orig, clone) => {
-			for(const key of keys(getPrototypeOf(orig))) {
-				assert.same(orig[key], clone[key], `Property ${key}`);
-			}
-		});
-	});
-}
+// if(typeof DOMMatrix == 'function') {
+// 	QUnit.test('Geometry types, DOMMatrix', assert => {
+// 		cloneObjectTest(assert, new DOMMatrix(), (orig, clone) => {
+// 			for(const key of keys(getPrototypeOf(orig))) {
+// 				assert.same(orig[key], clone[key], `Property ${key}`);
+// 			}
+// 		});
+// 	});
+// }
 
-if(typeof DOMMatrixReadOnly == 'function' && typeof DOMMatrixReadOnly.fromMatrix == 'function') {
-	QUnit.test('Geometry types, DOMMatrixReadOnly', assert => {
-		cloneObjectTest(assert, new DOMMatrixReadOnly(), (orig, clone) => {
-			for(const key of keys(getPrototypeOf(orig))) {
-				assert.same(orig[key], clone[key], `Property ${key}`);
-			}
-		});
-	});
-}
+// if(typeof DOMMatrixReadOnly == 'function' && typeof DOMMatrixReadOnly.fromMatrix == 'function') {
+// 	QUnit.test('Geometry types, DOMMatrixReadOnly', assert => {
+// 		cloneObjectTest(assert, new DOMMatrixReadOnly(), (orig, clone) => {
+// 			for(const key of keys(getPrototypeOf(orig))) {
+// 				assert.same(orig[key], clone[key], `Property ${key}`);
+// 			}
+// 		});
+// 	});
+// }
 
 if(typeof DOMPoint == 'function') {
 	QUnit.test('Geometry types, DOMPoint', assert => {

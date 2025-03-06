@@ -11,5 +11,8 @@
 	"typescript.format.insertSpaceAfterKeywordsInControlFlowStatements": false,
 	"editor.renderWhitespace": "all",
 	"editor.wordWrap": "on",
-	"javascript.preferences.importModuleSpecifier": "relative"
+	"javascript.preferences.importModuleSpecifier": "relative",
+	"html.format.wrapAttributes": "preserve",
+	"html.format.wrapLineLength": 0,
+	"html.format.unformatted": "script,style"
 }

@@ -1,7 +1,5 @@
-import { slice } from "../../../native/Array/prototype/slice";
-
 export function toSpliced(a1, a2) {
-	var arr = slice.call(this);
+	var arr = Array.from(this);
 	arr.splice.apply(arr, arguments);
 	return arr;
 }

@@ -66,6 +66,8 @@ export function structuredClone(obj) {
 				return new DataView(new Uint8Array(obj.buffer).buffer);
 			case '[object Blob]':
 				return obj.slice(0, obj.size, obj.type);
+			case '[object BigInt]':
+				return obj.valueOf();
 			default:
 				throw new Error("Failed to execute 'structuredClone' on " + type);
 		}

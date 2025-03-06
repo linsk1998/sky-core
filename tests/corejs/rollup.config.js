@@ -166,4 +166,21 @@ module.exports = [{
 			]
 		}),
 	]
+}, {
+	input: 'tests/corejs/es/index.js',
+	output: {
+		strict: false,
+		file: 'docs/tests/corejs/es2015.js',
+		format: 'iife'
+	},
+	treeshake: false,
+	plugins: [
+		sky('es2015'),
+		nodeResolve(),
+		importPlugin({
+			libraryName: "sky-core",
+			libraryDirectory: "utils"
+		}),
+		...require("../conditional-es2015"),
+	]
 }];
