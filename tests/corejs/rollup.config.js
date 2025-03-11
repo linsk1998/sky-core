@@ -182,5 +182,25 @@ module.exports = [{
 			libraryDirectory: "utils"
 		}),
 		...require("../conditional-es2015"),
+		babel({
+			babelHelpers: 'runtime',
+			babelrc: false,
+			compact: false,
+			plugins: [
+				["@babel/plugin-transform-runtime", {
+					absoluteRuntime: false,
+					corejs: false,
+					helpers: true,
+					regenerator: true,
+					useESModules: true,
+					version: babelRuntimeVersion
+				}],
+				// ES2019
+				"@babel/plugin-transform-optional-catch-binding"
+			],
+			include: [
+				"tests/corejs/**/*",
+			]
+		}),
 	]
 }];

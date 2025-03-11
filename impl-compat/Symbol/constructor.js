@@ -3,10 +3,8 @@ import { isPrimitive } from "../../utils/isPrimitive";
 var symbol_sqe = 0;
 var all_symbol = {};
 export function Symbol(desc) {
+	this.description = desc = desc == undefined ? "" : String(desc);
 	this.__name__ = "@@" + desc + ":" + symbol_sqe;
-	if(desc !== undefined) {
-		this.description = String(desc);
-	}
 	symbol_sqe++;
 	all_symbol[this.__name__] = this;
 };

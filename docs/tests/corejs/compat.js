@@ -1,9 +1,6 @@
 (function () {
 
-	function definePrototype(target, property, value) {
-	  var prototype = target.prototype;
-	  if (!(property in prototype)) prototype[property] = value;
-	}
+	var iterator$1 = '@@iterator';
 
 	function values$2() {
 	  var array = this;
@@ -28,12 +25,8 @@
 	  };
 	}
 
-	definePrototype(Array, 'values', values$2);
-
-	var iterator$1 = '@@iterator';
-
 	if (!Array.prototype[iterator$1]) {
-	  Array.prototype[iterator$1] = Array.prototype.values;
+	  Array.prototype[iterator$1] = values$2;
 	}
 
 	function iterator() {
@@ -295,6 +288,11 @@
 
 	if (!Array$1.isArray) {
 	  Array$1.isArray = isArray;
+	}
+
+	function definePrototype(target, property, value) {
+	  var prototype = target.prototype;
+	  if (!(property in prototype)) prototype[property] = value;
 	}
 
 	var slice$1 = Array.prototype.slice;
@@ -3312,10 +3310,8 @@
 	var symbol_sqe = 0;
 	var all_symbol = {};
 	function Symbol$4(desc) {
+	  this.description = desc = desc == undefined ? "" : String(desc);
 	  this.__name__ = "@@" + desc + ":" + symbol_sqe;
-	  if (desc !== undefined) {
-	    this.description = String(desc);
-	  }
 	  symbol_sqe++;
 	  all_symbol[this.__name__] = this;
 	}
@@ -3685,6 +3681,8 @@
 	}
 
 	definePrototype(Array, 'entries', entries$2);
+
+	definePrototype(Array, 'values', values$2);
 
 	function createMap() {
 	  function Map() {
@@ -8017,7 +8015,7 @@
 	      } else {
 	        c++;
 	        array[index] = {
-	          value: data,
+	          value: one,
 	          status: 'fulfilled'
 	        };
 	        if (c >= array.length) {

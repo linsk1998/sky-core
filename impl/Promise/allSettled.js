@@ -25,7 +25,7 @@ export function allSettled(promises) {
 				});
 			} else {
 				c++;
-				array[index] = { value: data, status: 'fulfilled' };
+				array[index] = { value: one, status: 'fulfilled' };
 				if(c >= array.length) {
 					resolve(array);
 				}

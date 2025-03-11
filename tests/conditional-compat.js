@@ -246,6 +246,9 @@ module.exports = [
 			".copyWithin": "sky-core/polyfill/Array/prototype/copyWithin",
 			/* Edge12+ Chrome46 Firefox34+ Safari9.1+ */
 			".name": "sky-core/polyfill/Function/prototype/name",
+			// ES2017.Array
+			/* Edge14+ Chrome66+ Firefox66+ Safari9 */
+			".values": "sky-core/polyfill/Array/prototype/values",
 			// ES2017.String
 			/* Chrome57+ Firefox40+ Safari9+ Edge15+ */
 			".padEnd": "sky-core/polyfill/String/prototype/padEnd",

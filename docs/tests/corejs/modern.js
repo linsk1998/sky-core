@@ -1,45 +1,25 @@
 (function () {
 
+	var Symbol$6 = window.Symbol;
+
 	var Object$1 = window.Object;
 
 	var defineProperty$1 = Object$1.defineProperty;
 
-	function isNotNullObject(obj) {
-		return typeof obj === "object" ? obj !== null : typeof obj === "function";
-	};
+	var defineProperties$1 = Object$1.defineProperties;
 
-	function defineProperty(obj, prop, descriptor) {
-		if(!isNotNullObject(obj)) {
-			throw new TypeError("Object.defineProperty called on non-object");
-		}
-		prop = String(prop);
-		if('value' in descriptor) {
-			delete obj[prop];
-			obj[prop] = descriptor.value;
+	var nonEnumerable = !!defineProperties$1;
+
+	var iterator$1 = (function() {
+		if(!Symbol$6) {
+			if(nonEnumerable) {
+				defineProperty$1(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
+			}
+			return '@@iterator';
 		} else {
-			if(descriptor.get) obj.__defineGetter__(prop, descriptor.get);
-			if(descriptor.set) obj.__defineSetter__(prop, descriptor.set);
+			return Symbol$6.iterator || Symbol$6('iterator');
 		}
-		return obj;
-	};
-
-	if(!defineProperty$1) {
-		if(Object$1.prototype.__defineSetter__) {
-			Object$1.defineProperty = defineProperty;
-		}
-	}
-
-	function definePrototype(target, property, value) {
-		var prototype = target.prototype;
-		if(!(property in prototype)) {
-			Object.defineProperty(prototype, property, {
-				configurable: true,
-				writable: true,
-				enumerable: false,
-				value: value
-			});
-		}
-	}
+	})();
 
 	function values$2() {
 		var array = this;
@@ -63,27 +43,8 @@
 		};
 	}
 
-	definePrototype(Array, 'values', values$2);
-
-	var Symbol$6 = window.Symbol;
-
-	var defineProperties$1 = Object$1.defineProperties;
-
-	var nonEnumerable = !!defineProperties$1;
-
-	var iterator$1 = (function() {
-		if(!Symbol$6) {
-			if(nonEnumerable) {
-				defineProperty$1(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
-			}
-			return '@@iterator';
-		} else {
-			return Symbol$6.iterator || Symbol$6('iterator');
-		}
-	})();
-
 	if(!Array.prototype[iterator$1]) {
-		Array.prototype[iterator$1] = Array.prototype.values;
+		Array.prototype[iterator$1] = values$2;
 	}
 
 	function iterator() {
@@ -315,6 +276,31 @@
 
 	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
 
+	function isNotNullObject(obj) {
+		return typeof obj === "object" ? obj !== null : typeof obj === "function";
+	};
+
+	function defineProperty(obj, prop, descriptor) {
+		if(!isNotNullObject(obj)) {
+			throw new TypeError("Object.defineProperty called on non-object");
+		}
+		prop = String(prop);
+		if('value' in descriptor) {
+			delete obj[prop];
+			obj[prop] = descriptor.value;
+		} else {
+			if(descriptor.get) obj.__defineGetter__(prop, descriptor.get);
+			if(descriptor.set) obj.__defineSetter__(prop, descriptor.set);
+		}
+		return obj;
+	};
+
+	if(!defineProperty$1) {
+		if(Object$1.prototype.__defineSetter__) {
+			Object$1.defineProperty = defineProperty;
+		}
+	}
+
 	if(accessor) {
 		if(!('name' in Function.prototype)) {
 			Object.defineProperty(Function.prototype, 'name', {
@@ -340,6 +326,18 @@
 
 	if(!Array$1.isArray) {
 		Array$1.isArray = isArray;
+	}
+
+	function definePrototype(target, property, value) {
+		var prototype = target.prototype;
+		if(!(property in prototype)) {
+			Object.defineProperty(prototype, property, {
+				configurable: true,
+				writable: true,
+				enumerable: false,
+				value: value
+			});
+		}
 	}
 
 	var slice$1 = Array.prototype.slice;
@@ -3390,6 +3388,12 @@
 
 	definePrototype(Array, 'entries', entries$2);
 
+	if(Symbol && Symbol.iterator) {
+		definePrototype(Array, 'values', Array.prototype[Symbol.iterator]);
+	} else {
+		definePrototype(Array, 'values', values$2);
+	}
+
 	function createSubMap() {
 		function Map() {
 			var args = arguments[0];
@@ -4740,24 +4744,32 @@
 	};
 	Symbol$4.sham = true;
 
-	function Symbol$3(desc) {
-		if(desc == undefined) {
-			desc = "";
-		}
-		return Symbol$6(desc);
+	var descs = Object.create(null);
+	function Symbol$3() {
+		var desc = arguments[0];
+		var s = Symbol$6(desc === undefined ? "" : desc);
+		descs[s] = desc;
+		return s;
 	};
+	function getSymbolDescription() {
+		return descs[this];
+	}
 
 	var Symbol$2 = Symbol$6;
 	if(!Symbol$6) {
 		Symbol$2 = window.Symbol = Symbol$4;
-		Symbol$2.sham = true;
 		Symbol$2.iterator = "@@iterator";
 		Symbol$2.hasInstance = "@@hasInstance";
 		Symbol$2.asyncIterator = "@@asyncIterator";
 	} else {
-		if(String(Symbol$2()) !== String(Symbol$2(""))) {
+		if(!('description' in Symbol$6.prototype)) {
 			Object.setPrototypeOf(Symbol$3, Symbol$2);
 			Symbol$2 = window.Symbol = Symbol$3;
+			Object.defineProperty(Symbol$6.prototype, 'description', {
+				configurable: true,
+				enumerable: false,
+				get: getSymbolDescription
+			});
 		}
 		if(!Symbol$2.iterator) { Symbol$2.iterator = Symbol$2("iterator"); }
 		if(!Symbol$2.hasInstance) { Symbol$2.hasInstance = Symbol$2("hasInstance"); }
@@ -4974,10 +4986,8 @@
 	var symbol_sqe = 0;
 	var all_symbol = {};
 	function Symbol$1(desc) {
+		this.description = desc = desc == undefined ? "" : String(desc);
 		this.__name__ = "@@" + desc + ":" + symbol_sqe;
-		if(desc !== undefined) {
-			this.description = String(desc);
-		}
 		symbol_sqe++;
 		all_symbol[this.__name__] = this;
 	};
@@ -7895,7 +7905,7 @@
 					});
 				} else {
 					c++;
-					array[index] = { value: data, status: 'fulfilled' };
+					array[index] = { value: one, status: 'fulfilled' };
 					if(c >= array.length) {
 						resolve(array);
 					}

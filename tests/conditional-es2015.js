@@ -1,11 +1,12 @@
 const polyfill = require("rollup-plugin-polyfill-inject");
-const inject = require("@rollup/plugin-inject");
 
 module.exports = [
 	polyfill({
 		modules: {
 			/* Chrome63+ Firefox34+ Safari10+ Edge12+ */
 			"Proxy.revocable": "sky-core/polyfill/Proxy/revocable",
+			/* Chrome70+ Firefox63+ Safari12+*/
+			"Symbol": "sky-core/polyfill/Symbol",
 			/* Chrome71+ Firefox69+ Safari12.1+ */
 			"queueMicrotask": "sky-core/polyfill/queueMicrotask",
 			//ES2019
@@ -30,12 +31,6 @@ module.exports = [
 			"Map.groupBy": "sky-core/polyfill/Map/groupBy",
 			/* Chrome119+ Firefox121+ Safari17.4+ */
 			"Promise.withResolvers": "sky-core/polyfill/Promise/withResolvers",
-
-			// "console": "sky-core/polyfill/console",
-			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
-			// "localStorage": "sky-core/polyfill/localStorage",
-			// "sessionStorage": "sky-core/polyfill/sessionStorage",
-			// 'Event': "sky-core/polyfill/Event",
 		},
 		exclude: [
 			"tests/corejs/helpers/*"
@@ -99,6 +94,9 @@ module.exports = [
 			".copyWithin": "sky-core/polyfill/Array/prototype/copyWithin",
 			/* Edge12+ Chrome46 Firefox34+ Safari9.1+ */
 			".name": "sky-core/polyfill/Function/prototype/name",
+			// ES2017.Array
+			/* Edge14+ Chrome66+ Firefox66+ Safari9 */
+			".values": "sky-core/polyfill/Array/prototype/values",
 			// ES2017.String
 			/* Chrome57+ Firefox40+ Safari9+ Edge15+ */
 			".padEnd": "sky-core/polyfill/String/prototype/padEnd",
@@ -114,7 +112,7 @@ module.exports = [
 			".flat": "sky-core/polyfill/Array/prototype/flat",
 			".flatMap": "sky-core/polyfill/Array/prototype/flatMap",
 			/* Chrome70+ Firefox63+ Safari12+*/
-			".description": "sky-core/polyfill/Symbol/prototype/description",
+			// ".description": "sky-core/polyfill/Symbol/prototype/description",
 			//ES2020
 			/* Chrome73+ Firefox67+ Safari13+*/
 			".matchAll": "sky-core/polyfill/String/prototype/matchAll",
@@ -137,23 +135,6 @@ module.exports = [
 		},
 		exclude: [
 			"tests/corejs/helpers/*"
-		]
-	}),
-	inject({
-		modules: {
-			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
-			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
-			"Symbol.asyncIterator": "sky-core/pure/Symbol/asyncIterator",
-			"Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
-			"Symbol.iterator": "sky-core/pure/Symbol/iterator",
-			"Symbol.for": "sky-core/pure/Symbol/for",
-			"Symbol.keyFor": "sky-core/pure/Symbol/keyFor",
-			"Symbol": "sky-core/pure/Symbol",
-		},
-		include: [
-			"impl/**/*",
-			"impl-*/**/*",
-			"tests/corejs/es/*",
 		]
 	})
 ];

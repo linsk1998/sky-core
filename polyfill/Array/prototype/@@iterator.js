@@ -1,6 +1,6 @@
-import "./values";
 import iterator from "sky-core/pure/Symbol/iterator";
+import { values } from "../../../impl/Array/prototype/values";
 
 if(!Array.prototype[iterator]) {
-	Array.prototype[iterator] = Array.prototype.values;
+	Array.prototype[iterator] = values;
 }

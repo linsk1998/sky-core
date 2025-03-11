@@ -4,7 +4,7 @@ import { defineProperty } from "../../native/Object/defineProperty";
 import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
 var symbol_sqe = 0;
 var all_symbol = {};
-export function Symbol(desc) {
+function Symbol(desc) {
 	var key = "@@" + desc + ":" + symbol_sqe;
 	this.__name__ = key;
 	if(nonEnumerable) {
@@ -29,7 +29,7 @@ Symbol.prototype.toString = function() {
 Symbol.prototype.toJSON = function() {
 	return undefined;
 };
-export var getOwnPropertySymbols = nonEnumerable ?
+var getOwnPropertySymbols = nonEnumerable ?
 	function(obj) {
 		var arr = [];
 		if(isPrimitive(obj)) {
@@ -60,3 +60,4 @@ export var getOwnPropertySymbols = nonEnumerable ?
 		}
 		return arr;
 	};
+export { Symbol, getOwnPropertySymbols };

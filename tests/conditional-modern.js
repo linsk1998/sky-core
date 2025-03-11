@@ -234,6 +234,9 @@ module.exports = [
 			".copyWithin": "sky-core/polyfill/Array/prototype/copyWithin",
 			/* Edge12+ Chrome46 Firefox34+ Safari9.1+ */
 			".name": "sky-core/polyfill/Function/prototype/name",
+			// ES2017.Array
+			/* Edge14+ Chrome66+ Firefox66+ Safari9 */
+			".values": "sky-core/polyfill/Array/prototype/values",
 			// ES2017.String
 			/* Chrome57+ Firefox40+ Safari9+ Edge15+ */
 			".padEnd": "sky-core/polyfill/String/prototype/padEnd",
@@ -249,7 +252,7 @@ module.exports = [
 			".flat": "sky-core/polyfill/Array/prototype/flat",
 			".flatMap": "sky-core/polyfill/Array/prototype/flatMap",
 			/* Chrome70+ Firefox63+ Safari12+*/
-			".description": "sky-core/polyfill/Symbol/prototype/description",
+			// ".description": "sky-core/polyfill/Symbol/prototype/description",
 			//ES2020
 			/* Chrome73+ Firefox67+ Safari13+*/
 			".matchAll": "sky-core/polyfill/String/prototype/matchAll",
