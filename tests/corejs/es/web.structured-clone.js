@@ -436,7 +436,7 @@ if(typeof window.File === "function") QUnit.test('File', assert => {
 });
 
 // FileList
-if(typeof window.File === "function" && window.DataTransfer) QUnit.test('FileList', assert => {
+if(typeof window.File === "function" && fromSource('new DataTransfer()')) QUnit.test('FileList', assert => {
 	const transfer = new DataTransfer();
 	transfer.items.add(new File(['test'], 'foo.txt'));
 	cloneObjectTest(

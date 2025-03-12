@@ -62,6 +62,17 @@ export function structuredClone(obj) {
 				return new DataView(new Uint8Array(obj.buffer).buffer);
 			case '[object Blob]':
 				return obj.slice(0, obj.size, obj.type);
+			case '[object File]':
+				return new File([obj], obj.name, {
+					type: obj.type,
+					lastModified: obj.lastModified
+				});
+			case '[object FileList]':
+				var transfer = new DataTransfer();
+				for(var i = 0, len = obj.length; i < len; i++) {
+					transfer.items.add(obj[i]);
+				}
+				return transfer.files;
 			default:
 				throw new Error("Failed to execute 'structuredClone' on " + type);
 		}

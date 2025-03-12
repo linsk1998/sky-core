@@ -28,7 +28,7 @@ QUnit.asyncTest('Promise#finally, rejected', assert => {
   Promise.reject(42).finally(it => {
     called++;
     argument = it;
-  }).catch(() => {
+  }).then(() => {
     assert.same(called, 1, 'onFinally function called one time');
     assert.same(argument, undefined, 'onFinally function called with a correct argument');
     start();

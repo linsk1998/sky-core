@@ -68,6 +68,11 @@ export function structuredClone(obj) {
 				return obj.slice(0, obj.size, obj.type);
 			case '[object BigInt]':
 				return obj.valueOf();
+			case '[object File]':
+				if(window.File) {
+					return new File([obj], obj.name);
+				}
+				return obj;
 			default:
 				throw new Error("Failed to execute 'structuredClone' on " + type);
 		}

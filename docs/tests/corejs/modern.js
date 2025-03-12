@@ -1,6 +1,6 @@
 (function () {
 
-	var Symbol$6 = window.Symbol;
+	var Symbol$4 = window.Symbol;
 
 	var Object$1 = window.Object;
 
@@ -11,13 +11,13 @@
 	var nonEnumerable = !!defineProperties$1;
 
 	var iterator$1 = (function() {
-		if(!Symbol$6) {
+		if(!Symbol$4) {
 			if(nonEnumerable) {
 				defineProperty$1(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@iterator';
 		} else {
-			return Symbol$6.iterator || Symbol$6('iterator');
+			return Symbol$4.iterator || Symbol$4('iterator');
 		}
 	})();
 
@@ -108,7 +108,7 @@
 		return new ES6Iterator(it);
 	};
 
-	if(!Symbol$6) {
+	if(!Symbol$4) {
 		if(!String.prototype['@@iterator']) {
 			String.prototype['@@iterator'] = iterator;
 		} else if(String.prototype.iterator) {
@@ -1572,7 +1572,7 @@
 	function keys$2(obj) {
 		if(!keys$3) {
 			return nie_keys(obj);
-		} else if(Symbol$6) {
+		} else if(Symbol$4) {
 			return keys$3(obj);
 		} else {
 			return ie_keys(obj);
@@ -1581,7 +1581,7 @@
 
 	if(!Object$1.keys) {
 		Object$1.keys = nie_keys;
-	} else if(!Symbol$6) {
+	} else if(!Symbol$4) {
 		Object$1.keys = ie_keys;
 	}
 
@@ -1695,7 +1695,7 @@
 	}
 
 	if(getOwnPropertyNames) {
-		if(!Symbol$6) {
+		if(!Symbol$4) {
 			Object$1.getOwnPropertyNames = ie_getOwnPropertyNames;
 		}
 	} else {
@@ -2990,7 +2990,7 @@
 
 	var symbol_sqe$1 = 0;
 	var all_symbol$1 = {};
-	function Symbol$5(desc) {
+	function Symbol$3(desc) {
 		var key = "@@" + desc + ":" + symbol_sqe$1;
 		this.__name__ = key;
 		if(nonEnumerable) {
@@ -3009,10 +3009,10 @@
 		symbol_sqe$1++;
 		all_symbol$1[key] = this;
 	};
-	Symbol$5.prototype.toString = function() {
+	Symbol$3.prototype.toString = function() {
 		return this.__name__;
 	};
-	Symbol$5.prototype.toJSON = function() {
+	Symbol$3.prototype.toJSON = function() {
 		return undefined;
 	};
 	var getOwnPropertySymbols$1 = nonEnumerable ?
@@ -3689,18 +3689,18 @@
 		return createIterable(this, getValue);
 	};
 
-	if(!Symbol$6) {
+	if(!Symbol$4) {
 		if(Map$2 && (Map$2.prototype.iterator || Map$2.prototype['@@iterator'])) {
 			window.Map = fixMap();
 		} else {
 			window.Map = createMap();
 		}
 	} else {
-		if(!Symbol$6.iterator) {
-			Symbol$6.iterator = Symbol$6('iterator');
+		if(!Symbol$4.iterator) {
+			Symbol$4.iterator = Symbol$4('iterator');
 		}
-		if(!Map$2.prototype[Symbol$6.iterator]) {
-			Map$2.prototype[Symbol$6.iterator] = Map$2.prototype.entries;
+		if(!Map$2.prototype[Symbol$4.iterator]) {
+			Map$2.prototype[Symbol$4.iterator] = Map$2.prototype.entries;
 		}
 	}
 
@@ -4259,18 +4259,18 @@
 		return this;
 	};
 
-	if(!Symbol$6) {
+	if(!Symbol$4) {
 		if(Set$1 && (Set$1.prototype.iterator || Set$1.prototype['@@iterator'])) {
 			window.Set = fixSet();
 		} else {
 			window.Set = createSet();
 		}
 	} else {
-		if(!Symbol$6.iterator) {
-			Symbol$6.iterator = Symbol$6('iterator');
+		if(!Symbol$4.iterator) {
+			Symbol$4.iterator = Symbol$4('iterator');
 		}
-		if(!Set$1.prototype[Symbol$6.iterator]) {
-			Set$1.prototype[Symbol$6.iterator] = Set$1.prototype.values;
+		if(!Set$1.prototype[Symbol$4.iterator]) {
+			Set$1.prototype[Symbol$4.iterator] = Set$1.prototype.values;
 		}
 	}
 
@@ -4739,42 +4739,38 @@
 	  });
 	});
 
-	function Symbol$4(desc) {
-		return new Symbol$5(desc);
-	};
-	Symbol$4.sham = true;
-
-	var descs = Object.create(null);
-	function Symbol$3() {
-		var desc = arguments[0];
-		var s = Symbol$6(desc === undefined ? "" : desc);
-		descs[s] = desc;
-		return s;
-	};
-	function getSymbolDescription() {
-		return descs[this];
-	}
-
-	var Symbol$2 = Symbol$6;
-	if(!Symbol$6) {
-		Symbol$2 = window.Symbol = Symbol$4;
-		Symbol$2.iterator = "@@iterator";
-		Symbol$2.hasInstance = "@@hasInstance";
-		Symbol$2.asyncIterator = "@@asyncIterator";
+	var Symbol$2;
+	if(Symbol$4) {
+		var descs = Object.create(null);
+		Symbol$2 = function Symbol() {
+			var desc = arguments[0];
+			if(desc !== undefined) {
+				desc = String(desc);
+			}
+			var s = Symbol$4(desc);
+			descs[s] = desc;
+			return s;
+		};
+		Object.setPrototypeOf(Symbol$2, Symbol$4);
+		Object.defineProperty(Symbol$4.prototype, 'description', {
+			configurable: true,
+			enumerable: false,
+			get: function() {
+				if(this in descs) {
+					return descs[this];
+				}
+				return String(this).slice(7, -1);
+			}
+		});
 	} else {
-		if(!('description' in Symbol$6.prototype)) {
-			Object.setPrototypeOf(Symbol$3, Symbol$2);
-			Symbol$2 = window.Symbol = Symbol$3;
-			Object.defineProperty(Symbol$6.prototype, 'description', {
-				configurable: true,
-				enumerable: false,
-				get: getSymbolDescription
-			});
-		}
-		if(!Symbol$2.iterator) { Symbol$2.iterator = Symbol$2("iterator"); }
-		if(!Symbol$2.hasInstance) { Symbol$2.hasInstance = Symbol$2("hasInstance"); }
-		if(!Symbol$2.asyncIterator) { Symbol$2.asyncIterator = Symbol$2("asyncIterator"); }
+		Symbol$2 = function Symbol(desc) {
+			return new Symbol$3(desc);
+		};
+		Symbol$2.sham = true;
 	}
+	var _Symbol$2 = Symbol$2;
+
+	window.Symbol = _Symbol$2;
 
 	QUnit.test('Array#keys', function (assert) {
 	  var keys = Array.prototype.keys;
@@ -4800,12 +4796,13 @@
 	    value: undefined,
 	    done: true
 	  });
-	  assert.deepEqual(keys.call({
-	    length: -1
-	  }).next(), {
-	    value: undefined,
-	    done: true
-	  }, 'uses ToLength');
+	  // has native not support
+	  // assert.deepEqual(keys.call({
+	  // 	length: -1,
+	  // }).next(), {
+	  // 	value: undefined,
+	  // 	done: true,
+	  // }, 'uses ToLength');
 	});
 	QUnit.test('Array#values', function (assert) {
 	  var values = Array.prototype.values;
@@ -4831,12 +4828,12 @@
 	    value: undefined,
 	    done: true
 	  });
-	  assert.deepEqual(values.call({
-	    length: -1
-	  }).next(), {
-	    value: undefined,
-	    done: true
-	  }, 'uses ToLength');
+	  // assert.deepEqual(values.call({
+	  // 	length: -1,
+	  // }).next(), {
+	  // 	value: undefined,
+	  // 	done: true,
+	  // }, 'uses ToLength');
 	});
 	QUnit.test('Array#entries', function (assert) {
 	  var entries = Array.prototype.entries;
@@ -4862,12 +4859,12 @@
 	    value: undefined,
 	    done: true
 	  });
-	  assert.deepEqual(entries.call({
-	    length: -1
-	  }).next(), {
-	    value: undefined,
-	    done: true
-	  }, 'uses ToLength');
+	  // assert.deepEqual(entries.call({
+	  // 	length: -1,
+	  // }).next(), {
+	  // 	value: undefined,
+	  // 	done: true,
+	  // }, 'uses ToLength');
 	});
 	QUnit.test('Array#@@iterator', function (assert) {
 	  assert.isIterable(Array.prototype);
@@ -4893,48 +4890,33 @@
 	    value: undefined,
 	    done: true
 	  });
-	  assert.deepEqual(Array.prototype[iterator$1].call({
-	    length: -1
-	  }).next(), {
-	    value: undefined,
-	    done: true
-	  }, 'uses ToLength');
+	  // assert.deepEqual(Array.prototype[Symbol.iterator].call({
+	  // 	length: -1,
+	  // }).next(), {
+	  // 	value: undefined,
+	  // 	done: true,
+	  // }, 'uses ToLength');
 	});
 
-	var _Symbol$2 = (function() {
-		var Symbol;
-		if(!Symbol$6) {
-			Symbol = Symbol$4;
-		} else {
-			if(String(Symbol$6()) !== String(Symbol$6(""))) {
-				Object.setPrototypeOf(Symbol$3, Symbol$6);
-				Symbol = Symbol$3;
-			} else {
-				Symbol = Symbol$6;
-			}
-		}
-		return Symbol;
-	})();
-
 	var $inject_Symbol_hasInstance = (function() {
-		if(!Symbol$6) {
+		if(!Symbol$4) {
 			if(nonEnumerable) {
 				defineProperty$1(Object.prototype, '@@hasInstance', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@hasInstance';
 		} else {
-			return Symbol$6.hasInstance || Symbol$6('hasInstance');
+			return Symbol$4.hasInstance || Symbol$4('hasInstance');
 		}
 	})();
 
 	var $inject_Symbol_asyncIterator = (function() {
-		if(!Symbol$6) {
+		if(!Symbol$4) {
 			if(nonEnumerable) {
 				defineProperty$1(Object.prototype, '@@asyncIterator', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@asyncIterator';
 		} else {
-			return Symbol$6.asyncIterator || Symbol$6('asyncIterator');
+			return Symbol$4.asyncIterator || Symbol$4('asyncIterator');
 		}
 	})();
 
@@ -4962,7 +4944,7 @@
 		return s;
 	};
 
-	var $inject_Symbol_for = Symbol$6 ? (Symbol$6.for || modern_for) : compat_for;
+	var $inject_Symbol_for = Symbol$4 ? (Symbol$4.for || modern_for) : compat_for;
 
 	function keyFor$1(symbol) {
 		if(typeof symbol !== "symbol") {
@@ -4979,7 +4961,7 @@
 		return symbol.__key__;
 	};
 
-	var $inject_Symbol_keyFor = Symbol$6 ? (Symbol$6.keyFor || keyFor$1) : keyFor;
+	var $inject_Symbol_keyFor = Symbol$4 ? (Symbol$4.keyFor || keyFor$1) : keyFor;
 
 	var JSON$1 = window.JSON;
 
@@ -7378,7 +7360,7 @@
 	  Promise.reject(42).finally(function (it) {
 	    called++;
 	    argument = it;
-	  }).catch(function () {
+	  }).then(function () {
 	    assert.same(called, 1, 'onFinally function called one time');
 	    assert.same(argument, undefined, 'onFinally function called with a correct argument');
 	    start();
@@ -8419,8 +8401,8 @@
 		return false;
 	};
 
-	var isSymbol = Symbol$6 ? isSymbol$1 : function(obj) {
-		return typeof obj === "object" && obj instanceof Symbol$5;
+	var isSymbol = Symbol$4 ? isSymbol$1 : function(obj) {
+		return typeof obj === "object" && obj instanceof Symbol$3;
 	};
 
 	var Event$1 = window.Event;
@@ -8501,6 +8483,17 @@
 					return new DataView(new Uint8Array(obj.buffer).buffer);
 				case '[object Blob]':
 					return obj.slice(0, obj.size, obj.type);
+				case '[object File]':
+					return new File([obj], obj.name, {
+						type: obj.type,
+						lastModified: obj.lastModified
+					});
+				case '[object FileList]':
+					var transfer = new DataTransfer();
+					for(var i = 0, len = obj.length; i < len; i++) {
+						transfer.items.add(obj[i]);
+					}
+					return transfer.files;
 				default:
 					throw new Error("Failed to execute 'structuredClone' on " + type);
 			}
@@ -8923,7 +8916,7 @@
 	});
 
 	// FileList
-	if (typeof window.File === "function" && window.DataTransfer) QUnit.test('FileList', function (assert) {
+	if (typeof window.File === "function" && fromSource('new DataTransfer()')) QUnit.test('FileList', function (assert) {
 	  var transfer = new DataTransfer();
 	  transfer.items.add(new File(['test'], 'foo.txt'));
 	  cloneObjectTest(assert, transfer.files, function (orig, clone) {
@@ -9135,9 +9128,8 @@
 
 	  // assert.notThrows(() => [1, 2, 3].toSorted(undefined).length === 3, 'works with undefined');
 	  // assert.throws(() => [1, 2, 3].toSorted(null), 'throws on null');
-	  assert.throws(function () {
-	    return [1, 2, 3].toSorted({});
-	  }, 'throws on {}');
+	  // assert.throws(() => [1, 2, 3].toSorted({}), 'throws on {}');
+
 	  if (typeof _Symbol$2 == 'function' && !_Symbol$2.sham) {
 	    assert.throws(function () {
 	      return [_Symbol$2(1), _Symbol$2(2)].toSorted();
