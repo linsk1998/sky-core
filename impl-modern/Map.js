@@ -1,12 +1,25 @@
-
-import { isFunction } from "../utils/isFunction";
 import { Map as GMap } from "../native/Map";
 import { toES6Iterator } from "../utils-modern/toES6Iterator";
+import { createIteratorHelper } from "../utils/createIteratorHelper";
 
 export function createSubMap() {
 	function Map() {
-		var args = arguments[0];
-		var map = new GMap(args);
+		var arr = arguments[0];
+		var map = new GMap();
+		if(arr) {
+			var _iterator = createIteratorHelper(arr), _step, item;
+			if(!_iterator) throw new TypeError(typeof arr + " " + arr + " is not iterable.");
+			try {
+				for(_iterator.s(); !(_step = _iterator.n()).done;) {
+					item = _step.value;
+					map.set(item[0], item[1]);
+				}
+			} catch(err) {
+				_iterator.e(err);
+			} finally {
+				_iterator.f();
+			}
+		}
 		Object.setPrototypeOf(map, Object.getPrototypeOf(this));
 		return map;
 	}
@@ -17,7 +30,7 @@ export function createSubMap() {
 export function fixMap() {
 	var Map = createSubMap();
 	var m = new GMap();
-	if(isFunction(m.size)) {
+	if(m.size !== 0) {
 		// firefox 18-
 		Object.defineProperty(Map.prototype, 'size', {
 			get: function() {
