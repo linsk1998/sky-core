@@ -1,13 +1,12 @@
 import { Symbol } from "../native/Symbol";
 import { Map } from "../native/Map";
-import { fixMap, createSubMap } from "../impl-modern/Map";
+import { fixMap, checkMapSupportConstructorIteratorReturn, createAndFixSubMap } from "../impl-modern/Map";
 import { createMap } from "../impl-compat/Map";
-import { checkMapSupportConstructorIteratorReturn } from "../utils-modern/checkMapSupportConstructorIteratorReturn";
 
 if(Symbol) {
 	if(Symbol.iterator) {
-		if(checkMapSupportConstructorIteratorReturn()) {
-			window.Map = createSubMap();
+		if(!checkMapSupportConstructorIteratorReturn()) {
+			window.Map = createAndFixSubMap();
 		}
 	} else {
 		// Safari8 支持entries

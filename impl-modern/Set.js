@@ -1,11 +1,62 @@
-import { isFunction } from "../utils/isFunction";
 import { Set as GSet } from "../native/Set";
 import { toES6Iterator } from "../utils-modern/toES6Iterator";
+import { createIteratorHelper } from "../utils/createIteratorHelper";
+import { Symbol } from "../native/Symbol";
+import { fixHasN0Bug } from "./Map";
+
+// 只有原生支持Symbol.iterator的情况下才会调用这个函数
+var setConstructorIteratorReturn = false;
+export function checkSetSupportConstructorIteratorReturn() {
+	try {
+		var called = 0;
+		var iteratorWithReturn = {
+			next: function() {
+				return { done: !!called++ };
+			},
+			return: function() {
+				setConstructorIteratorReturn = true;
+			}
+		};
+		iteratorWithReturn[Symbol.iterator] = function() {
+			return this;
+		};
+		new GSet(iteratorWithReturn);
+	} catch(error) { /* empty */ }
+	checkSetSupportConstructorIteratorReturn = function() {
+		return setConstructorIteratorReturn;
+	};
+	return setConstructorIteratorReturn;
+}
+export function createAndFixSubSet() {
+	var Set = createSubSet();
+	var set = new Set();
+	// V8 ~ Chromium 42- fails only with 5+ elements
+	var i = 5;
+	while(i--) set.add(i);
+	if(!set.has(-0)) {
+		fixHasN0Bug(Set);
+	}
+	return Set;
+}
 export function createSubSet() {
 	function Set() {
-		var args = arguments[0];
-		var set = new GSet(args);
+		var arr = arguments[0];
+		var set = new GSet();
 		Object.setPrototypeOf(set, Object.getPrototypeOf(this));
+		if(arr) {
+			var _iterator = createIteratorHelper(arr), _step, item;
+			if(!_iterator) throw new TypeError(typeof arr + " " + arr + " is not iterable.");
+			try {
+				for(_iterator.s(); !(_step = _iterator.n()).done;) {
+					item = _step.value;
+					set.add(item);
+				}
+			} catch(err) {
+				_iterator.e(err);
+			} finally {
+				_iterator.f();
+			}
+		}
 		return set;
 	}
 	Object.setPrototypeOf(Set, GSet);
@@ -16,7 +67,7 @@ export function createSubSet() {
 export function fixSet() {
 	var Set = createSubSet();
 	var s = new GSet();
-	if(isFunction(s.size)) {
+	if(s.size !== 0) {
 		// firefox 18-
 		Object.defineProperty(Set.prototype, 'size', {
 			get: function() {

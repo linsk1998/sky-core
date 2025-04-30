@@ -1,11 +1,56 @@
 import { Map as GMap } from "../native/Map";
 import { toES6Iterator } from "../utils-modern/toES6Iterator";
 import { createIteratorHelper } from "../utils/createIteratorHelper";
+import { Symbol } from "../native/Symbol";
+
+// 只有原生支持Symbol.iterator的情况下才会调用这个函数
+var mapConstructorIteratorReturn = false;
+export function checkMapSupportConstructorIteratorReturn() {
+	try {
+		var called = 0;
+		var iteratorWithReturn = {
+			next: function() {
+				return { done: !!called++ };
+			},
+			return: function() {
+				mapConstructorIteratorReturn = true;
+			}
+		};
+		iteratorWithReturn[Symbol.iterator] = function() {
+			return this;
+		};
+		new GMap(iteratorWithReturn);
+	} catch(error) { /* empty */ }
+	checkMapSupportConstructorIteratorReturn = function() {
+		return mapConstructorIteratorReturn;
+	};
+	return mapConstructorIteratorReturn;
+}
+export function createAndFixSubMap() {
+	var Map = createSubMap();
+	var map = new Map();
+	// V8 ~ Chromium 42- fails only with 5+ elements
+	var i = 5;
+	while(i--) map.set(i, 0);
+	if(!map.has(-0)) {
+		fixHasN0Bug(Map);
+	}
+	return Map;
+}
+export function fixHasN0Bug(Map) {
+	var hasFn = Map.prototype.has;
+	Map.prototype.has = function has(key) {
+		return key === 0 ?
+			hasFn.call(this, 0) :
+			hasFn.apply(this, arguments);
+	};
+}
 
 export function createSubMap() {
 	function Map() {
 		var arr = arguments[0];
 		var map = new GMap();
+		Object.setPrototypeOf(map, Object.getPrototypeOf(this));
 		if(arr) {
 			var _iterator = createIteratorHelper(arr), _step, item;
 			if(!_iterator) throw new TypeError(typeof arr + " " + arr + " is not iterable.");
@@ -20,7 +65,6 @@ export function createSubMap() {
 				_iterator.f();
 			}
 		}
-		Object.setPrototypeOf(map, Object.getPrototypeOf(this));
 		return map;
 	}
 	Object.setPrototypeOf(Map, GMap);

@@ -3421,10 +3421,54 @@
 		definePrototype(Array, 'values', values$2);
 	}
 
+	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
+	var mapConstructorIteratorReturn = false;
+	function checkMapSupportConstructorIteratorReturn() {
+		try {
+			var called = 0;
+			var iteratorWithReturn = {
+				next: function() {
+					return { done: !!called++ };
+				},
+				return: function() {
+					mapConstructorIteratorReturn = true;
+				}
+			};
+			iteratorWithReturn[Symbol$4.iterator] = function() {
+				return this;
+			};
+			new Map$2(iteratorWithReturn);
+		} catch(error) { /* empty */ }
+		checkMapSupportConstructorIteratorReturn = function() {
+			return mapConstructorIteratorReturn;
+		};
+		return mapConstructorIteratorReturn;
+	}
+	function createAndFixSubMap() {
+		var Map = createSubMap();
+		var map = new Map();
+		// V8 ~ Chromium 42- fails only with 5+ elements
+		var i = 5;
+		while(i--) map.set(i, 0);
+		if(!map.has(-0)) {
+			fixHasN0Bug(Map);
+		}
+		return Map;
+	}
+	function fixHasN0Bug(Map) {
+		var hasFn = Map.prototype.has;
+		Map.prototype.has = function has(key) {
+			return key === 0 ?
+				hasFn.call(this, 0) :
+				hasFn.apply(this, arguments);
+		};
+	}
+
 	function createSubMap() {
 		function Map() {
 			var arr = arguments[0];
 			var map = new Map$2();
+			Object.setPrototypeOf(map, Object.getPrototypeOf(this));
 			if(arr) {
 				var _iterator = createIteratorHelper(arr), _step, item;
 				if(!_iterator) throw new TypeError(typeof arr + " " + arr + " is not iterable.");
@@ -3439,7 +3483,6 @@
 					_iterator.f();
 				}
 			}
-			Object.setPrototypeOf(map, Object.getPrototypeOf(this));
 			return map;
 		}
 		Object.setPrototypeOf(Map, Map$2);
@@ -3724,34 +3767,10 @@
 		return createIterable(this, getValue);
 	};
 
-	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
-	var mapConstructorIteratorReturn = false;
-	function checkMapSupportConstructorIteratorReturn() {
-		try {
-			var called = 0;
-			var iteratorWithReturn = {
-				next: function() {
-					return { done: !!called++ };
-				},
-				return: function() {
-					mapConstructorIteratorReturn = true;
-				}
-			};
-			iteratorWithReturn[Symbol$4.iterator] = function() {
-				return this;
-			};
-			new Map$2(iteratorWithReturn);
-		} catch(error) { /* empty */ }
-		checkMapSupportConstructorIteratorReturn = function() {
-			return mapConstructorIteratorReturn;
-		};
-		return mapConstructorIteratorReturn;
-	}
-
 	if(Symbol$4) {
 		if(Symbol$4.iterator) {
-			if(checkMapSupportConstructorIteratorReturn()) {
-				window.Map = createSubMap();
+			if(!checkMapSupportConstructorIteratorReturn()) {
+				window.Map = createAndFixSubMap();
 			}
 		} else {
 			// Safari8 支持entries
@@ -4212,11 +4231,59 @@
 
 	var Set$1 = window.Set;
 
+	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
+	var setConstructorIteratorReturn = false;
+	function checkSetSupportConstructorIteratorReturn() {
+		try {
+			var called = 0;
+			var iteratorWithReturn = {
+				next: function() {
+					return { done: !!called++ };
+				},
+				return: function() {
+					setConstructorIteratorReturn = true;
+				}
+			};
+			iteratorWithReturn[Symbol$4.iterator] = function() {
+				return this;
+			};
+			new Set$1(iteratorWithReturn);
+		} catch(error) { /* empty */ }
+		checkSetSupportConstructorIteratorReturn = function() {
+			return setConstructorIteratorReturn;
+		};
+		return setConstructorIteratorReturn;
+	}
+	function createAndFixSubSet() {
+		var Set = createSubSet();
+		var set = new Set();
+		// V8 ~ Chromium 42- fails only with 5+ elements
+		var i = 5;
+		while(i--) set.add(i);
+		if(!set.has(-0)) {
+			fixHasN0Bug(Set);
+		}
+		return Set;
+	}
 	function createSubSet() {
 		function Set() {
-			var args = arguments[0];
-			var set = new Set$1(args);
+			var arr = arguments[0];
+			var set = new Set$1();
 			Object.setPrototypeOf(set, Object.getPrototypeOf(this));
+			if(arr) {
+				var _iterator = createIteratorHelper(arr), _step, item;
+				if(!_iterator) throw new TypeError(typeof arr + " " + arr + " is not iterable.");
+				try {
+					for(_iterator.s(); !(_step = _iterator.n()).done;) {
+						item = _step.value;
+						set.add(item);
+					}
+				} catch(err) {
+					_iterator.e(err);
+				} finally {
+					_iterator.f();
+				}
+			}
 			return set;
 		}
 		Object.setPrototypeOf(Set, Set$1);
@@ -4227,7 +4294,7 @@
 	function fixSet() {
 		var Set = createSubSet();
 		var s = new Set$1();
-		if(isFunction(s.size)) {
+		if(s.size !== 0) {
 			// firefox 18-
 			$inject_Object_defineProperty(Set.prototype, 'size', {
 				get: function() {
@@ -4323,18 +4390,23 @@
 		return this;
 	};
 
-	if(!Symbol$4) {
+	if(Symbol$4) {
+		if(Symbol$4.iterator) {
+			if(!checkSetSupportConstructorIteratorReturn()) {
+				window.Set = createAndFixSubSet();
+			}
+		} else {
+			// Safari8 支持values
+			// Safari9 支持Symbol
+			// Safari10 支持iterator
+			Symbol$4.iterator = Symbol$4('iterator');
+			Set$1.prototype[Symbol$4.iterator] = Set$1.prototype.values;
+		}
+	} else {
 		if(Set$1 && (Set$1.prototype.iterator || Set$1.prototype['@@iterator'])) {
 			window.Set = fixSet();
 		} else {
 			window.Set = createSet();
-		}
-	} else {
-		if(!Symbol$4.iterator) {
-			Symbol$4.iterator = Symbol$4('iterator');
-		}
-		if(!Set$1.prototype[Symbol$4.iterator]) {
-			Set$1.prototype[Symbol$4.iterator] = Set$1.prototype.values;
 		}
 	}
 
