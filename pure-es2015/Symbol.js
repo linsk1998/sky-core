@@ -4,12 +4,11 @@ var Symbol;
 if('description' in native_Symbol.prototype) {
 	Symbol = native_Symbol;
 } else {
-	Object.setPrototypeOf(es2015_Symbol, native_Symbol);
+	Symbol = es2015_Symbol;
 	Object.defineProperty(native_Symbol.prototype, 'description', {
 		configurable: true,
 		enumerable: false,
 		get: getSymbolDescription
 	});
-	Symbol = es2015_Symbol;
 }
 export default Symbol;

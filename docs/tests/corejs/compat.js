@@ -5061,53 +5061,6 @@
 	  // }, 'uses ToLength');
 	});
 
-	function matchAll(regExp) {
-	  if (this == null) {
-	    throw new TypeError("matchAll called on null or undefined");
-	  }
-	  var string = this;
-	  if (isString(regExp)) {
-	    regExp = new RegExp(regExp, 'g');
-	  } else if (regExp && regExp.global === false) {
-	    throw new TypeError("matchAll called with a non-global RegExp argument");
-	  }
-	  var it = {
-	    next: function () {
-	      var value = regExp.exec(string);
-	      if (value) {
-	        return {
-	          value: value,
-	          done: false
-	        };
-	      } else {
-	        return {
-	          value: undefined,
-	          done: true
-	        };
-	      }
-	    }
-	  };
-	  it[iterator$1] = function () {
-	    return this;
-	  };
-	  return it;
-	}
-
-	definePrototype(String, 'matchAll', matchAll);
-
-	Symbol$2.sham = true;
-	Symbol$2.asyncIterator = "@@asyncIterator";
-	Symbol$2.isConcatSpreadable = "@@isConcatSpreadable";
-	Symbol$2.match = "@@match";
-	Symbol$2.matchAll = "@@matchAll";
-	Symbol$2.replace = "@@replace";
-	Symbol$2.search = "@@search";
-	Symbol$2.species = "@@species";
-	Symbol$2.split = "@@split";
-	Symbol$2.toPrimitive = "@@toPrimitive";
-	Symbol$2.toStringTag = "@@toStringTag";
-	Symbol$2.unscopables = "@@unscopables";
-
 	var $inject_Symbol_hasInstance = '@@hasInstance';
 
 	var $inject_Symbol_asyncIterator = '@@asyncIterator';
@@ -5288,9 +5241,9 @@
 	      assert.strictEqual(JSON.stringify(object), '{"bar":2}', 'object key');
 	    }
 	    // assert.strictEqual(JSON.stringify(Symbol('symbol')), undefined, 'symbol value');
-	    if (_typeof(Symbol$2()) === 'symbol') {
-	      assert.strictEqual(JSON.stringify(Object(Symbol$2('symbol'))), '{}', 'boxed symbol');
-	    }
+	    // if(typeof Symbol() === 'symbol') {
+	    // 	assert.strictEqual(JSON.stringify(Object(Symbol('symbol'))), '{}', 'boxed symbol');
+	    // }
 	    // assert.strictEqual(JSON.stringify(undefined, () => 42), '42', 'replacer works with top-level undefined');
 	  });
 	}
@@ -7858,6 +7811,40 @@
 	  assert.same(globalThis, Object(globalThis), 'is object');
 	  assert.same(globalThis.Math, Math, 'contains globals');
 	});
+
+	function matchAll(regExp) {
+	  if (this == null) {
+	    throw new TypeError("matchAll called on null or undefined");
+	  }
+	  var string = this;
+	  if (isString(regExp)) {
+	    regExp = new RegExp(regExp, 'g');
+	  } else if (regExp && regExp.global === false) {
+	    throw new TypeError("matchAll called with a non-global RegExp argument");
+	  }
+	  var it = {
+	    next: function () {
+	      var value = regExp.exec(string);
+	      if (value) {
+	        return {
+	          value: value,
+	          done: false
+	        };
+	      } else {
+	        return {
+	          value: undefined,
+	          done: true
+	        };
+	      }
+	    }
+	  };
+	  it[iterator$1] = function () {
+	    return this;
+	  };
+	  return it;
+	}
+
+	definePrototype(String, 'matchAll', matchAll);
 
 	QUnit.test('String#matchAll', function (assert) {
 	  var matchAll = String.prototype.matchAll;

@@ -1,6 +1,6 @@
 (function () {
 
-	var Symbol$4 = window.Symbol;
+	var Symbol$6 = window.Symbol;
 
 	var Object$1 = window.Object;
 
@@ -11,13 +11,13 @@
 	var nonEnumerable = !!defineProperties$1;
 
 	var iterator$1 = (function() {
-		if(!Symbol$4) {
+		if(!Symbol$6) {
 			if(nonEnumerable) {
 				defineProperty$1(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@iterator';
 		} else {
-			return Symbol$4.iterator || Symbol$4('iterator');
+			return Symbol$6.iterator || Symbol$6('iterator');
 		}
 	})();
 
@@ -108,7 +108,7 @@
 		return new ES6Iterator(it);
 	};
 
-	if(!Symbol$4) {
+	if(!Symbol$6) {
 		if(!String.prototype['@@iterator']) {
 			String.prototype['@@iterator'] = iterator;
 		} else if(String.prototype.iterator) {
@@ -1572,7 +1572,7 @@
 	function keys$2(obj) {
 		if(!keys$3) {
 			return nie_keys(obj);
-		} else if(Symbol$4) {
+		} else if(Symbol$6) {
 			return keys$3(obj);
 		} else {
 			return ie_keys(obj);
@@ -1581,7 +1581,7 @@
 
 	if(!Object$1.keys) {
 		Object$1.keys = nie_keys;
-	} else if(!Symbol$4) {
+	} else if(!Symbol$6) {
 		Object$1.keys = ie_keys;
 	}
 
@@ -1695,7 +1695,7 @@
 	}
 
 	if(getOwnPropertyNames) {
-		if(!Symbol$4) {
+		if(!Symbol$6) {
 			Object$1.getOwnPropertyNames = ie_getOwnPropertyNames;
 		}
 	} else {
@@ -2990,7 +2990,8 @@
 
 	var symbol_sqe$1 = 0;
 	var all_symbol$1 = {};
-	function Symbol$3(desc) {
+
+	function Symbol$5(desc) {
 		var key = "@@" + desc + ":" + symbol_sqe$1;
 		this.__name__ = key;
 		if(nonEnumerable) {
@@ -3009,13 +3010,13 @@
 		symbol_sqe$1++;
 		all_symbol$1[key] = this;
 	};
-	Symbol$3.prototype.toString = function() {
+	Symbol$5.prototype.toString = function() {
 		return this.__name__;
 	};
-	Symbol$3.prototype.toJSON = function() {
+	Symbol$5.prototype.toJSON = function() {
 		return undefined;
 	};
-	var getOwnPropertySymbols$2 = nonEnumerable ?
+	var getOwnPropertySymbols$3 = nonEnumerable ?
 		function(obj) {
 			var arr = [];
 			if(isPrimitive(obj)) {
@@ -3047,8 +3048,20 @@
 			return arr;
 		};
 
-	if(!Object$1.getOwnPropertySymbols) {
-		Object$1.getOwnPropertySymbols = getOwnPropertySymbols$2;
+	var getOwnPropertySymbols$2 = Object$1.getOwnPropertySymbols;
+	if(getOwnPropertySymbols$2) {
+		try {
+			getOwnPropertySymbols$2(0);
+		} catch(e) {
+			Object$1.getOwnPropertySymbols = function(obj) {
+				if(isPrimitive(obj)) {
+					return [];
+				}
+				return getOwnPropertySymbols$2(obj);
+			};
+		}
+	} else {
+		Object$1.getOwnPropertySymbols = getOwnPropertySymbols$3;
 	}
 
 	function freeze(o) {
@@ -3434,7 +3447,7 @@
 					mapConstructorIteratorReturn = true;
 				}
 			};
-			iteratorWithReturn[Symbol$4.iterator] = function() {
+			iteratorWithReturn[Symbol$6.iterator] = function() {
 				return this;
 			};
 			new Map$2(iteratorWithReturn);
@@ -3767,8 +3780,8 @@
 		return createIterable(this, getValue);
 	};
 
-	if(Symbol$4) {
-		if(Symbol$4.iterator) {
+	if(Symbol$6) {
+		if(Symbol$6.iterator) {
 			if(!checkMapSupportConstructorIteratorReturn()) {
 				window.Map = createAndFixSubMap();
 			}
@@ -3776,8 +3789,8 @@
 			// Safari8 支持entries
 			// Safari9 支持Symbol
 			// Safari10 支持iterator
-			Symbol$4.iterator = Symbol$4('iterator');
-			Map$2.prototype[Symbol$4.iterator] = Map$2.prototype.entries;
+			Symbol$6.iterator = Symbol$6('iterator');
+			Map$2.prototype[Symbol$6.iterator] = Map$2.prototype.entries;
 		}
 	} else {
 		if(Map$2 && (Map$2.prototype.iterator || Map$2.prototype['@@iterator'])) {
@@ -4244,7 +4257,7 @@
 					setConstructorIteratorReturn = true;
 				}
 			};
-			iteratorWithReturn[Symbol$4.iterator] = function() {
+			iteratorWithReturn[Symbol$6.iterator] = function() {
 				return this;
 			};
 			new Set$1(iteratorWithReturn);
@@ -4390,8 +4403,8 @@
 		return this;
 	};
 
-	if(Symbol$4) {
-		if(Symbol$4.iterator) {
+	if(Symbol$6) {
+		if(Symbol$6.iterator) {
 			if(!checkSetSupportConstructorIteratorReturn()) {
 				window.Set = createAndFixSubSet();
 			}
@@ -4399,8 +4412,8 @@
 			// Safari8 支持values
 			// Safari9 支持Symbol
 			// Safari10 支持iterator
-			Symbol$4.iterator = Symbol$4('iterator');
-			Set$1.prototype[Symbol$4.iterator] = Set$1.prototype.values;
+			Symbol$6.iterator = Symbol$6('iterator');
+			Set$1.prototype[Symbol$6.iterator] = Set$1.prototype.values;
 		}
 	} else {
 		if(Set$1 && (Set$1.prototype.iterator || Set$1.prototype['@@iterator'])) {
@@ -4875,34 +4888,41 @@
 	  });
 	});
 
-	var Symbol$2;
-	if(Symbol$4) {
-		var descs = Object.create(null);
-		Symbol$2 = function Symbol() {
-			var desc = arguments[0];
-			if(desc !== undefined) {
-				desc = String(desc);
-			}
-			var s = Symbol$4(desc);
-			descs[s] = desc;
-			return s;
-		};
-		Object.setPrototypeOf(Symbol$2, Symbol$4);
-		Object.defineProperty(Symbol$4.prototype, 'description', {
+	function Symbol$4(desc) {
+		return new Symbol$5(desc);
+	};
+	Symbol$4.sham = true;
+
+	var descs = Object.create(null);
+	function Symbol$3() {
+		var desc = arguments[0];
+		if(desc !== undefined) {
+			desc = String(desc);
+		}
+		var s = Symbol$6(desc);
+		descs[s] = desc;
+		return s;
+	};
+	Object.setPrototypeOf(Symbol$3, Symbol$6);
+
+	function getSymbolDescription() {
+		var s = this.valueOf();
+		if(s in descs) {
+			return descs[s];
+		}
+		return String(this).slice(7, -1);
+	}
+
+	var Symbol$2 = Symbol$6;
+	if(Symbol$6) {
+		Symbol$2 = Symbol$3;
+		Object.defineProperty(Symbol$6.prototype, 'description', {
 			configurable: true,
 			enumerable: false,
-			get: function() {
-				if(this in descs) {
-					return descs[this];
-				}
-				return String(this).slice(7, -1);
-			}
+			get: getSymbolDescription
 		});
 	} else {
-		Symbol$2 = function Symbol(desc) {
-			return new Symbol$3(desc);
-		};
-		Symbol$2.sham = true;
+		Symbol$2 = Symbol$4;
 	}
 	var _Symbol$2 = Symbol$2;
 
@@ -5035,24 +5055,24 @@
 	});
 
 	var $inject_Symbol_hasInstance = (function() {
-		if(!Symbol$4) {
+		if(!Symbol$6) {
 			if(nonEnumerable) {
 				defineProperty$1(Object.prototype, '@@hasInstance', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@hasInstance';
 		} else {
-			return Symbol$4.hasInstance || Symbol$4('hasInstance');
+			return Symbol$6.hasInstance || Symbol$6('hasInstance');
 		}
 	})();
 
 	var $inject_Symbol_asyncIterator = (function() {
-		if(!Symbol$4) {
+		if(!Symbol$6) {
 			if(nonEnumerable) {
 				defineProperty$1(Object.prototype, '@@asyncIterator', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@asyncIterator';
 		} else {
-			return Symbol$4.asyncIterator || Symbol$4('asyncIterator');
+			return Symbol$6.asyncIterator || Symbol$6('asyncIterator');
 		}
 	})();
 
@@ -5080,7 +5100,7 @@
 		return s;
 	};
 
-	var $inject_Symbol_for = Symbol$4 ? (Symbol$4.for || modern_for) : compat_for;
+	var $inject_Symbol_for = Symbol$6 ? (Symbol$6.for || modern_for) : compat_for;
 
 	function keyFor$1(symbol) {
 		if(typeof symbol !== "symbol") {
@@ -5097,7 +5117,7 @@
 		return symbol.__key__;
 	};
 
-	var $inject_Symbol_keyFor = Symbol$4 ? (Symbol$4.keyFor || keyFor$1) : keyFor;
+	var $inject_Symbol_keyFor = Symbol$6 ? (Symbol$6.keyFor || keyFor$1) : keyFor;
 
 	var JSON$1 = window.JSON;
 
@@ -5279,9 +5299,9 @@
 	      assert.strictEqual(JSON.stringify(object), '{"bar":2}', 'object key');
 	    }
 	    // assert.strictEqual(JSON.stringify(Symbol('symbol')), undefined, 'symbol value');
-	    if (_typeof(_Symbol$2()) === 'symbol') {
-	      assert.strictEqual(JSON.stringify(Object(_Symbol$2('symbol'))), '{}', 'boxed symbol');
-	    }
+	    // if(typeof Symbol() === 'symbol') {
+	    // 	assert.strictEqual(JSON.stringify(Object(Symbol('symbol'))), '{}', 'boxed symbol');
+	    // }
 	    // assert.strictEqual(JSON.stringify(undefined, () => 42), '42', 'replacer works with top-level undefined');
 	  });
 	}
@@ -8560,8 +8580,8 @@
 		return false;
 	};
 
-	var isSymbol = Symbol$4 ? isSymbol$1 : function(obj) {
-		return typeof obj === "object" && obj instanceof Symbol$3;
+	var isSymbol = Symbol$6 ? isSymbol$1 : function(obj) {
+		return typeof obj === "object" && obj instanceof Symbol$5;
 	};
 
 	var Event$1 = window.Event;

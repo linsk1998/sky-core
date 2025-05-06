@@ -2,8 +2,10 @@ import { isPrimitive } from "../../utils/isPrimitive";
 import { nonEnumerable } from "../../support/nonEnumerable";
 import { defineProperty } from "../../native/Object/defineProperty";
 import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
+
 var symbol_sqe = 0;
 var all_symbol = {};
+
 function Symbol(desc) {
 	var key = "@@" + desc + ":" + symbol_sqe;
 	this.__name__ = key;

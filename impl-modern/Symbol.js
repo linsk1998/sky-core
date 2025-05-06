@@ -13,8 +13,9 @@ export function Symbol() {
 Object.setPrototypeOf(Symbol, native_Symbol);
 
 export function getSymbolDescription() {
-	if(this in descs) {
-		return descs[this];
+	var s = this.valueOf();
+	if(s in descs) {
+		return descs[s];
 	}
 	return String(this).slice(7, -1);
 }

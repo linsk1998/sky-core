@@ -1,19 +1,20 @@
-
-import { Symbol as compat_Symbol } from "../impl/Symbol";
-import { Symbol as modern_Symbol } from "../impl-modern/Symbol";
 import { Symbol as native_Symbol } from "../native/Symbol";
+import { Symbol as impl_Symbol } from "../impl/Symbol";
+import { Symbol as modern_Symbol, getSymbolDescription } from "../impl-modern/Symbol";
 
-export default (function() {
-	var Symbol;
-	if(!native_Symbol) {
-		Symbol = compat_Symbol;
+var Symbol;
+if(native_Symbol) {
+	if('description' in native_Symbol.prototype) {
+		Symbol = native_Symbol;
 	} else {
-		if(String(native_Symbol()) !== String(native_Symbol(""))) {
-			Object.setPrototypeOf(modern_Symbol, native_Symbol);
-			Symbol = modern_Symbol;
-		} else {
-			Symbol = native_Symbol;
-		}
+		Symbol = modern_Symbol;
+		Object.defineProperty(native_Symbol.prototype, 'description', {
+			configurable: true,
+			enumerable: false,
+			get: getSymbolDescription
+		});
 	}
-	return Symbol;
-})();
+} else {
+	Symbol = impl_Symbol;
+}
+export default Symbol;
