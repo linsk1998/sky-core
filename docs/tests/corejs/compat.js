@@ -134,8 +134,6 @@
 	  return n;
 	}
 
-	var Array$1 = window.Array;
-
 	var Object$1 = window.Object;
 
 	var toString$1 = Object$1.prototype.toString;
@@ -149,6 +147,41 @@
 	  return typeof obj === 'function';
 	}
 	;
+
+	// form babel helper
+	function createIteratorHelper(o) {
+	  var it = o[iterator$1];
+	  if (!it) return null;
+	  var normalCompletion = true,
+	    didErr = false,
+	    err;
+
+	  // "it" is being reassigned multiple times to reduce the variables (bundle size)
+	  // thus TypeScript can't infer the correct type of the "it"
+	  return {
+	    s: function () {
+	      it = it.call(o);
+	    },
+	    n: function () {
+	      var step = it.next();
+	      normalCompletion = step.done;
+	      return step;
+	    },
+	    e: function (e) {
+	      didErr = true;
+	      err = e;
+	    },
+	    f: function () {
+	      try {
+	        if (!normalCompletion && it["return"] != null) {
+	          it["return"]();
+	        }
+	      } finally {
+	        if (didErr) throw err;
+	      }
+	    }
+	  };
+	}
 
 	var Number$1 = window.Number;
 
@@ -181,37 +214,23 @@
 	  }
 	  var i, item;
 	  if (entries) {
-	    var normalCompletion = true;
-	    var error, it;
+	    var _iterator = createIteratorHelper(arrayLike),
+	      _step;
+	    if (!_iterator) throw new TypeError(typeof arrayLike + " " + arrayLike + " is not iterable.");
 	    try {
-	      it = entries.call(arrayLike);
 	      i = 0;
-	      while (true) {
-	        var next = it.next();
-	        normalCompletion = next.done;
-	        if (next.done) break;
-	        item = next.value;
+	      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+	        item = _step.value;
 	        if (mapFn) {
 	          item = mapFn.call(thisArg, item, i);
 	        }
 	        push.call(arr, item);
 	        i++;
 	      }
-	    } catch (e) {
-	      error = e;
+	    } catch (err) {
+	      _iterator.e(err);
 	    } finally {
-	      try {
-	        if (!normalCompletion) {
-	          var onReturn = it['return'];
-	          if (onReturn) {
-	            onReturn.call(it);
-	          }
-	        }
-	      } finally {
-	        if (error) {
-	          throw error;
-	        }
-	      }
+	      _iterator.f();
 	    }
 	  } else if (arrayLike.length >= 0 && arrayLike.length <= Number.MAX_SAFE_INTEGER) {
 	    for (i = 0; i < arrayLike.length; i++) {
@@ -226,8 +245,8 @@
 	}
 	;
 
-	if (!Array$1.from) {
-	  Array$1.from = from$1;
+	if (!Array.from) {
+	  Array.from = from$1;
 	}
 
 	var k$2 = 'slice';
@@ -281,6 +300,8 @@
 	    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
 	  }
 	}
+
+	var Array$1 = window.Array;
 
 	function isArray(obj) {
 	  return toString$1.call(obj) === '[object Array]';
@@ -3651,41 +3672,6 @@
 	});
 
 	var Map$2 = window.Map;
-
-	// form babel helper
-	function createIteratorHelper(o) {
-	  var it = o[iterator$1];
-	  if (!it) return null;
-	  var normalCompletion = true,
-	    didErr = false,
-	    err;
-
-	  // "it" is being reassigned multiple times to reduce the variables (bundle size)
-	  // thus TypeScript can't infer the correct type of the "it"
-	  return {
-	    s: function () {
-	      it = it.call(o);
-	    },
-	    n: function () {
-	      var step = it.next();
-	      normalCompletion = step.done;
-	      return step;
-	    },
-	    e: function (e) {
-	      didErr = true;
-	      err = e;
-	    },
-	    f: function () {
-	      try {
-	        if (!normalCompletion && it["return"] != null) {
-	          it["return"]();
-	        }
-	      } finally {
-	        if (didErr) throw err;
-	      }
-	    }
-	  };
-	}
 
 	function entries$2() {
 	  var array = this;

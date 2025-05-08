@@ -1,6 +1,8 @@
 import { Array } from "../../native/Array";
-import { from } from "../../impl/Array/from";
+import { Symbol } from "../../native/Symbol";
+import { checkArraySupportConstructorIteratorReturn } from "../../impl/Array/from";
+import { from } from "../../impl-compat/Array/from";
 
-if(!Array.from) {
+if(!(Array.from && Symbol && checkArraySupportConstructorIteratorReturn())) {
 	Array.from = from;
 }
