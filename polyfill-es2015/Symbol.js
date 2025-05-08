@@ -1,15 +1,8 @@
 import { Symbol as native_Symbol } from "../native/Symbol";
-import { Symbol as es2015_Symbol, getSymbolDescription } from "../impl-es2015/Symbol";
-var Symbol;
-if('description' in native_Symbol.prototype) {
-	Symbol = native_Symbol;
-} else {
-	Object.setPrototypeOf(es2015_Symbol, native_Symbol);
-	Object.defineProperty(native_Symbol.prototype, 'description', {
-		configurable: true,
-		enumerable: false,
-		get: getSymbolDescription
-	});
-	Symbol = window.Symbol = es2015_Symbol;
+import Symbol from "sky-core/pure/Symbol";
+
+if(native_Symbol !== Symbol) {
+	if(!Symbol.asyncIterator) { Symbol.asyncIterator = Symbol("asyncIterator"); }
+	window.Symbol = Symbol;
 }
 export { Symbol };

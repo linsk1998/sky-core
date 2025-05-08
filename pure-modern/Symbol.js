@@ -5,6 +5,7 @@ import { Symbol as modern_Symbol, getSymbolDescription } from "../impl-modern/Sy
 var Symbol = native_Symbol;
 if(native_Symbol) {
 	Symbol = modern_Symbol;
+	Object.setPrototypeOf(Symbol, native_Symbol);
 	Object.defineProperty(native_Symbol.prototype, 'description', {
 		configurable: true,
 		enumerable: false,

@@ -5,6 +5,7 @@ if('description' in native_Symbol.prototype) {
 	Symbol = native_Symbol;
 } else {
 	Symbol = es2015_Symbol;
+	Object.setPrototypeOf(Symbol, native_Symbol);
 	Object.defineProperty(native_Symbol.prototype, 'description', {
 		configurable: true,
 		enumerable: false,

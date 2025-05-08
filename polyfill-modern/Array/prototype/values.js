@@ -1,3 +1,4 @@
+import { Symbol } from "../../../native/Symbol";
 import { definePrototype } from "sky-core/utils/definePrototype";
 import { values } from "../../../impl/Array/prototype/values";
 

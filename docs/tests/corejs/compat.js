@@ -2569,19 +2569,15 @@
 	}
 
 	function promise_finally (onCompleted) {
-	  return this.then(function (value) {
-	    var r = onCompleted();
-	    if (r === undefined) {
-	      return value;
-	    }
-	    return r;
-	  }, function (error) {
-	    var r = onCompleted();
-	    if (r === undefined) {
-	      return error;
-	    }
-	    return r;
-	  });
+	  var fun = isFunction(onCompleted);
+	  return this.then(fun ? function (x) {
+	    return Promise.resolve(onCompleted()).then(function () {
+	      return x;
+	    });
+	  } : onCompleted, fun ? function (e) {
+	    onCompleted();
+	    throw e;
+	  } : onCompleted);
 	}
 	;
 
@@ -3309,17 +3305,24 @@
 
 	var symbol_sqe = 0;
 	var all_symbol = {};
-	function Symbol$4(desc) {
+	function symbol(desc) {
+	  if (this instanceof symbol) {
+	    throw new TypeError("Symbol is not a constructor");
+	  }
+	  return new Symbol$2(desc);
+	}
+	;
+	symbol.sham = true;
+	function Symbol$2(desc) {
 	  this.description = desc = desc == undefined ? "" : String(desc);
 	  this.__name__ = "@@" + desc + ":" + symbol_sqe;
 	  symbol_sqe++;
 	  all_symbol[this.__name__] = this;
 	}
-	;
-	Symbol$4.prototype.toString = function () {
+	Symbol$2.prototype.toString = function () {
 	  return this.__name__;
 	};
-	Symbol$4.prototype.toJSON = function () {
+	Symbol$2.prototype.toJSON = function () {
 	  return undefined;
 	};
 	function getOwnPropertySymbols(obj) {
@@ -4908,31 +4911,13 @@
 	  });
 	});
 
-	var Symbol$3 = window.Symbol;
+	var Symbol$1 = window.Symbol;
 
-	function Symbol$2(desc) {
-	  return new Symbol$4(desc);
-	}
-	;
-	Symbol$2.sham = true;
-
-	var Symbol$1 = Symbol$3;
-	if (!Symbol$1) {
-	  window.Symbol = Symbol$1 = Symbol$2;
-	  Symbol$1.sham = true;
-	  Symbol$1.asyncIterator = "@@asyncIterator";
-	  Symbol$1.hasInstance = "@@hasInstance";
-	  // Symbol.isConcatSpreadable = "@@isConcatSpreadable";
-	  Symbol$1.iterator = "@@iterator";
-	  // Symbol.match = "@@match";
-	  // Symbol.matchAll = "@@matchAll";
-	  // Symbol.replace = "@@replace";
-	  // Symbol.search = "@@search";
-	  // Symbol.species = "@@species";
-	  // Symbol.split = "@@split";
-	  // Symbol.toPrimitive = "@@toPrimitive";
-	  // Symbol.toStringTag = "@@toStringTag";
-	  // Symbol.unscopables = "@@unscopables";
+	if (Symbol$1 !== symbol) {
+	  symbol.iterator = "@@iterator";
+	  symbol.hasInstance = "@@hasInstance";
+	  symbol.asyncIterator = "@@asyncIterator";
+	  window.Symbol = symbol;
 	}
 
 	QUnit.test('Array#keys', function (assert) {
@@ -5070,7 +5055,7 @@
 	  if (Object.hasOwn(symbol_cache, desc)) {
 	    return symbol_cache[desc];
 	  }
-	  var s = Symbol$2(desc);
+	  var s = symbol(desc);
 	  s.__key__ = desc;
 	  symbol_cache[desc] = s;
 	  return s;
@@ -5089,7 +5074,7 @@
 	var JSON$1 = window.JSON;
 
 	function isSymbol(obj) {
-	  return typeof obj === "object" && obj instanceof Symbol$4;
+	  return typeof obj === "object" && obj instanceof Symbol$2;
 	}
 	;
 
@@ -5159,11 +5144,11 @@
 	var _ref = GLOBAL.Reflect || {},
 	  ownKeys = _ref.ownKeys;
 	QUnit.test('Symbol', function (assert) {
-	  assert.isFunction(Symbol$2);
-	  if (NATIVE) assert.strictEqual(Symbol$2.length, 0, 'arity is 0');
+	  assert.isFunction(symbol);
+	  if (NATIVE) assert.strictEqual(symbol.length, 0, 'arity is 0');
 	  // assert.name(Symbol, 'Symbol');
-	  var symbol1 = Symbol$2('symbol');
-	  var symbol2 = Symbol$2('symbol');
+	  var symbol1 = symbol('symbol');
+	  var symbol2 = symbol('symbol');
 	  assert.ok(symbol1 !== symbol2, 'Symbol("symbol") !== Symbol("symbol")');
 	  var object = {};
 	  object[symbol1] = 42;
@@ -5204,15 +5189,15 @@
 	    w: 2,
 	    e: 3
 	  };
-	  prototype[Symbol$2()] = 42;
-	  prototype[Symbol$2()] = 43;
+	  prototype[symbol()] = 42;
+	  prototype[symbol()] = 43;
 	  assert.deepEqual(Object.getOwnPropertyNames(prototype).sort(), ['e', 'q', 'w']);
 	  assert.strictEqual(Object.getOwnPropertySymbols(prototype).length, 2);
 	  var object = Object.create(prototype);
 	  object.a = 1;
 	  object.s = 2;
 	  object.d = 3;
-	  object[Symbol$2()] = 44;
+	  object[symbol()] = 44;
 	  assert.deepEqual(Object.getOwnPropertyNames(object).sort(), ['a', 'd', 's']);
 	  assert.strictEqual(Object.getOwnPropertySymbols(object).length, 1);
 	  // assert.strictEqual(Object.getOwnPropertySymbols(Object.prototype).length, 0);
@@ -5229,15 +5214,15 @@
 	});
 	if (JSON) {
 	  QUnit.test('Symbols & JSON.stringify', function (assert) {
-	    assert.strictEqual(JSON.stringify([1, Symbol$2('foo'), false, Symbol$2('bar'), {}]), '[1,null,false,null,{}]', 'array value');
+	    assert.strictEqual(JSON.stringify([1, symbol('foo'), false, symbol('bar'), {}]), '[1,null,false,null,{}]', 'array value');
 	    assert.strictEqual(JSON.stringify({
-	      symbol: Symbol$2('symbol')
+	      symbol: symbol('symbol')
 	    }), '{}', 'object value');
 	    if (DESCRIPTORS) {
 	      var object = {
 	        bar: 2
 	      };
-	      object[Symbol$2('symbol')] = 1;
+	      object[symbol('symbol')] = 1;
 	      assert.strictEqual(JSON.stringify(object), '{"bar":2}', 'object key');
 	    }
 	    // assert.strictEqual(JSON.stringify(Symbol('symbol')), undefined, 'symbol value');
@@ -5249,11 +5234,11 @@
 	}
 	if (DESCRIPTORS) {
 	  QUnit.test('Symbols & descriptors', function (assert) {
-	    var d = Symbol$2('d');
-	    var e = Symbol$2('e');
-	    var f = Symbol$2('f');
-	    var i = Symbol$2('i');
-	    var j = Symbol$2('j');
+	    var d = symbol('d');
+	    var e = symbol('e');
+	    var f = symbol('f');
+	    var i = symbol('i');
+	    var j = symbol('j');
 	    var prototype = {
 	      g: 'g'
 	    };
@@ -5342,8 +5327,8 @@
 	    // }, 'redefined non-enum key');
 	  });
 	  QUnit.test('Symbols & Object.defineProperties', function (assert) {
-	    var c = Symbol$2('c');
-	    var d = Symbol$2('d');
+	    var c = symbol('c');
+	    var d = symbol('d');
 	    var descriptors = {
 	      a: {
 	        configurable: true,
@@ -5387,8 +5372,8 @@
 	    assert.strictEqual(object[d], undefined, 'd');
 	  });
 	  QUnit.test('Symbols & Object.create', function (assert) {
-	    var c = Symbol$2('c');
-	    var d = Symbol$2('d');
+	    var c = symbol('c');
+	    var d = symbol('d');
 	    var descriptors = {
 	      a: {
 	        configurable: true,
@@ -5448,7 +5433,7 @@
 	  // });
 
 	  QUnit.test('Symbol.sham flag', function (assert) {
-	    assert.same(Symbol$2.sham, _typeof(Symbol$2()) === 'symbol' ? undefined : true);
+	    assert.same(symbol.sham, _typeof(symbol()) === 'symbol' ? undefined : true);
 	  });
 	}
 
@@ -7066,8 +7051,8 @@
 	    object = {
 	      a: 'a'
 	    };
-	    var c = Symbol$2('c');
-	    var d = Symbol$2('d');
+	    var c = symbol('c');
+	    var d = symbol('d');
 	    object[c] = 'c';
 	    $inject_Object_defineProperty(object, 'b', {
 	      value: 'b'
@@ -7344,8 +7329,8 @@
 	    }
 	  });
 	  object.w = 2;
-	  var symbol = Symbol$2('4');
-	  object[symbol] = 4;
+	  var symbol$1 = symbol('4');
+	  object[symbol$1] = 4;
 	  var descriptors = Object.getOwnPropertyDescriptors(object);
 	  assert.strictEqual(descriptors.q, undefined);
 	  assert.deepEqual(descriptors.w, {
@@ -7369,7 +7354,7 @@
 	      value: 3
 	    });
 	  }
-	  assert.strictEqual(descriptors[symbol].value, 4);
+	  assert.strictEqual(descriptors[symbol$1].value, 4);
 	});
 	QUnit.test('Object.getOwnPropertyDescriptors.sham flag', function (assert) {
 	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);
@@ -7489,7 +7474,7 @@
 	  Promise.reject(42)["finally"](function (it) {
 	    called++;
 	    argument = it;
-	  }).then(function () {
+	  })["catch"](function () {
 	    assert.same(called, 1, 'onFinally function called one time');
 	    assert.same(argument, undefined, 'onFinally function called with a correct argument');
 	    start();
@@ -7726,15 +7711,15 @@
 	});
 
 	QUnit.test('Symbol#description', function (assert) {
-	  assert.same(Symbol$2('foo').description, 'foo');
-	  assert.same(Symbol$2('').description, '');
-	  assert.same(Symbol$2(')').description, ')');
-	  assert.same(Symbol$2({}).description, '[object Object]');
-	  assert.same(Symbol$2(null).description, 'null');
-	  assert.same(Symbol$2(undefined).description, undefined);
-	  assert.same(Symbol$2().description, undefined);
-	  assert.same(Object(Symbol$2('foo')).description, 'foo');
-	  assert.same(Object(Symbol$2()).description, undefined);
+	  assert.same(symbol('foo').description, 'foo');
+	  assert.same(symbol('').description, '');
+	  assert.same(symbol(')').description, ')');
+	  assert.same(symbol({}).description, '[object Object]');
+	  assert.same(symbol(null).description, 'null');
+	  assert.same(symbol(undefined).description, undefined);
+	  assert.same(symbol().description, undefined);
+	  assert.same(Object(symbol('foo')).description, 'foo');
+	  assert.same(Object(symbol()).description, undefined);
 	  // if (DESCRIPTORS) {
 	  //   assert.ok(!Object.hasOwn(Symbol('foo'), 'description'));
 	  //   const descriptor = Object.getOwnPropertyDescriptor(Symbol.prototype, 'description');
@@ -7742,13 +7727,13 @@
 	  //   assert.same(descriptor.configurable, true);
 	  //   assert.same(typeof descriptor.get, 'function');
 	  // }
-	  if (_typeof(Symbol$2()) == 'symbol') {
-	    assert.same(Symbol$2('foo').toString(), 'Symbol(foo)');
-	    assert.same(String(Symbol$2('foo')), 'Symbol(foo)');
-	    assert.same(Symbol$2('').toString(), 'Symbol()');
-	    assert.same(String(Symbol$2('')), 'Symbol()');
-	    assert.same(Symbol$2().toString(), 'Symbol()');
-	    assert.same(String(Symbol$2()), 'Symbol()');
+	  if (_typeof(symbol()) == 'symbol') {
+	    assert.same(symbol('foo').toString(), 'Symbol(foo)');
+	    assert.same(String(symbol('foo')), 'Symbol(foo)');
+	    assert.same(symbol('').toString(), 'Symbol()');
+	    assert.same(String(symbol('')), 'Symbol()');
+	    assert.same(symbol().toString(), 'Symbol()');
+	    assert.same(String(symbol()), 'Symbol()');
 	  }
 	});
 
@@ -8638,7 +8623,7 @@
 	        r.errors = obj.errors;
 	      }
 	      return r;
-	    } else if (obj instanceof Symbol$4) {
+	    } else if (obj instanceof Symbol$2) {
 	      throw new Error("Failed to execute 'structuredClone' on Symbol");
 	    }
 	    var type = toString$1.call(obj);
@@ -9113,7 +9098,7 @@
 	QUnit.test('structuredClone#Non-serializable types', function (assert) {
 	  var nons = [function () {
 	    return 1;
-	  }, Symbol$2('desc'), GLOBAL];
+	  }, symbol('desc'), GLOBAL];
 	  var event = new Event("");
 	  // NodeJS events are simple objects
 	  if (event) nons.push(event);
@@ -9171,7 +9156,7 @@
 	  assert.deepEqual(toReversed.call(array), expected, 'non-array target');
 	  array = [1];
 	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[Symbol$2.species] = function () {
+	  array.constructor = (_array$constructor = {}, _array$constructor[symbol.species] = function () {
 	    return {
 	      foo: 1
 	    };
@@ -9311,14 +9296,14 @@
 	  // assert.throws(() => [1, 2, 3].toSorted(null), 'throws on null');
 	  // assert.throws(() => [1, 2, 3].toSorted({}), 'throws on {}');
 
-	  if (typeof Symbol$2 == 'function' && !Symbol$2.sham) {
+	  if (typeof symbol == 'function' && !symbol.sham) {
 	    assert["throws"](function () {
-	      return [Symbol$2(1), Symbol$2(2)].toSorted();
+	      return [symbol(1), symbol(2)].toSorted();
 	    }, 'w/o cmp throws on symbols');
 	  }
 	  array = [1];
 	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[Symbol$2.species] = function () {
+	  array.constructor = (_array$constructor = {}, _array$constructor[symbol.species] = function () {
 	    return {
 	      foo: 1
 	    };
@@ -9370,7 +9355,7 @@
 	  }
 	  array = [];
 	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[Symbol$2.species] = function () {
+	  array.constructor = (_array$constructor = {}, _array$constructor[symbol.species] = function () {
 	    return {
 	      foo: 1
 	    };
@@ -9426,7 +9411,7 @@
 	  }
 	  array = [1, 2];
 	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[Symbol$2.species] = function () {
+	  array.constructor = (_array$constructor = {}, _array$constructor[symbol.species] = function () {
 	    return {
 	      foo: 1
 	    };
@@ -9503,7 +9488,7 @@
 	    }, TypeError, 'coercible #2');
 	  }
 	  assert["throws"](function () {
-	    return isWellFormed.call(Symbol$2('isWellFormed test'));
+	    return isWellFormed.call(symbol('isWellFormed test'));
 	  }, 'throws on symbol context');
 	});
 
@@ -9571,7 +9556,7 @@
 	    }, TypeError, 'coercible #2');
 	  }
 	  assert["throws"](function () {
-	    return toWellFormed.call(Symbol$2('toWellFormed test'));
+	    return toWellFormed.call(symbol('toWellFormed test'));
 	  }, 'throws on symbol context');
 	});
 

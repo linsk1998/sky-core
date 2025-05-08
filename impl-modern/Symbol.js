@@ -10,7 +10,6 @@ export function Symbol() {
 	descs[s] = desc;
 	return s;
 };
-Object.setPrototypeOf(Symbol, native_Symbol);
 
 export function getSymbolDescription() {
 	var s = this.valueOf();

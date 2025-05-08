@@ -1674,24 +1674,25 @@ return class extends Parent { /* empty */ };
 	}
 
 	function promise_finally(onCompleted) {
-		return this.then(function(value) {
-			var r = onCompleted();
-			if(r === undefined) {
-				return value;
-			}
-			return r;
-		}, function(error) {
-			var r = onCompleted();
-			if(r === undefined) {
-				return error;
-			}
-			return r;
-		});
+		var fun = isFunction(onCompleted);
+		return this.then(
+			fun ?
+				function(x) {
+					return Promise.resolve(onCompleted()).then(function() { return x; });
+				} :
+				onCompleted,
+			fun ?
+				function(e) {
+					onCompleted();
+					throw e;
+				} :
+				onCompleted
+		);
 	};
 
 	definePrototype(Promise$1, 'finally', promise_finally);
 
-	const Symbol$8 = GLOBAL.Symbol || {};
+	const Symbol$7 = GLOBAL.Symbol || {};
 	const {
 	  setPrototypeOf: setPrototypeOf$1,
 	  create
@@ -1774,7 +1775,7 @@ return class extends Parent { /* empty */ };
 	  let FakePromise1 = promise.constructor = function (executor) {
 	    executor(() => {/* empty */}, () => {/* empty */});
 	  };
-	  const FakePromise2 = FakePromise1[Symbol$8.species] = function (executor) {
+	  const FakePromise2 = FakePromise1[Symbol$7.species] = function (executor) {
 	    executor(() => {/* empty */}, () => {/* empty */});
 	  };
 	  // assert.ok(promise.then(() => { /* empty */ }) instanceof FakePromise2, 'subclassing, @@species pattern');
@@ -2487,19 +2488,19 @@ return class extends Parent { /* empty */ };
 	  // assert.notThrows(() => !weakset.has(1), 'return false on primitive');
 	});
 
-	var Symbol$7 = window.Symbol;
+	var Symbol$6 = window.Symbol;
 
 	var descs = Object.create(null);
-	function Symbol$6() {
+	function Symbol$5() {
 		var desc = arguments[0];
 		if(desc !== undefined) {
 			desc = String(desc);
 		}
-		var s = Symbol$7(desc);
+		var s = Symbol$6(desc);
 		descs[s] = desc;
 		return s;
 	};
-	Object.setPrototypeOf(Symbol$6, Symbol$7);
+	Object.setPrototypeOf(Symbol$5, Symbol$6);
 
 	function getSymbolDescription() {
 		if(this in descs) {
@@ -2508,17 +2509,23 @@ return class extends Parent { /* empty */ };
 		return String(this).slice(7, -1);
 	}
 
-	var Symbol$5;
-	if('description' in Symbol$7.prototype) {
-		Symbol$5 = Symbol$7;
+	var Symbol$3;
+	if('description' in Symbol$6.prototype) {
+		Symbol$3 = Symbol$6;
 	} else {
-		Object.setPrototypeOf(Symbol$6, Symbol$7);
-		Object.defineProperty(Symbol$7.prototype, 'description', {
+		Symbol$3 = Symbol$5;
+		Object.setPrototypeOf(Symbol$3, Symbol$6);
+		Object.defineProperty(Symbol$6.prototype, 'description', {
 			configurable: true,
 			enumerable: false,
 			get: getSymbolDescription
 		});
-		Symbol$5 = window.Symbol = Symbol$6;
+	}
+	var Symbol$4 = Symbol$3;
+
+	if(Symbol$6 !== Symbol$4) {
+		if(!Symbol$4.asyncIterator) { Symbol$4.asyncIterator = Symbol$4("asyncIterator"); }
+		window.Symbol = Symbol$4;
 	}
 
 	definePrototype(Array, 'values', Array.prototype[Symbol.iterator]);
@@ -4254,7 +4261,7 @@ return class extends Parent { /* empty */ };
 
 	definePrototype(String, 'startsWith', startsWith);
 
-	const Symbol$4 = GLOBAL.Symbol || {};
+	const Symbol$2 = GLOBAL.Symbol || {};
 	QUnit.test('String#startsWith', assert => {
 	  const startsWith = String.prototype.startsWith;
 	  assert.isFunction(startsWith);
@@ -4302,7 +4309,7 @@ return class extends Parent { /* empty */ };
 
 	definePrototype(String, 'endsWith', endsWith);
 
-	const Symbol$3 = GLOBAL.Symbol || {};
+	const Symbol$1 = GLOBAL.Symbol || {};
 	QUnit.test('String#endsWith', assert => {
 	  const endsWith = String.prototype.endsWith;
 	  assert.isFunction(endsWith);
@@ -5328,7 +5335,7 @@ return class extends Parent { /* empty */ };
 	  Promise.reject(42).finally(it => {
 	    called++;
 	    argument = it;
-	  }).then(() => {
+	  }).catch(() => {
 	    assert.same(called, 1, 'onFinally function called one time');
 	    assert.same(argument, undefined, 'onFinally function called with a correct argument');
 	    start();
@@ -7289,19 +7296,6 @@ return class extends Parent { /* empty */ };
 	  // assert.true(array.with(1, 2) instanceof Array, 'non-generic');
 	});
 
-	var Symbol$1;
-	if('description' in Symbol$7.prototype) {
-		Symbol$1 = Symbol$7;
-	} else {
-		Symbol$1 = Symbol$6;
-		Object.defineProperty(Symbol$7.prototype, 'description', {
-			configurable: true,
-			enumerable: false,
-			get: getSymbolDescription
-		});
-	}
-	var Symbol$2 = Symbol$1;
-
 	function isSymbol(obj) {
 		if(typeof obj === "symbol") {
 			return true;
@@ -7373,7 +7367,7 @@ return class extends Parent { /* empty */ };
 	    assert.throws(() => isWellFormed.call(null), TypeError, 'coercible #1');
 	    assert.throws(() => isWellFormed.call(undefined), TypeError, 'coercible #2');
 	  }
-	  assert.throws(() => isWellFormed.call(Symbol$2('isWellFormed test')), 'throws on symbol context');
+	  assert.throws(() => isWellFormed.call(Symbol$4('isWellFormed test')), 'throws on symbol context');
 	});
 
 	function toWellFormed() {
@@ -7443,13 +7437,13 @@ return class extends Parent { /* empty */ };
 	var nonEnumerable = !!defineProperties;
 
 	var iterator = (function() {
-		if(!Symbol$7) {
+		if(!Symbol$6) {
 			if(nonEnumerable) {
 				defineProperty(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@iterator';
 		} else {
-			return Symbol$7.iterator || Symbol$7('iterator');
+			return Symbol$6.iterator || Symbol$6('iterator');
 		}
 	})();
 

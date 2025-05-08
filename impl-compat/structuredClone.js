@@ -1,6 +1,6 @@
 import { toString } from "../native/Object/prototype/toString";
 import { NullProtoObject } from "../impl-compat/Object/NullProtoObject";
-import { Symbol } from "../impl-compat/Symbol/constructor";
+import { Symbol } from "../impl-compat/Symbol";
 
 export function structuredClone(obj) {
 	var r;

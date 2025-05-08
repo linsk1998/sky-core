@@ -1,6 +1,6 @@
 import { Object } from "../../native/Object";
 import { isPrimitive } from "../../utils/isPrimitive";
-import { getOwnPropertySymbols as symbol_getOwnPropertySymbols } from "../../impl/Symbol/constructor";
+import { getOwnPropertySymbols as symbol_getOwnPropertySymbols } from "../../impl/Symbol";
 
 var getOwnPropertySymbols = Object.getOwnPropertySymbols;
 if(getOwnPropertySymbols) {

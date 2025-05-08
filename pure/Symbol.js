@@ -8,6 +8,7 @@ if(native_Symbol) {
 		Symbol = native_Symbol;
 	} else {
 		Symbol = modern_Symbol;
+		Object.setPrototypeOf(Symbol, native_Symbol);
 		Object.defineProperty(native_Symbol.prototype, 'description', {
 			configurable: true,
 			enumerable: false,
