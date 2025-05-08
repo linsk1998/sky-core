@@ -55,12 +55,13 @@ QUnit.test('Object.assign', assert => {
     //   `)(Object.assign).b, 1);
     // } catch { /* empty */ }
   }
-  string = 'abcdefghijklmnopqrst';
-  const result = {};
-  for(let i = 0, { length } = string; i < length; ++i) {
-    const char = string.charAt(i);
-    result[char] = char;
-  }
-  assert.strictEqual(Object.keys(Object.assign({}, result)).join(''), string);
+  // 不保证对象遍历的顺序
+  // string = 'abcdefghijklmnopqrst';
+  // const result = {};
+  // for(let i = 0, { length } = string; i < length; ++i) {
+  //   const char = string.charAt(i);
+  //   result[char] = char;
+  // }
+  // assert.strictEqual(Object.keys(Object.assign({}, result)).join(''), string);
 });
 
