@@ -1,5 +1,5 @@
 import { Symbol as native_Symbol } from "../native/Symbol";
-import { Symbol as impl_Symbol } from "../impl/Symbol";
+import { symbol as impl_Symbol } from "../impl/Symbol";
 import { Symbol as modern_Symbol, getSymbolDescription } from "../impl-modern/Symbol";
 
 var Symbol;

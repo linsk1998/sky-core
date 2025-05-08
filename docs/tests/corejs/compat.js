@@ -3314,7 +3314,9 @@
 	;
 	symbol.sham = true;
 	function Symbol$2(desc) {
-	  this.description = desc = desc == undefined ? "" : String(desc);
+	  if (desc !== undefined) {
+	    this.description = String(desc);
+	  }
 	  this.__name__ = "@@" + desc + ":" + symbol_sqe;
 	  symbol_sqe++;
 	  all_symbol[this.__name__] = this;
