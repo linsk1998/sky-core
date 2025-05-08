@@ -1,16 +1,18 @@
+import { isFunction } from "sky-core";
 
 export default function(onCompleted) {
-	return this.then(function(value) {
-		var r = onCompleted();
-		if(r === undefined) {
-			return value;
-		}
-		return r;
-	}, function(error) {
-		var r = onCompleted();
-		if(r === undefined) {
-			return error;
-		}
-		return r;
-	});
+	var fun = isFunction(onCompleted);
+	return this.then(
+		fun ?
+			function(x) {
+				return Promise.resolve(onCompleted()).then(function() { return x; });
+			} :
+			onCompleted,
+		fun ?
+			function(e) {
+				onCompleted();
+				throw e;
+			} :
+			onCompleted
+	);
 };
