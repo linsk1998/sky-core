@@ -38,8 +38,8 @@ async function seleniumTest(url, capabilities) {
 		await driver.wait(until.elementLocated(By.id('qunit-testresult')), 10000);
 
 		// 获取失败和通过的测试数量信息
-		let failedElement = await driver.findElement(By.css('#qunit-testresult>.failed'));
-		let passedElement = await driver.findElement(By.css('#qunit-testresult>.passed'));
+		let failedElement = await driver.findElement(By.css('#qunit-testresult .failed'));
+		let passedElement = await driver.findElement(By.css('#qunit-testresult .passed'));
 
 		let failedCount = parseInt(await failedElement.getText(), 10);
 		let passedCount = parseInt(await passedElement.getText(), 10);
