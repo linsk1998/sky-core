@@ -19,7 +19,7 @@ function sleep(ms) {
 
 async function corejsTest(capabilities) {
 	return seleniumTest(
-		'http://raw.githack.com/linsk1998/sky-core/master/docs/tests/corejs/2.html',
+		'http://raw.githack.com/linsk1998/sky-core/master/docs/tests/corejs/3.html',
 		capabilities
 	);
 }

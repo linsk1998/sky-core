@@ -16,7 +16,7 @@ const hubUrl = 'https://' + username + ':' + accessKey + '@hub.lambdatest.com/wd
 
 async function corejsTest(capabilities) {
 	return seleniumTest(
-		'http://raw.githack.com/linsk1998/sky-core/master/docs/tests/corejs/2.html',
+		'http://raw.githack.com/linsk1998/sky-core/master/docs/tests/corejs/3.html',
 		capabilities
 	);
 }
