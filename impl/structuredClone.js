@@ -35,7 +35,12 @@ export function structuredClone(obj) {
 		} else if(obj instanceof Error) {
 			r = Object.create(Object.getPrototypeOf(obj));
 			r.message = obj.message;
-			r.stack = obj.stack;
+			Object.defineProperty(r, 'stack', {
+				value: obj.stack,
+				configurable: true,
+				enumerable: true,
+				writable: true
+			});
 			if('cause' in obj) {
 				r.cause = obj.cause;
 			}

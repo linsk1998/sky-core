@@ -31,9 +31,14 @@ export function structuredClone(obj) {
 				return arrayClone(obj);
 			}
 		} else if(obj instanceof Error) {
-			r = Object.create(Object.getPrototypeOf(obj));
+			r = Object.create(proto);
 			r.message = obj.message;
-			r.stack = obj.stack;
+			Object.defineProperty(r, 'stack', {
+				value: obj.stack,
+				configurable: true,
+				enumerable: true,
+				writable: true
+			});
 			if('cause' in obj) {
 				r.cause = obj.cause;
 			}
@@ -45,7 +50,7 @@ export function structuredClone(obj) {
 		var type = toString.call(obj);
 		switch(type) {
 			case '[object Object]':
-				return objectClone(Object.create(Object.getPrototypeOf(obj)), obj);
+				return objectClone(Object.create(proto), obj);
 			case '[object Date]':
 				return new Date(obj);
 			case '[object Number]':
