@@ -78,6 +78,16 @@ export function structuredClone(obj) {
 					transfer.items.add(obj[i]);
 				}
 				return transfer.files;
+			case '[object DOMRectReadOnly]':
+				return new DOMRectReadOnly(obj.x, obj.y, obj.width, obj.height);
+			case '[object DOMRect]':
+				return new DOMRect(obj.x, obj.y, obj.width, obj.height);
+			case '[object DOMPointReadOnly]':
+				return new DOMPointReadOnly(obj.x, obj.y, obj.z, obj.w);
+			case '[object DOMPoint]':
+				return new DOMPoint(obj.x, obj.y, obj.z, obj.w);
+			case '[object DOMQuad]':
+				return new DOMQuad(obj.p1, obj.p2, obj.p3, obj.p4);
 			default:
 				throw new Error("Failed to execute 'structuredClone' on " + type);
 		}
