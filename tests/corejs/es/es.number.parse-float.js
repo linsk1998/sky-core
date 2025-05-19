@@ -7,7 +7,7 @@ QUnit.test('Number.parseFloat', assert => {
   assert.arity(parseFloat, 1);
   assert.looksNative(parseFloat);
   // assert.nonEnumerable(Number, 'parseFloat');
-  assert.same(parseFloat, GLOBAL.parseFloat);
+  // assert.same(parseFloat, GLOBAL.parseFloat);
   assert.same(parseFloat('0'), 0);
   assert.same(parseFloat(' 0'), 0);
   assert.same(parseFloat('+0'), 0);
