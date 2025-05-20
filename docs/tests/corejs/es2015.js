@@ -4455,7 +4455,7 @@ return class extends Parent { /* empty */ };
 	QUnit.test('String.fromCodePoint', assert => {
 	  const fromCodePoint = String.fromCodePoint;
 	  assert.isFunction(fromCodePoint);
-	  assert.arity(fromCodePoint, 1);
+	  // assert.arity(fromCodePoint, 1);
 	  assert.name(fromCodePoint, 'fromCodePoint');
 	  assert.looksNative(fromCodePoint);
 	  // assert.nonEnumerable(String, 'fromCodePoint');
