@@ -118,10 +118,20 @@ export function fixMap() {
 			};
 		}
 	}
+	if(m.set(0, 0) !== m) {
+		fixSet(m.set, Map);
+	}
 	if(!Map.prototype['@@iterator']) {
 		Map.prototype['@@iterator'] = Map.prototype.entries;
 	}
 	return Map;
+}
+
+function fixSet(setMethod, Map) {
+	Map.prototype.set = function set(k, v) {
+		setMethod.apply(this, arguments);
+		return this;
+	};
 }
 
 function getKey(item) {

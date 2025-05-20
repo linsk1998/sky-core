@@ -106,11 +106,21 @@ export function fixSet() {
 			};
 		}
 	}
+	if(s.add(0) !== s) {
+		fixAdd(s.add, Set);
+	}
 	if(!Set.prototype['@@iterator']) {
 		Set.prototype['@@iterator'] = Set.prototype.values;
 	}
 	return Set;
 };
+
+function fixAdd(addMethod, Set) {
+	Set.prototype.add = function add(v) {
+		addMethod.apply(this, arguments);
+		return this;
+	};
+}
 
 function getValueX2(item) {
 	return [item, item];

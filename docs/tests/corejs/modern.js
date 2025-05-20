@@ -3566,10 +3566,20 @@
 				};
 			}
 		}
+		if(m.set(0, 0) !== m) {
+			fixSet$1(m.set, Map);
+		}
 		if(!Map.prototype['@@iterator']) {
 			Map.prototype['@@iterator'] = Map.prototype.entries;
 		}
 		return Map;
+	}
+
+	function fixSet$1(setMethod, Map) {
+		Map.prototype.set = function set(k, v) {
+			setMethod.apply(this, arguments);
+			return this;
+		};
 	}
 
 	function getKey$1(item) {
@@ -4363,11 +4373,21 @@
 				};
 			}
 		}
+		if(s.add(0) !== s) {
+			fixAdd(s.add, Set);
+		}
 		if(!Set.prototype['@@iterator']) {
 			Set.prototype['@@iterator'] = Set.prototype.values;
 		}
 		return Set;
 	};
+
+	function fixAdd(addMethod, Set) {
+		Set.prototype.add = function add(v) {
+			addMethod.apply(this, arguments);
+			return this;
+		};
+	}
 
 	function getValueX2(item) {
 		return [item, item];
