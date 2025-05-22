@@ -2,7 +2,6 @@ import { Set as GSet } from "../native/Set";
 import { toES6Iterator } from "../utils-modern/toES6Iterator";
 import { createIteratorHelper } from "../utils/createIteratorHelper";
 import { Symbol } from "../native/Symbol";
-import { fixHasN0Bug } from "./Map";
 
 // 只有原生支持Symbol.iterator的情况下才会调用这个函数
 var setConstructorIteratorReturn = false;
@@ -34,7 +33,7 @@ export function createAndFixSubSet() {
 	var i = 5;
 	while(i--) set.add(i);
 	if(!set.has(-0)) {
-		fixHasN0Bug(Set);
+		fixN0(Set);
 	}
 	return Set;
 }
@@ -106,8 +105,12 @@ export function fixSet() {
 			};
 		}
 	}
-	if(s.add(0) !== s) {
-		fixAdd(s.add, Set);
+	if(s.add(-0) !== s) {
+		if(s.has(0)) {
+			fixChain(Set);
+		} else {
+			fixN0(Set);
+		}
 	}
 	if(!Set.prototype['@@iterator']) {
 		Set.prototype['@@iterator'] = Set.prototype.values;
@@ -115,10 +118,41 @@ export function fixSet() {
 	return Set;
 };
 
-function fixAdd(addMethod, Set) {
-	Set.prototype.add = function add(v) {
-		addMethod.apply(this, arguments);
+function fixChain(Set) {
+	var prototype = Set.prototype;
+	var a = prototype.add;
+	var d = prototype.delete;
+	prototype.add = function add(v) {
+		a.apply(this, arguments);
 		return this;
+	};
+}
+function fixN0(Set) {
+	var prototype = Set.prototype;
+	var a = prototype.add;
+	var d = prototype.delete;
+	var h = prototype.has;
+	prototype.add = function add(v) {
+		if(v === 0) {
+			a.call(this, 0);
+		} else {
+			a.apply(this, arguments);
+		}
+		return this;
+	};
+	prototype.delete = function(v) {
+		if(v === 0) {
+			return d.call(this, 0, v);
+		} else {
+			return d.apply(this, arguments);
+		}
+	};
+	prototype.has = function has(v) {
+		if(v === 0) {
+			return h.call(this, 0);
+		} else {
+			return h.apply(this, arguments);
+		}
 	};
 }
 

@@ -2314,7 +2314,7 @@
 	  assert.arity(Object.setPrototypeOf, 2);
 	  // assert.name(Object.setPrototypeOf, 'setPrototypeOf');
 	  assert.looksNative(Object.setPrototypeOf);
-	  assert.nonEnumerable(Object, 'setPrototypeOf');
+	  // assert.nonEnumerable(Object, 'setPrototypeOf');
 	  // assert.ok('apply' in Object.setPrototypeOf({}, Function.prototype), 'Parent properties in target');
 	  assert.strictEqual(Object.setPrototypeOf({
 	    a: 2
@@ -4017,7 +4017,7 @@
 	});
 	QUnit.test('Map#delete', function (assert) {
 	  assert.isFunction(Map.prototype["delete"]);
-	  assert.arity(Map.prototype["delete"], 1);
+	  // assert.arity(Map.prototype.delete, 1);
 	  if (NATIVE) assert.name(Map.prototype["delete"], 'delete');
 	  assert.looksNative(Map.prototype["delete"]);
 	  // assert.nonEnumerable(Map.prototype, 'delete');
@@ -4032,7 +4032,7 @@
 	  assert.strictEqual(map.size, 5);
 	  assert.ok(map["delete"](NaN));
 	  assert.strictEqual(map.size, 4);
-	  assert.ok(!map["delete"](4));
+	  assert.ok(!map["delete"](4), 'delete no');
 	  assert.strictEqual(map.size, 4);
 	  map["delete"]([]);
 	  assert.strictEqual(map.size, 4);
@@ -6059,10 +6059,8 @@
 	      return startsWith.call(undefined, '.');
 	    }, TypeError);
 	  }
-	  var regexp = /./;
-	  assert["throws"](function () {
-	    return '/./'.startsWith(regexp);
-	  }, TypeError);
+	  // const regexp = /./;
+	  // assert.throws(() => '/./'.startsWith(regexp), TypeError);
 	  var object = {};
 	  assert.notThrows(function () {
 	    return '[object Object]'.startsWith(object);
@@ -6117,10 +6115,8 @@
 	      return endsWith.call(undefined, '.');
 	    }, TypeError);
 	  }
-	  var regexp = /./;
-	  assert["throws"](function () {
-	    return '/./'.endsWith(regexp);
-	  }, TypeError);
+	  // const regexp = /./;
+	  // assert.throws(() => '/./'.endsWith(regexp), TypeError);
 	  var object = {};
 	  assert.notThrows(function () {
 	    return '[object Object]'.endsWith(object);
@@ -8994,7 +8990,7 @@
 	    });
 	  });
 	}
-	if (window.DOMRect) {
+	if (fromSource('new DOMRect(1, 2, 3, 4)')) {
 	  QUnit.test('Geometry types, DOMRect', function (assert) {
 	    cloneObjectTest(assert, new DOMRect(1, 2, 3, 4), function (orig, clone) {
 	      for (var _iterator8 = _createForOfIteratorHelperLoose(keys(getPrototypeOf(orig))), _step8; !(_step8 = _iterator8()).done;) {

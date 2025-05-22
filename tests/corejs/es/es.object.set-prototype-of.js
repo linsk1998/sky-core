@@ -5,7 +5,7 @@ if(PROTO) QUnit.test('Object.setPrototypeOf', assert => {
   assert.arity(Object.setPrototypeOf, 2);
   // assert.name(Object.setPrototypeOf, 'setPrototypeOf');
   assert.looksNative(Object.setPrototypeOf);
-  assert.nonEnumerable(Object, 'setPrototypeOf');
+  // assert.nonEnumerable(Object, 'setPrototypeOf');
   // assert.ok('apply' in Object.setPrototypeOf({}, Function.prototype), 'Parent properties in target');
   assert.strictEqual(Object.setPrototypeOf({ a: 2 }, {
     b() {

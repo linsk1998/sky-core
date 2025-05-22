@@ -33,17 +33,9 @@ export function createAndFixSubMap() {
 	var i = 5;
 	while(i--) map.set(i, 0);
 	if(!map.has(-0)) {
-		fixHasN0Bug(Map);
+		fixN0(Map);
 	}
 	return Map;
-}
-export function fixHasN0Bug(Map) {
-	var hasFn = Map.prototype.has;
-	Map.prototype.has = function has(key) {
-		return key === 0 ?
-			hasFn.call(this, 0) :
-			hasFn.apply(this, arguments);
-	};
 }
 
 export function createSubMap() {
@@ -118,8 +110,12 @@ export function fixMap() {
 			};
 		}
 	}
-	if(m.set(0, 0) !== m) {
-		fixSet(m.set, Map);
+	if(m.set(-0, 0) !== m) {
+		if(m.has(0)) {
+			fixChain(Map);
+		} else {
+			fixN0(Map);
+		}
 	}
 	if(!Map.prototype['@@iterator']) {
 		Map.prototype['@@iterator'] = Map.prototype.entries;
@@ -127,10 +123,49 @@ export function fixMap() {
 	return Map;
 }
 
-function fixSet(setMethod, Map) {
-	Map.prototype.set = function set(k, v) {
-		setMethod.apply(this, arguments);
+function fixChain(Map) {
+	var prototype = Map.prototype;
+	var s = prototype.set;
+	var d = prototype.delete;
+	prototype.set = function set(k, v) {
+		s.apply(this, arguments);
 		return this;
+	};
+}
+function fixN0(Map) {
+	var prototype = Map.prototype;
+	var s = prototype.set;
+	var d = prototype.delete;
+	var g = prototype.get;
+	var h = prototype.has;
+	prototype.set = function set(k, v) {
+		if(k === 0) {
+			s.call(this, 0, v);
+		} else {
+			s.apply(this, arguments);
+		}
+		return this;
+	};
+	prototype.delete = function(k, v) {
+		if(k === 0) {
+			return d.call(this, 0, v);
+		} else {
+			return d.apply(this, arguments);
+		}
+	};
+	prototype.get = function get(k) {
+		if(k === 0) {
+			return g.call(this, 0);
+		} else {
+			return g.apply(this, arguments);
+		}
+	};
+	prototype.has = function has(k) {
+		if(k === 0) {
+			return h.call(this, 0);
+		} else {
+			return h.apply(this, arguments);
+		}
 	};
 }
 
