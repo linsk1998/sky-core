@@ -9053,7 +9053,7 @@
 	// });
 
 	// https://github.com/oven-sh/bun/issues/11696
-	if (typeof window.File === "function") QUnit.test('File', function (assert) {
+	if (fromSource('new File(["test"], "foo.txt")')) QUnit.test('File', function (assert) {
 	  cloneObjectTest(assert, new File(['This is a test.'], 'foo.txt', {
 	    type: 'c/d'
 	  }), function (orig, clone) {

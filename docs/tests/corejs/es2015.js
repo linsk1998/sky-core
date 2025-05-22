@@ -6974,7 +6974,7 @@ return class extends Parent { /* empty */ };
 	// });
 
 	// https://github.com/oven-sh/bun/issues/11696
-	if (typeof window.File === "function") QUnit.test('File', assert => {
+	if (fromSource('new File(["test"], "foo.txt")')) QUnit.test('File', assert => {
 	  cloneObjectTest(assert, new File(['This is a test.'], 'foo.txt', {
 	    type: 'c/d'
 	  }), (orig, clone) => {
