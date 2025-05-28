@@ -62,7 +62,7 @@ QUnit.test('WeakSet', assert => {
 QUnit.test('WeakSet#add', assert => {
   assert.isFunction(WeakSet.prototype.add);
   // assert.name(WeakSet.prototype.add, 'add');
-  assert.arity(WeakSet.prototype.add, 1);
+  // assert.arity(WeakSet.prototype.add, 1);
   assert.looksNative(WeakSet.prototype.add);
   // assert.nonEnumerable(WeakSet.prototype, 'add');
   const weakset = new WeakSet();

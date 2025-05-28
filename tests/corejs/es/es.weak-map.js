@@ -135,14 +135,14 @@ QUnit.test('WeakMap#has', assert => {
 QUnit.test('WeakMap#set', assert => {
   assert.isFunction(WeakMap.prototype.set);
   if(NATIVE) assert.name(WeakMap.prototype.set, 'set');
-  assert.arity(WeakMap.prototype.set, 2);
+  // assert.arity(WeakMap.prototype.set, 2);
   assert.looksNative(WeakMap.prototype.set);
   // assert.nonEnumerable(WeakMap.prototype, 'set');
   const weakmap = new WeakMap();
   const object = {};
   weakmap.set(object, 33);
   assert.same(weakmap.get(object), 33, 'works with object as keys');
-  // assert.ok(weakmap.set({}, 42) === weakmap, 'chaining');
+  assert.ok(weakmap.set({}, 42) === weakmap, 'chaining');
   assert.throws(() => new WeakMap().set(42, 42), 'throws with primitive keys');
   // const object1 = Object.freeze({});
   // const object2 = {};

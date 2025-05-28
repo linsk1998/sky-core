@@ -2,7 +2,14 @@ import { WeakMap } from "../native/WeakMap";
 // import { freeze } from "../native/Object/freeze";
 import { nonEnumerable } from "../support/nonEnumerable";
 import { WeakMap as impl_WeakMap, KEY_WM } from "../impl/WeakMap";
-if(!WeakMap) {
+import { fixChain } from "../impl-modern/WeakMap";
+
+if(WeakMap) {
+	var wm = new WeakMap();
+	if(wm.set({}, 0) !== wm) {
+		fixChain(WeakMap);
+	}
+} else {
 	if(nonEnumerable) {
 		Object.defineProperty(Object.prototype, KEY_WM, {
 			value: undefined,
