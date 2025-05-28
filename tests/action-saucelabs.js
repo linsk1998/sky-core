@@ -35,14 +35,21 @@ async function seleniumTest(url, capabilities) {
 		// Navigate to a URL, click on the first and second list items and add a new one in the list.
 		await driver.get(url);
 		// 等待 QUnit 测试完成，确保结果区域加载出来
-		await driver.wait(until.elementLocated(By.id('qunit-testresult')), 10000);
+		let resultPanel = await driver.wait(until.elementLocated(By.id('qunit-testresult')), 10000);
 
-		// 获取失败和通过的测试数量信息
-		let failedElement = await driver.findElement(By.css('#qunit-testresult>.failed'));
-		let passedElement = await driver.findElement(By.css('#qunit-testresult>.passed'));
+		const [passed, failed] = await Promise.all([
+			driver.wait(until.elementTextMatches(
+				resultPanel.findElement(By.className('passed')),
+				/\d+/)
+			).getText(),
+			driver.wait(until.elementTextMatches(
+				resultPanel.findElement(By.className('failed')),
+				/\d+/)
+			).getText()
+		]);
+		let passedCount = parseInt(passed, 10);
+		let failedCount = parseInt(failed, 10);
 
-		let failedCount = parseInt(await failedElement.getText(), 10);
-		let passedCount = parseInt(await passedElement.getText(), 10);
 		if(failedCount === 0 && passedCount > 0) {
 			console.log(`All QUnit tests passed! Passed: ${passedCount}`);
 			await driver.executeScript('sauce:job-result=passed');
