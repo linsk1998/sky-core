@@ -100,6 +100,19 @@ export function fixSet() {
 				}
 			};
 		}
+		if(!Set.prototype.clear) {
+			// firefox 13~18
+			Set.prototype.clear = function clear() {
+				var it = this.iterator();
+				while(true) {
+					try {
+						this.delete(it.next());
+					} catch(e) {
+						break;
+					}
+				}
+			};
+		}
 	}
 	if(s.add(-0) !== s) {
 		if(s.has(0)) {

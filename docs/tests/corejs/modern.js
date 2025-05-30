@@ -3573,6 +3573,19 @@
 					}
 				};
 			}
+			if(!Map.prototype.clear) {
+				// firefox 13~18
+				Map.prototype.clear = function clear() {
+					var it = this.iterator();
+					while(true) {
+						try {
+							this.delete(it.next()[0]);
+						} catch(e) {
+							break;
+						}
+					}
+				};
+			}
 		}
 		if(m.set(-0, 0) !== m) {
 			if(m.has(0)) {
@@ -4416,6 +4429,19 @@
 							break;
 						}
 						callbackfn.call(arguments[1], next, next, this);
+					}
+				};
+			}
+			if(!Set.prototype.clear) {
+				// firefox 13~18
+				Set.prototype.clear = function clear() {
+					var it = this.iterator();
+					while(true) {
+						try {
+							this.delete(it.next());
+						} catch(e) {
+							break;
+						}
 					}
 				};
 			}
