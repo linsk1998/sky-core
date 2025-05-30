@@ -93,7 +93,7 @@ export function fixMap() {
 		if(!Map.prototype.forEach) {
 			// firefox 17~24
 			// myMap.forEach(callback([value][, key][, map])[, thisArg])
-			Map.prototype.forEach = function forEach(callbackfn, thisArg) {
+			Map.prototype.forEach = function forEach(callbackfn) {
 				var it = this.iterator();
 				while(true) {
 					try {
@@ -101,7 +101,7 @@ export function fixMap() {
 					} catch(e) {
 						break;
 					}
-					callbackfn.call(thisArg, next[1], next[0], this);
+					callbackfn.call(arguments[1], next[1], next[0], this);
 				}
 			};
 		}

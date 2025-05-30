@@ -88,7 +88,7 @@ export function fixSet() {
 		};
 		if(!Set.prototype.forEach) {
 			// firefox 17~24
-			Set.prototype.forEach = function forEach(callbackfn, thisArg) {
+			Set.prototype.forEach = function forEach(callbackfn) {
 				var it = this.iterator();
 				while(true) {
 					try {
@@ -96,7 +96,7 @@ export function fixSet() {
 					} catch(e) {
 						break;
 					}
-					callbackfn.call(thisArg, next, next, this);
+					callbackfn.call(arguments[1], next, next, this);
 				}
 			};
 		}
