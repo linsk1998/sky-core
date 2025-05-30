@@ -104,8 +104,8 @@
 	ES6Iterator.prototype['@@iterator'] = function() {
 		return this;
 	};
-	function toES6Iterator(it) {
-		return new ES6Iterator(it);
+	function toES6Iterator(it, transform) {
+		return new ES6Iterator(it, transform);
 	};
 
 	if(!Symbol$5) {
@@ -3533,39 +3533,35 @@
 	}
 	function fixMap() {
 		var Map = createSubMap();
+		var prototype = Map.prototype;
 		var m = new Map$2();
 		if(m.size !== 0) {
 			// firefox 18-
-			$inject_Object_defineProperty(Map.prototype, 'size', {
+			var size = m.size;
+			$inject_Object_defineProperty(prototype, 'size', {
 				get: function() {
-					return Map$2.prototype.size.call(this);
+					return size.call(this);
 				},
 				enumerable: true
 			});
 		}
 		// ie11 not support iterator
-		if(Map.prototype.iterator) {
+		if(prototype.iterator) {
 			// firefox 17~26 iterator return firefox iterator
-			if(!Map.prototype.entries) {
-				// firefox 17~19
-				Map.prototype.entries = function() {
-					return toES6Iterator(this.iterator());
-				};
-			}
-			if(!Map.prototype.keys) {
-				Map.prototype.keys = function() {
-					return toES6Iterator(this.iterator(), getKey$1);
-				};
-			}
-			if(!Map.prototype.values) {
-				Map.prototype.values = function() {
-					return toES6Iterator(this.iterator(), getValue$1);
-				};
-			}
+			// firefox 17~19
+			Map.prototype.entries = function entries() {
+				return toES6Iterator(this.iterator());
+			};
+			Map.prototype.keys = function keys() {
+				return toES6Iterator(this.iterator(), getKey$1);
+			};
+			Map.prototype.values = function values() {
+				return toES6Iterator(this.iterator(), getValue$1);
+			};
 			if(!Map.prototype.forEach) {
 				// firefox 17~24
 				// myMap.forEach(callback([value][, key][, map])[, thisArg])
-				Map.prototype.forEach = function(callbackfn, thisArg) {
+				Map.prototype.forEach = function forEach(callbackfn, thisArg) {
 					var it = this.iterator();
 					while(true) {
 						try {
@@ -4401,21 +4397,17 @@
 		// ie11 not support iterator
 		if(Set.prototype.iterator) {
 			// firefox 17~26 iterator return firefox iterator
-			if(!Set.prototype.values) {
-				// firefox 17~23
-				Set.prototype.values = function() {
-					return toES6Iterator(this.iterator());
-				};
-			}
-			if(!Set.prototype.entries) {
-				// firefox 17~23
-				Set.prototype.entries = function() {
-					return toES6Iterator(this.iterator(), getValueX2);
-				};
-			}
+			// firefox 17~23
+			Set.prototype.values = Set.prototype.keys = function values() {
+				return toES6Iterator(this.iterator());
+			};
+			// firefox 17~23
+			Set.prototype.entries = function entries() {
+				return toES6Iterator(this.iterator(), getValueX2);
+			};
 			if(!Set.prototype.forEach) {
 				// firefox 17~24
-				Set.prototype.forEach = function(callbackfn, thisArg) {
+				Set.prototype.forEach = function forEach(callbackfn, thisArg) {
 					var it = this.iterator();
 					while(true) {
 						try {

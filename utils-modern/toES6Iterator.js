@@ -22,6 +22,6 @@ ES6Iterator.prototype.next = function() {
 ES6Iterator.prototype['@@iterator'] = function() {
 	return this;
 };
-export function toES6Iterator(it) {
-	return new ES6Iterator(it);
+export function toES6Iterator(it, transform) {
+	return new ES6Iterator(it, transform);
 };

@@ -65,39 +65,35 @@ export function createSubMap() {
 }
 export function fixMap() {
 	var Map = createSubMap();
+	var prototype = Map.prototype;
 	var m = new GMap();
 	if(m.size !== 0) {
 		// firefox 18-
-		Object.defineProperty(Map.prototype, 'size', {
+		var size = m.size;
+		Object.defineProperty(prototype, 'size', {
 			get: function() {
-				return GMap.prototype.size.call(this);
+				return size.call(this);
 			},
 			enumerable: true
 		});
 	}
 	// ie11 not support iterator
-	if(Map.prototype.iterator) {
+	if(prototype.iterator) {
 		// firefox 17~26 iterator return firefox iterator
-		if(!Map.prototype.entries) {
-			// firefox 17~19
-			Map.prototype.entries = function() {
-				return toES6Iterator(this.iterator());
-			};
-		}
-		if(!Map.prototype.keys) {
-			Map.prototype.keys = function() {
-				return toES6Iterator(this.iterator(), getKey);
-			};
-		}
-		if(!Map.prototype.values) {
-			Map.prototype.values = function() {
-				return toES6Iterator(this.iterator(), getValue);
-			};
-		}
+		// firefox 17~19
+		Map.prototype.entries = function entries() {
+			return toES6Iterator(this.iterator());
+		};
+		Map.prototype.keys = function keys() {
+			return toES6Iterator(this.iterator(), getKey);
+		};
+		Map.prototype.values = function values() {
+			return toES6Iterator(this.iterator(), getValue);
+		};
 		if(!Map.prototype.forEach) {
 			// firefox 17~24
 			// myMap.forEach(callback([value][, key][, map])[, thisArg])
-			Map.prototype.forEach = function(callbackfn, thisArg) {
+			Map.prototype.forEach = function forEach(callbackfn, thisArg) {
 				var it = this.iterator();
 				while(true) {
 					try {

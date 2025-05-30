@@ -78,21 +78,17 @@ export function fixSet() {
 	// ie11 not support iterator
 	if(Set.prototype.iterator) {
 		// firefox 17~26 iterator return firefox iterator
-		if(!Set.prototype.values) {
-			// firefox 17~23
-			Set.prototype.values = function() {
-				return toES6Iterator(this.iterator());
-			};
-		}
-		if(!Set.prototype.entries) {
-			// firefox 17~23
-			Set.prototype.entries = function() {
-				return toES6Iterator(this.iterator(), getValueX2);
-			};
-		}
+		// firefox 17~23
+		Set.prototype.values = Set.prototype.keys = function values() {
+			return toES6Iterator(this.iterator());
+		};
+		// firefox 17~23
+		Set.prototype.entries = function entries() {
+			return toES6Iterator(this.iterator(), getValueX2);
+		};
 		if(!Set.prototype.forEach) {
 			// firefox 17~24
-			Set.prototype.forEach = function(callbackfn, thisArg) {
+			Set.prototype.forEach = function forEach(callbackfn, thisArg) {
 				var it = this.iterator();
 				while(true) {
 					try {
