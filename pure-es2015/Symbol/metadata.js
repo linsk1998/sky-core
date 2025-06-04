@@ -1,1 +1,1 @@
-export default Symbol("metadata");
+export default Symbol.for("Symbol.metadata");

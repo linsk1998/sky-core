@@ -9,6 +9,6 @@ export default (function() {
 		}
 		return '@@metadata';
 	} else {
-		return Symbol.metadata || Symbol('metadata');
+		return Symbol.metadata || Symbol.for("Symbol.metadata");
 	}
 })();
