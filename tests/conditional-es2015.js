@@ -9,13 +9,13 @@ module.exports = [
 			"Symbol": "sky-core/polyfill/Symbol",
 			/* Chrome71+ Firefox69+ Safari12.1+ */
 			"queueMicrotask": "sky-core/polyfill/queueMicrotask",
-			//ES2019
+			// ES2019
 			/* Chrome73+ Firefox63+ Safari12.1+ */
 			"Object.fromEntries": "sky-core/polyfill/Object/fromEntries",
 			/* ES2020 */
 			/* Chrome71+ Firefox65+ Safari12.1+*/
 			'globalThis': "sky-core/polyfill/globalThis",
-			//ES2021
+			// ES2021
 			/* Chrome76+ Firefox71+ Safari13+*/
 			'Promise.allSettled': "sky-core/polyfill/Promise/allSettled",
 			/* Chrome85+ Firefox79+ Safari14+*/
@@ -25,6 +25,10 @@ module.exports = [
 			"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
 			/* Chrome98+ Firefox94+ Safari15.4+*/
 			"structuredClone": "sky-core/polyfill/structuredClone",
+			// ES2023
+			/* Chrome109+ Safari16.4+ */
+			"WeakMap": "sky-core/polyfill/WeakMap",
+			"WeakSet": "sky-core/polyfill/WeakSet",
 			// ES2024
 			/* Chrome117+ Firefox119+ Safari17.4+ */
 			"Object.groupBy": "sky-core/polyfill/Object/groupBy",

@@ -2922,118 +2922,6 @@
 	  assert.strictEqual(Number.MIN_SAFE_INTEGER, -Math.pow(2, 53) + 1, 'Is -2^53 + 1');
 	});
 
-	var WeakMap$2 = window.WeakMap;
-
-	var KEY_WM = "@@WeakMap";
-	var weakSeq = 0;
-	function WeakMap$1() {
-		this.symbol = weakSeq++;
-		if(arguments.length) {
-			var iterable = arguments[0];
-			var entries = iterable[iterator$1];
-			if(entries) {
-				var it = entries.call(iterable);
-				while(true) {
-					var next = it.next();
-					if(next.done) break;
-					try {
-						this.set(next.value[0], next.value[1]);
-					} catch(e) {
-						if(it.return) {
-							try {
-								it.return();
-							} catch(e) { }
-						}
-						throw e;
-					}
-				}
-			}
-		}
-	}
-	WeakMap$1.prototype.set = function(key, value) {
-		if(!isNotNullObject(key)) {
-			throw new TypeError("Invalid value used in weak");
-		}
-		var map = key[KEY_WM];
-		if(!map) {
-			map = {};
-			if(!nonEnumerable) {
-				key[KEY_WM] = map;
-			} else {
-				$inject_Object_defineProperty(key, KEY_WM, {
-					value: map,
-					enumerable: false,
-					configurable: true,
-					writable: true
-				});
-			}
-		}
-		map[this.symbol] = value;
-		return this;
-	};
-	WeakMap$1.prototype.get = function(key) {
-		var map = key[KEY_WM];
-		if(map) {
-			return map[this.symbol];
-		}
-	};
-	WeakMap$1.prototype.has = function(key) {
-		var map = key[KEY_WM];
-		if(map) {
-			return this.symbol in map;
-		}
-		return false;
-	};
-	WeakMap$1.prototype.delete = function(key) {
-		if(!isNotNullObject(key)) {
-			return false;
-		}
-		var map = key[KEY_WM];
-		if(map) {
-			if(this.symbol in map) {
-				delete map[this.symbol];
-				return false;
-			}
-		}
-		return false;
-	};
-
-	function fixChain$3(WeakMap) {
-		var setMethod = WeakMap.prototype.set;
-		WeakMap.prototype.set = function set() {
-			setMethod.apply(this, arguments);
-			return this;
-		};
-	}
-
-	if(WeakMap$2) {
-		var wm = new WeakMap$2();
-		if(wm.set({}, 0) !== wm) {
-			fixChain$3(WeakMap$2);
-		}
-	} else {
-		if(nonEnumerable) {
-			Object.defineProperty(Object.prototype, KEY_WM, {
-				value: undefined,
-				enumerable: false,
-				configurable: true
-			});
-			// if(freeze) {
-			// 	Object.freeze = function(o) {
-			// 		if(!o[KEY_WM]) {
-			// 			Object.defineProperty(o, KEY_WM, {
-			// 				value: {},
-			// 				enumerable: false,
-			// 				configurable: true
-			// 			});
-			// 		}
-			// 		return freeze.call(Object, o);
-			// 	};
-			// }
-		}
-		window.WeakMap = WeakMap$1;
-	}
-
 	function isPrimitive(value) {
 		return (
 			typeof value === 'string' ||
@@ -3108,6 +2996,200 @@
 			}
 			return arr;
 		};
+
+	var descs = Object.create(null);
+	function Symbol$3() {
+		var desc = arguments[0];
+		if(desc !== undefined) {
+			desc = String(desc);
+		}
+		var s = Symbol$5(desc);
+		descs[s] = desc;
+		return s;
+	};
+
+	function getSymbolDescription() {
+		var s = this.valueOf();
+		if(s in descs) {
+			return descs[s];
+		}
+		return String(this).slice(7, -1);
+	}
+
+	var Symbol$2 = Symbol$5;
+	if(Symbol$5) {
+		Symbol$2 = Symbol$3;
+		Object.setPrototypeOf(Symbol$2, Symbol$5);
+		Object.defineProperty(Symbol$5.prototype, 'description', {
+			configurable: true,
+			enumerable: false,
+			get: getSymbolDescription
+		});
+	} else {
+		Symbol$2 = symbol$1;
+	}
+	var _Symbol$2 = Symbol$2;
+
+	var WeakMap$2 = window.WeakMap;
+
+	var KEY_WM = "@@WeakMap";
+	var weakSeq = 0;
+	function WeakMap$1() {
+		this.symbol = weakSeq++;
+		if(arguments.length) {
+			var iterable = arguments[0];
+			var entries = iterable[iterator$1];
+			if(entries) {
+				var it = entries.call(iterable);
+				while(true) {
+					var next = it.next();
+					if(next.done) break;
+					try {
+						this.set(next.value[0], next.value[1]);
+					} catch(e) {
+						if(it.return) {
+							try {
+								it.return();
+							} catch(e) { }
+						}
+						throw e;
+					}
+				}
+			}
+		}
+	}
+	WeakMap$1.prototype.set = function(key, value) {
+		if(!isNotNullObject(key)) {
+			throw new TypeError("Invalid value used in weak");
+		}
+		var map = key[KEY_WM];
+		if(!map) {
+			map = {};
+			if(!nonEnumerable) {
+				key[KEY_WM] = map;
+			} else {
+				$inject_Object_defineProperty(key, KEY_WM, {
+					value: map,
+					enumerable: false,
+					configurable: true,
+					writable: true
+				});
+			}
+		}
+		map[this.symbol] = value;
+		return this;
+	};
+	WeakMap$1.prototype.get = function(key) {
+		var map = key[KEY_WM];
+		if(map) {
+			return map[this.symbol];
+		}
+	};
+	WeakMap$1.prototype.has = function(key) {
+		var map = key[KEY_WM];
+		if(map) {
+			return this.symbol in map;
+		}
+		return false;
+	};
+	WeakMap$1.prototype.delete = function(key) {
+		if(!isNotNullObject(key)) {
+			return false;
+		}
+		var map = key[KEY_WM];
+		if(map) {
+			if(this.symbol in map) {
+				delete map[this.symbol];
+				return true;
+			}
+		}
+		return false;
+	};
+
+	function fixChain$3(WeakMap) {
+		var setMethod = WeakMap.prototype.set;
+		WeakMap.prototype.set = function set() {
+			setMethod.apply(this, arguments);
+			return this;
+		};
+	}
+
+	function inherits(clazz, superClazz) {
+		Object.setPrototypeOf(clazz, superClazz);
+		clazz.prototype = Object.create(superClazz.prototype);
+		clazz.prototype.constructor = clazz;
+	}
+
+	function fixSymbol$1(BugWeakMap) {
+		function WeakMap() {
+			var m = new BugWeakMap(arguments[0]);
+			Object.setPrototypeOf(m, Object.getPrototypeOf(this));
+			return m;
+		}
+		inherits(WeakMap, BugWeakMap);
+		var s = BugWeakMap.prototype.set;
+		WeakMap.prototype.set = function set(k, v) {
+			if(typeof k === "symbol") {
+				this[k] = v;
+				return this;
+			} else {
+				return s.apply(this, arguments);
+			}
+		};
+		var g = BugWeakMap.prototype.get;
+		WeakMap.prototype.get = function get(k) {
+			if(typeof k === "symbol") {
+				return this[k];
+			} else {
+				return g.apply(this, arguments);
+			}
+		};
+		var h = BugWeakMap.prototype.has;
+		WeakMap.prototype.has = function has(k) {
+			if(typeof k === "symbol") {
+				return k in this;
+			} else {
+				return h.apply(this, arguments);
+			}
+		};
+		var d = BugWeakMap.prototype.delete;
+		WeakMap.prototype.delete = function(k, v) {
+			if(typeof k === "symbol") {
+				if(k in this) {
+					delete this[k];
+					return true;
+				}
+				return false;
+			} else {
+				return d.apply(this, arguments);
+			}
+		};
+		return WeakMap;
+	}
+
+	if(WeakMap$2) {
+		var wm = new WeakMap$2();
+		if(Symbol$5) {
+			try {
+				wm.set(Symbol$5(), 1);
+			} catch(e) {
+				window.WeakMap = fixSymbol$1(WeakMap$2);
+			}
+		} else {
+			if(wm.set({}, 0) !== wm) {
+				fixChain$3(WeakMap$2);
+			}
+		}
+	} else {
+		if(nonEnumerable) {
+			Object.defineProperty(Object.prototype, KEY_WM, {
+				value: undefined,
+				enumerable: false,
+				configurable: true
+			});
+		}
+		window.WeakMap = WeakMap$1;
+	}
 
 	if(Symbol$5) {
 		var getOwnPropertySymbols$2 = Object$1.getOwnPropertySymbols;
@@ -3217,6 +3299,11 @@
 	  assert.ok(weakmap.has(object), 'works with frozen objects #1');
 	  weakmap.delete(object);
 	  assert.ok(!weakmap.has(object), 'works with frozen objects #2');
+	  var s = _Symbol$2();
+	  weakmap.set(s, 12);
+	  assert.ok(weakmap.has(s));
+	  assert.ok(weakmap.delete(s));
+	  assert.ok(!weakmap.has(s), 'symbols as weakmap keys');
 	});
 	QUnit.test('WeakMap#get', function (assert) {
 	  assert.isFunction(WeakMap.prototype.get);
@@ -3285,6 +3372,9 @@
 	  // weakmap.delete(object2);
 	  // assert.same(weakmap.get(object1), undefined, 'works with frozen objects #3');
 	  // assert.same(weakmap.get(object2), undefined, 'works with frozen objects #4');
+	  var s = _Symbol$2();
+	  weakmap.set(s, 123);
+	  assert.same(weakmap.get(s), 123, 'symbols as weakmap keys');
 	});
 
 	var WeakSet$2 = window.WeakSet;
@@ -3332,10 +3422,57 @@
 		};
 	}
 
+	function fixSymbol(BugWeakSet) {
+		function WeakSet() {
+			var m = new BugWeakSet(arguments[0]);
+			Object.setPrototypeOf(m, Object.getPrototypeOf(this));
+			return m;
+		}
+		inherits(WeakSet, BugWeakSet);
+		var a = BugWeakSet.prototype.add;
+		WeakSet.prototype.add = function add(v) {
+			if(typeof v === "symbol") {
+				this[v] = v;
+				return this;
+			} else {
+				return a.apply(this, arguments);
+			}
+		};
+		var h = BugWeakSet.prototype.has;
+		WeakSet.prototype.has = function has(v) {
+			if(typeof v === "symbol") {
+				return v in this;
+			} else {
+				return h.apply(this, arguments);
+			}
+		};
+		var d = BugWeakSet.prototype.delete;
+		WeakSet.prototype.delete = function(v) {
+			if(typeof v === "symbol") {
+				if(v in this) {
+					delete this[v];
+					return true;
+				}
+				return false;
+			} else {
+				return d.apply(this, arguments);
+			}
+		};
+		return WeakSet;
+	}
+
 	if(WeakSet$2) {
 		var ws = new WeakSet$2();
-		if(ws.add({}) !== ws) {
-			fixChain$2(WeakSet$2);
+		if(Symbol$5) {
+			try {
+				ws.add(Symbol$5());
+			} catch(e) {
+				window.WeakSet = fixSymbol(WeakSet$2);
+			}
+		} else {
+			if(ws.add({}) !== ws) {
+				fixChain$2(WeakSet$2);
+			}
 		}
 	} else {
 		window.WeakSet = WeakSet$1;
@@ -3405,10 +3542,13 @@
 	  assert.looksNative(WeakSet.prototype.add);
 	  // assert.nonEnumerable(WeakSet.prototype, 'add');
 	  var weakset = new WeakSet();
-	  // assert.ok(weakset.add({}) === weakset, 'chaining');
+	  assert.ok(weakset.add({}) === weakset, 'chaining');
 	  assert.throws(function () {
 	    return new WeakSet().add(42);
 	  }, 'throws with primitive keys');
+	  var s = _Symbol$2();
+	  weakset.add(s);
+	  assert.ok(weakset.has(s), 'symbols as weakset keys');
 	});
 	QUnit.test('WeakSet#delete', function (assert) {
 	  assert.isFunction(WeakSet.prototype.delete);
@@ -3422,6 +3562,11 @@
 	  weakset.delete(a);
 	  assert.ok(!weakset.has(a) && weakset.has(b), 'WeakSet has`nt value after .delete()');
 	  // assert.notThrows(() => !weakset.delete(1), 'return false on primitive');
+	  var s = _Symbol$2();
+	  weakset.add(s);
+	  assert.ok(weakset.has(s));
+	  assert.ok(weakset.delete(s));
+	  assert.ok(!weakset.has(s), 'symbols as weakset keys');
 	});
 	QUnit.test('WeakSet#has', function (assert) {
 	  assert.isFunction(WeakSet.prototype.has);
@@ -5032,39 +5177,6 @@
 	    done: true
 	  });
 	});
-
-	var descs = Object.create(null);
-	function Symbol$3() {
-		var desc = arguments[0];
-		if(desc !== undefined) {
-			desc = String(desc);
-		}
-		var s = Symbol$5(desc);
-		descs[s] = desc;
-		return s;
-	};
-
-	function getSymbolDescription() {
-		var s = this.valueOf();
-		if(s in descs) {
-			return descs[s];
-		}
-		return String(this).slice(7, -1);
-	}
-
-	var Symbol$2 = Symbol$5;
-	if(Symbol$5) {
-		Symbol$2 = Symbol$3;
-		Object.setPrototypeOf(Symbol$2, Symbol$5);
-		Object.defineProperty(Symbol$5.prototype, 'description', {
-			configurable: true,
-			enumerable: false,
-			get: getSymbolDescription
-		});
-	} else {
-		Symbol$2 = symbol$1;
-	}
-	var _Symbol$2 = Symbol$2;
 
 	if(Symbol$5 !== _Symbol$2) {
 		if(Symbol$5) {
@@ -8358,12 +8470,6 @@
 	  var object = {};
 	  assert.same('[object Object]'.replaceAll(object, 'a'), 'a');
 	});
-
-	function inherits(clazz, superClazz) {
-		Object.setPrototypeOf(clazz, superClazz);
-		clazz.prototype = Object.create(superClazz.prototype);
-		clazz.prototype.constructor = clazz;
-	}
 
 	function AggregateError$1(errors, message) {
 		if(!(this instanceof AggregateError$1)) {

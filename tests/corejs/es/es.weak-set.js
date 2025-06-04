@@ -66,8 +66,11 @@ QUnit.test('WeakSet#add', assert => {
   assert.looksNative(WeakSet.prototype.add);
   // assert.nonEnumerable(WeakSet.prototype, 'add');
   const weakset = new WeakSet();
-  // assert.ok(weakset.add({}) === weakset, 'chaining');
+  assert.ok(weakset.add({}) === weakset, 'chaining');
   assert.throws(() => new WeakSet().add(42), 'throws with primitive keys');
+  const s = Symbol();
+  weakset.add(s);
+  assert.ok(weakset.has(s), 'symbols as weakset keys');
 });
 
 QUnit.test('WeakSet#delete', assert => {
@@ -82,6 +85,11 @@ QUnit.test('WeakSet#delete', assert => {
   weakset.delete(a);
   assert.ok(!weakset.has(a) && weakset.has(b), 'WeakSet has`nt value after .delete()');
   // assert.notThrows(() => !weakset.delete(1), 'return false on primitive');
+  const s = Symbol();
+  weakset.add(s);
+  assert.ok(weakset.has(s));
+  assert.ok(weakset.delete(s));
+  assert.ok(!weakset.has(s), 'symbols as weakset keys');
 });
 
 QUnit.test('WeakSet#has', assert => {

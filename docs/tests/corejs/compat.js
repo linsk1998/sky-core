@@ -3213,7 +3213,55 @@
 	  assert.strictEqual(Number.MIN_SAFE_INTEGER, -Math.pow(2, 53) + 1, 'Is -2^53 + 1');
 	});
 
+	function isPrimitive(value) {
+	  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
+	}
+
+	var symbol_sqe = 0;
+	var all_symbol = {};
+	function symbol(desc) {
+	  if (this instanceof symbol) {
+	    throw new TypeError("Symbol is not a constructor");
+	  }
+	  return new Symbol$2(desc);
+	}
+	;
+	symbol.sham = true;
+	function Symbol$2(desc) {
+	  if (desc !== undefined) {
+	    this.description = String(desc);
+	  }
+	  this.__name__ = "@@" + desc + ":" + symbol_sqe;
+	  symbol_sqe++;
+	  all_symbol[this.__name__] = this;
+	}
+	Symbol$2.prototype.toString = function () {
+	  return this.__name__;
+	};
+	Symbol$2.prototype.toJSON = function () {
+	  return undefined;
+	};
+	function getOwnPropertySymbols(obj) {
+	  var arr = [];
+	  if (isPrimitive(obj)) {
+	    return arr;
+	  }
+	  for (var key in obj) {
+	    if (key.substring(0, 2) === "@@") {
+	      if (Object.hasOwn(obj, key)) {
+	        if (key in all_symbol) {
+	          arr.push(all_symbol[key]);
+	        }
+	      }
+	    }
+	  }
+	  return arr;
+	}
+	;
+
 	var WeakMap$2 = window.WeakMap;
+
+	var Symbol$1 = window.Symbol;
 
 	var nonEnumerable = !!defineProperties$1;
 
@@ -3285,7 +3333,7 @@
 	  if (map) {
 	    if (this.symbol in map) {
 	      delete map[this.symbol];
-	      return false;
+	      return true;
 	    }
 	  }
 	  return false;
@@ -3302,10 +3350,124 @@
 	  }();
 	}
 
+	function forIn(obj, fn, thisArg) {
+	  if (typeof obj !== "object") {
+	    return false;
+	  }
+	  var jsObject = isJsObject(obj);
+	  for (var key in obj) {
+	    if (!jsObject) {
+	      if (key === "constructor") {
+	        continue;
+	      }
+	    }
+	    switch (key.substring(0, 2)) {
+	      case "__":
+	      case "@@":
+	        continue;
+	    }
+	    if (fn.call(thisArg, obj[key], key) === false) {
+	      return false;
+	    }
+	  }
+	  if (hasEnumBug) {
+	    var i = dontEnums.length;
+	    var proto = getPrototypeOf$1(obj);
+	    //遍历nonEnumerableProps数组
+	    while (i--) {
+	      var prop = dontEnums[i];
+	      if (prop in obj && obj[prop] !== proto[prop]) {
+	        if (fn.call(thisArg, obj[prop], prop) === false) {
+	          return false;
+	        }
+	      }
+	    }
+	  }
+	  return true;
+	}
+	;
+
+	function inherits(subClass, superClass) {
+	  forIn(superClass, setKey, subClass);
+	  var prototype = Object.create(superClass.prototype);
+	  prototype.constructor = subClass;
+	  prototype.__proto__ = prototype;
+	  subClass.prototype = prototype;
+	  subClass.__proto__ = superClass.prototype;
+	}
+	;
+	function setKey(value, key) {
+	  this[key] = value;
+	}
+
+	function fixSymbol$1(BugWeakMap) {
+	  function WeakMap() {
+	    var m = new BugWeakMap(arguments[0]);
+	    Object.setPrototypeOf(m, Object.getPrototypeOf(this));
+	    return m;
+	  }
+	  inherits(WeakMap, BugWeakMap);
+	  var s = BugWeakMap.prototype.set;
+	  WeakMap.prototype.set = function () {
+	    function set(k, v) {
+	      if (typeof k === "symbol") {
+	        this[k] = v;
+	        return this;
+	      } else {
+	        return s.apply(this, arguments);
+	      }
+	    }
+	    return set;
+	  }();
+	  var g = BugWeakMap.prototype.get;
+	  WeakMap.prototype.get = function () {
+	    function get(k) {
+	      if (typeof k === "symbol") {
+	        return this[k];
+	      } else {
+	        return g.apply(this, arguments);
+	      }
+	    }
+	    return get;
+	  }();
+	  var h = BugWeakMap.prototype.has;
+	  WeakMap.prototype.has = function () {
+	    function has(k) {
+	      if (typeof k === "symbol") {
+	        return k in this;
+	      } else {
+	        return h.apply(this, arguments);
+	      }
+	    }
+	    return has;
+	  }();
+	  var d = BugWeakMap.prototype["delete"];
+	  WeakMap.prototype["delete"] = function (k, v) {
+	    if (typeof k === "symbol") {
+	      if (k in this) {
+	        delete this[k];
+	        return true;
+	      }
+	      return false;
+	    } else {
+	      return d.apply(this, arguments);
+	    }
+	  };
+	  return WeakMap;
+	}
+
 	if (WeakMap$2) {
 	  var wm = new WeakMap$2();
-	  if (wm.set({}, 0) !== wm) {
-	    fixChain$1(WeakMap$2);
+	  if (Symbol$1) {
+	    try {
+	      wm.set(Symbol$1(), 1);
+	    } catch (e) {
+	      window.WeakMap = fixSymbol$1(WeakMap$2);
+	    }
+	  } else {
+	    if (wm.set({}, 0) !== wm) {
+	      fixChain$1(WeakMap$2);
+	    }
 	  }
 	} else {
 	  if (nonEnumerable) {
@@ -3314,67 +3476,9 @@
 	      enumerable: false,
 	      configurable: true
 	    });
-	    // if(freeze) {
-	    // 	Object.freeze = function(o) {
-	    // 		if(!o[KEY_WM]) {
-	    // 			Object.defineProperty(o, KEY_WM, {
-	    // 				value: {},
-	    // 				enumerable: false,
-	    // 				configurable: true
-	    // 			});
-	    // 		}
-	    // 		return freeze.call(Object, o);
-	    // 	};
-	    // }
 	  }
 	  window.WeakMap = WeakMap$1;
 	}
-
-	function isPrimitive(value) {
-	  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
-	}
-
-	var symbol_sqe = 0;
-	var all_symbol = {};
-	function symbol(desc) {
-	  if (this instanceof symbol) {
-	    throw new TypeError("Symbol is not a constructor");
-	  }
-	  return new Symbol$2(desc);
-	}
-	;
-	symbol.sham = true;
-	function Symbol$2(desc) {
-	  if (desc !== undefined) {
-	    this.description = String(desc);
-	  }
-	  this.__name__ = "@@" + desc + ":" + symbol_sqe;
-	  symbol_sqe++;
-	  all_symbol[this.__name__] = this;
-	}
-	Symbol$2.prototype.toString = function () {
-	  return this.__name__;
-	};
-	Symbol$2.prototype.toJSON = function () {
-	  return undefined;
-	};
-	function getOwnPropertySymbols(obj) {
-	  var arr = [];
-	  if (isPrimitive(obj)) {
-	    return arr;
-	  }
-	  for (var key in obj) {
-	    if (key.substring(0, 2) === "@@") {
-	      if (Object.hasOwn(obj, key)) {
-	        if (key in all_symbol) {
-	          arr.push(all_symbol[key]);
-	        }
-	      }
-	    }
-	  }
-	  return arr;
-	}
-	;
 
 	if (!Object$1.getOwnPropertySymbols) {
 	  Object$1.getOwnPropertySymbols = getOwnPropertySymbols;
@@ -3472,6 +3576,11 @@
 	  assert.ok(weakmap.has(object), 'works with frozen objects #1');
 	  weakmap["delete"](object);
 	  assert.ok(!weakmap.has(object), 'works with frozen objects #2');
+	  var s = symbol();
+	  weakmap.set(s, 12);
+	  assert.ok(weakmap.has(s));
+	  assert.ok(weakmap["delete"](s));
+	  assert.ok(!weakmap.has(s), 'symbols as weakmap keys');
 	});
 	QUnit.test('WeakMap#get', function (assert) {
 	  assert.isFunction(WeakMap.prototype.get);
@@ -3540,6 +3649,9 @@
 	  // weakmap.delete(object2);
 	  // assert.same(weakmap.get(object1), undefined, 'works with frozen objects #3');
 	  // assert.same(weakmap.get(object2), undefined, 'works with frozen objects #4');
+	  var s = symbol();
+	  weakmap.set(s, 123);
+	  assert.same(weakmap.get(s), 123, 'symbols as weakmap keys');
 	});
 
 	var WeakSet$2 = window.WeakSet;
@@ -3590,10 +3702,57 @@
 	  }();
 	}
 
+	function fixSymbol(BugWeakSet) {
+		function WeakSet() {
+			var m = new BugWeakSet(arguments[0]);
+			Object.setPrototypeOf(m, Object.getPrototypeOf(this));
+			return m;
+		}
+		inherits(WeakSet, BugWeakSet);
+		var a = BugWeakSet.prototype.add;
+		WeakSet.prototype.add = function add(v) {
+			if(typeof v === "symbol") {
+				this[v] = v;
+				return this;
+			} else {
+				return a.apply(this, arguments);
+			}
+		};
+		var h = BugWeakSet.prototype.has;
+		WeakSet.prototype.has = function has(v) {
+			if(typeof v === "symbol") {
+				return v in this;
+			} else {
+				return h.apply(this, arguments);
+			}
+		};
+		var d = BugWeakSet.prototype.delete;
+		WeakSet.prototype.delete = function(v) {
+			if(typeof v === "symbol") {
+				if(v in this) {
+					delete this[v];
+					return true;
+				}
+				return false;
+			} else {
+				return d.apply(this, arguments);
+			}
+		};
+		return WeakSet;
+	}
+
 	if (WeakSet$2) {
 	  var ws = new WeakSet$2();
-	  if (ws.add({}) !== ws) {
-	    fixChain(WeakSet$2);
+	  if (Symbol$1) {
+	    try {
+	      ws.add(Symbol$1());
+	    } catch (e) {
+	      window.WeakSet = fixSymbol(WeakSet$2);
+	    }
+	  } else {
+	    if (ws.add({}) !== ws) {
+	      fixChain(WeakSet$2);
+	    }
 	  }
 	} else {
 	  window.WeakSet = WeakSet$1;
@@ -3663,10 +3822,13 @@
 	  assert.looksNative(WeakSet.prototype.add);
 	  // assert.nonEnumerable(WeakSet.prototype, 'add');
 	  var weakset = new WeakSet();
-	  // assert.ok(weakset.add({}) === weakset, 'chaining');
+	  assert.ok(weakset.add({}) === weakset, 'chaining');
 	  assert["throws"](function () {
 	    return new WeakSet().add(42);
 	  }, 'throws with primitive keys');
+	  var s = symbol();
+	  weakset.add(s);
+	  assert.ok(weakset.has(s), 'symbols as weakset keys');
 	});
 	QUnit.test('WeakSet#delete', function (assert) {
 	  assert.isFunction(WeakSet.prototype["delete"]);
@@ -3680,6 +3842,11 @@
 	  weakset["delete"](a);
 	  assert.ok(!weakset.has(a) && weakset.has(b), 'WeakSet has`nt value after .delete()');
 	  // assert.notThrows(() => !weakset.delete(1), 'return false on primitive');
+	  var s = symbol();
+	  weakset.add(s);
+	  assert.ok(weakset.has(s));
+	  assert.ok(weakset["delete"](s));
+	  assert.ok(!weakset.has(s), 'symbols as weakset keys');
 	});
 	QUnit.test('WeakSet#has', function (assert) {
 	  assert.isFunction(WeakSet.prototype.has);
@@ -4924,8 +5091,6 @@
 	    done: true
 	  });
 	});
-
-	var Symbol$1 = window.Symbol;
 
 	if (Symbol$1 !== symbol) {
 	  symbol.iterator = "@@iterator";
@@ -8181,56 +8346,6 @@
 	  var object = {};
 	  assert.same('[object Object]'.replaceAll(object, 'a'), 'a');
 	});
-
-	function forIn(obj, fn, thisArg) {
-	  if (typeof obj !== "object") {
-	    return false;
-	  }
-	  var jsObject = isJsObject(obj);
-	  for (var key in obj) {
-	    if (!jsObject) {
-	      if (key === "constructor") {
-	        continue;
-	      }
-	    }
-	    switch (key.substring(0, 2)) {
-	      case "__":
-	      case "@@":
-	        continue;
-	    }
-	    if (fn.call(thisArg, obj[key], key) === false) {
-	      return false;
-	    }
-	  }
-	  if (hasEnumBug) {
-	    var i = dontEnums.length;
-	    var proto = getPrototypeOf$1(obj);
-	    //遍历nonEnumerableProps数组
-	    while (i--) {
-	      var prop = dontEnums[i];
-	      if (prop in obj && obj[prop] !== proto[prop]) {
-	        if (fn.call(thisArg, obj[prop], prop) === false) {
-	          return false;
-	        }
-	      }
-	    }
-	  }
-	  return true;
-	}
-	;
-
-	function inherits(subClass, superClass) {
-	  forIn(superClass, setKey, subClass);
-	  var prototype = Object.create(superClass.prototype);
-	  prototype.constructor = subClass;
-	  prototype.__proto__ = prototype;
-	  subClass.prototype = prototype;
-	  subClass.__proto__ = superClass.prototype;
-	}
-	;
-	function setKey(value, key) {
-	  this[key] = value;
-	}
 
 	function AggregateError$1(errors, message) {
 	  if (!(this instanceof AggregateError$1)) {

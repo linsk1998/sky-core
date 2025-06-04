@@ -86,6 +86,11 @@ QUnit.test('WeakMap#delete', assert => {
   assert.ok(weakmap.has(object), 'works with frozen objects #1');
   weakmap.delete(object);
   assert.ok(!weakmap.has(object), 'works with frozen objects #2');
+  const s = Symbol();
+  weakmap.set(s, 12);
+  assert.ok(weakmap.has(s));
+  assert.ok(weakmap.delete(s));
+  assert.ok(!weakmap.has(s), 'symbols as weakmap keys');
 });
 
 QUnit.test('WeakMap#get', assert => {
@@ -155,6 +160,9 @@ QUnit.test('WeakMap#set', assert => {
   // weakmap.delete(object2);
   // assert.same(weakmap.get(object1), undefined, 'works with frozen objects #3');
   // assert.same(weakmap.get(object2), undefined, 'works with frozen objects #4');
+  const s = Symbol();
+  weakmap.set(s, 123);
+  assert.same(weakmap.get(s), 123, 'symbols as weakmap keys');
 });
 
 // QUnit.test('WeakMap#@@toStringTag', assert => {

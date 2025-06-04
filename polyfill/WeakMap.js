@@ -1,13 +1,22 @@
 import { WeakMap } from "../native/WeakMap";
-// import { freeze } from "../native/Object/freeze";
+import { Symbol } from "../native/Symbol";
 import { nonEnumerable } from "../support/nonEnumerable";
 import { WeakMap as impl_WeakMap, KEY_WM } from "../impl/WeakMap";
 import { fixChain } from "../impl-modern/WeakMap";
+import { fixSymbol } from "../impl-es2015/WeakMap";
 
 if(WeakMap) {
 	var wm = new WeakMap();
-	if(wm.set({}, 0) !== wm) {
-		fixChain(WeakMap);
+	if(Symbol) {
+		try {
+			wm.set(Symbol(), 1);
+		} catch(e) {
+			window.WeakMap = fixSymbol(WeakMap);
+		}
+	} else {
+		if(wm.set({}, 0) !== wm) {
+			fixChain(WeakMap);
+		}
 	}
 } else {
 	if(nonEnumerable) {
@@ -16,18 +25,6 @@ if(WeakMap) {
 			enumerable: false,
 			configurable: true
 		});
-		// if(freeze) {
-		// 	Object.freeze = function(o) {
-		// 		if(!o[KEY_WM]) {
-		// 			Object.defineProperty(o, KEY_WM, {
-		// 				value: {},
-		// 				enumerable: false,
-		// 				configurable: true
-		// 			});
-		// 		}
-		// 		return freeze.call(Object, o);
-		// 	};
-		// }
 	}
 	window.WeakMap = impl_WeakMap;
 }

@@ -69,7 +69,7 @@ WeakMap.prototype.delete = function(key) {
 	if(map) {
 		if(this.symbol in map) {
 			delete map[this.symbol];
-			return false;
+			return true;
 		}
 	}
 	return false;
