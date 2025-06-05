@@ -8,7 +8,7 @@ function createRollupPlugin(browser) {
 			resolveId(id) {
 				var prefix = "sky-core/";
 				if(id.startsWith(prefix)) {
-					return path.resolve(__dirname, "./" + id.substring(prefix.length, id.length));
+					return path.resolve(__dirname, "./" + id.substring(prefix.length, id.length) + ".js");
 				}
 			}
 		};

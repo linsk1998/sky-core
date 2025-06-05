@@ -1,8 +1,8 @@
 
-import alias from "@rollup/plugin-alias";
 import inject from "@rollup/plugin-inject";
 import importPlugin from 'rollup-plugin-import';
-import { modules, polyfills, pures, utils } from "./alias-compat.mjs";
+const sky = require('../createRollupPlugin');
+
 export default {
 	input: './advance-compat.js',
 	output: {
@@ -11,13 +11,10 @@ export default {
 		format: 'esm'
 	},
 	plugins: [
+		sky('compat'),
 		importPlugin({
 			libraryName: "sky-core",
 			libraryDirectory: "utils"
-		}),
-		alias({
-			entries: [
-			].concat(pures).concat(polyfills).concat(utils).concat(modules)
 		}),
 		inject({
 			"modules": {

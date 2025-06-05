@@ -645,8 +645,6 @@ return class extends Parent { /* empty */ };
 	  assert.throws(() => toPrecision.call(undefined, 1), TypeError, '? thisNumberValue(this value)');
 	});
 
-	var Date$1 = window.Date;
-
 	function definePrototype(target, property, value) {
 		var prototype = target.prototype;
 		if(!(property in prototype)) {
@@ -658,6 +656,8 @@ return class extends Parent { /* empty */ };
 			});
 		}
 	}
+
+	var Date$1 = window.Date;
 
 	function prefixIntrger2(number) {
 		if(number<10){
@@ -1349,6 +1349,10 @@ return class extends Parent { /* empty */ };
 	  assert.same(result.w, 33);
 	});
 
+	// QUnit.test('Object.defineProperties.sham flag', assert => {
+	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
+	// });
+
 	var slice = Array.prototype.slice;
 
 	function bind(context) {
@@ -1442,14 +1446,6 @@ return class extends Parent { /* empty */ };
 
 	var Promise$3 = window.Promise;
 
-	function isNotNullObject(obj) {
-		return typeof obj === "object" ? obj !== null : typeof obj === "function";
-	};
-
-	function isFunction(obj) {
-		return typeof obj === 'function';
-	};
-
 	var queueMicrotask$2 = window.queueMicrotask;
 
 	var ticks = null;
@@ -1484,6 +1480,14 @@ return class extends Parent { /* empty */ };
 	if(!queueMicrotask$2) {
 		window.queueMicrotask = initQueueMicrotask(Promise$3 ? Promise$3.prototype.then.bind(Promise$3.resolve(1)) : setTimeout);
 	}
+
+	function isNotNullObject(obj) {
+		return typeof obj === "object" ? obj !== null : typeof obj === "function";
+	};
+
+	function isFunction(obj) {
+		return typeof obj === 'function';
+	};
 
 	var PENDING = 1;
 	var RESOLVED = 2;
@@ -2501,6 +2505,11 @@ return class extends Parent { /* empty */ };
 	  assert.same(weakmap.get(s), 123, 'symbols as weakmap keys');
 	});
 
+	// QUnit.test('WeakMap#@@toStringTag', assert => {
+	//   assert.strictEqual(WeakMap.prototype[Symbol.toStringTag], 'WeakMap', 'WeakMap::@@toStringTag is `WeakMap`');
+	//   assert.strictEqual(String(new WeakMap()), '[object WeakMap]', 'correct stringification');
+	// });
+
 	var WeakSet$1 = window.WeakSet;
 
 	function fixSymbol(BugWeakSet) {
@@ -2654,6 +2663,11 @@ return class extends Parent { /* empty */ };
 	  // assert.notThrows(() => !weakset.has(1), 'return false on primitive');
 	});
 
+	// QUnit.test('WeakSet::@@toStringTag', assert => {
+	//   assert.strictEqual(WeakSet.prototype[Symbol.toStringTag], 'WeakSet', 'WeakSet::@@toStringTag is `WeakSet`');
+	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
+	// });
+
 	definePrototype(Array, 'values', Array.prototype[Symbol.iterator]);
 
 	function entries() {
@@ -2680,7 +2694,6 @@ return class extends Parent { /* empty */ };
 
 	definePrototype(Array, 'entries', entries);
 
-	/* eslint-disable radar/no-element-overwrite -- required for testing */
 	const {
 	  ownKeys: ownKeys$2
 	} = GLOBAL.Reflect || {};
@@ -3124,7 +3137,6 @@ return class extends Parent { /* empty */ };
 	  });
 	});
 
-	/* eslint-disable radar/no-element-overwrite -- required for testing */
 	const {
 	  ownKeys: ownKeys$1
 	} = GLOBAL.Reflect || {};
@@ -6669,7 +6681,6 @@ return class extends Parent { /* empty */ };
 
 	window.structuredClone = structuredClone$2 ? structuredClone$fix : structuredClone$1;
 
-	// Originally from: https://github.com/web-platform-tests/wpt/blob/4b35e758e2fc4225368304b02bcec9133965fd1a/IndexedDB/structured-clone.any.js
 	const from = Array.from;
 	const assign = Object.assign;
 	const getPrototypeOf = Object.getPrototypeOf;

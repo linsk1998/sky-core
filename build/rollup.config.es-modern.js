@@ -1,9 +1,8 @@
-
-import alias from "@rollup/plugin-alias";
 import importPlugin from 'rollup-plugin-import';
 import inject from "@rollup/plugin-inject";
 import polyfill from "rollup-plugin-polyfill-inject";
-import { modules, polyfills, pures, utils } from "./alias-modern.mjs";
+const sky = require('../createRollupPlugin');
+
 export default {
 	input: './es.js',
 	output: {
@@ -13,6 +12,7 @@ export default {
 	},
 	context: "this",
 	plugins: [
+		sky('modern'),
 		importPlugin({
 			libraryName: "sky-core",
 			libraryDirectory: "utils"
@@ -74,10 +74,6 @@ export default {
 				"utils-compat/**",
 				"utils-modern/**"
 			]
-		}),
-		alias({
-			entries: [
-			].concat(pures).concat(polyfills).concat(utils).concat(modules)
 		})
 	]
 };

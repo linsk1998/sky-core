@@ -176,13 +176,83 @@
 	}();
 	var WHITESPACES = "\t\n\x0B\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
 
-	function _arrayLikeToArray(r, a) {
-	  (null == a || a > r.length) && (a = r.length);
-	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-	  return n;
+	function isNotNullObject(obj) {
+		return typeof obj === "object" ? obj !== null : typeof obj === "function";
+	};
+
+	function defineProperty(obj, prop, descriptor) {
+		if(!isNotNullObject(obj)) {
+			throw new TypeError("Object.defineProperty called on non-object");
+		}
+		prop = String(prop);
+		if('value' in descriptor) {
+			delete obj[prop];
+			obj[prop] = descriptor.value;
+		} else {
+			if(descriptor.get) obj.__defineGetter__(prop, descriptor.get);
+			if(descriptor.set) obj.__defineSetter__(prop, descriptor.set);
+		}
+		return obj;
+	};
+
+	if(!defineProperty$1) {
+		if(Object$1.prototype.__defineSetter__) {
+			Object$1.defineProperty = defineProperty;
+		}
 	}
 
+	function definePrototype(target, property, value) {
+		var prototype = target.prototype;
+		if(!(property in prototype)) {
+			Object.defineProperty(prototype, property, {
+				configurable: true,
+				writable: true,
+				enumerable: false,
+				value: value
+			});
+		}
+	}
+
+	var slice$1 = Array.prototype.slice;
+
+	function bind(context) {
+		var self = this, args = slice$1.call(arguments, 1);
+		var Bind = function() {
+			if(this instanceof Bind) {
+				self.apply(this, args.concat(slice$1.call(arguments)));
+				return;
+			}
+			return self.apply(context, args.concat(slice$1.call(arguments)));
+		};
+		return Bind;
+	}
+
+	definePrototype(Function, 'bind', bind);
+
 	var Array$1 = window.Array;
+
+	var toString$1 = Object$1.prototype.toString;
+
+	function isArray(obj) {
+		return toString$1.call(obj) === '[object Array]';
+	}
+
+	if(!Array$1.isArray) {
+		Array$1.isArray = isArray;
+	}
+
+	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
+
+	if(accessor) {
+		if(!('name' in Function.prototype)) {
+			Object.defineProperty(Function.prototype, 'name', {
+				enumerable: false, configurable: true,
+				get: function() {
+					return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
+				}
+			});
+		}
+	}
 
 	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
 	var arrayConstructorIteratorReturn = false;
@@ -208,7 +278,11 @@
 		return arrayConstructorIteratorReturn;
 	}
 
-	var toString$1 = Object$1.prototype.toString;
+	var Number$1 = window.Number;
+
+	if(!('MAX_SAFE_INTEGER' in Number$1)) {
+		Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
+	}
 
 	function isString(obj) {
 		return toString$1.call(obj) === '[object String]';
@@ -253,12 +327,6 @@
 				}
 			},
 		};
-	}
-
-	var Number$1 = window.Number;
-
-	if(!('MAX_SAFE_INTEGER' in Number$1)) {
-		Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
 	}
 
 	var push = Array.prototype.push;
@@ -320,42 +388,10 @@
 		Array$1.from = from$1;
 	}
 
-	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
-
-	function isNotNullObject(obj) {
-		return typeof obj === "object" ? obj !== null : typeof obj === "function";
-	};
-
-	function defineProperty(obj, prop, descriptor) {
-		if(!isNotNullObject(obj)) {
-			throw new TypeError("Object.defineProperty called on non-object");
-		}
-		prop = String(prop);
-		if('value' in descriptor) {
-			delete obj[prop];
-			obj[prop] = descriptor.value;
-		} else {
-			if(descriptor.get) obj.__defineGetter__(prop, descriptor.get);
-			if(descriptor.set) obj.__defineSetter__(prop, descriptor.set);
-		}
-		return obj;
-	};
-
-	if(!defineProperty$1) {
-		if(Object$1.prototype.__defineSetter__) {
-			Object$1.defineProperty = defineProperty;
-		}
-	}
-
-	if(accessor) {
-		if(!('name' in Function.prototype)) {
-			Object.defineProperty(Function.prototype, 'name', {
-				enumerable: false, configurable: true,
-				get: function() {
-					return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
-				}
-			});
-		}
+	function _arrayLikeToArray(r, a) {
+	  (null == a || a > r.length) && (a = r.length);
+	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+	  return n;
 	}
 
 	function _unsupportedIterableToArray(r, a) {
@@ -365,42 +401,6 @@
 	    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
 	  }
 	}
-
-	function isArray(obj) {
-		return toString$1.call(obj) === '[object Array]';
-	}
-
-	if(!Array$1.isArray) {
-		Array$1.isArray = isArray;
-	}
-
-	function definePrototype(target, property, value) {
-		var prototype = target.prototype;
-		if(!(property in prototype)) {
-			Object.defineProperty(prototype, property, {
-				configurable: true,
-				writable: true,
-				enumerable: false,
-				value: value
-			});
-		}
-	}
-
-	var slice$1 = Array.prototype.slice;
-
-	function bind(context) {
-		var self = this, args = slice$1.call(arguments, 1);
-		var Bind = function() {
-			if(this instanceof Bind) {
-				self.apply(this, args.concat(slice$1.call(arguments)));
-				return;
-			}
-			return self.apply(context, args.concat(slice$1.call(arguments)));
-		};
-		return Bind;
-	}
-
-	definePrototype(Function, 'bind', bind);
 
 	function _createForOfIteratorHelperLoose(r, e) {
 	  var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
@@ -1578,12 +1578,6 @@
 
 	definePrototype(Array, 'keys', keys$4);
 
-	var keys$3 = Object$1.keys;
-
-	function isNotSymbolKey(key) {
-		return key.substring(0, 2) !== "@@";
-	}
-
 	var hasOwnProperty = Object$1.prototype.hasOwnProperty;
 
 	function hasOwn(obj, key) {
@@ -1592,6 +1586,12 @@
 
 	if(!Object$1.hasOwn) {
 		Object$1.hasOwn = hasOwn;
+	}
+
+	var keys$3 = Object$1.keys;
+
+	function isNotSymbolKey(key) {
+		return key.substring(0, 2) !== "@@";
 	}
 
 	function ie_keys(obj) {
@@ -1963,6 +1963,10 @@
 	  assert.same(result.w, 33);
 	});
 
+	// QUnit.test('Object.defineProperties.sham flag', assert => {
+	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
+	// });
+
 	QUnit.test('Function#bind', function (assert) {
 	  var bind = Function.prototype.bind;
 	  assert.isFunction(bind);
@@ -2277,20 +2281,6 @@
 		Promise$2 = window.Promise = Promise$3;
 	}
 
-	var Error$2 = window.Error;
-
-	function Error$1(message) {
-		this.message = message === undefined ? "" : String(message);
-		var options = arguments[1];
-		if(typeof options === "object" && options !== null) {
-			if('cause' in options) {
-				this.cause = options.cause;
-			}
-		}
-	}
-	Error$1.prototype = Error$2.prototype;
-	window.Error = Error$1;
-
 	function promise_finally(onCompleted) {
 		var fun = isFunction(onCompleted);
 		return this.then(
@@ -2309,6 +2299,20 @@
 	};
 
 	definePrototype(Promise$2, 'finally', promise_finally);
+
+	var Error$2 = window.Error;
+
+	function Error$1(message) {
+		this.message = message === undefined ? "" : String(message);
+		var options = arguments[1];
+		if(typeof options === "object" && options !== null) {
+			if('cause' in options) {
+				this.cause = options.cause;
+			}
+		}
+	}
+	Error$1.prototype = Error$2.prototype;
+	window.Error = Error$1;
 
 	var _Symbol$3 = GLOBAL.Symbol || {};
 	var setPrototypeOf = Object.setPrototypeOf,
@@ -3377,6 +3381,11 @@
 	  assert.same(weakmap.get(s), 123, 'symbols as weakmap keys');
 	});
 
+	// QUnit.test('WeakMap#@@toStringTag', assert => {
+	//   assert.strictEqual(WeakMap.prototype[Symbol.toStringTag], 'WeakMap', 'WeakMap::@@toStringTag is `WeakMap`');
+	//   assert.strictEqual(String(new WeakMap()), '[object WeakMap]', 'correct stringification');
+	// });
+
 	var WeakSet$2 = window.WeakSet;
 
 	function WeakSet$1() {
@@ -3584,7 +3593,16 @@
 	  // assert.notThrows(() => !weakset.has(1), 'return false on primitive');
 	});
 
-	var Map$2 = window.Map;
+	// QUnit.test('WeakSet::@@toStringTag', assert => {
+	//   assert.strictEqual(WeakSet.prototype[Symbol.toStringTag], 'WeakSet', 'WeakSet::@@toStringTag is `WeakSet`');
+	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
+	// });
+
+	if(Symbol$5 && Symbol$5.iterator) {
+		definePrototype(Array, 'values', Array.prototype[Symbol$5.iterator]);
+	} else {
+		definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
+	}
 
 	function entries$2() {
 		var array = this;
@@ -3610,11 +3628,7 @@
 
 	definePrototype(Array, 'entries', entries$2);
 
-	if(Symbol$5 && Symbol$5.iterator) {
-		definePrototype(Array, 'values', Array.prototype[Symbol$5.iterator]);
-	} else {
-		definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
-	}
+	var Map$2 = window.Map;
 
 	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
 	var mapConstructorIteratorReturn = false;
@@ -8836,17 +8850,6 @@
 	  // assert.equal(true, 'find' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
 
-	function isSymbol$1(obj) {
-		if(typeof obj === "symbol") {
-			return true;
-		}
-		return false;
-	};
-
-	var isSymbol = Symbol$5 ? isSymbol$1 : function(obj) {
-		return typeof obj === "object" && obj instanceof Symbol$4;
-	};
-
 	var Event$1 = window.Event;
 
 	if(!isFunction(Event$1)) {
@@ -8863,6 +8866,17 @@
 			};
 		}
 	}
+
+	function isSymbol$1(obj) {
+		if(typeof obj === "symbol") {
+			return true;
+		}
+		return false;
+	};
+
+	var isSymbol = Symbol$5 ? isSymbol$1 : function(obj) {
+		return typeof obj === "object" && obj instanceof Symbol$4;
+	};
 
 	function structuredClone$1(obj) {
 		var r;
