@@ -11,7 +11,7 @@ var babelRuntimePath = require.resolve("@babel/runtime/package.json", {
 var babelRuntimePackage = require(babelRuntimePath);
 var babelRuntimeVersion = babelRuntimePackage.version;
 module.exports = [{
-	input: 'tests/corejs/es/index.js',
+	input: 'tests/corejs/index.js',
 	output: {
 		strict: false,
 		file: 'docs/tests/corejs/compat.js',
@@ -97,7 +97,7 @@ module.exports = [{
 		}),
 	]
 }, {
-	input: 'tests/corejs/es/index.js',
+	input: 'tests/corejs/index.js',
 	output: {
 		strict: false,
 		file: 'docs/tests/corejs/modern.js',
@@ -167,7 +167,7 @@ module.exports = [{
 		}),
 	]
 }, {
-	input: 'tests/corejs/es/index.js',
+	input: 'tests/corejs/index.js',
 	output: {
 		strict: false,
 		file: 'docs/tests/corejs/es2015.js',

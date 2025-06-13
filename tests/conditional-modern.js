@@ -279,6 +279,8 @@ module.exports = [
 	}),
 	inject({
 		modules: {
+			"setTimeout": "sky-core/pure/setTimeout",
+			"setInterval": "sky-core/pure/setInterval",
 			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
 			"Symbol.asyncIterator": "sky-core/pure/Symbol/asyncIterator",
@@ -292,6 +294,7 @@ module.exports = [
 			"impl/**/*",
 			"impl-*/**/*",
 			"tests/corejs/es/*",
+			"tests/corejs/web/*",
 		]
 	})
 ];
