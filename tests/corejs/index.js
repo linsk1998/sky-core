@@ -60,6 +60,8 @@ import "./es/es.object.set-prototype-of";
 import "./es/es.object.is";
 
 
+// /* Edge12+ Chrome32 Firefox4+ */
+// import "./web/web.url";
 /* Edge12+ Chrome32 Firefox27+ Safari7+ */
 import "./es/es.promise";
 

@@ -165,8 +165,8 @@ module.exports = [
 			"Promise.withResolvers": "sky-core/polyfill/Promise/withResolvers",
 
 			//URL 这个polyfil支持accessor，但不支持自动转string和JSON，需要用.href获取
-			// "URL": "sky-core/polyfill/URL",
-			// "URLSearchParams": "sky-core/polyfill/URLSearchParams",
+			"URL": "sky-core/polyfill/URL",
+			"URLSearchParams": "sky-core/polyfill/URLSearchParams",
 
 		},
 		exclude: [

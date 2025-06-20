@@ -67,6 +67,10 @@ module.exports = [
 			// IE11+ Chrome8+ Safari5.1+ Firfox21+ Opera15+
 			'location.origin': "sky-core/polyfill/location",
 
+			/* Edge12+ Chrome32 Firefox4+ */
+			'URL': "sky-core/polyfill/URL",
+			'URLSearchParams': "sky-core/polyfill/URLSearchParams",
+
 			// Chrome41+ Edge12 Safari9+ Firfox32+ Opera32+
 			"Array.from": [
 				"sky-core/polyfill/Array/from",
