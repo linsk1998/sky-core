@@ -1,4 +1,3 @@
-import { isFunction } from "../utils/isFunction";
 import { loadScript as loadScriptIE } from "../utils-compat/loadScript";
 import { loadScript as loadScriptST } from "../utils-es2015/loadScript";
 var loadScript;
@@ -13,29 +12,9 @@ if(document.currentScript !== void 0) {
 		last_error = error;
 		last_filename = filename;
 	};
-	loadScript = function(src) {
-		var resolve, reject, charset;
-		var last = arguments[arguments.length - 1];
-		if(arguments.length > 3) {
-			resolve = arguments[1];
-			reject = arguments[2];
-			charset = arguments[3];
-		} else if(arguments.length > 2) {
-			resolve = arguments[1];
-			if(isFunction(last)) {
-				reject = last;
-			} else {
-				charset = last;
-			}
-		} else {
-			if(isFunction(last)) {
-				resolve = last;
-			} else {
-				charset = last;
-			}
-		}
+	loadScript = function(src, resolve, reject) {
 		var script = document.createElement('SCRIPT');
-		script.charset = charset || "UTF-8";
+		script.charset = "UTF-8";
 		script.src = src;
 		src = script.src;
 		script.async = true;

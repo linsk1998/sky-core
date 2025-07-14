@@ -1,9 +1,34 @@
 {
+	"name": "sky-core",
+	"description": "Javascript toolkit core library",
+	"deprecated": false,
+	"version": "0.18.0",
+	"keywords": [
+		"polyfill",
+		"core-js",
+		"shim"
+	],
 	"author": {
 		"name": "linsk"
 	},
-	"deprecated": false,
-	"description": "Javascript toolkit core library",
+	"license": "MIT",
+	"module": "dist/utils.esm.js",
+	"scripts": {
+		"build:utils": "rollup --config build/rollup.config.utils.js",
+		"build:es": "rollup --config build/rollup.config.es.js && rollup --config build/rollup.config.es-compat.js && rollup --config build/rollup.config.es-modern.js",
+		"build:web": "rollup --config build/rollup.config.web.js && rollup --config build/rollup.config.web-compat.js && rollup --config build/rollup.config.web-modern.js",
+		"build:sky": "rollup --config build/rollup.config.sky.js && rollup --config build/rollup.config.sky-compat.js && rollup --config build/rollup.config.sky-modern.js",
+		"build:advance": "rollup --config build/rollup.config.advance-es2015.js && rollup --config build/rollup.config.advance-modern.js && rollup --config build/rollup.config.advance-compat.js",
+		"test:corejs": "rollup --config tests/corejs/rollup.config.js",
+		"test:ie8": "rollup --config tests/ie8/rollup.config.ie8.js",
+		"test:lambdatest": "node tests/action-lambdatest.js",
+		"test:saucelabs": "node tests/action-saucelabs.js",
+		"prepublishOnly": "npm test:lambdatest"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
 	"devDependencies": {
 		"@babel/core": "^7.13.14",
 		"@babel/plugin-transform-arrow-functions": "^7.20.7",
@@ -44,26 +69,5 @@
 		"rollup-plugin-import": "^1.0.2",
 		"rollup-plugin-polyfill-inject": "^1.0.3",
 		"selenium-webdriver": "^4.29.0"
-	},
-	"license": "MIT",
-	"module": "dist/utils.esm.js",
-	"name": "sky-core",
-	"scripts": {
-		"build:utils": "rollup --config build/rollup.config.utils.js",
-		"build:es": "rollup --config build/rollup.config.es.js && rollup --config build/rollup.config.es-compat.js && rollup --config build/rollup.config.es-modern.js",
-		"build:web": "rollup --config build/rollup.config.web.js && rollup --config build/rollup.config.web-compat.js && rollup --config build/rollup.config.web-modern.js",
-		"build:sky": "rollup --config build/rollup.config.sky.js && rollup --config build/rollup.config.sky-compat.js && rollup --config build/rollup.config.sky-modern.js",
-		"build:advance": "rollup --config build/rollup.config.advance-es2015.js && rollup --config build/rollup.config.advance-modern.js && rollup --config build/rollup.config.advance-compat.js",
-		"test:corejs": "rollup --config tests/corejs/rollup.config.js",
-		"test:ie8": "rollup --config tests/ie8/rollup.config.ie8.js",
-		"test:lambdatest": "node tests/action-lambdatest.js",
-		"test:saucelabs": "node tests/action-saucelabs.js",
-		"publish:npm": "npm publish --registry=https://registry.npmjs.org"
-	},
-	"keywords": [
-		"polyfill",
-		"core-js",
-		"shim"
-	],
-	"version": "0.18.0"
+	}
 }
