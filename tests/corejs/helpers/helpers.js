@@ -60,13 +60,13 @@ return class extends Parent { /* empty */ };
 	} catch { /* empty */ }
 })();
 
-// export function timeLimitedPromise(time, fn) {
-// 	return Promise.race([
-// 		new Promise(fn), new Promise((resolve, reject) => {
-// 			setTimeout(reject, time);
-// 		}),
-// 	]);
-// }
+export function timeLimitedPromise(time, promise) {
+	return Promise.race([
+		promise, new Promise((resolve, reject) => {
+			setTimeout(reject, time);
+		}),
+	]);
+}
 
 // // This function is used to force RegExp.prototype[Symbol.*] methods
 // // to not use the native implementation.

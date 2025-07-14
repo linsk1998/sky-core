@@ -165,8 +165,8 @@ module.exports = [
 			"Promise.withResolvers": "sky-core/polyfill/Promise/withResolvers",
 
 			//URL 这个polyfil支持accessor，但不支持自动转string和JSON，需要用.href获取
-			// "URL": "sky-core/polyfill/URL",
-			// "URLSearchParams": "sky-core/polyfill/URLSearchParams",
+			"URL": "sky-core/polyfill/URL",
+			"URLSearchParams": "sky-core/polyfill/URLSearchParams",
 
 		},
 		exclude: [
@@ -291,6 +291,8 @@ module.exports = [
 	}),
 	inject({
 		modules: {
+			"setTimeout": "sky-core/pure/setTimeout",
+			"setInterval": "sky-core/pure/setInterval",
 			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
 			"Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
@@ -307,6 +309,7 @@ module.exports = [
 			"impl/**/*",
 			"impl-*/**/*",
 			"tests/corejs/es/*",
+			"tests/corejs/web/*",
 		]
 	})
 ];

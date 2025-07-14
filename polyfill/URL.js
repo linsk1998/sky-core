@@ -31,5 +31,13 @@ if(!URL) {
 				get: getSearchParams
 			});
 		}
+		if(!('toJSON' in url)) {
+			URL.prototype.toJSON = function() {
+				return this.href;
+			};
+		}
+		if(!('toString' in url) || url.toString() != url.href) {
+			URL.prototype.toString = URL.prototype.toJSON;
+		}
 	}
 }

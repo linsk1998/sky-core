@@ -1,46 +1,37 @@
 import { SearchParams } from "../impl/SearchParams";
 
 export function URL(relativePath) {
+	if(typeof relativePath !== "string") relativePath = String(relativePath);
 	var absolutePath = arguments[1];
-	var path, arr;
-	this.port = this.search = this.hash = this.username = this.password = "";
-	this.searchParams = new SearchParams(this);
-	var pattern = /^[a-zA-Z]+:/;
-	if(arr = relativePath.match(pattern)) {
-		this.protocol = arr[0];
-		path = relativePath.replace(pattern, "");
-		pattern = /^\/*([^\/]+)/;
-		var host = path.match(pattern)[1];
-		path = path.replace(pattern, "");
-		arr = host.split("@");
-		if(arr.length > 1) {
-			this.host = arr[1];
-			arr = arr[0].split(":");
-			if(arr.length > 1) {
-				this.username = arr[0];
-				this.password = arr[1];
-			} else {
-				this.username = arr[0];
-			}
-		} else {
-			this.host = host;
+	if(absolutePath !== undefined) {
+		if(typeof absolutePath !== "object" || !absolutePath.href) {
+			absolutePath = new URL(absolutePath);
 		}
+	}
+	this.searchParams = new SearchParams(this);
+	var path, arr;
+	var pattern = /^(\w+:)(?:\/\/(?:([^@:/]+)(?:\:([^@:/]+))?@)?([^:/]*)(?:\:([^/]+))?)?(\/[^?#]*)?(\?[^#]*)?(\#.*)?$/;
+	if(arr = relativePath.match(pattern)) {
+		this.protocol = arr[1];
+		this.username = arr[2] || '';
+		this.password = arr[3] || '';
+		this.hostname = arr[4] || '';
+		this.port = arr[5] || '';
+		this.pathname = arr[6] || '';
+		this.search = arr[7] || '';
+		this.hash = arr[8] || '';
 	} else if(absolutePath) {
 		var absInfo = absolutePath.indexOf ? new URL(absolutePath) : absolutePath;
-		if(absInfo.hostname) {
-			this.hostname = absInfo.hostname;
-			this.port = absInfo.port;
-		} else {
-			this.host = absInfo.host;
-		}
 		this.protocol = absInfo.protocol;
-		if(absInfo.username) this.username = absInfo.username;
-		if(absInfo.password) this.password = absInfo.password;
+		this.username = absInfo.username;
+		this.password = absInfo.password;
 		this.pathname = absInfo.pathname;
+		this.hostname = absInfo.hostname;
+		this.port = absInfo.port;
 		if(relativePath.startsWith("#")) {
 			this.search = absInfo.search;
 			this.hash = relativePath;
-			return this;
+			return;
 		} else if(relativePath.startsWith("?")) {
 			var a = relativePath.indexOf("#");
 			if(a < 0) {
@@ -50,7 +41,7 @@ export function URL(relativePath) {
 				this.search = relativePath.substr(0, a);
 				this.hash = relativePath.substring(a, relativePath.length);
 			}
-			return this;
+			return;
 		} else if(relativePath.startsWith("/")) {
 			path = relativePath;
 		} else if(relativePath.startsWith("../")) {
@@ -63,18 +54,12 @@ export function URL(relativePath) {
 		} else {
 			path = absInfo.pathname.replace(/[^\/]*$/, "") + relativePath.replace(/^\.\//, "");
 		}
+		this.pathname = path;
+		this.search = '';
+		this.hash = '';
 	} else {
 		throw new TypeError("Invalid URL");
 	}
-	pattern = /^[^#]*/;
-	this.hash = path.replace(pattern, "");
-	arr = path.match(pattern);
-	path = arr[0];
-	pattern = /^[^\?]*/;
-	this.search = path.replace(pattern, "");
-	arr = path.match(pattern);
-	this.pathname = arr[0];
-	return this;
 };
 
 export var URLProperties = {
@@ -132,6 +117,9 @@ export var URLProperties = {
 			this.password = url.password;
 		}
 	}
+};
+URL.prototype.toString = URL.prototype.toJSON = function() {
+	return this.href;
 };
 export function getSearchParams() {
 	var searchParams = new SearchParams(this);

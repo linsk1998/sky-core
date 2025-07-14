@@ -128,91 +128,15 @@
 	}();
 	var WHITESPACES = "\t\n\x0B\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
 
-	function definePrototype(target, property, value) {
-	  var prototype = target.prototype;
-	  if (!(property in prototype)) prototype[property] = value;
+	function _arrayLikeToArray(r, a) {
+	  (null == a || a > r.length) && (a = r.length);
+	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+	  return n;
 	}
-
-	var k$2 = 'slice';
-	var slice_native = Array.prototype[k$2];
-	function slice$2(start, end) {
-	  if (this instanceof Object) {
-	    if (end === undefined) {
-	      return slice_native.call(this, start);
-	    }
-	    return slice_native.call(this, start, end);
-	  }
-	  var i,
-	    r = [];
-	  var len = this.length;
-	  if (start < 0) start += len;
-	  if (end === undefined) end = len;else if (end < 0) end += len;
-	  if (start < end) {
-	    len = end - start;
-	    r = new Array(len);
-	    i = len;
-	    while (i-- > 0) {
-	      r[i] = this[i + start];
-	    }
-	  }
-	  return r;
-	}
-	if (![1][k$2](0, undefined).length) {
-	  Array.prototype[k$2] = slice$2;
-	}
-
-	var slice$1 = Array.prototype.slice;
-
-	function bind(context) {
-	  var self = this,
-	    args = slice$1.call(arguments, 1);
-	  var Bind = function () {
-	    if (this instanceof Bind) {
-	      self.apply(this, args.concat(slice$1.call(arguments)));
-	      return;
-	    }
-	    return self.apply(context, args.concat(slice$1.call(arguments)));
-	  };
-	  return Bind;
-	}
-
-	definePrototype(Function, 'bind', bind);
-
-	var Array$1 = window.Array;
 
 	var Object$1 = window.Object;
 
 	var toString$1 = Object$1.prototype.toString;
-
-	function isArray(obj) {
-	  return toString$1.call(obj) === '[object Array]';
-	}
-
-	if (!Array$1.isArray) {
-	  Array$1.isArray = isArray;
-	}
-
-	var defineProperties$1 = Object$1.defineProperties;
-
-	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
-
-	if (accessor) {
-	  if (!('name' in Function.prototype)) {
-	    Object.defineProperty(Function.prototype, 'name', {
-	      enumerable: false,
-	      configurable: true,
-	      get: function () {
-	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
-	      }
-	    });
-	  }
-	}
-
-	var Number$1 = window.Number;
-
-	if (!('MAX_SAFE_INTEGER' in Number$1)) {
-	  Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
-	}
 
 	function isString(obj) {
 	  return toString$1.call(obj) === '[object String]';
@@ -257,6 +181,12 @@
 	      }
 	    }
 	  };
+	}
+
+	var Number$1 = window.Number;
+
+	if (!('MAX_SAFE_INTEGER' in Number$1)) {
+	  Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
 	}
 
 	var push = Array.prototype.push;
@@ -319,10 +249,48 @@
 	  Array.from = from$1;
 	}
 
-	function _arrayLikeToArray(r, a) {
-	  (null == a || a > r.length) && (a = r.length);
-	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-	  return n;
+	var k$2 = 'slice';
+	var slice_native = Array.prototype[k$2];
+	function slice$2(start, end) {
+	  if (this instanceof Object) {
+	    if (end === undefined) {
+	      return slice_native.call(this, start);
+	    }
+	    return slice_native.call(this, start, end);
+	  }
+	  var i,
+	    r = [];
+	  var len = this.length;
+	  if (start < 0) start += len;
+	  if (end === undefined) end = len;else if (end < 0) end += len;
+	  if (start < end) {
+	    len = end - start;
+	    r = new Array(len);
+	    i = len;
+	    while (i-- > 0) {
+	      r[i] = this[i + start];
+	    }
+	  }
+	  return r;
+	}
+	if (![1][k$2](0, undefined).length) {
+	  Array.prototype[k$2] = slice$2;
+	}
+
+	var defineProperties$1 = Object$1.defineProperties;
+
+	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
+
+	if (accessor) {
+	  if (!('name' in Function.prototype)) {
+	    Object.defineProperty(Function.prototype, 'name', {
+	      enumerable: false,
+	      configurable: true,
+	      get: function () {
+	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
+	      }
+	    });
+	  }
 	}
 
 	function _unsupportedIterableToArray(r, a) {
@@ -332,6 +300,38 @@
 	    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
 	  }
 	}
+
+	var Array$1 = window.Array;
+
+	function isArray(obj) {
+	  return toString$1.call(obj) === '[object Array]';
+	}
+
+	if (!Array$1.isArray) {
+	  Array$1.isArray = isArray;
+	}
+
+	function definePrototype(target, property, value) {
+	  var prototype = target.prototype;
+	  if (!(property in prototype)) prototype[property] = value;
+	}
+
+	var slice$1 = Array.prototype.slice;
+
+	function bind(context) {
+	  var self = this,
+	    args = slice$1.call(arguments, 1);
+	  var Bind = function () {
+	    if (this instanceof Bind) {
+	      self.apply(this, args.concat(slice$1.call(arguments)));
+	      return;
+	    }
+	    return self.apply(context, args.concat(slice$1.call(arguments)));
+	  };
+	  return Bind;
+	}
+
+	definePrototype(Function, 'bind', bind);
 
 	function _createForOfIteratorHelperLoose(r, e) {
 	  var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
@@ -404,14 +404,11 @@
 	    if (Function("\n'use strict';\nclass Subclass extends Object { /* empty */ };\nreturn new Subclass() instanceof Subclass;\n\t\t")()) return Function('Parent', "\n'use strict';\nreturn class extends Parent { /* empty */ };\n\t\t");
 	  } catch (_unused) {/* empty */}
 	}();
-
-	// export function timeLimitedPromise(time, fn) {
-	// 	return Promise.race([
-	// 		new Promise(fn), new Promise((resolve, reject) => {
-	// 			setTimeout(reject, time);
-	// 		}),
-	// 	]);
-	// }
+	function timeLimitedPromise(time, promise) {
+	  return Promise.race([promise, new Promise(function (resolve, reject) {
+	    setTimeout(reject, time);
+	  })]);
+	}
 
 	// // This function is used to force RegExp.prototype[Symbol.*] methods
 	// // to not use the native implementation.
@@ -1406,6 +1403,319 @@
 	  }
 	});
 
+	var setTimeout$2 = window.setTimeout;
+
+	function setTimeout$1(cb) {
+	  var ms = arguments[1];
+	  if (arguments.length <= 2) {
+	    return setTimeout$2(cb, ms);
+	  }
+	  var args = slice$1.call(arguments, 2);
+	  var cba = function () {
+	    cb.apply(this, args);
+	  };
+	  return setTimeout$2(cba, ms);
+	}
+
+	var setInterval$1 = window.setInterval;
+
+	function setInterval(cb) {
+	  var ms = arguments[1];
+	  if (arguments.length <= 2) {
+	    return setInterval$1(cb, ms);
+	  }
+	  var args = slice$1.call(arguments, 2);
+	  var cba = function () {
+	    cb.apply(this, args);
+	  };
+	  return setInterval$1(cba, ms);
+	}
+
+	var Promise$3 = window.Promise;
+
+	function isNotNullObject(obj) {
+	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
+	}
+	;
+
+	var queueMicrotask$2 = window.queueMicrotask;
+
+	var ticks = null;
+	var nextTick = setTimeout$1;
+	function initQueueMicrotask(fn) {
+	  nextTick = fn;
+	  return queueMicrotask$1;
+	}
+	function next() {
+	  if (ticks && ticks.length) {
+	    for (var i = 0; i < ticks.length; i++) {
+	      var args = ticks[i];
+	      var fn = args[0];
+	      args = slice$1.call(args, 1);
+	      try {
+	        fn.apply(this, args);
+	      } catch (e) {
+	        console.error(e);
+	      }
+	    }
+	    ticks = null;
+	  }
+	}
+	function queueMicrotask$1() {
+	  if (!ticks) {
+	    ticks = new Array();
+	    nextTick(next);
+	  }
+	  ticks.push(arguments);
+	}
+	;
+
+	if (!queueMicrotask$2) {
+	  window.queueMicrotask = queueMicrotask$1;
+	}
+
+	var PENDING = 1;
+	var RESOLVED = 2;
+	var REJECTED = 3;
+	function Promise$2(executor) {
+	  if (!executor) {
+	    throw new TypeError("undefined is not a promise");
+	  }
+	  this._resolveds = [];
+	  this._rejecteds = [];
+	  this._state = PENDING; //resolved | rejected
+
+	  var me = this;
+	  function resolve(value) {
+	    if (me._state === PENDING) {
+	      if (value) {
+	        try {
+	          var then = value.then;
+	          if (isFunction(then)) {
+	            queueMicrotask(function () {
+	              try {
+	                value.then(resolve, reject);
+	              } catch (e) {
+	                reject(e);
+	              }
+	            });
+	            return;
+	          }
+	        } catch (e) {
+	          reject(e);
+	          return;
+	        }
+	      }
+	      me._value = value;
+	      me._state = RESOLVED;
+	      queueMicrotask(function () {
+	        var a = me._resolveds,
+	          len = a.length,
+	          i;
+	        for (i = 0; i < len; i++) a[i].call(me, me._value);
+	        me._resolveds = null;
+	      });
+	    }
+	  }
+	  function reject(reason) {
+	    if (me._state === PENDING) {
+	      me._value = reason;
+	      me._state = REJECTED;
+	      queueMicrotask(function () {
+	        var a = me._rejecteds,
+	          len = a.length,
+	          i;
+	        for (i = 0; i < len; i++) a[i].call(me, me._value);
+	        me._rejecteds = null;
+	      });
+	    }
+	  }
+	  try {
+	    executor(resolve, reject);
+	  } catch (e) {
+	    reject(e);
+	  }
+	}
+	function nextPromise(before, after, resolve, reject) {
+	  return function (value) {
+	    try {
+	      var x = before(value);
+	      if (x != null && isFunction(x.then)) {
+	        x.then(resolve, reject);
+	      } else {
+	        after(x);
+	      }
+	    } catch (r) {
+	      reject(r);
+	    }
+	  };
+	}
+	function returnArg1(arg1) {
+	  return arg1;
+	}
+	Promise$2.prototype.then = function () {
+	  function then(onResolved, onRejected) {
+	    // var Class = speciesConstructor(this, Promise);
+	    var me = this;
+	    onResolved = onResolved || returnArg1;
+	    onRejected = onRejected || returnArg1;
+	    return new Promise$2(function (resolve, reject) {
+	      switch (me._state) {
+	        case RESOLVED:
+	          queueMicrotask(nextPromise(onResolved, resolve, resolve, reject), me._value);
+	          break;
+	        case REJECTED:
+	          queueMicrotask(nextPromise(onRejected, reject, resolve, reject), me._value);
+	          break;
+	        default:
+	          me._resolveds.push(nextPromise(onResolved, resolve, resolve, reject));
+	          me._rejecteds.push(nextPromise(onRejected, reject, resolve, reject));
+	      }
+	    });
+	  }
+	  return then;
+	}();
+	Promise$2.prototype["catch"] = function (onRejected) {
+	  return this.then(undefined, onRejected);
+	};
+	function ResolvePromise(value) {
+	  this._value = value;
+	  this._state = RESOLVED;
+	}
+	ResolvePromise.prototype = Promise$2.prototype;
+	function RejectPromise(value) {
+	  this._value = value;
+	  this._state = REJECTED;
+	}
+	RejectPromise.prototype = Promise$2.prototype;
+	Promise$2.resolve = function () {
+	  function resolve(value) {
+	    if (value && typeof value === "object" && value.constructor === this) {
+	      return value;
+	    }
+	    if (!this) {
+	      throw TypeError("Promise.resolve called on non-object");
+	    }
+	    if (!isFunction(this)) {
+	      throw TypeError(this + " is not a constructor");
+	    }
+	    return new ResolvePromise(value);
+	    // var Class = this;
+	    // if(Class === Promise) {
+	    // }
+	    // var promiseCapability = new PromiseCapability(Class);
+	    // var resolve = promiseCapability.resolve;
+	    // resolve(value);
+	    // return promiseCapability.promise;
+	  }
+	  return resolve;
+	}();
+	Promise$2.reject = function () {
+	  function reject(value) {
+	    if (value && typeof value === "object" && value.constructor === this) {
+	      return value;
+	    }
+	    if (!this) {
+	      throw TypeError("Promise.resolve called on non-object");
+	    }
+	    if (!isFunction(this)) {
+	      throw TypeError(this + " is not a constructor");
+	    }
+	    return new RejectPromise(value);
+	  }
+	  return reject;
+	}();
+	Promise$2.all = function (promises) {
+	  if (!Array.isArray(promises)) {
+	    throw new TypeError('You must pass an array to all.');
+	  }
+	  if (promises.length == 0) return Promise$2.resolve();
+	  return new Promise$2(function (resolve, reject) {
+	    var result = new Array(promises.length);
+	    var c = 0;
+	    promises.forEach.call(function (one, index) {
+	      if (isNotNullObject(one) && isFunction(one.then)) {
+	        one.then(function (data) {
+	          c++;
+	          result[index] = data;
+	          if (c >= promises.length) {
+	            resolve(result);
+	          }
+	        }, reject);
+	      } else {
+	        c++;
+	        if (c >= promises.length) {
+	          resolve();
+	        }
+	      }
+	    });
+	  });
+	};
+	Promise$2.race = function (promises) {
+	  if (!Array.isArray(promises)) {
+	    throw new TypeError('You must pass an array to all.');
+	  }
+	  return new Promise$2(function (resolve, reject) {
+	    var i = promises.length;
+	    while (i--) {
+	      promises[i].then(resolve, reject);
+	    }
+	  });
+	};
+
+	var Promise$1 = Promise$3;
+	if (!Promise$1) {
+	  Promise$1 = window.Promise = Promise$2;
+	}
+
+	QUnit.asyncTest('setTimeout / clearTimeout', function (assert) {
+	  expect(1);
+	  timeLimitedPromise(1000, new Promise(function (resolve) {
+	    setTimeout$1(function (a, b) {
+	      resolve(a + b);
+	    }, 30, 'a', 'b');
+	  })).then(function (it) {
+	    assert.strictEqual(it, 'ab', 'setTimeout works with additional args');
+	    start();
+	  })["catch"](function () {
+	    assert.ok(false, 'setTimeout works with additional args');
+	    start();
+	  });
+	  timeLimitedPromise(1000, new Promise(function (resolve) {
+	    clearTimeout(setTimeout$1(resolve, 30));
+	  })).then(function () {
+	    assert.ok(false, 'clearImmediate works with wraped setTimeout');
+	    start();
+	  })["catch"](function () {
+	    assert.ok(true, 'clearImmediate works with wraped setTimeout');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('setInterval / clearInterval', function (assert) {
+	  expect(1);
+	  timeLimitedPromise(1000, new Promise(function (resolve, reject) {
+	    var i = 0;
+	    var interval = setInterval(function (a, b) {
+	      if (a + b !== 'ab' || i > 2) reject({
+	        a: a,
+	        b: b,
+	        i: i
+	      });
+	      if (i++ === 2) {
+	        clearInterval(interval);
+	        setTimeout$1(resolve, 30);
+	      }
+	    }, 5, 'a', 'b');
+	  })).then(function () {
+	    assert.ok(true, 'setInterval & clearInterval works with additional args');
+	  })["catch"](function (error) {
+	    if (!error) error = {};
+	    assert.ok(false, "setInterval & clearInterval works with additional args: " + error.a + ", " + error.b + ", times: " + error.i);
+	  }).then(function () {
+	    start();
+	  });
+	});
+
 	var Error$2 = window.Error;
 
 	function Error$1(message) {
@@ -1737,11 +2047,6 @@
 	  Object$1.getPrototypeOf = getPrototypeOf$1;
 	}
 
-	function isNotNullObject(obj) {
-	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
-	}
-	;
-
 	var defineProperty$1 = Object$1.defineProperty;
 
 	function ie8_defineProperty(obj, prop, descriptor) {
@@ -1796,31 +2101,6 @@
 
 	var $inject_Object_defineProperty = Object.defineProperty ? ie8_defineProperty : compat_defineProperty;
 
-	function keys$3() {
-	  var array = this;
-	  var index = 0;
-	  return {
-	    next: function () {
-	      var value;
-	      var done = array.length <= index;
-	      if (!done) {
-	        value = index;
-	        index++;
-	      }
-	      return {
-	        done: done,
-	        value: value
-	      };
-	    },
-	    '@@iterator': function () {
-	      return this;
-	    },
-	    '@@toStringTag': 'Array Iterator'
-	  };
-	}
-
-	definePrototype(Array, 'keys', keys$3);
-
 	function isJsObject(o) {
 	  if (typeof o !== "object") {
 	    return false;
@@ -1838,7 +2118,7 @@
 	  toString: null
 	}.propertyIsEnumerable('toString');
 
-	function keys$2(obj) {
+	function keys$3(obj) {
 	  if (obj == null) {
 	    throw new TypeError("Cannot convert undefined or null to object");
 	  }
@@ -1886,8 +2166,33 @@
 	  return result;
 	}
 
+	function keys$2() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = index;
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	definePrototype(Array, 'keys', keys$2);
+
 	if (!Object$1.keys) {
-	  Object$1.keys = keys$2;
+	  Object$1.keys = keys$3;
 	}
 
 	function defineProperties(obj, properties) {
@@ -2261,10 +2566,6 @@
 	  assert.same(result.w, 33);
 	});
 
-	// QUnit.test('Object.defineProperties.sham flag', assert => {
-	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
-	// });
-
 	QUnit.test('Function#bind', function (assert) {
 	  var bind = Function.prototype.bind;
 	  assert.isFunction(bind);
@@ -2355,238 +2656,6 @@
 	  assert.ok(!Object.is({}, {}), '{} isnt {}');
 	});
 
-	var Promise$3 = window.Promise;
-
-	var queueMicrotask$2 = window.queueMicrotask;
-
-	var ticks = null;
-	var nextTick = setTimeout;
-	function initQueueMicrotask(fn) {
-	  nextTick = fn;
-	  return queueMicrotask$1;
-	}
-	function next() {
-	  if (ticks && ticks.length) {
-	    for (var i = 0; i < ticks.length; i++) {
-	      var args = ticks[i];
-	      var fn = args[0];
-	      args = slice$1.call(args, 1);
-	      try {
-	        fn.apply(this, args);
-	      } catch (e) {
-	        console.error(e);
-	      }
-	    }
-	    ticks = null;
-	  }
-	}
-	function queueMicrotask$1() {
-	  if (!ticks) {
-	    ticks = new Array();
-	    nextTick(next);
-	  }
-	  ticks.push(arguments);
-	}
-	;
-
-	if (!queueMicrotask$2) {
-	  window.queueMicrotask = queueMicrotask$1;
-	}
-
-	var PENDING = 1;
-	var RESOLVED = 2;
-	var REJECTED = 3;
-	function Promise$2(executor) {
-	  if (!executor) {
-	    throw new TypeError("undefined is not a promise");
-	  }
-	  this._resolveds = [];
-	  this._rejecteds = [];
-	  this._state = PENDING; //resolved | rejected
-
-	  var me = this;
-	  function resolve(value) {
-	    if (me._state === PENDING) {
-	      if (value) {
-	        try {
-	          var then = value.then;
-	          if (isFunction(then)) {
-	            queueMicrotask(function () {
-	              try {
-	                value.then(resolve, reject);
-	              } catch (e) {
-	                reject(e);
-	              }
-	            });
-	            return;
-	          }
-	        } catch (e) {
-	          reject(e);
-	          return;
-	        }
-	      }
-	      me._value = value;
-	      me._state = RESOLVED;
-	      queueMicrotask(function () {
-	        var a = me._resolveds,
-	          len = a.length,
-	          i;
-	        for (i = 0; i < len; i++) a[i].call(me, me._value);
-	        me._resolveds = null;
-	      });
-	    }
-	  }
-	  function reject(reason) {
-	    if (me._state === PENDING) {
-	      me._value = reason;
-	      me._state = REJECTED;
-	      queueMicrotask(function () {
-	        var a = me._rejecteds,
-	          len = a.length,
-	          i;
-	        for (i = 0; i < len; i++) a[i].call(me, me._value);
-	        me._rejecteds = null;
-	      });
-	    }
-	  }
-	  try {
-	    executor(resolve, reject);
-	  } catch (e) {
-	    reject(e);
-	  }
-	}
-	function nextPromise(before, after, resolve, reject) {
-	  return function (value) {
-	    try {
-	      var x = before(value);
-	      if (x != null && isFunction(x.then)) {
-	        x.then(resolve, reject);
-	      } else {
-	        after(x);
-	      }
-	    } catch (r) {
-	      reject(r);
-	    }
-	  };
-	}
-	function returnArg1(arg1) {
-	  return arg1;
-	}
-	Promise$2.prototype.then = function () {
-	  function then(onResolved, onRejected) {
-	    // var Class = speciesConstructor(this, Promise);
-	    var me = this;
-	    onResolved = onResolved || returnArg1;
-	    onRejected = onRejected || returnArg1;
-	    return new Promise$2(function (resolve, reject) {
-	      switch (me._state) {
-	        case RESOLVED:
-	          queueMicrotask(nextPromise(onResolved, resolve, resolve, reject), me._value);
-	          break;
-	        case REJECTED:
-	          queueMicrotask(nextPromise(onRejected, reject, resolve, reject), me._value);
-	          break;
-	        default:
-	          me._resolveds.push(nextPromise(onResolved, resolve, resolve, reject));
-	          me._rejecteds.push(nextPromise(onRejected, reject, resolve, reject));
-	      }
-	    });
-	  }
-	  return then;
-	}();
-	Promise$2.prototype["catch"] = function (onRejected) {
-	  return this.then(undefined, onRejected);
-	};
-	function ResolvePromise(value) {
-	  this._value = value;
-	  this._state = RESOLVED;
-	}
-	ResolvePromise.prototype = Promise$2.prototype;
-	function RejectPromise(value) {
-	  this._value = value;
-	  this._state = REJECTED;
-	}
-	RejectPromise.prototype = Promise$2.prototype;
-	Promise$2.resolve = function () {
-	  function resolve(value) {
-	    if (value && typeof value === "object" && value.constructor === this) {
-	      return value;
-	    }
-	    if (!this) {
-	      throw TypeError("Promise.resolve called on non-object");
-	    }
-	    if (!isFunction(this)) {
-	      throw TypeError(this + " is not a constructor");
-	    }
-	    return new ResolvePromise(value);
-	    // var Class = this;
-	    // if(Class === Promise) {
-	    // }
-	    // var promiseCapability = new PromiseCapability(Class);
-	    // var resolve = promiseCapability.resolve;
-	    // resolve(value);
-	    // return promiseCapability.promise;
-	  }
-	  return resolve;
-	}();
-	Promise$2.reject = function () {
-	  function reject(value) {
-	    if (value && typeof value === "object" && value.constructor === this) {
-	      return value;
-	    }
-	    if (!this) {
-	      throw TypeError("Promise.resolve called on non-object");
-	    }
-	    if (!isFunction(this)) {
-	      throw TypeError(this + " is not a constructor");
-	    }
-	    return new RejectPromise(value);
-	  }
-	  return reject;
-	}();
-	Promise$2.all = function (promises) {
-	  if (!Array.isArray(promises)) {
-	    throw new TypeError('You must pass an array to all.');
-	  }
-	  if (promises.length == 0) return Promise$2.resolve();
-	  return new Promise$2(function (resolve, reject) {
-	    var result = new Array(promises.length);
-	    var c = 0;
-	    promises.forEach.call(function (one, index) {
-	      if (isNotNullObject(one) && isFunction(one.then)) {
-	        one.then(function (data) {
-	          c++;
-	          result[index] = data;
-	          if (c >= promises.length) {
-	            resolve(result);
-	          }
-	        }, reject);
-	      } else {
-	        c++;
-	        if (c >= promises.length) {
-	          resolve();
-	        }
-	      }
-	    });
-	  });
-	};
-	Promise$2.race = function (promises) {
-	  if (!Array.isArray(promises)) {
-	    throw new TypeError('You must pass an array to all.');
-	  }
-	  return new Promise$2(function (resolve, reject) {
-	    var i = promises.length;
-	    while (i--) {
-	      promises[i].then(resolve, reject);
-	    }
-	  });
-	};
-
-	var Promise$1 = Promise$3;
-	if (!Promise$1) {
-	  Promise$1 = window.Promise = Promise$2;
-	}
-
 	function promise_finally (onCompleted) {
 	  var fun = isFunction(onCompleted);
 	  return this.then(fun ? function (x) {
@@ -2664,7 +2733,7 @@
 	    result += 'G';
 	  });
 	  result += 'H';
-	  setTimeout(function () {
+	  setTimeout$1(function () {
 	    if (!~result.indexOf('C')) {
 	      assert.same(result, EXPECTED_ORDER);
 	      start();
@@ -3263,10 +3332,6 @@
 	}
 	;
 
-	var WeakMap$2 = window.WeakMap;
-
-	var Symbol$1 = window.Symbol;
-
 	var nonEnumerable = !!defineProperties$1;
 
 	var KEY_WM = "@@WeakMap";
@@ -3343,146 +3408,7 @@
 	  return false;
 	};
 
-	function fixChain$1(WeakMap) {
-	  var setMethod = WeakMap.prototype.set;
-	  WeakMap.prototype.set = function () {
-	    function set() {
-	      setMethod.apply(this, arguments);
-	      return this;
-	    }
-	    return set;
-	  }();
-	}
-
-	function forIn(obj, fn, thisArg) {
-	  if (typeof obj !== "object") {
-	    return false;
-	  }
-	  var jsObject = isJsObject(obj);
-	  for (var key in obj) {
-	    if (!jsObject) {
-	      if (key === "constructor") {
-	        continue;
-	      }
-	    }
-	    switch (key.substring(0, 2)) {
-	      case "__":
-	      case "@@":
-	        continue;
-	    }
-	    if (fn.call(thisArg, obj[key], key) === false) {
-	      return false;
-	    }
-	  }
-	  if (hasEnumBug) {
-	    var i = dontEnums.length;
-	    var proto = getPrototypeOf$1(obj);
-	    //遍历nonEnumerableProps数组
-	    while (i--) {
-	      var prop = dontEnums[i];
-	      if (prop in obj && obj[prop] !== proto[prop]) {
-	        if (fn.call(thisArg, obj[prop], prop) === false) {
-	          return false;
-	        }
-	      }
-	    }
-	  }
-	  return true;
-	}
-	;
-
-	function inherits(subClass, superClass) {
-	  forIn(superClass, setKey, subClass);
-	  var prototype = Object.create(superClass.prototype);
-	  prototype.constructor = subClass;
-	  prototype.__proto__ = prototype;
-	  subClass.prototype = prototype;
-	  subClass.__proto__ = superClass.prototype;
-	}
-	;
-	function setKey(value, key) {
-	  this[key] = value;
-	}
-
-	function fixSymbol$1(BugWeakMap) {
-	  function WeakMap() {
-	    var m = new BugWeakMap(arguments[0]);
-	    Object.setPrototypeOf(m, Object.getPrototypeOf(this));
-	    return m;
-	  }
-	  inherits(WeakMap, BugWeakMap);
-	  var s = BugWeakMap.prototype.set;
-	  WeakMap.prototype.set = function () {
-	    function set(k, v) {
-	      if (typeof k === "symbol") {
-	        this[k] = v;
-	        return this;
-	      } else {
-	        return s.apply(this, arguments);
-	      }
-	    }
-	    return set;
-	  }();
-	  var g = BugWeakMap.prototype.get;
-	  WeakMap.prototype.get = function () {
-	    function get(k) {
-	      if (typeof k === "symbol") {
-	        return this[k];
-	      } else {
-	        return g.apply(this, arguments);
-	      }
-	    }
-	    return get;
-	  }();
-	  var h = BugWeakMap.prototype.has;
-	  WeakMap.prototype.has = function () {
-	    function has(k) {
-	      if (typeof k === "symbol") {
-	        return k in this;
-	      } else {
-	        return h.apply(this, arguments);
-	      }
-	    }
-	    return has;
-	  }();
-	  var d = BugWeakMap.prototype["delete"];
-	  WeakMap.prototype["delete"] = function (k, v) {
-	    if (typeof k === "symbol") {
-	      if (k in this) {
-	        delete this[k];
-	        return true;
-	      }
-	      return false;
-	    } else {
-	      return d.apply(this, arguments);
-	    }
-	  };
-	  return WeakMap;
-	}
-
-	if (WeakMap$2) {
-	  var wm = new WeakMap$2();
-	  if (Symbol$1) {
-	    try {
-	      wm.set(Symbol$1(), 1);
-	    } catch (e) {
-	      window.WeakMap = fixSymbol$1(WeakMap$2);
-	    }
-	  } else {
-	    if (wm.set({}, 0) !== wm) {
-	      fixChain$1(WeakMap$2);
-	    }
-	  }
-	} else {
-	  if (nonEnumerable) {
-	    Object.defineProperty(Object.prototype, KEY_WM, {
-	      value: undefined,
-	      enumerable: false,
-	      configurable: true
-	    });
-	  }
-	  window.WeakMap = WeakMap$1;
-	}
+	window.WeakMap = WeakMap$1;
 
 	if (!Object$1.getOwnPropertySymbols) {
 	  Object$1.getOwnPropertySymbols = getOwnPropertySymbols;
@@ -3658,13 +3584,6 @@
 	  assert.same(weakmap.get(s), 123, 'symbols as weakmap keys');
 	});
 
-	// QUnit.test('WeakMap#@@toStringTag', assert => {
-	//   assert.strictEqual(WeakMap.prototype[Symbol.toStringTag], 'WeakMap', 'WeakMap::@@toStringTag is `WeakMap`');
-	//   assert.strictEqual(String(new WeakMap()), '[object WeakMap]', 'correct stringification');
-	// });
-
-	var WeakSet$2 = window.WeakSet;
-
 	function WeakSet$1() {
 	  this.map = new WeakMap();
 	  if (arguments.length) {
@@ -3700,72 +3619,7 @@
 	  return this.map["delete"](key);
 	};
 
-	function fixChain(WeakSet) {
-	  var addMethod = WeakSet.prototype.add;
-	  WeakSet.prototype.add = function () {
-	    function add() {
-	      addMethod.apply(this, arguments);
-	      return this;
-	    }
-	    return add;
-	  }();
-	}
-
-	function fixSymbol(BugWeakSet) {
-		function WeakSet() {
-			var m = new BugWeakSet(arguments[0]);
-			Object.setPrototypeOf(m, Object.getPrototypeOf(this));
-			return m;
-		}
-		inherits(WeakSet, BugWeakSet);
-		var a = BugWeakSet.prototype.add;
-		WeakSet.prototype.add = function add(v) {
-			if(typeof v === "symbol") {
-				this[v] = v;
-				return this;
-			} else {
-				return a.apply(this, arguments);
-			}
-		};
-		var h = BugWeakSet.prototype.has;
-		WeakSet.prototype.has = function has(v) {
-			if(typeof v === "symbol") {
-				return v in this;
-			} else {
-				return h.apply(this, arguments);
-			}
-		};
-		var d = BugWeakSet.prototype.delete;
-		WeakSet.prototype.delete = function(v) {
-			if(typeof v === "symbol") {
-				if(v in this) {
-					delete this[v];
-					return true;
-				}
-				return false;
-			} else {
-				return d.apply(this, arguments);
-			}
-		};
-		return WeakSet;
-	}
-
-	if (WeakSet$2) {
-	  var ws = new WeakSet$2();
-	  if (Symbol$1) {
-	    try {
-	      ws.add(Symbol$1());
-	    } catch (e) {
-	      window.WeakSet = fixSymbol(WeakSet$2);
-	    }
-	  } else {
-	    if (ws.add({}) !== ws) {
-	      fixChain(WeakSet$2);
-	    }
-	  }
-	} else {
-	  window.WeakSet = WeakSet$1;
-	}
+	window.WeakSet = WeakSet$1;
 
 	var _ref$3 = GLOBAL.Reflect || {},
 	  ownKeys$3 = _ref$3.ownKeys;
@@ -3873,12 +3727,7 @@
 	  // assert.notThrows(() => !weakset.has(1), 'return false on primitive');
 	});
 
-	// QUnit.test('WeakSet::@@toStringTag', assert => {
-	//   assert.strictEqual(WeakSet.prototype[Symbol.toStringTag], 'WeakSet', 'WeakSet::@@toStringTag is `WeakSet`');
-	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
-	// });
-
-	definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
+	var Map$2 = window.Map;
 
 	function entries$2() {
 	  var array = this;
@@ -3905,7 +3754,7 @@
 
 	definePrototype(Array, 'entries', entries$2);
 
-	var Map$2 = window.Map;
+	definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
 
 	function createMap() {
 	  function Map() {
@@ -5105,6 +4954,8 @@
 	    done: true
 	  });
 	});
+
+	var Symbol$1 = window.Symbol;
 
 	if (Symbol$1 !== symbol) {
 	  symbol.iterator = "@@iterator";
@@ -8360,6 +8211,56 @@
 	  var object = {};
 	  assert.same('[object Object]'.replaceAll(object, 'a'), 'a');
 	});
+
+	function forIn(obj, fn, thisArg) {
+	  if (typeof obj !== "object") {
+	    return false;
+	  }
+	  var jsObject = isJsObject(obj);
+	  for (var key in obj) {
+	    if (!jsObject) {
+	      if (key === "constructor") {
+	        continue;
+	      }
+	    }
+	    switch (key.substring(0, 2)) {
+	      case "__":
+	      case "@@":
+	        continue;
+	    }
+	    if (fn.call(thisArg, obj[key], key) === false) {
+	      return false;
+	    }
+	  }
+	  if (hasEnumBug) {
+	    var i = dontEnums.length;
+	    var proto = getPrototypeOf$1(obj);
+	    //遍历nonEnumerableProps数组
+	    while (i--) {
+	      var prop = dontEnums[i];
+	      if (prop in obj && obj[prop] !== proto[prop]) {
+	        if (fn.call(thisArg, obj[prop], prop) === false) {
+	          return false;
+	        }
+	      }
+	    }
+	  }
+	  return true;
+	}
+	;
+
+	function inherits(subClass, superClass) {
+	  forIn(superClass, setKey, subClass);
+	  var prototype = Object.create(superClass.prototype);
+	  prototype.constructor = subClass;
+	  prototype.__proto__ = prototype;
+	  subClass.prototype = prototype;
+	  subClass.__proto__ = superClass.prototype;
+	}
+	;
+	function setKey(value, key) {
+	  this[key] = value;
+	}
 
 	function AggregateError$1(errors, message) {
 	  if (!(this instanceof AggregateError$1)) {
