@@ -1,7 +1,6 @@
-
-import { deleteProperty as modern_deleteProperty } from "../../impl-modern/Reflect/deleteProperty";
 import { Reflect } from "../../polyfill/Reflect";
+import { deleteProperty } from "../../impl-modern/Reflect/deleteProperty";
 
 if(!Reflect.deleteProperty) {
-	Reflect.deleteProperty = modern_deleteProperty;
+	Reflect.deleteProperty = deleteProperty;
 }

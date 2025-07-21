@@ -1,2 +1,4 @@
-import getPrototypeOf from "sky-core/pure/Object/getPrototypeOf";
-export default getPrototypeOf;
+import { Reflect } from "../../native/Reflect";
+import { getPrototypeOf } from "../../impl/Reflect/getPrototypeOf";
+
+export default Reflect ? Reflect.getPrototypeOf : getPrototypeOf;

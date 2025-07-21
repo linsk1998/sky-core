@@ -2,7 +2,7 @@ import { Symbol as native_Symbol } from "../native/Symbol";
 import { symbol as impl_Symbol } from "../impl/Symbol";
 import { Symbol as modern_Symbol, getSymbolDescription } from "../impl-modern/Symbol";
 
-var Symbol = native_Symbol;
+var Symbol;
 if(native_Symbol) {
 	Symbol = modern_Symbol;
 	Object.setPrototypeOf(Symbol, native_Symbol);

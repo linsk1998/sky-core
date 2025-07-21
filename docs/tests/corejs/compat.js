@@ -128,15 +128,91 @@
 	}();
 	var WHITESPACES = "\t\n\x0B\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
 
-	function _arrayLikeToArray(r, a) {
-	  (null == a || a > r.length) && (a = r.length);
-	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-	  return n;
+	function definePrototype(target, property, value) {
+	  var prototype = target.prototype;
+	  if (!(property in prototype)) prototype[property] = value;
 	}
+
+	var k$2 = 'slice';
+	var slice_native = Array.prototype[k$2];
+	function slice$2(start, end) {
+	  if (this instanceof Object) {
+	    if (end === undefined) {
+	      return slice_native.call(this, start);
+	    }
+	    return slice_native.call(this, start, end);
+	  }
+	  var i,
+	    r = [];
+	  var len = this.length;
+	  if (start < 0) start += len;
+	  if (end === undefined) end = len;else if (end < 0) end += len;
+	  if (start < end) {
+	    len = end - start;
+	    r = new Array(len);
+	    i = len;
+	    while (i-- > 0) {
+	      r[i] = this[i + start];
+	    }
+	  }
+	  return r;
+	}
+	if (![1][k$2](0, undefined).length) {
+	  Array.prototype[k$2] = slice$2;
+	}
+
+	var slice$1 = Array.prototype.slice;
+
+	function bind(context) {
+	  var self = this,
+	    args = slice$1.call(arguments, 1);
+	  var Bind = function () {
+	    if (this instanceof Bind) {
+	      self.apply(this, args.concat(slice$1.call(arguments)));
+	      return;
+	    }
+	    return self.apply(context, args.concat(slice$1.call(arguments)));
+	  };
+	  return Bind;
+	}
+
+	definePrototype(Function, 'bind', bind);
+
+	var Array$1 = window.Array;
 
 	var Object$1 = window.Object;
 
 	var toString$1 = Object$1.prototype.toString;
+
+	function isArray(obj) {
+	  return toString$1.call(obj) === '[object Array]';
+	}
+
+	if (!Array$1.isArray) {
+	  Array$1.isArray = isArray;
+	}
+
+	var defineProperties$1 = Object$1.defineProperties;
+
+	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
+
+	if (accessor) {
+	  if (!('name' in Function.prototype)) {
+	    Object.defineProperty(Function.prototype, 'name', {
+	      enumerable: false,
+	      configurable: true,
+	      get: function () {
+	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
+	      }
+	    });
+	  }
+	}
+
+	var Number$1 = window.Number;
+
+	if (!('MAX_SAFE_INTEGER' in Number$1)) {
+	  Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
+	}
 
 	function isString(obj) {
 	  return toString$1.call(obj) === '[object String]';
@@ -181,12 +257,6 @@
 	      }
 	    }
 	  };
-	}
-
-	var Number$1 = window.Number;
-
-	if (!('MAX_SAFE_INTEGER' in Number$1)) {
-	  Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
 	}
 
 	var push = Array.prototype.push;
@@ -249,48 +319,10 @@
 	  Array.from = from$1;
 	}
 
-	var k$2 = 'slice';
-	var slice_native = Array.prototype[k$2];
-	function slice$2(start, end) {
-	  if (this instanceof Object) {
-	    if (end === undefined) {
-	      return slice_native.call(this, start);
-	    }
-	    return slice_native.call(this, start, end);
-	  }
-	  var i,
-	    r = [];
-	  var len = this.length;
-	  if (start < 0) start += len;
-	  if (end === undefined) end = len;else if (end < 0) end += len;
-	  if (start < end) {
-	    len = end - start;
-	    r = new Array(len);
-	    i = len;
-	    while (i-- > 0) {
-	      r[i] = this[i + start];
-	    }
-	  }
-	  return r;
-	}
-	if (![1][k$2](0, undefined).length) {
-	  Array.prototype[k$2] = slice$2;
-	}
-
-	var defineProperties$1 = Object$1.defineProperties;
-
-	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
-
-	if (accessor) {
-	  if (!('name' in Function.prototype)) {
-	    Object.defineProperty(Function.prototype, 'name', {
-	      enumerable: false,
-	      configurable: true,
-	      get: function () {
-	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
-	      }
-	    });
-	  }
+	function _arrayLikeToArray(r, a) {
+	  (null == a || a > r.length) && (a = r.length);
+	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+	  return n;
 	}
 
 	function _unsupportedIterableToArray(r, a) {
@@ -300,38 +332,6 @@
 	    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
 	  }
 	}
-
-	var Array$1 = window.Array;
-
-	function isArray(obj) {
-	  return toString$1.call(obj) === '[object Array]';
-	}
-
-	if (!Array$1.isArray) {
-	  Array$1.isArray = isArray;
-	}
-
-	function definePrototype(target, property, value) {
-	  var prototype = target.prototype;
-	  if (!(property in prototype)) prototype[property] = value;
-	}
-
-	var slice$1 = Array.prototype.slice;
-
-	function bind(context) {
-	  var self = this,
-	    args = slice$1.call(arguments, 1);
-	  var Bind = function () {
-	    if (this instanceof Bind) {
-	      self.apply(this, args.concat(slice$1.call(arguments)));
-	      return;
-	    }
-	    return self.apply(context, args.concat(slice$1.call(arguments)));
-	  };
-	  return Bind;
-	}
-
-	definePrototype(Function, 'bind', bind);
 
 	function _createForOfIteratorHelperLoose(r, e) {
 	  var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
@@ -1433,11 +1433,6 @@
 
 	var Promise$3 = window.Promise;
 
-	function isNotNullObject(obj) {
-	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
-	}
-	;
-
 	var queueMicrotask$2 = window.queueMicrotask;
 
 	var ticks = null;
@@ -1473,6 +1468,11 @@
 	if (!queueMicrotask$2) {
 	  window.queueMicrotask = queueMicrotask$1;
 	}
+
+	function isNotNullObject(obj) {
+	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
+	}
+	;
 
 	var PENDING = 1;
 	var RESOLVED = 2;
@@ -1633,7 +1633,7 @@
 	  return new Promise$2(function (resolve, reject) {
 	    var result = new Array(promises.length);
 	    var c = 0;
-	    promises.forEach.call(function (one, index) {
+	    promises.forEach(function (one, index) {
 	      if (isNotNullObject(one) && isFunction(one.then)) {
 	        one.then(function (data) {
 	          c++;
@@ -1644,8 +1644,9 @@
 	        }, reject);
 	      } else {
 	        c++;
+	        result[index] = one;
 	        if (c >= promises.length) {
-	          resolve();
+	          resolve(result);
 	        }
 	      }
 	    });
@@ -2047,6 +2048,8 @@
 	  Object$1.getPrototypeOf = getPrototypeOf$1;
 	}
 
+	var create$2 = Object$1.create;
+
 	var defineProperty$1 = Object$1.defineProperty;
 
 	function ie8_defineProperty(obj, prop, descriptor) {
@@ -2101,6 +2104,31 @@
 
 	var $inject_Object_defineProperty = Object.defineProperty ? ie8_defineProperty : compat_defineProperty;
 
+	function keys$3() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = index;
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	definePrototype(Array, 'keys', keys$3);
+
 	function isJsObject(o) {
 	  if (typeof o !== "object") {
 	    return false;
@@ -2118,7 +2146,7 @@
 	  toString: null
 	}.propertyIsEnumerable('toString');
 
-	function keys$3(obj) {
+	function keys$2(obj) {
 	  if (obj == null) {
 	    throw new TypeError("Cannot convert undefined or null to object");
 	  }
@@ -2166,33 +2194,8 @@
 	  return result;
 	}
 
-	function keys$2() {
-	  var array = this;
-	  var index = 0;
-	  return {
-	    next: function () {
-	      var value;
-	      var done = array.length <= index;
-	      if (!done) {
-	        value = index;
-	        index++;
-	      }
-	      return {
-	        done: done,
-	        value: value
-	      };
-	    },
-	    '@@iterator': function () {
-	      return this;
-	    },
-	    '@@toStringTag': 'Array Iterator'
-	  };
-	}
-
-	definePrototype(Array, 'keys', keys$2);
-
 	if (!Object$1.keys) {
-	  Object$1.keys = keys$3;
+	  Object$1.keys = keys$2;
 	}
 
 	function defineProperties(obj, properties) {
@@ -2229,7 +2232,7 @@
 	;
 	create$1.sham = true;
 
-	if (!Object$1.create) {
+	if (!create$2) {
 	  Object$1.create = create$1;
 	}
 
@@ -2565,6 +2568,10 @@
 	  assert.same(result.q, 42);
 	  assert.same(result.w, 33);
 	});
+
+	// QUnit.test('Object.defineProperties.sham flag', assert => {
+	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
+	// });
 
 	QUnit.test('Function#bind', function (assert) {
 	  var bind = Function.prototype.bind;
@@ -3286,12 +3293,8 @@
 	  assert.strictEqual(Number.MIN_SAFE_INTEGER, -Math.pow(2, 53) + 1, 'Is -2^53 + 1');
 	});
 
-	function isPrimitive(value) {
-	  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
-	}
-
 	var symbol_sqe = 0;
-	var all_symbol = {};
+	var allSymbols = {};
 	function symbol(desc) {
 	  if (this instanceof symbol) {
 	    throw new TypeError("Symbol is not a constructor");
@@ -3306,7 +3309,7 @@
 	  }
 	  this.__name__ = "@@" + desc + ":" + symbol_sqe;
 	  symbol_sqe++;
-	  all_symbol[this.__name__] = this;
+	  allSymbols[this.__name__] = this;
 	}
 	Symbol$2.prototype.toString = function () {
 	  return this.__name__;
@@ -3314,23 +3317,6 @@
 	Symbol$2.prototype.toJSON = function () {
 	  return undefined;
 	};
-	function getOwnPropertySymbols(obj) {
-	  var arr = [];
-	  if (isPrimitive(obj)) {
-	    return arr;
-	  }
-	  for (var key in obj) {
-	    if (key.substring(0, 2) === "@@") {
-	      if (Object.hasOwn(obj, key)) {
-	        if (key in all_symbol) {
-	          arr.push(all_symbol[key]);
-	        }
-	      }
-	    }
-	  }
-	  return arr;
-	}
-	;
 
 	var nonEnumerable = !!defineProperties$1;
 
@@ -3409,6 +3395,28 @@
 	};
 
 	window.WeakMap = WeakMap$1;
+
+	function isPrimitive(value) {
+	  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
+	}
+
+	function getOwnPropertySymbols(obj) {
+	  var arr = [];
+	  if (isPrimitive(obj)) {
+	    return arr;
+	  }
+	  for (var key in obj) {
+	    if (key.substring(0, 2) === "@@") {
+	      if (Object.hasOwn(obj, key)) {
+	        if (key in allSymbols) {
+	          arr.push(allSymbols[key]);
+	        }
+	      }
+	    }
+	  }
+	  return arr;
+	}
+	;
 
 	if (!Object$1.getOwnPropertySymbols) {
 	  Object$1.getOwnPropertySymbols = getOwnPropertySymbols;
@@ -3584,6 +3592,11 @@
 	  assert.same(weakmap.get(s), 123, 'symbols as weakmap keys');
 	});
 
+	// QUnit.test('WeakMap#@@toStringTag', assert => {
+	//   assert.strictEqual(WeakMap.prototype[Symbol.toStringTag], 'WeakMap', 'WeakMap::@@toStringTag is `WeakMap`');
+	//   assert.strictEqual(String(new WeakMap()), '[object WeakMap]', 'correct stringification');
+	// });
+
 	function WeakSet$1() {
 	  this.map = new WeakMap();
 	  if (arguments.length) {
@@ -3727,7 +3740,12 @@
 	  // assert.notThrows(() => !weakset.has(1), 'return false on primitive');
 	});
 
-	var Map$2 = window.Map;
+	// QUnit.test('WeakSet::@@toStringTag', assert => {
+	//   assert.strictEqual(WeakSet.prototype[Symbol.toStringTag], 'WeakSet', 'WeakSet::@@toStringTag is `WeakSet`');
+	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
+	// });
+
+	definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
 
 	function entries$2() {
 	  var array = this;
@@ -3754,7 +3772,7 @@
 
 	definePrototype(Array, 'entries', entries$2);
 
-	definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
+	var Map$2 = window.Map;
 
 	function createMap() {
 	  function Map() {

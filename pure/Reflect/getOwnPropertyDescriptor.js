@@ -1,2 +1,4 @@
-import getOwnPropertyDescriptor from "sky-core/pure/Object/getOwnPropertyDescriptor";
-export default getOwnPropertyDescriptor; 
+import { Reflect } from "../../native/Reflect";
+import { getOwnPropertyDescriptor } from "../../impl/Reflect/getOwnPropertyDescriptor";
+
+export default Reflect ? Reflect.getOwnPropertyDescriptor : getOwnPropertyDescriptor;

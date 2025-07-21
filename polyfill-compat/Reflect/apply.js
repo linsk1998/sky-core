@@ -1,4 +1,3 @@
-
 import { apply } from "../../impl/Reflect/apply";
 import { Reflect } from "../../polyfill/Reflect";
 
