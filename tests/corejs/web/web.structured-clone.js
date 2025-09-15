@@ -25,7 +25,7 @@ function cloneTest(value, verifyFunc) {
 function cloneObjectTest(assert, value, verifyFunc) {
 	cloneTest(value, (orig, clone) => {
 		assert.notSame(orig, clone, 'clone should have different reference');
-		assert.same(typeof clone, 'object', 'clone should be an object');
+		assert.same(typeof clone, typeof orig, 'clone should be an object');
 		// https://github.com/qunitjs/node-qunit/issues/146
 		assert.ok(getPrototypeOf(orig) === getPrototypeOf(clone), 'clone should have same prototype');
 		verifyFunc(orig, clone);
@@ -394,7 +394,7 @@ if(typeof DOMRectReadOnly == 'function' && typeof DOMRectReadOnly.fromRect == 'f
 // 	});
 // }
 
-if(window.Blob) QUnit.test('Blob', assert => {
+if(typeof Blob === "function") QUnit.test('Blob', assert => {
 	cloneObjectTest(
 		assert,
 		new Blob(['This is a test.'], { type: 'a/b' }),

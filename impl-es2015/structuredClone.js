@@ -14,7 +14,7 @@ export function structuredClone(obj) {
 			return objectClone({}, obj);
 		} else if(Array.isArray(obj)) {
 			return arrayClone(obj);
-		} else if(obj instanceof Node || obj instanceof Event || obj instanceof Window) {
+		} else if(obj instanceof Node || obj instanceof Event || obj === window) {
 			throw new Error("Failed to execute 'structuredClone' on DOM");
 		} else if(obj instanceof Set) {
 			return new Set(obj);
@@ -58,8 +58,6 @@ export function structuredClone(obj) {
 				return new DataView(new Uint8Array(obj.buffer).buffer);
 			case '[object Blob]':
 				return obj.slice(0, obj.size, obj.type);
-			case '[object BigInt]':
-				return new Object(obj.valueOf());
 			case '[object File]':
 				return new File([obj], obj.name, {
 					type: obj.type,
@@ -71,6 +69,8 @@ export function structuredClone(obj) {
 					transfer.items.add(it);
 				}
 				return transfer.files;
+			case '[object BigInt]':
+				return new Object(obj.valueOf());
 			case '[object DOMRectReadOnly]':
 				return new DOMRectReadOnly(obj.x, obj.y, obj.width, obj.height);
 			case '[object DOMRect]':

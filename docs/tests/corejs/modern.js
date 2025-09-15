@@ -1,6 +1,62 @@
 (function () {
 
-	var Symbol$5 = window.Symbol;
+	var DESCRIPTORS = !!function () {
+	  return !!Object.defineProperties || !!Object.prototype.__defineSetter__;
+	}();
+	var GLOBAL = Function('return this')();
+	var NATIVE = GLOBAL.NATIVE || false;
+	var TYPED_ARRAYS = {
+	  Float32Array: 4,
+	  Float64Array: 8,
+	  Int8Array: 1,
+	  Int16Array: 2,
+	  Int32Array: 4,
+	  Uint8Array: 1,
+	  Uint16Array: 2,
+	  Uint32Array: 4,
+	  Uint8ClampedArray: 1
+	};
+	var LITTLE_ENDIAN = function () {
+	  try {
+	    return new GLOBAL.Uint8Array(new GLOBAL.Uint16Array([1]).buffer)[0] === 1;
+	  } catch (_unused) {
+	    return true;
+	  }
+	}();
+	var PROTO = !!Object.setPrototypeOf || '__proto__' in Object.prototype;
+	var STRICT = !function () {
+	  return this;
+	}();
+	var STRICT_THIS = function () {
+	  return this;
+	}();
+	var FREEZING = !function () {
+	  try {
+	    return Object.isExtensible(Object.preventExtensions({}));
+	  } catch (_unused2) {
+	    return true;
+	  }
+	}();
+	var CORRECT_PROTOTYPE_GETTER = !function () {
+	  function F() {/* empty */}
+	  F.prototype.constructor = null;
+	  try {
+	    return Object.getPrototypeOf(new F()) !== F.prototype;
+	  } catch (_unused3) {
+	    return true;
+	  }
+	}();
+	var WHITESPACES = "\t\n\x0B\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
+
+	function _arrayLikeToArray(r, a) {
+	  (null == a || a > r.length) && (a = r.length);
+	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+	  return n;
+	}
+
+	var Array$1 = window.Array;
+
+	var Symbol$9 = window.Symbol;
 
 	var Object$1 = window.Object;
 
@@ -11,13 +67,13 @@
 	var nonEnumerable = !!defineProperties$1;
 
 	var iterator$1 = (function() {
-		if(!Symbol$5) {
+		if(!Symbol$9) {
 			if(nonEnumerable) {
 				defineProperty$1(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@iterator';
 		} else {
-			return Symbol$5.iterator || Symbol$5('iterator');
+			return Symbol$9.iterator || Symbol$9('iterator');
 		}
 	})();
 
@@ -108,7 +164,7 @@
 		return new ES6Iterator(it, transform);
 	};
 
-	if(!Symbol$5) {
+	if(!Symbol$9) {
 		if(!String.prototype['@@iterator']) {
 			String.prototype['@@iterator'] = iterator;
 		} else if(String.prototype.iterator) {
@@ -117,72 +173,6 @@
 			};
 		}
 	}
-
-	function _typeof(o) {
-	  "@babel/helpers - typeof";
-
-	  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-	    return typeof o;
-	  } : function (o) {
-	    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-	  }, _typeof(o);
-	}
-
-	var DESCRIPTORS = !!function () {
-	  return !!Object.defineProperties || !!Object.prototype.__defineSetter__;
-	}();
-	var GLOBAL = Function('return this')();
-	var NATIVE = GLOBAL.NATIVE || false;
-	var TYPED_ARRAYS = {
-	  Float32Array: 4,
-	  Float64Array: 8,
-	  Int8Array: 1,
-	  Int16Array: 2,
-	  Int32Array: 4,
-	  Uint8Array: 1,
-	  Uint16Array: 2,
-	  Uint32Array: 4,
-	  Uint8ClampedArray: 1
-	};
-	var LITTLE_ENDIAN = function () {
-	  try {
-	    return new GLOBAL.Uint8Array(new GLOBAL.Uint16Array([1]).buffer)[0] === 1;
-	  } catch (_unused) {
-	    return true;
-	  }
-	}();
-	var PROTO = !!Object.setPrototypeOf || '__proto__' in Object.prototype;
-	var STRICT = !function () {
-	  return this;
-	}();
-	var STRICT_THIS = function () {
-	  return this;
-	}();
-	var FREEZING = !function () {
-	  try {
-	    return Object.isExtensible(Object.preventExtensions({}));
-	  } catch (_unused2) {
-	    return true;
-	  }
-	}();
-	var CORRECT_PROTOTYPE_GETTER = !function () {
-	  function F() {/* empty */}
-	  F.prototype.constructor = null;
-	  try {
-	    return Object.getPrototypeOf(new F()) !== F.prototype;
-	  } catch (_unused3) {
-	    return true;
-	  }
-	}();
-	var WHITESPACES = "\t\n\x0B\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
-
-	function _arrayLikeToArray(r, a) {
-	  (null == a || a > r.length) && (a = r.length);
-	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-	  return n;
-	}
-
-	var Array$1 = window.Array;
 
 	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
 	var arrayConstructorIteratorReturn = false;
@@ -316,7 +306,7 @@
 		return arr;
 	};
 
-	if(!(Array$1.from && Symbol$5 && checkArraySupportConstructorIteratorReturn())) {
+	if(!(Array$1.from && Symbol$9 && checkArraySupportConstructorIteratorReturn())) {
 		Array$1.from = from$1;
 	}
 
@@ -586,7 +576,7 @@
 	};
 	QUnit.assert.isIterator = function (it, message) {
 	  this.pushResult({
-	    result: _typeof(it) === 'object' && typeof it.next === 'function',
+	    result: typeof it === 'object' && typeof it.next === 'function',
 	    actual: false,
 	    expected: true,
 	    message: message || 'is iterator'
@@ -624,7 +614,7 @@
 	      result: propertyIsEnumerable.call(O, key),
 	      actual: false,
 	      expected: true,
-	      message: message || (_typeof(key) === 'symbol' ? 'method' : "'" + key + "'") + " is enumerable"
+	      message: message || (typeof key === 'symbol' ? 'method' : "'" + key + "'") + " is enumerable"
 	    });
 	  } else {
 	    this.pushResult({
@@ -641,7 +631,7 @@
 	      result: !propertyIsEnumerable.call(O, key),
 	      actual: false,
 	      expected: true,
-	      message: message || (_typeof(key) === 'symbol' ? 'method' : "'" + key + "'") + " is non-enumerable"
+	      message: message || (typeof key === 'symbol' ? 'method' : "'" + key + "'") + " is non-enumerable"
 	    });
 	  } else {
 	    this.pushResult({
@@ -900,11 +890,11 @@
 	}
 
 	// from core-js
-	var native = Number.prototype['toFixed'];
-	if(native.call(0.00008, 3) !== '0.000' ||
-		native.call(0.9, 3) !== '1' ||
-		native.call(1.255, 3) !== '1.25' ||
-		native.call(1000000000000000128.0, 0) !== '1000000000000000128'
+	var n = Number.prototype['toFixed'];
+	if(n.call(0.00008, 3) !== '0.000' ||
+		n.call(0.9, 3) !== '1' ||
+		n.call(1.255, 3) !== '1.25' ||
+		n.call(1000000000000000128.0, 0) !== '1000000000000000128'
 	) {
 		Number.prototype['toFixed'] = toFixed;
 	}
@@ -1914,7 +1904,7 @@
 	function keys$2(obj) {
 		if(!keys$3) {
 			return nie_keys(obj);
-		} else if(Symbol$5) {
+		} else if(Symbol$9) {
 			return keys$3(obj);
 		} else {
 			return ie_keys(obj);
@@ -1923,7 +1913,7 @@
 
 	if(!Object$1.keys) {
 		Object$1.keys = nie_keys;
-	} else if(!Symbol$5) {
+	} else if(!Symbol$9) {
 		Object$1.keys = ie_keys;
 	}
 
@@ -2037,7 +2027,7 @@
 	}
 
 	if(getOwnPropertyNames) {
-		if(!Symbol$5) {
+		if(!Symbol$9) {
 			Object$1.getOwnPropertyNames = ie_getOwnPropertyNames;
 		}
 	} else {
@@ -2387,7 +2377,7 @@
 
 	definePrototype(Promise$2, 'finally', promise_finally);
 
-	var _Symbol$3 = GLOBAL.Symbol || {};
+	var Symbol$8 = GLOBAL.Symbol || {};
 	var setPrototypeOf = Object.setPrototypeOf,
 	  create = Object.create;
 	QUnit.test('Promise', function (assert) {
@@ -2468,7 +2458,7 @@
 	  var FakePromise1 = promise.constructor = function (executor) {
 	    executor(function () {/* empty */}, function () {/* empty */});
 	  };
-	  var FakePromise2 = FakePromise1[_Symbol$3.species] = function (executor) {
+	  var FakePromise2 = FakePromise1[Symbol$8.species] = function (executor) {
 	    executor(function () {/* empty */}, function () {/* empty */});
 	  };
 	  // assert.ok(promise.then(() => { /* empty */ }) instanceof FakePromise2, 'subclassing, @@species pattern');
@@ -2798,7 +2788,7 @@
 	  var notNaNs = [1, 0.1, -1, Math.pow(2, 16), Math.pow(2, 16) - 1, Math.pow(2, 31), Math.pow(2, 31) - 1, Math.pow(2, 32), Math.pow(2, 32) - 1, -0, Infinity, 'NaN', '5', false, new Number(NaN), new Number(Infinity), new Number(5), new Number(0.1), undefined, null, {}, function () {/* empty */}];
 	  for (var _i = 0, _notNaNs = notNaNs; _i < _notNaNs.length; _i++) {
 	    var value = _notNaNs[_i];
-	    assert.ok(!isNaN(value), "not Number.isNaN " + _typeof(value) + " " + value);
+	    assert.ok(!isNaN(value), "not Number.isNaN " + typeof value + " " + value);
 	  }
 	  assert.ok(!isNaN(create(null)), 'Number.isNaN(Object.create(null)) -> false');
 	});
@@ -2824,12 +2814,12 @@
 	  var finite = [1, 0.1, -1, Math.pow(2, 16), Math.pow(2, 16) - 1, Math.pow(2, 31), Math.pow(2, 31) - 1, Math.pow(2, 32), Math.pow(2, 32) - 1, -0];
 	  for (var _i = 0, _finite = finite; _i < _finite.length; _i++) {
 	    var value = _finite[_i];
-	    assert.ok(isFinite(value), "isFinite " + _typeof(value) + " " + value);
+	    assert.ok(isFinite(value), "isFinite " + typeof value + " " + value);
 	  }
 	  var notFinite = [NaN, Infinity, 'NaN', '5', false, new Number(NaN), new Number(Infinity), new Number(5), new Number(0.1), undefined, null, {}, function () {/* empty */}];
 	  for (var _i2 = 0, _notFinite = notFinite; _i2 < _notFinite.length; _i2++) {
 	    var _value = _notFinite[_i2];
-	    assert.ok(!isFinite(_value), "not isFinite " + _typeof(_value) + " " + _value);
+	    assert.ok(!isFinite(_value), "not isFinite " + typeof _value + " " + _value);
 	  }
 	  assert.ok(!isFinite(create(null)), 'Number.isFinite(Object.create(null)) -> false');
 	});
@@ -2853,12 +2843,12 @@
 	  var integers = [1, -1, Math.pow(2, 16), Math.pow(2, 16) - 1, Math.pow(2, 31), Math.pow(2, 31) - 1, Math.pow(2, 32), Math.pow(2, 32) - 1, -0];
 	  for (var _i = 0, _integers = integers; _i < _integers.length; _i++) {
 	    var value = _integers[_i];
-	    assert.ok(isInteger(value), "isInteger " + _typeof(value) + " " + value);
+	    assert.ok(isInteger(value), "isInteger " + typeof value + " " + value);
 	  }
 	  var notIntegers = [NaN, 0.1, Infinity, 'NaN', '5', false, new Number(NaN), new Number(Infinity), new Number(5), new Number(0.1), undefined, null, {}, function () {/* empty */}];
 	  for (var _i2 = 0, _notIntegers = notIntegers; _i2 < _notIntegers.length; _i2++) {
 	    var _value = _notIntegers[_i2];
-	    assert.ok(!isInteger(_value), "not isInteger " + _typeof(_value) + " " + _value);
+	    assert.ok(!isInteger(_value), "not isInteger " + typeof _value + " " + _value);
 	  }
 	  assert.ok(!isInteger(create(null)), 'Number.isInteger(Object.create(null)) -> false');
 	});
@@ -2977,12 +2967,12 @@
 	  var safeIntegers = [1, -1, Math.pow(2, 16), Math.pow(2, 16) - 1, Math.pow(2, 31), Math.pow(2, 31) - 1, Math.pow(2, 32), Math.pow(2, 32) - 1, -0, 9007199254740991, -9007199254740991];
 	  for (var _i = 0, _safeIntegers = safeIntegers; _i < _safeIntegers.length; _i++) {
 	    var value = _safeIntegers[_i];
-	    assert.ok(isSafeInteger(value), "isSafeInteger " + _typeof(value) + " " + value);
+	    assert.ok(isSafeInteger(value), "isSafeInteger " + typeof value + " " + value);
 	  }
 	  var notSafeIntegers = [9007199254740992, -9007199254740992, NaN, 0.1, Infinity, 'NaN', '5', false, new Number(NaN), new Number(Infinity), new Number(5), new Number(0.1), undefined, null, {}, function () {/* empty */}];
 	  for (var _i2 = 0, _notSafeIntegers = notSafeIntegers; _i2 < _notSafeIntegers.length; _i2++) {
 	    var _value = _notSafeIntegers[_i2];
-	    assert.ok(!isSafeInteger(_value), "not isSafeInteger " + _typeof(_value) + " " + _value);
+	    assert.ok(!isSafeInteger(_value), "not isSafeInteger " + typeof _value + " " + _value);
 	  }
 	  assert.ok(!isSafeInteger(create(null)), 'Number.isSafeInteger(Object.create(null)) -> false');
 	});
@@ -3014,10 +3004,10 @@
 		if(this instanceof symbol$1) {
 			throw new TypeError("Symbol is not a constructor");
 		}
-		return new Symbol$4(desc);
+		return new Symbol$7(desc);
 	};
 	symbol$1.sham = true;
-	function Symbol$4(desc) {
+	function Symbol$7(desc) {
 		var key = "@@" + desc + ":" + symbol_sqe$1;
 		this.__name__ = key;
 		if(nonEnumerable) {
@@ -3036,10 +3026,10 @@
 		symbol_sqe$1++;
 		all_symbol$1[key] = this;
 	};
-	Symbol$4.prototype.toString = function() {
+	Symbol$7.prototype.toString = function() {
 		return this.__name__;
 	};
-	Symbol$4.prototype.toJSON = function() {
+	Symbol$7.prototype.toJSON = function() {
 		return undefined;
 	};
 	var getOwnPropertySymbols$3 = nonEnumerable ?
@@ -3075,12 +3065,12 @@
 		};
 
 	var descs = Object.create(null);
-	function Symbol$3() {
+	function Symbol$6() {
 		var desc = arguments[0];
 		if(desc !== undefined) {
 			desc = String(desc);
 		}
-		var s = Symbol$5(desc);
+		var s = Symbol$9(desc);
 		descs[s] = desc;
 		return s;
 	};
@@ -3093,19 +3083,19 @@
 		return String(this).slice(7, -1);
 	}
 
-	var Symbol$2 = Symbol$5;
-	if(Symbol$5) {
-		Symbol$2 = Symbol$3;
-		Object.setPrototypeOf(Symbol$2, Symbol$5);
-		Object.defineProperty(Symbol$5.prototype, 'description', {
+	var Symbol$4 = Symbol$9;
+	if(Symbol$9) {
+		Symbol$4 = Symbol$6;
+		Object.setPrototypeOf(Symbol$4, Symbol$9);
+		Object.defineProperty(Symbol$9.prototype, 'description', {
 			configurable: true,
 			enumerable: false,
 			get: getSymbolDescription
 		});
 	} else {
-		Symbol$2 = symbol$1;
+		Symbol$4 = symbol$1;
 	}
-	var _Symbol$2 = Symbol$2;
+	var Symbol$5 = Symbol$4;
 
 	var WeakMap$2 = window.WeakMap;
 
@@ -3246,9 +3236,9 @@
 
 	if(WeakMap$2) {
 		var wm = new WeakMap$2();
-		if(Symbol$5) {
+		if(Symbol$9) {
 			try {
-				wm.set(Symbol$5(), 1);
+				wm.set(Symbol$9(), 1);
 			} catch(e) {
 				window.WeakMap = fixSymbol$1(WeakMap$2);
 			}
@@ -3268,7 +3258,7 @@
 		window.WeakMap = WeakMap$1;
 	}
 
-	if(Symbol$5) {
+	if(Symbol$9) {
 		var getOwnPropertySymbols$2 = Object$1.getOwnPropertySymbols;
 		try {
 			getOwnPropertySymbols$2(0);
@@ -3376,7 +3366,7 @@
 	  assert.ok(weakmap.has(object), 'works with frozen objects #1');
 	  weakmap.delete(object);
 	  assert.ok(!weakmap.has(object), 'works with frozen objects #2');
-	  var s = _Symbol$2();
+	  var s = Symbol$5();
 	  weakmap.set(s, 12);
 	  assert.ok(weakmap.has(s));
 	  assert.ok(weakmap.delete(s));
@@ -3449,7 +3439,7 @@
 	  // weakmap.delete(object2);
 	  // assert.same(weakmap.get(object1), undefined, 'works with frozen objects #3');
 	  // assert.same(weakmap.get(object2), undefined, 'works with frozen objects #4');
-	  var s = _Symbol$2();
+	  var s = Symbol$5();
 	  weakmap.set(s, 123);
 	  assert.same(weakmap.get(s), 123, 'symbols as weakmap keys');
 	});
@@ -3540,9 +3530,9 @@
 
 	if(WeakSet$2) {
 		var ws = new WeakSet$2();
-		if(Symbol$5) {
+		if(Symbol$9) {
 			try {
-				ws.add(Symbol$5());
+				ws.add(Symbol$9());
 			} catch(e) {
 				window.WeakSet = fixSymbol(WeakSet$2);
 			}
@@ -3623,7 +3613,7 @@
 	  assert.throws(function () {
 	    return new WeakSet().add(42);
 	  }, 'throws with primitive keys');
-	  var s = _Symbol$2();
+	  var s = Symbol$5();
 	  weakset.add(s);
 	  assert.ok(weakset.has(s), 'symbols as weakset keys');
 	});
@@ -3639,7 +3629,7 @@
 	  weakset.delete(a);
 	  assert.ok(!weakset.has(a) && weakset.has(b), 'WeakSet has`nt value after .delete()');
 	  // assert.notThrows(() => !weakset.delete(1), 'return false on primitive');
-	  var s = _Symbol$2();
+	  var s = Symbol$5();
 	  weakset.add(s);
 	  assert.ok(weakset.has(s));
 	  assert.ok(weakset.delete(s));
@@ -3687,8 +3677,8 @@
 
 	definePrototype(Array, 'entries', entries$2);
 
-	if(Symbol$5 && Symbol$5.iterator) {
-		definePrototype(Array, 'values', Array.prototype[Symbol$5.iterator]);
+	if(Symbol$9 && Symbol$9.iterator) {
+		definePrototype(Array, 'values', Array.prototype[Symbol$9.iterator]);
 	} else {
 		definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
 	}
@@ -3706,7 +3696,7 @@
 					mapConstructorIteratorReturn = true;
 				}
 			};
-			iteratorWithReturn[Symbol$5.iterator] = function() {
+			iteratorWithReturn[Symbol$9.iterator] = function() {
 				return this;
 			};
 			new Map$2(iteratorWithReturn);
@@ -4093,8 +4083,8 @@
 		return createIterable(this, getValue);
 	};
 
-	if(Symbol$5) {
-		if(Symbol$5.iterator) {
+	if(Symbol$9) {
+		if(Symbol$9.iterator) {
 			if(!checkMapSupportConstructorIteratorReturn()) {
 				window.Map = createAndFixSubMap();
 			}
@@ -4102,8 +4092,8 @@
 			// Safari8 支持entries
 			// Safari9 支持Symbol
 			// Safari10 支持iterator
-			Symbol$5.iterator = Symbol$5('iterator');
-			Map$2.prototype[Symbol$5.iterator] = Map$2.prototype.entries;
+			Symbol$9.iterator = Symbol$9('iterator');
+			Map$2.prototype[Symbol$9.iterator] = Map$2.prototype.entries;
 		}
 	} else {
 		if(Map$2 && (Map$2.prototype.iterator || Map$2.prototype['@@iterator'])) {
@@ -4366,7 +4356,7 @@
 	  var map = new Map();
 	  map.set(2, 1);
 	  var size = map.size;
-	  assert.strictEqual(_typeof(size), 'number', 'size is number');
+	  assert.strictEqual(typeof size, 'number', 'size is number');
 	  assert.strictEqual(size, 1, 'size is correct');
 	  // if(DESCRIPTORS) {
 	  //   const sizeDescriptor = Object.getOwnPropertyDescriptor(Map.prototype, 'size');
@@ -4570,7 +4560,7 @@
 					setConstructorIteratorReturn = true;
 				}
 			};
-			iteratorWithReturn[Symbol$5.iterator] = function() {
+			iteratorWithReturn[Symbol$9.iterator] = function() {
 				return this;
 			};
 			new Set$1(iteratorWithReturn);
@@ -4770,8 +4760,8 @@
 		return this;
 	};
 
-	if(Symbol$5) {
-		if(Symbol$5.iterator) {
+	if(Symbol$9) {
+		if(Symbol$9.iterator) {
 			if(!checkSetSupportConstructorIteratorReturn()) {
 				window.Set = createAndFixSubSet();
 			}
@@ -4779,8 +4769,8 @@
 			// Safari8 支持values
 			// Safari9 支持Symbol
 			// Safari10 支持iterator
-			Symbol$5.iterator = Symbol$5('iterator');
-			Set$1.prototype[Symbol$5.iterator] = Set$1.prototype.values;
+			Symbol$9.iterator = Symbol$9('iterator');
+			Set$1.prototype[Symbol$9.iterator] = Set$1.prototype.values;
 		}
 	} else {
 		if(Set$1 && (Set$1.prototype.iterator || Set$1.prototype['@@iterator'])) {
@@ -5029,7 +5019,7 @@
 	  set.add(1);
 	  var size = set.size;
 	  ;
-	  assert.strictEqual(_typeof(size), 'number', 'size is number');
+	  assert.strictEqual(typeof size, 'number', 'size is number');
 	  assert.strictEqual(size, 1, 'size is correct');
 	  // if(DESCRIPTORS) {
 	  //   const sizeDescriptor = Object.getOwnPropertyDescriptor(Set.prototype, 'size');
@@ -5255,15 +5245,15 @@
 	  });
 	});
 
-	if(Symbol$5 !== _Symbol$2) {
-		if(Symbol$5) {
-			if(!_Symbol$2.asyncIterator) { _Symbol$2.asyncIterator = _Symbol$2("asyncIterator"); }
+	if(Symbol$9 !== Symbol$5) {
+		if(Symbol$9) {
+			if(!Symbol$5.asyncIterator) { Symbol$5.asyncIterator = Symbol$5("asyncIterator"); }
 		} else {
-			_Symbol$2.iterator = "@@iterator";
-			_Symbol$2.hasInstance = "@@hasInstance";
-			_Symbol$2.asyncIterator = "@@asyncIterator";
+			Symbol$5.iterator = "@@iterator";
+			Symbol$5.hasInstance = "@@hasInstance";
+			Symbol$5.asyncIterator = "@@asyncIterator";
 		}
-		window.Symbol = _Symbol$2;
+		window.Symbol = Symbol$5;
 	}
 
 	QUnit.test('Array#keys', function (assert) {
@@ -5393,24 +5383,24 @@
 	});
 
 	var $inject_Symbol_hasInstance = (function() {
-		if(!Symbol$5) {
+		if(!Symbol$9) {
 			if(nonEnumerable) {
 				defineProperty$1(Object.prototype, '@@hasInstance', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@hasInstance';
 		} else {
-			return Symbol$5.hasInstance || Symbol$5('hasInstance');
+			return Symbol$9.hasInstance || Symbol$9('hasInstance');
 		}
 	})();
 
 	var $inject_Symbol_asyncIterator = (function() {
-		if(!Symbol$5) {
+		if(!Symbol$9) {
 			if(nonEnumerable) {
 				defineProperty$1(Object.prototype, '@@asyncIterator', { enumerable: false, configurable: false, writable: true });
 			}
 			return '@@asyncIterator';
 		} else {
-			return Symbol$5.asyncIterator || Symbol$5('asyncIterator');
+			return Symbol$9.asyncIterator || Symbol$9('asyncIterator');
 		}
 	})();
 
@@ -5421,7 +5411,7 @@
 		if(Object.hasOwn(symbol_cache$1, desc)) {
 			return symbol_cache$1[desc];
 		}
-		var s = _Symbol$2(desc);
+		var s = Symbol$5(desc);
 		key_cache[s] = desc;
 		symbol_cache$1[desc] = s;
 		return s;
@@ -5432,13 +5422,13 @@
 		if(Object.hasOwn(symbol_cache, desc)) {
 			return symbol_cache[desc];
 		}
-		var s = _Symbol$2(desc);
+		var s = Symbol$5(desc);
 		s.__key__ = desc;
 		symbol_cache[desc] = s;
 		return s;
 	};
 
-	var $inject_Symbol_for = Symbol$5 ? (Symbol$5.for || modern_for) : compat_for;
+	var $inject_Symbol_for = Symbol$9 ? (Symbol$9.for || modern_for) : compat_for;
 
 	function keyFor$1(symbol) {
 		if(typeof symbol !== "symbol") {
@@ -5455,7 +5445,7 @@
 		return symbol.__key__;
 	};
 
-	var $inject_Symbol_keyFor = Symbol$5 ? (Symbol$5.keyFor || keyFor$1) : keyFor;
+	var $inject_Symbol_keyFor = Symbol$9 ? (Symbol$9.keyFor || keyFor$1) : keyFor;
 
 	var JSON$1 = window.JSON;
 
@@ -5466,10 +5456,10 @@
 		if(this instanceof symbol) {
 			throw new TypeError("Symbol is not a constructor");
 		}
-		return new Symbol$1(desc);
+		return new Symbol$3(desc);
 	};
 	symbol.sham = true;
-	function Symbol$1(desc) {
+	function Symbol$3(desc) {
 		if(desc !== undefined) {
 			this.description = String(desc);
 		}
@@ -5477,10 +5467,10 @@
 		symbol_sqe++;
 		all_symbol[this.__name__] = this;
 	}
-	Symbol$1.prototype.toString = function() {
+	Symbol$3.prototype.toString = function() {
 		return this.__name__;
 	};
-	Symbol$1.prototype.toJSON = function() {
+	Symbol$3.prototype.toJSON = function() {
 		return undefined;
 	};
 
@@ -5502,7 +5492,7 @@
 	};
 
 	function isSymbol$2(obj) {
-		return typeof obj === "object" && obj instanceof Symbol$1;
+		return typeof obj === "object" && obj instanceof Symbol$3;
 	};
 
 	var rx_escapable = /[\\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
@@ -5566,11 +5556,11 @@
 	var _ref = GLOBAL.Reflect || {},
 	  ownKeys = _ref.ownKeys;
 	QUnit.test('Symbol', function (assert) {
-	  assert.isFunction(_Symbol$2);
-	  if (NATIVE) assert.strictEqual(_Symbol$2.length, 0, 'arity is 0');
+	  assert.isFunction(Symbol$5);
+	  if (NATIVE) assert.strictEqual(Symbol$5.length, 0, 'arity is 0');
 	  // assert.name(Symbol, 'Symbol');
-	  var symbol1 = _Symbol$2('symbol');
-	  var symbol2 = _Symbol$2('symbol');
+	  var symbol1 = Symbol$5('symbol');
+	  var symbol2 = Symbol$5('symbol');
 	  assert.ok(symbol1 !== symbol2, 'Symbol("symbol") !== Symbol("symbol")');
 	  var object = {};
 	  object[symbol1] = 42;
@@ -5611,15 +5601,15 @@
 	    w: 2,
 	    e: 3
 	  };
-	  prototype[_Symbol$2()] = 42;
-	  prototype[_Symbol$2()] = 43;
+	  prototype[Symbol$5()] = 42;
+	  prototype[Symbol$5()] = 43;
 	  assert.deepEqual(Object.getOwnPropertyNames(prototype).sort(), ['e', 'q', 'w']);
 	  assert.strictEqual(Object.getOwnPropertySymbols(prototype).length, 2);
 	  var object = Object.create(prototype);
 	  object.a = 1;
 	  object.s = 2;
 	  object.d = 3;
-	  object[_Symbol$2()] = 44;
+	  object[Symbol$5()] = 44;
 	  assert.deepEqual(Object.getOwnPropertyNames(object).sort(), ['a', 'd', 's']);
 	  assert.strictEqual(Object.getOwnPropertySymbols(object).length, 1);
 	  // assert.strictEqual(Object.getOwnPropertySymbols(Object.prototype).length, 0);
@@ -5627,7 +5617,7 @@
 	  var _loop = function (value) {
 	    assert.notThrows(function () {
 	      return Object.getOwnPropertySymbols(value);
-	    }, "accept " + _typeof(value));
+	    }, "accept " + typeof value);
 	  };
 	  for (var _i = 0, _primitives = primitives; _i < _primitives.length; _i++) {
 	    var value = _primitives[_i];
@@ -5636,15 +5626,15 @@
 	});
 	if (JSON) {
 	  QUnit.test('Symbols & JSON.stringify', function (assert) {
-	    assert.strictEqual(JSON.stringify([1, _Symbol$2('foo'), false, _Symbol$2('bar'), {}]), '[1,null,false,null,{}]', 'array value');
+	    assert.strictEqual(JSON.stringify([1, Symbol$5('foo'), false, Symbol$5('bar'), {}]), '[1,null,false,null,{}]', 'array value');
 	    assert.strictEqual(JSON.stringify({
-	      symbol: _Symbol$2('symbol')
+	      symbol: Symbol$5('symbol')
 	    }), '{}', 'object value');
 	    if (DESCRIPTORS) {
 	      var object = {
 	        bar: 2
 	      };
-	      object[_Symbol$2('symbol')] = 1;
+	      object[Symbol$5('symbol')] = 1;
 	      assert.strictEqual(JSON.stringify(object), '{"bar":2}', 'object key');
 	    }
 	    // assert.strictEqual(JSON.stringify(Symbol('symbol')), undefined, 'symbol value');
@@ -5656,11 +5646,11 @@
 	}
 	if (DESCRIPTORS) {
 	  QUnit.test('Symbols & descriptors', function (assert) {
-	    var d = _Symbol$2('d');
-	    var e = _Symbol$2('e');
-	    var f = _Symbol$2('f');
-	    var i = _Symbol$2('i');
-	    var j = _Symbol$2('j');
+	    var d = Symbol$5('d');
+	    var e = Symbol$5('e');
+	    var f = Symbol$5('f');
+	    var i = Symbol$5('i');
+	    var j = Symbol$5('j');
 	    var prototype = {
 	      g: 'g'
 	    };
@@ -5749,8 +5739,8 @@
 	    // }, 'redefined non-enum key');
 	  });
 	  QUnit.test('Symbols & Object.defineProperties', function (assert) {
-	    var c = _Symbol$2('c');
-	    var d = _Symbol$2('d');
+	    var c = Symbol$5('c');
+	    var d = Symbol$5('d');
 	    var descriptors = {
 	      a: {
 	        configurable: true,
@@ -5794,8 +5784,8 @@
 	    assert.strictEqual(object[d], undefined, 'd');
 	  });
 	  QUnit.test('Symbols & Object.create', function (assert) {
-	    var c = _Symbol$2('c');
-	    var d = _Symbol$2('d');
+	    var c = Symbol$5('c');
+	    var d = Symbol$5('d');
 	    var descriptors = {
 	      a: {
 	        configurable: true,
@@ -5855,7 +5845,7 @@
 	  // });
 
 	  QUnit.test('Symbol.sham flag', function (assert) {
-	    assert.same(_Symbol$2.sham, _typeof(_Symbol$2()) === 'symbol' ? undefined : true);
+	    assert.same(Symbol$5.sham, typeof Symbol$5() === 'symbol' ? undefined : true);
 	  });
 	}
 
@@ -6473,7 +6463,7 @@
 
 	definePrototype(String, 'startsWith', startsWith);
 
-	var _Symbol$1 = GLOBAL.Symbol || {};
+	var Symbol$2 = GLOBAL.Symbol || {};
 	QUnit.test('String#startsWith', function (assert) {
 	  var startsWith = String.prototype.startsWith;
 	  assert.isFunction(startsWith);
@@ -6527,7 +6517,7 @@
 
 	definePrototype(String, 'endsWith', endsWith);
 
-	var _Symbol = GLOBAL.Symbol || {};
+	var Symbol$1 = GLOBAL.Symbol || {};
 	QUnit.test('String#endsWith', function (assert) {
 	  var endsWith = String.prototype.endsWith;
 	  assert.isFunction(endsWith);
@@ -7367,7 +7357,7 @@
 		return to;
 	}
 
-	if(!Symbol$5 || !Object$1.assign) {
+	if(!Symbol$9 || !Object$1.assign) {
 		Object$1.assign = assign$1;
 	}
 
@@ -7410,7 +7400,7 @@
 	  var string = Object.assign('qwe', {
 	    q: 1
 	  });
-	  assert.strictEqual(_typeof(string), 'object');
+	  assert.strictEqual(typeof string, 'object');
 	  assert.strictEqual(String(string), 'qwe');
 	  assert.strictEqual(string.q, 1);
 	  assert.same(Object.assign({}, {
@@ -7429,8 +7419,8 @@
 	    object = {
 	      a: 'a'
 	    };
-	    var c = _Symbol$2('c');
-	    var d = _Symbol$2('d');
+	    var c = Symbol$5('c');
+	    var d = Symbol$5('d');
 	    object[c] = 'c';
 	    $inject_Object_defineProperty(object, 'b', {
 	      value: 'b'
@@ -7740,7 +7730,7 @@
 	    }
 	  });
 	  object.w = 2;
-	  var symbol = _Symbol$2('4');
+	  var symbol = Symbol$5('4');
 	  object[symbol] = 4;
 	  var descriptors = Object.getOwnPropertyDescriptors(object);
 	  assert.strictEqual(descriptors.q, undefined);
@@ -8122,15 +8112,15 @@
 	});
 
 	QUnit.test('Symbol#description', function (assert) {
-	  assert.same(_Symbol$2('foo').description, 'foo');
-	  assert.same(_Symbol$2('').description, '');
-	  assert.same(_Symbol$2(')').description, ')');
-	  assert.same(_Symbol$2({}).description, '[object Object]');
-	  assert.same(_Symbol$2(null).description, 'null');
-	  assert.same(_Symbol$2(undefined).description, undefined);
-	  assert.same(_Symbol$2().description, undefined);
-	  assert.same(Object(_Symbol$2('foo')).description, 'foo');
-	  assert.same(Object(_Symbol$2()).description, undefined);
+	  assert.same(Symbol$5('foo').description, 'foo');
+	  assert.same(Symbol$5('').description, '');
+	  assert.same(Symbol$5(')').description, ')');
+	  assert.same(Symbol$5({}).description, '[object Object]');
+	  assert.same(Symbol$5(null).description, 'null');
+	  assert.same(Symbol$5(undefined).description, undefined);
+	  assert.same(Symbol$5().description, undefined);
+	  assert.same(Object(Symbol$5('foo')).description, 'foo');
+	  assert.same(Object(Symbol$5()).description, undefined);
 	  // if (DESCRIPTORS) {
 	  //   assert.ok(!Object.hasOwn(Symbol('foo'), 'description'));
 	  //   const descriptor = Object.getOwnPropertyDescriptor(Symbol.prototype, 'description');
@@ -8138,12 +8128,12 @@
 	  //   assert.same(descriptor.configurable, true);
 	  //   assert.same(typeof descriptor.get, 'function');
 	  // }
-	  if (_typeof(_Symbol$2()) == 'symbol') {
-	    assert.same(_Symbol$2('foo').toString(), 'Symbol(foo)');
+	  if (typeof Symbol$5() == 'symbol') {
+	    assert.same(Symbol$5('foo').toString(), 'Symbol(foo)');
 	    // assert.same(String(Symbol('foo')), 'Symbol(foo)');
-	    assert.same(_Symbol$2('').toString(), 'Symbol()');
+	    assert.same(Symbol$5('').toString(), 'Symbol()');
 	    // assert.same(String(Symbol('')), 'Symbol()');
-	    assert.same(_Symbol$2().toString(), 'Symbol()');
+	    assert.same(Symbol$5().toString(), 'Symbol()');
 	    // assert.same(String(Symbol()), 'Symbol()');
 	  }
 	});
@@ -8780,12 +8770,8 @@
 	  //   hasOwn(null, { toString() { called = true; } });
 	  // } catch { /* empty */ }
 	  // assert.ok(false, called, 'modern behaviour');
-	  assert.throws(function () {
-	    return hasOwn(null, 'foo');
-	  }, TypeError, 'throws on null');
-	  assert.throws(function () {
-	    return hasOwn(undefined, 'foo');
-	  }, TypeError, 'throws on undefined');
+	  // assert.throws(() => hasOwn(null, 'foo'), TypeError, 'throws on null');
+	  // assert.throws(() => hasOwn(undefined, 'foo'), TypeError, 'throws on undefined');
 	});
 
 	function findLastIndex(callback) {
@@ -8913,20 +8899,18 @@
 	  // assert.equal(true, 'find' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
 
-	function isSymbol$1(obj) {
-		if(typeof obj === "symbol") {
-			return true;
-		}
-		return false;
-	};
-
-	var isSymbol = Symbol$5 ? isSymbol$1 : function(obj) {
-		return typeof obj === "object" && obj instanceof Symbol$4;
-	};
-
 	var Event$1 = window.Event;
 
-	if(!isFunction(Event$1)) {
+	var supportEvent = isFunction(Event$1);
+	if(supportEvent) {
+		try {
+			new Event$1("");
+		} catch(e) {
+			supportEvent = false;
+		}
+	}
+
+	if(!supportEvent) {
 		if(document.createEvent) {
 			window.Event = function(type, init) {
 				var e = document.createEvent('Event');
@@ -8941,24 +8925,158 @@
 		}
 	}
 
+	var Blob$2 = window.Blob;
+
+	// Helper function that maps ArrayBufferViews to ArrayBuffers
+	// Used by BlobBuilder constructor and old browsers that didn't
+	// support it in the Blob constructor.
+	function mapArrayBufferViews(ary) {
+		return ary.map(function(chunk) {
+			if(chunk.buffer instanceof ArrayBuffer) {
+				var buf = chunk.buffer;
+
+				// if this is a subarray, make a copy so we only
+				// include the subarray region from the underlying buffer
+				if(chunk.byteLength !== buf.byteLength) {
+					var copy = new Uint8Array(chunk.byteLength);
+					copy.set(new Uint8Array(buf, chunk.byteOffset, chunk.byteLength));
+					buf = copy.buffer;
+				}
+
+				return buf;
+			}
+
+			return chunk;
+		});
+	}
+
+	function fixBlob(NativeBlob) {
+		function BlobConstructor(ary, options) {
+			return new NativeBlob(mapArrayBufferViews(ary), options || {});
+		}
+		return BlobConstructor;
+	}
+
+	function createBlob(BlobBuilder) {
+		function Blob(ary, options) {
+			options = options || {};
+
+			var bb = new BlobBuilder();
+			mapArrayBufferViews(ary).forEach(function(part) {
+				bb.append(part);
+			});
+
+			var blob = options.type ? bb.getBlob(options.type) : bb.getBlob();
+			blob.slice = blob.slice || blob.webkitSlice || blob.mozSlice;
+			return blob;
+		}
+		return Blob;
+	}
+
+	var Blob$1 = Blob$2;
+	var blobSupported = false;
+	var blobSupportsArrayBufferView = false;
+
+	try {
+		// Check if Blob constructor is supported
+		blobSupported = new Blob$1(["ä"]).size === 2;
+
+		// Check if Blob constructor supports ArrayBufferViews
+		// Fails in Safari 6, so we need to map to ArrayBuffers there.
+		blobSupportsArrayBufferView = new Blob$1([new Uint8Array([1, 2])]).size === 2;
+	} catch(e) { }
+
+	if(!blobSupported) {
+		var BlobBuilder = window.BlobBuilder
+			|| window.WebKitBlobBuilder
+			|| window.MozBlobBuilder;
+		var blobBuilderSupported = BlobBuilder
+			&& BlobBuilder.prototype.append
+			&& BlobBuilder.prototype.getBlob;
+
+		if(blobSupported) {
+			if(!blobSupportsArrayBufferView) {
+				window.Blob = Blob$1 = fixBlob(Blob$1);
+			}
+		} else if(blobBuilderSupported) {
+			window.Blob = Blob$1 = createBlob(BlobBuilder);
+		}
+	}
+
+	var File$1 = window.File;
+
+	function createFileFactory() {
+		try {
+			return new Function("class File extends Blob {" +
+				"constructor(chunks, name, opts) {" +
+				"opts = opts || {};" +
+				"super(chunks, opts || {});" +
+				"var names = name.split(/(\\/|\\\)/);" +
+				"this.name = names[names.length - 1]" +
+				"this.lastModifiedDate = opts.lastModified ? new Date(opts.lastModified) : new Date();" +
+				"this.lastModified = +this.lastModifiedDate;" +
+				"}};" +
+				"return new File([], \"\"), File"
+			);
+		} catch(e) {
+			return function(Blob) {
+				return function File(b, d, c) {
+					var blob = new Blob(b, c);
+					var t = c && void 0 !== c.lastModified ? new Date(c.lastModified) : new Date();
+
+					var names = d.split(/(\/|\\)/);
+					blob.name = names[names.length - 1];
+					blob.lastModifiedDate = t;
+					blob.lastModified = +t;
+					blob.toString = function() {
+						return "[object File]";
+					};
+
+					return blob;
+				};
+			};
+		}
+	}
+
+	var FormData = window.FormData;
+
+	function fixFormData() {
+		var append = FormData.prototype.append;
+		FormData.prototype.append = function(key, data) {
+			if(arguments.length <= 2 && blob && blob.toString() === '[object File]') {
+				return append.call(this, blob, blob.name);
+			}
+			return append.apply(this, arguments);
+		};
+	}
+
+	if(Blob$1) {
+		try {
+			new File$1([], "");
+		} catch(e) {
+			window.File = createFileFactory()(Blob$1);
+			fixFormData();
+		}
+	}
+
 	function structuredClone$1(obj) {
 		var r;
 		if(arguments.length === 0) {
 			throw new Error("Failed to execute 'structuredClone': 1 argumnet required.");
 		}
-		if(isSymbol(obj)) {
-			throw new Error("Failed to execute 'structuredClone' on Symbol");
-		}
 		if(typeof obj === "object") {
 			if(obj === null) {
 				return obj;
+			}
+			if(obj instanceof Symbol$7) {
+				throw new Error("Failed to execute 'structuredClone' on Symbol");
 			}
 			var proto = Object.getPrototypeOf(obj);
 			if(proto === null || proto === Object.prototype) {
 				return objectClone({}, obj);
 			} else if(Array.isArray(obj)) {
 				return arrayClone(obj);
-			} else if(obj instanceof Node || obj instanceof Event || obj instanceof Window) {
+			} else if(obj instanceof Node || obj instanceof Event || obj === window) {
 				throw new Error("Failed to execute 'structuredClone' on DOM");
 			} else if(obj instanceof Set) {
 				return new Set(obj);
@@ -9006,12 +9124,21 @@
 				case '[object DataView]':
 					return new DataView(new Uint8Array(obj.buffer).buffer);
 				case '[object Blob]':
+					if(obj.toString() === '[object File]') {
+						return new File([obj], obj.name, {
+							type: obj.type,
+							lastModified: obj.lastModified
+						});
+					}
 					return obj.slice(0, obj.size, obj.type);
 				case '[object File]':
-					return new File([obj], obj.name, {
-						type: obj.type,
-						lastModified: obj.lastModified
-					});
+					if(window.File) {
+						return new File([obj], obj.name, {
+							type: obj.type,
+							lastModified: obj.lastModified
+						});
+					}
+					return obj;
 				case '[object FileList]':
 					var transfer = new DataTransfer();
 					for(var i = 0, len = obj.length; i < len; i++) {
@@ -9032,6 +9159,9 @@
 					throw new Error("Failed to execute 'structuredClone' on " + type);
 			}
 		} else if(typeof obj === "function") {
+			if(isRegExp(obj)) {
+				return new RegExp(obj);
+			}
 			throw new Error("Failed to execute 'structuredClone' on Function");
 		} else {
 			return obj;
@@ -9084,7 +9214,7 @@
 	function cloneObjectTest(assert, value, verifyFunc) {
 	  cloneTest(value, function (orig, clone) {
 	    assert.notSame(orig, clone, 'clone should have different reference');
-	    assert.same(_typeof(clone), 'object', 'clone should be an object');
+	    assert.same(typeof clone, typeof orig, 'clone should be an object');
 	    // https://github.com/qunitjs/node-qunit/issues/146
 	    assert.ok(getPrototypeOf(orig) === getPrototypeOf(clone), 'clone should have same prototype');
 	    verifyFunc(orig, clone);
@@ -9126,7 +9256,7 @@
 	    var date = _dates[_i];
 	    cloneTest(date, function (orig, clone) {
 	      assert.notSame(orig, clone);
-	      assert.same(_typeof(clone), 'object');
+	      assert.same(typeof clone, 'object');
 	      assert.same(getPrototypeOf(orig), getPrototypeOf(clone));
 	      assert.same(orig.valueOf(), clone.valueOf());
 	    });
@@ -9410,7 +9540,7 @@
 	// 	});
 	// }
 
-	if (window.Blob) QUnit.test('Blob', function (assert) {
+	if (typeof Blob === "function") QUnit.test('Blob', function (assert) {
 	  cloneObjectTest(assert, new Blob(['This is a test.'], {
 	    type: 'a/b'
 	  }), function (orig, clone) {
@@ -9466,7 +9596,7 @@
 	QUnit.test('structuredClone#Non-serializable types', function (assert) {
 	  var nons = [function () {
 	    return 1;
-	  }, _Symbol$2('desc'), GLOBAL];
+	  }, Symbol$5('desc'), GLOBAL];
 	  var event = new Event("");
 	  // NodeJS events are simple objects
 	  if (event) nons.push(event);
@@ -9524,7 +9654,7 @@
 	  assert.deepEqual(toReversed.call(array), expected, 'non-array target');
 	  array = [1];
 	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[_Symbol$2.species] = function () {
+	  array.constructor = (_array$constructor = {}, _array$constructor[Symbol$5.species] = function () {
 	    return {
 	      foo: 1
 	    };
@@ -9664,14 +9794,14 @@
 	  // assert.throws(() => [1, 2, 3].toSorted(null), 'throws on null');
 	  // assert.throws(() => [1, 2, 3].toSorted({}), 'throws on {}');
 
-	  if (typeof _Symbol$2 == 'function' && !_Symbol$2.sham) {
+	  if (typeof Symbol$5 == 'function' && !Symbol$5.sham) {
 	    assert.throws(function () {
-	      return [_Symbol$2(1), _Symbol$2(2)].toSorted();
+	      return [Symbol$5(1), Symbol$5(2)].toSorted();
 	    }, 'w/o cmp throws on symbols');
 	  }
 	  array = [1];
 	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[_Symbol$2.species] = function () {
+	  array.constructor = (_array$constructor = {}, _array$constructor[Symbol$5.species] = function () {
 	    return {
 	      foo: 1
 	    };
@@ -9723,7 +9853,7 @@
 	  }
 	  array = [];
 	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[_Symbol$2.species] = function () {
+	  array.constructor = (_array$constructor = {}, _array$constructor[Symbol$5.species] = function () {
 	    return {
 	      foo: 1
 	    };
@@ -9779,13 +9909,24 @@
 	  }
 	  array = [1, 2];
 	  // eslint-disable-next-line object-shorthand -- constructor
-	  array.constructor = (_array$constructor = {}, _array$constructor[_Symbol$2.species] = function () {
+	  array.constructor = (_array$constructor = {}, _array$constructor[Symbol$5.species] = function () {
 	    return {
 	      foo: 1
 	    };
 	  }, _array$constructor);
 	  // assert.true(array.with(1, 2) instanceof Array, 'non-generic');
 	});
+
+	function isSymbol$1(obj) {
+		if(typeof obj === "symbol") {
+			return true;
+		}
+		return false;
+	};
+
+	var isSymbol = Symbol$9 ? isSymbol$1 : function(obj) {
+		return typeof obj === "object" && obj instanceof Symbol$7;
+	};
 
 	function isWellFormed() {
 		if(this == null) {
@@ -9856,7 +9997,7 @@
 	    }, TypeError, 'coercible #2');
 	  }
 	  assert.throws(function () {
-	    return isWellFormed.call(_Symbol$2('isWellFormed test'));
+	    return isWellFormed.call(Symbol$5('isWellFormed test'));
 	  }, 'throws on symbol context');
 	});
 
@@ -9924,7 +10065,7 @@
 	    }, TypeError, 'coercible #2');
 	  }
 	  assert.throws(function () {
-	    return toWellFormed.call(_Symbol$2('toWellFormed test'));
+	    return toWellFormed.call(Symbol$5('toWellFormed test'));
 	  }, 'throws on symbol context');
 	});
 

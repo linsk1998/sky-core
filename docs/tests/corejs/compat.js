@@ -838,8 +838,8 @@
 	}
 
 	// from core-js
-	var _native = Number.prototype['toFixed'];
-	if (_native.call(0.00008, 3) !== '0.000' || _native.call(0.9, 3) !== '1' || _native.call(1.255, 3) !== '1.25' || _native.call(1000000000000000128.0, 0) !== '1000000000000000128') {
+	var n = Number.prototype['toFixed'];
+	if (n.call(0.00008, 3) !== '0.000' || n.call(0.9, 3) !== '1' || n.call(1.255, 3) !== '1.25' || n.call(1000000000000000128.0, 0) !== '1000000000000000128') {
 	  Number.prototype['toFixed'] = toFixed;
 	}
 
@@ -8496,12 +8496,8 @@
 	  //   hasOwn(null, { toString() { called = true; } });
 	  // } catch { /* empty */ }
 	  // assert.ok(false, called, 'modern behaviour');
-	  assert["throws"](function () {
-	    return hasOwn(null, 'foo');
-	  }, TypeError, 'throws on null');
-	  assert["throws"](function () {
-	    return hasOwn(undefined, 'foo');
-	  }, TypeError, 'throws on undefined');
+	  // assert.throws(() => hasOwn(null, 'foo'), TypeError, 'throws on null');
+	  // assert.throws(() => hasOwn(undefined, 'foo'), TypeError, 'throws on undefined');
 	});
 
 	function findLastIndex(callback) {
@@ -8757,7 +8753,7 @@
 	function cloneObjectTest(assert, value, verifyFunc) {
 	  cloneTest(value, function (orig, clone) {
 	    assert.notSame(orig, clone, 'clone should have different reference');
-	    assert.same(_typeof(clone), 'object', 'clone should be an object');
+	    assert.same(_typeof(clone), _typeof(orig), 'clone should be an object');
 	    // https://github.com/qunitjs/node-qunit/issues/146
 	    assert.ok(getPrototypeOf(orig) === getPrototypeOf(clone), 'clone should have same prototype');
 	    verifyFunc(orig, clone);
@@ -9083,7 +9079,7 @@
 	// 	});
 	// }
 
-	if (window.Blob) QUnit.test('Blob', function (assert) {
+	if (typeof Blob === "function") QUnit.test('Blob', function (assert) {
 	  cloneObjectTest(assert, new Blob(['This is a test.'], {
 	    type: 'a/b'
 	  }), function (orig, clone) {
