@@ -165,6 +165,16 @@ module.exports = [{
 				"tests/corejs/**/*",
 			]
 		}),
+		babel({
+			babelHelpers: 'bundled',
+			babelrc: false,
+			compact: false,
+			plugins: [
+				"@babel/plugin-transform-member-expression-literals",
+				"@babel/plugin-transform-property-literals",
+				"@babel/plugin-transform-reserved-words"
+			]
+		}),
 	]
 }, {
 	input: 'tests/corejs/index.js',

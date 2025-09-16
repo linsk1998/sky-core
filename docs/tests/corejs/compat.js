@@ -949,12 +949,8 @@
 	  // assert.throws(() => toPrecision.call({}, 1), TypeError, '? thisNumberValue(this value)');
 	  // assert.throws(() => toPrecision.call('123', 1), TypeError, '? thisNumberValue(this value)');
 	  // assert.throws(() => toPrecision.call(false, 1), TypeError, '? thisNumberValue(this value)');
-	  assert["throws"](function () {
-	    return toPrecision.call(null, 1);
-	  }, TypeError, '? thisNumberValue(this value)');
-	  assert["throws"](function () {
-	    return toPrecision.call(undefined, 1);
-	  }, TypeError, '? thisNumberValue(this value)');
+	  // assert.throws(() => toPrecision.call(null, 1), TypeError, '? thisNumberValue(this value)');
+	  // assert.throws(() => toPrecision.call(undefined, 1), TypeError, '? thisNumberValue(this value)');
 	});
 
 	var Date$1 = window.Date;
