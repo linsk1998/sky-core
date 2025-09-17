@@ -1,20 +1,21 @@
 import { isNode } from "sky-core/utils/isNode";
 import { toString } from "../native/Object/prototype/toString";
 import { isPlainObject } from "sky-core/utils/isPlainObject";
-import { isSymbol } from "sky-core/utils/isSymbol";
+import { Symbol } from "../impl/Symbol";
 import { isWindow } from "sky-core/utils/isWindow";
+import { isRegExp } from "../utils/isRegExp";
 
 export function structuredClone(obj) {
 	var r;
 	if(arguments.length === 0) {
 		throw new Error("Failed to execute 'structuredClone': 1 argumnet required.");
 	}
-	if(isSymbol(obj)) {
-		throw new Error("Failed to execute 'structuredClone' on Symbol");
-	}
 	if(typeof obj === "object") {
 		if(obj === null) {
 			return obj;
+		}
+		if(obj instanceof Symbol) {
+			throw new Error("Failed to execute 'structuredClone' on Symbol");
 		}
 		if(Array.isArray(obj)) {
 			return arrayClone(obj);
@@ -70,20 +71,26 @@ export function structuredClone(obj) {
 			case '[object DataView]':
 				return new DataView(new Uint8Array(obj.buffer).buffer);
 			case '[object Blob]':
+				if(obj.toString() === '[object File]') {
+					return new File([obj], obj.name, { type: obj.type, lastModified: obj.lastModified });
+				}
 				return obj.slice(0, obj.size, obj.type);
-			case '[object BigInt]':
-				return obj.valueOf();
 			case '[object File]':
 				if(window.File) {
-					return new File([obj], obj.name);
+					return new File([obj], obj.name, {
+						type: obj.type,
+						lastModified: obj.lastModified
+					});
 				}
 				return obj;
 			case '[object FileList]':
-				const transfer = new DataTransfer();
-				for(let it of obj) {
-					transfer.items.add(it);
+				var transfer = new DataTransfer();
+				for(var i = 0, len = obj.length; i < len; i++) {
+					transfer.items.add(obj[i]);
 				}
 				return transfer.files;
+			case '[object BigInt]':
+				return obj.valueOf();
 			case '[object DOMRectReadOnly]':
 				return new DOMRectReadOnly(obj.x, obj.y, obj.width, obj.height);
 			case '[object DOMRect]':
@@ -98,6 +105,9 @@ export function structuredClone(obj) {
 				throw new Error("Failed to execute 'structuredClone' on " + type);
 		}
 	} else if(typeof obj === "function") {
+		if(isRegExp(obj)) {
+			return new RegExp(obj);
+		}
 		throw new Error("Failed to execute 'structuredClone' on Function");
 	} else {
 		return obj;

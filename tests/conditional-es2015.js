@@ -3,8 +3,6 @@ const polyfill = require("rollup-plugin-polyfill-inject");
 module.exports = [
 	polyfill({
 		modules: {
-			/* Edge12+ Chrome32 Firefox4+ */
-			'URL': "sky-core/polyfill/URL",
 			/* Chrome63+ Firefox34+ Safari10+ Edge12+ */
 			"Proxy.revocable": "sky-core/polyfill/Proxy/revocable",
 			/* Chrome70+ Firefox63+ Safari12+*/

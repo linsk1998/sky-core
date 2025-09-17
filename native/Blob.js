@@ -1,0 +1,1 @@
+export var Blob = window.Blob;

@@ -157,12 +157,22 @@ module.exports = [{
 				["@babel/plugin-transform-spread", { loose: true }],
 				// "@babel/plugin-transform-sticky-regex",
 				["@babel/plugin-transform-template-literals", { loose: true }],
-				"@babel/plugin-transform-typeof-symbol",
+				// "@babel/plugin-transform-typeof-symbol",
 				// ES5
 				// "@babel/plugin-transform-property-mutators"
 			],
 			include: [
 				"tests/corejs/**/*",
+			]
+		}),
+		babel({
+			babelHelpers: 'bundled',
+			babelrc: false,
+			compact: false,
+			plugins: [
+				"@babel/plugin-transform-member-expression-literals",
+				"@babel/plugin-transform-property-literals",
+				"@babel/plugin-transform-reserved-words"
 			]
 		}),
 	]

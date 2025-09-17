@@ -71,6 +71,9 @@ module.exports = [
 			'URL': "sky-core/polyfill/URL",
 			'URLSearchParams': "sky-core/polyfill/URLSearchParams",
 
+			/* Chrome38 firefox28 Safari10 Android4.4.4 */
+			"File": "sky-core/polyfill/File",
+
 			// Chrome41+ Edge12 Safari9+ Firfox32+ Opera32+
 			"Array.from": [
 				"sky-core/polyfill/Array/from",
