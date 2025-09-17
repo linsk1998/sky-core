@@ -35,17 +35,12 @@ console.log(document.head);
 
 ```javascript
 //rollup.config.js
-import polyfill from "rollup-plugin-polyfill-inject";
+const polyfill = require("rollup-plugin-polyfill-inject");
 
-export default {
-	input: 'src/index.js',
-	output: {
-		file: 'dist/index.js',
-		format: 'iife'
-	},
+module.exports = {
 	plugins: [
 		polyfill({
-			"modules": {
+			polluting: {
 				".includes": [
 					"sky-core/polyfill/Array/prototype/includes",
 					"sky-core/polyfill/String/prototype/includes"
@@ -53,6 +48,7 @@ export default {
 				"Set":"sky-core/polyfill/Set",
 				"Map":"sky-core/polyfill/Map",
 			},
+			exclude: ["**/node_modules/sky-core/**"]
 		})
 	]
 }
@@ -75,40 +71,118 @@ console.log([].includes('a'));
 
 ```javascript
 //rollup.config.js
-import inject from "@rollup/plugin-inject";
+const polyfill = require("rollup-plugin-polyfill-inject");
 
-export default {
-	input: 'src/index.js',
-	output: {
-		file: 'dist/index.js',
-		format: 'iife'
-	},
+module.exports = {
 	plugins: [
-		inject({
-			"modules": {
+		polyfill({
+			pure: {
 				"XMLHttpRequest":"sky-core/pure/XMLHttpRequest"
 			},
-			include:["**/ajax.js"]
+			exclude: ["**/node_modules/sky-core/**"]
 		})
 	]
 }
 ```
 
 ```javascript
-//browser.js
+// before
 export const isIE6=!window.XMLHttpRequest;
-//XMLHttpRequest will NOT replace to polyfill
-```
-
-```javascript
-//ajax.js
 export function get(url){
-	//XMLHttpRequest will replace to polyfill
 	var xhr=new XMLHttpRequest();
 	return new Promise(function(){
 		//...
 	});
 }
+```
+
+```javascript
+// after
+import injectXMLHttpRequest from "sky-core/pure/XMLHttpRequest";
+
+export const isIE6=!window.XMLHttpRequest; //window.XXX和typeof XXX不会改变
+export function get(url){
+	var xhr=new injectXMLHttpRequest();
+	return new Promise(function(){
+		//...
+	});
+}
+```
+
+
+## 结合rollup插件以getter、setter方式引入polyfill
+
+```javascript
+//rollup.config.js
+const polyfill = require("rollup-plugin-polyfill-inject");
+
+module.exports = {
+	plugins: [
+		polyfill({
+			getter: {
+				"document.currentScript": ["sky-core/utils/getCurrentScript", 'getCurrentScript'],
+				"window.innerWidth": ["sky-core/utils/getInnerWidth", 'getInnerWidth'],
+				"innerWidth": ["sky-core/utils/getInnerWidth", 'getInnerWidth'],
+			}
+			exclude: ["**/node_modules/sky-core/**"]
+		})
+	]
+}
+```
+
+```javascript
+// before
+console.log(innerWidth)
+console.log(window.innerWidth)
+```
+
+```javascript
+// after
+import { getInnerWidth } from "sky-core/utils/getInnerWidth";
+
+console.log(getInnerWidth())
+console.log(getInnerWidth())
+```
+
+## 结合rollup插件在setTimeout、setInterval使用超过3个参数时才引入polyfill
+
+```javascript
+//rollup.config.js
+const polyfill = require("rollup-plugin-polyfill-inject");
+
+module.exports = {
+	plugins: [
+		polyfill({
+			timer: {
+				"setTimeout": "sky-core/pure/setTimeout",
+				"setInterval": "sky-core/pure/setInterval"
+			}
+			exclude: ["**/node_modules/sky-core/**"]
+		})
+	]
+}
+```
+
+```javascript
+// before
+let args = [0, 1, 2];
+setTimeout(function() { }, 0);
+setTimeout(function() { });
+setTimeout(function() { }, ...args);
+setTimeout.apply(window, args);
+console.log(setTimeout);
+```
+
+```javascript
+// after
+import argsSetTimeout from "sky-core/pure/setTimeout";
+
+let args = [0, 1, 2];
+setTimeout(function() { }, 0);
+setTimeout(function() { });
+argsSetTimeout(function() { }, ...args);
+argsSetTimeout.apply(window, args);
+console.log(argsSetTimeout);
 ```
 
 # 约定

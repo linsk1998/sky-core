@@ -2,7 +2,7 @@
 	"name": "sky-core",
 	"description": "Javascript toolkit core library",
 	"deprecated": false,
-	"version": "0.20.0",
+	"version": "0.21.0",
 	"keywords": [
 		"polyfill",
 		"core-js",
@@ -22,8 +22,7 @@
 		"test:corejs": "rollup --config tests/corejs/rollup.config.js",
 		"test:ie8": "rollup --config tests/ie8/rollup.config.ie8.js",
 		"test:lambdatest": "node tests/action-lambdatest.js",
-		"test:saucelabs": "node tests/action-saucelabs.js",
-		"prepublishOnly": "npm run test:lambdatest"
+		"test:saucelabs": "node tests/action-saucelabs.js"
 	},
 	"publishConfig": {
 		"access": "public",
