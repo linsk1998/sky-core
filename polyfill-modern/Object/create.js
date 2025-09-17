@@ -1,7 +1,10 @@
 import { Object } from "../../native/Object";
-import { create } from "../../impl-modern/Object/create";
-if(!Object.create) {
-	if('__proto__' in Object.prototype) {
-		Object.create = create;
+import { create } from "../../native/Object/create";
+import { proto } from "../../support/proto";
+import { create as modern_create } from "../../impl-modern/Object/create";
+
+if(!create) {
+	if(proto) {
+		Object.create = modern_create;
 	}
 }

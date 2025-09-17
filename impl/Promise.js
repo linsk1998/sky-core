@@ -155,7 +155,7 @@ Promise.all = function(promises) {
 	return new Promise(function(resolve, reject) {
 		var result = new Array(promises.length);
 		var c = 0;
-		promises.forEach.call(function(one, index) {
+		promises.forEach(function(one, index) {
 			if(isNotNullObject(one) && isFunction(one.then)) {
 				one.then(function(data) {
 					c++;
@@ -166,8 +166,9 @@ Promise.all = function(promises) {
 				}, reject);
 			} else {
 				c++;
+				result[index] = one;
 				if(c >= promises.length) {
-					resolve();
+					resolve(result);
 				}
 			}
 		});
