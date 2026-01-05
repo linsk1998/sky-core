@@ -1,21 +1,29 @@
+import { urlDecode } from "../utils/urlDecode";
+
 function URLSearchParams(paramsString) {
 	this._data = new Array();
 	if(paramsString) {
-		var i, pair;
+		var i, pair, pairs, poi, key, value;
 		if(Array.isArray(paramsString)) {
 			i = this._data.length = paramsString.length;
 			while(i-- > 0) {
 				pair = paramsString[i];
-				this._data[i] = new Array(pairs[1], pairs[0]);
+				this._data[i] = [pairs[1], pairs[0]];
 			}
 		} else {
-			var pairs = paramsString.split("&");
+			pairs = paramsString.split("&");
 			i = this._data.length = pairs.length;
 			while(i-- > 0) {
 				pair = pairs[i];
 				if(pair) {
-					var id = pair.indexOf("=");
-					this._data[i] = new Array(decodeURIComponent(pair.substring(id + 1, pair.length)), decodeURIComponent(pair.substring(0, id)));
+					poi = pair.indexOf("=");
+					if(poi >= 0) {
+						value = urlDecode(pair.substring(id + 1, pair.length));
+						key = urlDecode(pair.substring(0, id));
+					} else {
+						key = urlDecode(pair);
+					}
+					this._data[i] = [value, key];
 				}
 			}
 		}
