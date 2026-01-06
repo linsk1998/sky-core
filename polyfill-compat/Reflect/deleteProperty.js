@@ -1,4 +1,3 @@
-
 import { deleteProperty as compat_deleteProperty } from "../../impl-compat/Reflect/deleteProperty";
 import { Reflect } from "../../polyfill/Reflect";
 

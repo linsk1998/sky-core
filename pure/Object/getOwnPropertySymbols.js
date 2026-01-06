@@ -1,21 +1,24 @@
-import { Object } from "../../native/Object";
-import { Symbol } from "../../native/Symbol";
+import { getOwnPropertySymbols as native_getOwnPropertySymbols } from "../../native/Object/getOwnPropertySymbols";
+import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
 import { isPrimitive } from "../../utils/isPrimitive";
-import { getOwnPropertySymbols as symbol_getOwnPropertySymbols } from "../../impl/Symbol";
+import { getOwnPropertySymbols as getOwnPropertySymbols$enum, getOwnPropertySymbols$property } from "../../impl/Object/getOwnPropertySymbols";
 
-if(Symbol) {
-	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var getOwnPropertySymbols;
+if(native_getOwnPropertySymbols) {
 	try {
-		getOwnPropertySymbols(0);
+		native_getOwnPropertySymbols(0);
+		getOwnPropertySymbols = native_getOwnPropertySymbols;
 	} catch(e) {
 		getOwnPropertySymbols = function(obj) {
 			if(isPrimitive(obj)) {
 				return [];
 			}
-			return getOwnPropertySymbols(obj);
+			return native_getOwnPropertySymbols(obj);
 		};
 	}
+} else if(getOwnPropertyNames) {
+	getOwnPropertySymbols = getOwnPropertySymbols$property;
 } else {
-	getOwnPropertySymbols = symbol_getOwnPropertySymbols;
+	getOwnPropertySymbols = getOwnPropertySymbols$enum;
 }
 export default getOwnPropertySymbols;

@@ -1,5 +1,4 @@
-
-import getPrototypeOf from "sky-core/pure/Object/getPrototypeOf";
+import { getPrototypeOf } from "../../impl/Reflect/getPrototypeOf";
 import { Reflect } from "../../polyfill/Reflect";
 
 if(!Reflect.getPrototypeOf) {

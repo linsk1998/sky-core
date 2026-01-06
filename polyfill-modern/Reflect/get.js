@@ -1,7 +1,6 @@
-
-import { get as modern_get } from "../../impl-modern/Reflect/get";
 import { Reflect } from "../../polyfill/Reflect";
+import { get } from "../../impl-modern/Reflect/get";
 
 if(!Reflect.get) {
-	Reflect.get = modern_get;
+	Reflect.get = get;
 }

@@ -1,4 +1,3 @@
-
 import { construct } from "../../impl/Reflect/construct";
 import { Reflect } from "../../polyfill/Reflect";
 

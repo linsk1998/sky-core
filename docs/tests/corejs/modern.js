@@ -48,19 +48,67 @@
 	}();
 	var WHITESPACES = "\t\n\x0B\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
 
-	function _arrayLikeToArray(r, a) {
-	  (null == a || a > r.length) && (a = r.length);
-	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-	  return n;
-	}
-
-	var Array$1 = window.Array;
-
-	var Symbol$9 = window.Symbol;
-
 	var Object$1 = window.Object;
 
 	var defineProperty$1 = Object$1.defineProperty;
+
+	function isNotNullObject(obj) {
+	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
+	}
+	;
+
+	function defineProperty(obj, prop, descriptor) {
+	  if (!isNotNullObject(obj)) {
+	    throw new TypeError("Object.defineProperty called on non-object");
+	  }
+	  prop = String(prop);
+	  if ('value' in descriptor) {
+	    delete obj[prop];
+	    obj[prop] = descriptor.value;
+	  } else {
+	    if (descriptor.get) obj.__defineGetter__(prop, descriptor.get);
+	    if (descriptor.set) obj.__defineSetter__(prop, descriptor.set);
+	  }
+	  return obj;
+	}
+	;
+
+	if (!defineProperty$1) {
+	  if (Object$1.prototype.__defineSetter__) {
+	    Object$1.defineProperty = defineProperty;
+	  }
+	}
+
+	function definePrototype(target, property, value) {
+	  var prototype = target.prototype;
+	  if (!(property in prototype)) {
+	    Object.defineProperty(prototype, property, {
+	      configurable: true,
+	      writable: true,
+	      enumerable: false,
+	      value: value
+	    });
+	  }
+	}
+
+	var slice$1 = Array.prototype.slice;
+
+	function bind(context) {
+	  var self = this,
+	    args = slice$1.call(arguments, 1);
+	  var Bind = function () {
+	    if (this instanceof Bind) {
+	      self.apply(this, args.concat(slice$1.call(arguments)));
+	      return;
+	    }
+	    return self.apply(context, args.concat(slice$1.call(arguments)));
+	  };
+	  return Bind;
+	}
+
+	definePrototype(Function, 'bind', bind);
+
+	var Symbol$9 = window.Symbol;
 
 	var defineProperties$1 = Object$1.defineProperties;
 
@@ -183,6 +231,32 @@
 	  }
 	}
 
+	var Array$1 = window.Array;
+
+	var toString$1 = Object$1.prototype.toString;
+
+	function isArray(obj) {
+	  return toString$1.call(obj) === '[object Array]';
+	}
+
+	if (!Array$1.isArray) {
+	  Array$1.isArray = isArray;
+	}
+
+	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
+
+	if (accessor) {
+	  if (!('name' in Function.prototype)) {
+	    Object.defineProperty(Function.prototype, 'name', {
+	      enumerable: false,
+	      configurable: true,
+	      get: function () {
+	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
+	      }
+	    });
+	  }
+	}
+
 	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
 	var arrayConstructorIteratorReturn = false;
 	function checkArraySupportConstructorIteratorReturn() {
@@ -209,7 +283,11 @@
 	  return arrayConstructorIteratorReturn;
 	}
 
-	var toString$1 = Object$1.prototype.toString;
+	var Number$1 = window.Number;
+
+	if (!('MAX_SAFE_INTEGER' in Number$1)) {
+	  Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
+	}
 
 	function isString(obj) {
 	  return toString$1.call(obj) === '[object String]';
@@ -254,12 +332,6 @@
 	      }
 	    }
 	  };
-	}
-
-	var Number$1 = window.Number;
-
-	if (!('MAX_SAFE_INTEGER' in Number$1)) {
-	  Number$1.MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
 	}
 
 	var push = Array.prototype.push;
@@ -322,45 +394,10 @@
 	  Array$1.from = from$1;
 	}
 
-	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
-
-	function isNotNullObject(obj) {
-	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
-	}
-	;
-
-	function defineProperty(obj, prop, descriptor) {
-	  if (!isNotNullObject(obj)) {
-	    throw new TypeError("Object.defineProperty called on non-object");
-	  }
-	  prop = String(prop);
-	  if ('value' in descriptor) {
-	    delete obj[prop];
-	    obj[prop] = descriptor.value;
-	  } else {
-	    if (descriptor.get) obj.__defineGetter__(prop, descriptor.get);
-	    if (descriptor.set) obj.__defineSetter__(prop, descriptor.set);
-	  }
-	  return obj;
-	}
-	;
-
-	if (!defineProperty$1) {
-	  if (Object$1.prototype.__defineSetter__) {
-	    Object$1.defineProperty = defineProperty;
-	  }
-	}
-
-	if (accessor) {
-	  if (!('name' in Function.prototype)) {
-	    Object.defineProperty(Function.prototype, 'name', {
-	      enumerable: false,
-	      configurable: true,
-	      get: function () {
-	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
-	      }
-	    });
-	  }
+	function _arrayLikeToArray(r, a) {
+	  (null == a || a > r.length) && (a = r.length);
+	  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+	  return n;
 	}
 
 	function _unsupportedIterableToArray(r, a) {
@@ -370,43 +407,6 @@
 	    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
 	  }
 	}
-
-	function isArray(obj) {
-	  return toString$1.call(obj) === '[object Array]';
-	}
-
-	if (!Array$1.isArray) {
-	  Array$1.isArray = isArray;
-	}
-
-	function definePrototype(target, property, value) {
-	  var prototype = target.prototype;
-	  if (!(property in prototype)) {
-	    Object.defineProperty(prototype, property, {
-	      configurable: true,
-	      writable: true,
-	      enumerable: false,
-	      value: value
-	    });
-	  }
-	}
-
-	var slice$1 = Array.prototype.slice;
-
-	function bind(context) {
-	  var self = this,
-	    args = slice$1.call(arguments, 1);
-	  var Bind = function () {
-	    if (this instanceof Bind) {
-	      self.apply(this, args.concat(slice$1.call(arguments)));
-	      return;
-	    }
-	    return self.apply(context, args.concat(slice$1.call(arguments)));
-	  };
-	  return Bind;
-	}
-
-	definePrototype(Function, 'bind', bind);
 
 	function _createForOfIteratorHelperLoose(r, e) {
 	  var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
@@ -1583,7 +1583,7 @@
 	  return new Promise$3(function (resolve, reject) {
 	    var result = new Array(promises.length);
 	    var c = 0;
-	    promises.forEach.call(function (one, index) {
+	    promises.forEach(function (one, index) {
 	      if (isNotNullObject(one) && isFunction(one.then)) {
 	        one.then(function (data) {
 	          c++;
@@ -1594,8 +1594,9 @@
 	        }, reject);
 	      } else {
 	        c++;
+	        result[index] = one;
 	        if (c >= promises.length) {
-	          resolve();
+	          resolve(result);
 	        }
 	      }
 	    });
@@ -1844,6 +1845,10 @@
 	  Object$1.getPrototypeOf = ie_getPrototypeOf;
 	}
 
+	var create$2 = Object$1.create;
+
+	var proto = !!setPrototypeOf$1 || '__proto__' in Object.prototype;
+
 	var $inject_Object_defineProperty = Object.defineProperty || defineProperty;
 
 	function keys$4() {
@@ -1871,12 +1876,6 @@
 
 	definePrototype(Array, 'keys', keys$4);
 
-	var keys$3 = Object$1.keys;
-
-	function isNotSymbolKey(key) {
-	  return key.substring(0, 2) !== "@@";
-	}
-
 	var hasOwnProperty = Object$1.prototype.hasOwnProperty;
 
 	function hasOwn(obj, key) {
@@ -1886,6 +1885,12 @@
 
 	if (!Object$1.hasOwn) {
 	  Object$1.hasOwn = hasOwn;
+	}
+
+	var keys$3 = Object$1.keys;
+
+	function isNotSymbolKey(key) {
+	  return key.substring(0, 2) !== "@@";
 	}
 
 	function ie_keys(obj) {
@@ -1969,8 +1974,8 @@
 	}
 	;
 
-	if (!Object$1.create) {
-	  if ('__proto__' in Object$1.prototype) {
+	if (!create$2) {
+	  if (proto) {
 	    Object$1.create = create$1;
 	  }
 	}
@@ -2260,6 +2265,10 @@
 	  assert.same(result.w, 33);
 	});
 
+	// QUnit.test('Object.defineProperties.sham flag', assert => {
+	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
+	// });
+
 	QUnit.test('Function#bind', function (assert) {
 	  var bind = Function.prototype.bind;
 	  assert.isFunction(bind);
@@ -2350,20 +2359,6 @@
 	  assert.ok(!Object.is({}, {}), '{} isnt {}');
 	});
 
-	var Error$2 = window.Error;
-
-	function Error$1(message) {
-	  this.message = message === undefined ? "" : String(message);
-	  var options = arguments[1];
-	  if (typeof options === "object" && options !== null) {
-	    if ('cause' in options) {
-	      this.cause = options.cause;
-	    }
-	  }
-	}
-	Error$1.prototype = Error$2.prototype;
-	window.Error = Error$1;
-
 	function promise_finally (onCompleted) {
 	  var fun = isFunction(onCompleted);
 	  return this.then(fun ? function (x) {
@@ -2378,6 +2373,20 @@
 	;
 
 	definePrototype(Promise$2, 'finally', promise_finally);
+
+	var Error$2 = window.Error;
+
+	function Error$1(message) {
+	  this.message = message === undefined ? "" : String(message);
+	  var options = arguments[1];
+	  if (typeof options === "object" && options !== null) {
+	    if ('cause' in options) {
+	      this.cause = options.cause;
+	    }
+	  }
+	}
+	Error$1.prototype = Error$2.prototype;
+	window.Error = Error$1;
 
 	var Symbol$8 = GLOBAL.Symbol || {};
 	var setPrototypeOf = Object.setPrototypeOf,
@@ -2991,12 +3000,8 @@
 	  assert.strictEqual(Number.MIN_SAFE_INTEGER, -Math.pow(2, 53) + 1, 'Is -2^53 + 1');
 	});
 
-	function isPrimitive(value) {
-	  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
-	}
-
 	var symbol_sqe$1 = 0;
-	var all_symbol$1 = {};
+	var allSymbols$1 = {};
 	function symbol$1(desc) {
 	  if (this instanceof symbol$1) {
 	    throw new TypeError("Symbol is not a constructor");
@@ -3026,7 +3031,7 @@
 	    this.description = String(desc);
 	  }
 	  symbol_sqe$1++;
-	  all_symbol$1[key] = this;
+	  allSymbols$1[key] = this;
 	}
 	;
 	Symbol$7.prototype.toString = function () {
@@ -3034,36 +3039,6 @@
 	};
 	Symbol$7.prototype.toJSON = function () {
 	  return undefined;
-	};
-	var getOwnPropertySymbols$3 = nonEnumerable ? function (obj) {
-	  var arr = [];
-	  if (isPrimitive(obj)) {
-	    return arr;
-	  }
-	  var keys = getOwnPropertyNames(obj);
-	  var i = keys.length;
-	  while (i-- > 0) {
-	    var key = keys[i];
-	    if (key.substring(0, 2) === "@@") {
-	      if (Object.hasOwn(all_symbol$1, key)) {
-	        arr.push(all_symbol$1[key]);
-	      }
-	    }
-	  }
-	  return arr;
-	} : function (obj) {
-	  var arr = [];
-	  if (isPrimitive(obj)) {
-	    return arr;
-	  }
-	  for (var key in obj) {
-	    if (key.substring(0, 2) === "@@") {
-	      if (Object.hasOwn(obj, key)) {
-	        arr.push(all_symbol$1[key]);
-	      }
-	    }
-	  }
-	  return arr;
 	};
 
 	var descs = Object.create(null);
@@ -3085,7 +3060,7 @@
 	  return String(this).slice(7, -1);
 	}
 
-	var Symbol$4 = Symbol$9;
+	var Symbol$4;
 	if (Symbol$9) {
 	  Symbol$4 = Symbol$6;
 	  Object.setPrototypeOf(Symbol$4, Symbol$9);
@@ -3260,20 +3235,59 @@
 	  window.WeakMap = WeakMap$1;
 	}
 
-	if (Symbol$9) {
-	  var getOwnPropertySymbols$2 = Object$1.getOwnPropertySymbols;
+	var getOwnPropertySymbols$1 = Object$1.getOwnPropertySymbols;
+
+	function isPrimitive(value) {
+	  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
+	}
+
+	function getOwnPropertySymbols$property(obj) {
+	  var arr = [];
+	  if (isPrimitive(obj)) {
+	    return arr;
+	  }
+	  var keys = getOwnPropertyNames(obj);
+	  var len = keys.length;
+	  for (var i = 0; i < len; i++) {
+	    var key = keys[i];
+	    if (key.slice(0, 2) === "@@") {
+	      if (Object.hasOwn(allSymbols$1, key) && key in allSymbols$1) {
+	        arr.push(allSymbols$1[key]);
+	      }
+	    }
+	  }
+	  return arr;
+	}
+	function getOwnPropertySymbols(obj) {
+	  var arr = [];
+	  if (isPrimitive(obj)) {
+	    return arr;
+	  }
+	  for (var key in obj) {
+	    if (key.slice(0, 2) === "@@") {
+	      if (Object.hasOwn(obj, key) && key in allSymbols$1) {
+	        arr.push(allSymbols$1[key]);
+	      }
+	    }
+	  }
+	  return arr;
+	}
+
+	if (getOwnPropertySymbols$1) {
 	  try {
-	    getOwnPropertySymbols$2(0);
+	    getOwnPropertySymbols$1(0);
 	  } catch (e) {
 	    Object$1.getOwnPropertySymbols = function (obj) {
 	      if (isPrimitive(obj)) {
 	        return [];
 	      }
-	      return getOwnPropertySymbols$2(obj);
+	      return getOwnPropertySymbols$1(obj);
 	    };
 	  }
+	} else if (getOwnPropertyNames) {
+	  Object$1.getOwnPropertySymbols = getOwnPropertySymbols$property;
 	} else {
-	  Object$1.getOwnPropertySymbols = getOwnPropertySymbols$3;
+	  Object$1.getOwnPropertySymbols = getOwnPropertySymbols;
 	}
 
 	function freeze(o) {
@@ -3445,6 +3459,11 @@
 	  weakmap.set(s, 123);
 	  assert.same(weakmap.get(s), 123, 'symbols as weakmap keys');
 	});
+
+	// QUnit.test('WeakMap#@@toStringTag', assert => {
+	//   assert.strictEqual(WeakMap.prototype[Symbol.toStringTag], 'WeakMap', 'WeakMap::@@toStringTag is `WeakMap`');
+	//   assert.strictEqual(String(new WeakMap()), '[object WeakMap]', 'correct stringification');
+	// });
 
 	var WeakSet$2 = window.WeakSet;
 
@@ -3653,7 +3672,16 @@
 	  // assert.notThrows(() => !weakset.has(1), 'return false on primitive');
 	});
 
-	var Map$2 = window.Map;
+	// QUnit.test('WeakSet::@@toStringTag', assert => {
+	//   assert.strictEqual(WeakSet.prototype[Symbol.toStringTag], 'WeakSet', 'WeakSet::@@toStringTag is `WeakSet`');
+	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
+	// });
+
+	if (Symbol$9 && Symbol$9.iterator) {
+	  definePrototype(Array, 'values', Array.prototype[Symbol$9.iterator]);
+	} else {
+	  definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
+	}
 
 	function entries$2() {
 	  var array = this;
@@ -3680,11 +3708,7 @@
 
 	definePrototype(Array, 'entries', entries$2);
 
-	if (Symbol$9 && Symbol$9.iterator) {
-	  definePrototype(Array, 'values', Array.prototype[Symbol$9.iterator]);
-	} else {
-	  definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
-	}
+	var Map$2 = window.Map;
 
 	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
 	var mapConstructorIteratorReturn = false;
@@ -5489,7 +5513,7 @@
 	var JSON$1 = window.JSON;
 
 	var symbol_sqe = 0;
-	var all_symbol = {};
+	var allSymbols = {};
 	function symbol(desc) {
 	  if (this instanceof symbol) {
 	    throw new TypeError("Symbol is not a constructor");
@@ -5504,7 +5528,7 @@
 	  }
 	  this.__name__ = "@@" + desc + ":" + symbol_sqe;
 	  symbol_sqe++;
-	  all_symbol[this.__name__] = this;
+	  allSymbols[this.__name__] = this;
 	}
 	Symbol$3.prototype.toString = function () {
 	  return this.__name__;
@@ -5512,23 +5536,6 @@
 	Symbol$3.prototype.toJSON = function () {
 	  return undefined;
 	};
-	function getOwnPropertySymbols$1(obj) {
-	  var arr = [];
-	  if (isPrimitive(obj)) {
-	    return arr;
-	  }
-	  for (var key in obj) {
-	    if (key.substring(0, 2) === "@@") {
-	      if (Object.hasOwn(obj, key)) {
-	        if (key in all_symbol) {
-	          arr.push(all_symbol[key]);
-	        }
-	      }
-	    }
-	  }
-	  return arr;
-	}
-	;
 
 	function isSymbol$2(obj) {
 	  return typeof obj === "object" && obj instanceof Symbol$3;
@@ -7706,8 +7713,6 @@
 	  // } catch { /* empty */ }
 	});
 
-	var getOwnPropertySymbols = Object$1.getOwnPropertySymbols;
-
 	function getOwnPropertyDescriptors$ff(obj) {
 	  var ownKeys = Object.keys(obj);
 	  var i = ownKeys.length;
@@ -7740,7 +7745,7 @@
 	}
 	function getOwnPropertyDescriptors$sb(obj) {
 	  var keys = getOwnPropertyNames(obj);
-	  var symbols = getOwnPropertySymbols(obj);
+	  var symbols = getOwnPropertySymbols$1(obj);
 	  var descs = {};
 	  var key, i;
 	  i = keys.length;
@@ -7758,7 +7763,7 @@
 
 	if (!Object$1.getOwnPropertyDescriptors) {
 	  if (defineProperty$1) {
-	    if (getOwnPropertySymbols) {
+	    if (getOwnPropertySymbols$1) {
 	      Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors$sb;
 	    } else {
 	      Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors$ie;
