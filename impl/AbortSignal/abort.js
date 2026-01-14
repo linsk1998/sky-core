@@ -1,7 +1,7 @@
-import { AbortController } from "./AbortController";
+import { AbortController } from "../AbortController";
 
 export function abort(reason) {
-	const ac = new AbortController();
+	var ac = new AbortController();
 	ac.abort(reason);
 	return ac.signal;
 };

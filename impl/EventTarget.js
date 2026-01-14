@@ -36,7 +36,12 @@ EventTarget.prototype.addEventListener = function(type, listenerObject, options)
 			return;
 		}
 	}
-	this.listeners[type].push({ handleEvent, once, passive, signal, capture });
+	this.listeners[type].push({
+		handleEvent: handleEvent,
+		once: once, passive: passive,
+		signal: signal,
+		capture: capture
+	});
 };
 EventTarget.prototype.removeEventListener = function(type, listenerObject) {
 	if(!(type in this.listeners)) {

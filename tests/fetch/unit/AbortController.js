@@ -1,5 +1,5 @@
-QUnit.test('web#DOMException', function(assert) {
-	var e = new DOMException("test", "AbortError");
+QUnit.test('web#AbortController', function(assert) {
+	var e = new AbortController("test", "AbortError");
 	assert.equal(e.name, "AbortError");
 
 	assert.ok(e instanceof DOMException);

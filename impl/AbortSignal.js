@@ -19,7 +19,7 @@ AbortSignal.prototype.dispatchEvent = function(event) {
 			this.onabort.call(this, event);
 		}
 	}
-	super.dispatchEvent(event);
+	EventTarget.prototype.dispatchEvent.call(this, event);
 };
 AbortSignal.prototype.throwIfAborted = function() {
 	var aborted = this.aborted;

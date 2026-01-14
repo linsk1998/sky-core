@@ -1,4 +1,4 @@
-import { AbortController } from "./AbortController";
+import { AbortController } from "../AbortController";
 
 export function any(iterable) {
 	var arr = Array.from(iterable);
