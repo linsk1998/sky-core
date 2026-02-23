@@ -19,6 +19,7 @@ import "sky-core/polyfill/sessionStorage";
 import "sky-core/polyfill/JSON";
 import "sky-core/polyfill/console";
 import "sky-core/polyfill/DOMException";
+import "sky-core/polyfill/Event";
 
 /* ES5 */
 import "sky-core/polyfill/Array/prototype/indexOf";

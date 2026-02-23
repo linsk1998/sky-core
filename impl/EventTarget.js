@@ -6,7 +6,7 @@ EventTarget.prototype.addEventListener = function(type, listenerObject, options)
 	if(!(type in listeners)) {
 		this.listeners[type] = [];
 	}
-	var handleEvent = typeof listenerObject === "object" ? listenerObject.handleEvent : handleEvent;
+	var handleEvent = typeof listenerObject === "object" ? listenerObject.handleEvent : listenerObject;
 	var once, passive, signal, capture = false;
 	if(options) {
 		if(typeof options === "object") {

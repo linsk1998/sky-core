@@ -85,7 +85,6 @@ module.exports = [{
 					version: babelRuntimeVersion
 				}],
 				"@babel/plugin-transform-block-scoping",
-				["@babel/plugin-transform-for-of", { loose: true }],
 				// ES5
 				// "@babel/plugin-transform-property-mutators",
 				// ES3
