@@ -47,12 +47,13 @@ EventTarget.prototype.removeEventListener = function(type, listenerObject) {
 	if(!(type in this.listeners)) {
 		return;
 	}
-	var handleEvent = typeof listenerObject === "object" ? listenerObject.handleEvent : handleEvent;
+	var listeners = this.listeners[type];
+	var handleEvent = typeof listenerObject === "object" ? listenerObject.handleEvent : listenerObject;
 	var i = listeners.length;
 	while(i--) {
 		var listener = listeners[i];
 		if(listener.handleEvent === handleEvent) {
-			listener.splice(i, 1);
+			listeners.splice(i, 1);
 		}
 	}
 };

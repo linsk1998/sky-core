@@ -1,5 +1,3 @@
-import { AbortController } from "../AbortController";
-
 export function any(iterable) {
 	var arr = Array.from(iterable);
 	var len = arr.length;
@@ -18,9 +16,12 @@ export function any(iterable) {
 		var signal = arr[i];
 		if(signal.aborted) {
 			controller.abort(signal.reason);
+			while(i--) {
+				signal = arr[i];
+				signal.removeEventListener('abort', abort);
+			}
 			break;
 		} else signal.addEventListener('abort', abort);
-
-		return controller.signal;
 	}
+	return controller.signal;
 }
