@@ -33,7 +33,7 @@ export function Request(input, options) {
 			input.bodyUsed = true;
 		}
 	} else {
-		this.url = String(input);
+		this.url = new URL(input, document.baseURI).href;
 	}
 
 	this.credentials = options.credentials || this.credentials || 'same-origin';
@@ -41,9 +41,11 @@ export function Request(input, options) {
 		this.headers = new Headers(options.headers);
 	}
 	this.method = normalizeMethod(options.method || this.method || 'GET');
-	this.mode = options.mode || this.mode || null;
+	this.mode = options.mode || this.mode || "cors";
 	this.signal = options.signal || this.signal || new AbortController().signal;
-	this.referrer = null;
+	this.referrer = "about:client";
+	this.cache = options.cache || "default";
+
 
 	if((this.method === 'GET' || this.method === 'HEAD') && body) {
 		throw new TypeError('Body not allowed for GET or HEAD requests');

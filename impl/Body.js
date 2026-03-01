@@ -1,5 +1,7 @@
 
 import { toString } from "../native/Object/prototype/toString";
+import { bytes } from "./Body/prototype/bytes";
+import { formData } from "./Body/prototype/formData";
 
 function consumed(body) {
 	if(body._noBody) return;
@@ -49,14 +51,6 @@ function bufferClone(buf) {
 		view.set(new Uint8Array(buf));
 		return view.buffer;
 	}
-}
-function decode(body) {
-	var form = new FormData();
-	var params = new URLSearchParams(body.trim());
-	params.forEach(function(value, key) {
-		form.append(value, key);
-	});
-	return form;
 }
 
 // Body 不是一个class，而是mixin
@@ -161,12 +155,11 @@ function Body() {
 			return Promise.resolve(this._bodyText);
 		}
 	};
-	this.formData = function() {
-		return this.text().then(decode);
-	};
 	this.json = function() {
 		return this.text().then(JSON.parse);
 	};
+	this.formData = formData;
+	this.bytes = bytes;
 }
 
 export { Body };

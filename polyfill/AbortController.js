@@ -1,7 +1,7 @@
+import { AbortController as native_AbortController } from "../native/AbortController";
 import { AbortController } from "../impl/AbortController";
 import { fixAbort } from "../impl/AbortController/prototype/abort";
 
-var native_AbortController = window.AbortController;
 if(!native_AbortController) {
 	window.AbortController = AbortController;
 } else {

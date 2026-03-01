@@ -1,3 +1,5 @@
+import { Body } from "./Body";
+
 export function Response(bodyInit, options) {
 	if(!(this instanceof Response)) {
 		throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
@@ -21,6 +23,9 @@ export function Response(bodyInit, options) {
 Body.call(Response.prototype);
 
 Response.prototype.clone = function() {
+	if(this.bodyUsed) {
+		throw new TypeError("Clone response body Used");
+	}
 	return new Response(this._bodyInit, {
 		status: this.status,
 		statusText: this.statusText,

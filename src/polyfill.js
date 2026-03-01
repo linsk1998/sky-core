@@ -179,6 +179,8 @@ import "sky-core/polyfill/Object/getOwnPropertyDescriptors";
 /* Chrome57+ Firefox40+ Safari9+ Edge15+ */
 import "sky-core/polyfill/String/prototype/padStart";
 import "sky-core/polyfill/String/prototype/padEnd";
+/* Edge14+ Chrome66+ Firefox66+ Safari9 */
+import "sky-core/polyfill/Array/prototype/values";
 
 /* ==================== module ==================== */
 /* ES2018 */
@@ -191,6 +193,13 @@ import "sky-core/polyfill/Promise/prototype/finally";
 /* Chrome66+ Firefox57+ Safari12.1+ Edge16+ */
 import "sky-core/polyfill/AbortController";
 import "sky-core/polyfill/AbortSignal";
+
+/* Web fetch */
+/* Chrome42 Firefox39+ Safari10.1+ Edge14+ */
+import "sky-core/polyfill/Headers";
+import "sky-core/polyfill/Response";
+import "sky-core/polyfill/Request";
+import "sky-core/polyfill/fetch";
 
 /* ES2019 */
 /* Chrome66+ Firefox61+ Safari12+ */

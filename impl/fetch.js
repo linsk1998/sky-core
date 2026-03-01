@@ -135,3 +135,5 @@ export function fetch(input, init) {
 		xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit);
 	});
 }
+
+fetch.xhr = true;

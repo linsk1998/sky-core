@@ -1,5 +1,5 @@
 function Headers(headers) {
-	this.map = {};
+	this.map = Object.create(null);
 	if(headers instanceof Headers) {
 		headers.forEach(function(value, name) {
 			this.append(name, value);
@@ -22,7 +22,7 @@ function Headers(headers) {
 Headers.prototype.append = function(name, value) {
 	name = normalizeName(name);
 	value = normalizeValue(value);
-	var oldValue = this.map[name];
+	var oldValue = Object.hasOwn(this.map, name) ? this.map[name] : null;
 	this.map[name] = oldValue ? oldValue + ', ' + value : value;
 };
 Headers.prototype['delete'] = function(name) {
@@ -30,10 +30,13 @@ Headers.prototype['delete'] = function(name) {
 };
 Headers.prototype.get = function(name) {
 	name = normalizeName(name);
-	return this.has(name) ? this.map[name] : null;
+	return Object.hasOwn(this.map, name) ? this.map[name] : null;
 };
 Headers.prototype.set = function(name, value) {
 	this.map[normalizeName(name)] = normalizeValue(value);
+};
+Headers.prototype.has = function(name) {
+	return Object.hasOwn(this.map, normalizeName(name));
 };
 Headers.prototype.forEach = function(callback, thisArg) {
 	var keys = Object.keys(this.map);
