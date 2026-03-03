@@ -77,7 +77,7 @@ if(fetch.xhr) {
 		fetch('/error').then(function() {
 			QUnit.ok(false, 'should reject');
 			QUnit.start();
-		}).catch(function(err) {
+		})['catch'](function(err) {
 			QUnit.ok(err instanceof TypeError, 'rejects with TypeError');
 			QUnit.start();
 		});
@@ -94,7 +94,7 @@ if(fetch.xhr) {
 			.then(function() {
 				QUnit.ok(false, 'should reject');
 				QUnit.start();
-			}).catch(function(err) {
+			})['catch'](function(err) {
 				QUnit.ok(err, 'rejects with Error');
 				QUnit.start();
 			});
@@ -109,7 +109,7 @@ if(fetch.xhr) {
 		fetch('/abort', { signal: controller.signal }).then(function() {
 			QUnit.ok(false, 'should reject');
 			QUnit.start();
-		}).catch(function(err) {
+		})['catch'](function(err) {
 			QUnit.equal(err.name, 'AbortError', 'rejects with AbortError');
 			QUnit.start();
 		});
@@ -125,7 +125,7 @@ if(fetch.xhr) {
 		fetch('/manual-abort').then(function() {
 			QUnit.ok(false, 'should reject');
 			QUnit.start();
-		}).catch(function(err) {
+		})['catch'](function(err) {
 			QUnit.equal(err.name, 'AbortError', 'rejects with AbortError');
 			QUnit.start();
 		});

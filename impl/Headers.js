@@ -1,5 +1,5 @@
 function Headers(headers) {
-	this.map = Object.create(null);
+	this.map = {};
 	if(headers instanceof Headers) {
 		headers.forEach(function(value, name) {
 			this.append(name, value);
@@ -39,10 +39,10 @@ Headers.prototype.has = function(name) {
 	return Object.hasOwn(this.map, normalizeName(name));
 };
 Headers.prototype.forEach = function(callback, thisArg) {
-	var keys = Object.keys(this.map);
-	for(var i = 0, len = keys.length; i < len; i++) {
-		var key = keys[i];
-		callback.call(thisArg, this.map[key], key, this);
+	for(var key in this.map) {
+		if(Object.hasOwn(this.map, key)) {
+			callback.call(thisArg, this.map[key], key, this);
+		}
 	}
 };
 Headers.prototype.keys = function() {

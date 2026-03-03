@@ -17,7 +17,7 @@ QUnit.test('Body - json()', function() {
 	res.json().then(function(data) {
 		QUnit.deepEqual(data, obj, 'json() parses');
 		QUnit.start();
-	}).catch(function(e) {
+	})['catch'](function(e) {
 		QUnit.ok(false, 'json failed: ' + e);
 		QUnit.start();
 	});
@@ -29,7 +29,7 @@ QUnit.test('Body - json() invalid', function() {
 	res.json().then(function() {
 		QUnit.ok(false, 'should reject');
 		QUnit.start();
-	}).catch(function(e) {
+	})['catch'](function(e) {
 		QUnit.ok(e instanceof SyntaxError, 'rejects with SyntaxError');
 		QUnit.start();
 	});
@@ -84,7 +84,7 @@ QUnit.test('Body - blob()', function() {
 // 		QUnit.ok(fd instanceof FormData, 'returns FormData');
 // 		QUnit.equal(fd.get('key'), 'value', 'content matches');
 // 		QUnit.start();
-// 	}).catch(function() {
+// 	})['catch'](function() {
 // 		// 如果未实现，应 reject 并说明
 // 		QUnit.ok(true, 'formData() not implemented, reject expected');
 // 		QUnit.start();
@@ -98,7 +98,7 @@ QUnit.test('Body - consume twice throws', function() {
 		res.text().then(function() {
 			QUnit.ok(false, 'second text should reject');
 			QUnit.start();
-		}).catch(function(e) {
+		})['catch'](function(e) {
 			QUnit.ok(e instanceof TypeError, 'second consume rejects');
 			QUnit.start();
 		});

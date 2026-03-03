@@ -31,10 +31,10 @@ QUnit.test('Headers methods - append, set, delete, has', function() {
 	h.append('X-Foo', 'bar');
 	QUnit.ok(h.has('X-Foo'), 'has returns true');
 
-	h.delete('X-Foo');
+	h['delete']('X-Foo');
 	QUnit.ok(!h.has('X-Foo'), 'delete removes');
 
-	h.delete('non-existent'); // should not throw
+	h['delete']('non-existent'); // should not throw
 	QUnit.ok(true, 'delete on missing header does not throw');
 });
 

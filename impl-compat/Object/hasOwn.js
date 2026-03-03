@@ -12,7 +12,7 @@ export function hasOwn(obj, key) {
 		return false;
 	}
 	if(obj instanceof NullProtoObject) {
-		return false;
+		return hasOwnProperty.call(obj, key);
 	}
 	var value = obj[key];
 	if(!(obj instanceof Object)) {
