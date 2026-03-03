@@ -1,3 +1,4 @@
+import { definePrototype } from "sky-core/utils/definePrototype";
 import { Date } from "../../../native/Date";
 import { toLocaleFormat } from "../../../impl/Date/prototype/toLocaleFormat";
 

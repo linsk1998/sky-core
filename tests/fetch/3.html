@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Test Suite</title>
+	<link rel="stylesheet" href="../qunit/qunit.css">
+</head>
+
+<body>
+	<!--[if gte IE 9]><!-->
+	<script nomodule>document.addEventListener('beforeload',e=>{e.target.tagName=='SCRIPT'&&e.target.hasAttribute('nomodule')&&e.preventDefault()},!0)</script>
+	<!--><![endif]-->
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	<script src="../qunit/qunit.js"></script>
+	<!--[if lt IE 9]><script src="./compat.js"></script><![endif]-->
+	<!--[if gte IE 9]><!-->
+	<script src="./modern.js" nomodule></script>
+	<script src="./es2015.js" type="module"></script>
+	<!--><![endif]-->
+</body>
+
+</html>

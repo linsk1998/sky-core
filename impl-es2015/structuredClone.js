@@ -65,8 +65,8 @@ export function structuredClone(obj) {
 				});
 			case '[object FileList]':
 				const transfer = new DataTransfer();
-				for(let it of obj) {
-					transfer.items.add(it);
+				for(let i = 0, len = obj.length; i < len; i++) {
+					transfer.items.add(obj[i]);
 				}
 				return transfer.files;
 			case '[object BigInt]':
