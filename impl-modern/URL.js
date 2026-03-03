@@ -23,8 +23,8 @@ export function URL(relativePath) {
 	} else if(absolutePath) {
 		var absInfo = absolutePath.indexOf ? new URL(absolutePath) : absolutePath;
 		this.protocol = absInfo.protocol;
-		this.username = absInfo.username;
-		this.password = absInfo.password;
+		this.username = absInfo.username || '';
+		this.password = absInfo.password || '';
 		this.pathname = absInfo.pathname;
 		this.hostname = absInfo.hostname;
 		this.port = absInfo.port;
