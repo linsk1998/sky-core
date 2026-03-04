@@ -1993,7 +1993,7 @@
 	    return false;
 	  }
 	  if (obj instanceof NullProtoObject) {
-	    return false;
+	    return hasOwnProperty.call(obj, key);
 	  }
 	  var value = obj[key];
 	  if (!(obj instanceof Object)) {
@@ -3741,7 +3741,7 @@
 	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
 	// });
 
-	definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
+	definePrototype(Array, 'values', Array.prototype[iterator$1] || values$2);
 
 	function entries$2() {
 	  var array = this;
@@ -8037,7 +8037,7 @@
 	  // 	return Promise.reject(new TypeError('You must pass an array to allSettled.'));
 	  // }
 	  return new Promise(function (resolve, reject) {
-	    var array = Array.from(promises);
+	    var array = slice$1.call(promises);
 	    if (array.length == 0) return resolve(array);
 	    var c = 0;
 	    array.forEach(function (one, index, array) {

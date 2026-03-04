@@ -14,7 +14,7 @@ module.exports = [{
 	input: 'tests/corejs/index.js',
 	output: {
 		strict: false,
-		file: 'docs/tests/corejs/compat.js',
+		file: 'tests/corejs/dest/compat.js',
 		format: 'iife'
 	},
 	treeshake: false,
@@ -100,7 +100,7 @@ module.exports = [{
 	input: 'tests/corejs/index.js',
 	output: {
 		strict: false,
-		file: 'docs/tests/corejs/modern.js',
+		file: 'tests/corejs/dest/modern.js',
 		format: 'iife'
 	},
 	treeshake: false,
@@ -180,7 +180,7 @@ module.exports = [{
 	input: 'tests/corejs/index.js',
 	output: {
 		strict: false,
-		file: 'docs/tests/corejs/es2015.js',
+		file: 'tests/corejs/dest/es2015.js',
 		format: 'iife'
 	},
 	treeshake: false,

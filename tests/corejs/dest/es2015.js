@@ -5988,7 +5988,7 @@ return class extends Parent { /* empty */ };
 		// 	return Promise.reject(new TypeError('You must pass an array to allSettled.'));
 		// }
 		return new Promise(function(resolve, reject) {
-			var array = Array.from(promises);
+			var array = slice.call(promises);
 			if(array.length == 0) return resolve(array);
 			var c = 0;
 			array.forEach(function(one, index, array) {
@@ -6421,7 +6421,7 @@ return class extends Parent { /* empty */ };
 			return false;
 		}
 		if(obj instanceof NullProtoObject) {
-			return false;
+			return hasOwnProperty.call(obj, key);
 		}
 		var value = obj[key];
 		if(!(obj instanceof Object)) {
@@ -6646,8 +6646,8 @@ return class extends Parent { /* empty */ };
 					});
 				case '[object FileList]':
 					const transfer = new DataTransfer();
-					for(let it of obj) {
-						transfer.items.add(it);
+					for(let i = 0, len = obj.length; i < len; i++) {
+						transfer.items.add(obj[i]);
 					}
 					return transfer.files;
 				case '[object BigInt]':

@@ -3677,11 +3677,7 @@
 	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
 	// });
 
-	if (Symbol$9 && Symbol$9.iterator) {
-	  definePrototype(Array, 'values', Array.prototype[Symbol$9.iterator]);
-	} else {
-	  definePrototype(Array, 'values', Array.prototype['@@iterator'] || values$2);
-	}
+	definePrototype(Array, 'values', Array.prototype[iterator$1] || values$2);
 
 	function entries$2() {
 	  var array = this;
@@ -8439,7 +8435,7 @@
 	  // 	return Promise.reject(new TypeError('You must pass an array to allSettled.'));
 	  // }
 	  return new Promise(function (resolve, reject) {
-	    var array = Array.from(promises);
+	    var array = slice$1.call(promises);
 	    if (array.length == 0) return resolve(array);
 	    var c = 0;
 	    array.forEach(function (one, index, array) {
