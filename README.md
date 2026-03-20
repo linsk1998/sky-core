@@ -218,3 +218,4 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 * [core-js](https://www.npmjs.com/package/core-js)
 * [whatwg-fetch](https://www.npmjs.com/package/whatwg-fetch)
 * [Blob.js](https://github.com/eligrey/Blob.js)
+* [cookie-store](https://github.com/markcellus/cookie-store)
