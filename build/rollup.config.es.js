@@ -12,7 +12,7 @@ export default {
 		interop: false,
 		format: 'iife'
 	},
-	context: "this",
+	context: "window",
 	plugins: [
 		sky(),
 		importPlugin({

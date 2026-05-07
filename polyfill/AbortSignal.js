@@ -4,13 +4,13 @@ import { any } from "../impl/AbortSignal/any";
 import { timeout } from "../impl/AbortSignal/timeout";
 import { throwIfAborted } from "../impl/AbortSignal/prototype/throwIfAborted";
 
-var native_AbortSignal = window.AbortSignal;
+var native_AbortSignal = this.AbortSignal;
 if(!native_AbortSignal) {
 	AbortSignal.prototype.throwIfAborted = throwIfAborted;
 	AbortSignal.abort = abort;
 	AbortSignal.any = any;
 	AbortSignal.timeout = timeout;
-	window.AbortSignal = AbortSignal;
+	this.AbortSignal = AbortSignal;
 } else {
 	if(!native_AbortSignal.prototype.throwIfAborted) {
 		native_AbortSignal.prototype.throwIfAborted = throwIfAborted;

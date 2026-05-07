@@ -19,7 +19,7 @@ module.exports = [{
 		interop: false,
 		format: 'iife'
 	},
-	context: "this",
+	context: "window",
 	plugins: [
 		sky('compat'),
 		importPlugin({

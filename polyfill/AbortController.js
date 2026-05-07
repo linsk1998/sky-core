@@ -3,7 +3,7 @@ import { AbortController } from "../impl/AbortController";
 import { fixAbort } from "../impl/AbortController/prototype/abort";
 
 if(!native_AbortController) {
-	window.AbortController = AbortController;
+	this.AbortController = AbortController;
 } else {
 	if(!('reason' in AbortSignal.prototype)) {
 		fixAbort(native_AbortController.prototype);

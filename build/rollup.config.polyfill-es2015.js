@@ -17,7 +17,7 @@ module.exports = [{
 		interop: false,
 		format: 'iife'
 	},
-	context: "this",
+	context: "window",
 	plugins: [
 		sky('es2015'),
 		importPlugin({

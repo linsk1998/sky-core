@@ -10,7 +10,7 @@ export default {
 		file: './dist/es-modern.js',
 		format: 'iife'
 	},
-	context: "this",
+	context: "window",
 	plugins: [
 		sky('modern'),
 		importPlugin({

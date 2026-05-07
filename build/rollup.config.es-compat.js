@@ -11,7 +11,7 @@ export default {
 		file: './dist/es-compat.js',
 		format: 'iife'
 	},
-	context: "this",
+	context: "window",
 	plugins: [
 		sky('compat'),
 		importPlugin({
