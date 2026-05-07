@@ -151,7 +151,7 @@ Promise.all = function(promises) {
 	if(!Array.isArray(promises)) {
 		throw new TypeError('You must pass an array to all.');
 	}
-	if(promises.length == 0) return Promise.resolve();
+	if(promises.length == 0) return Promise.resolve([]);
 	return new Promise(function(resolve, reject) {
 		var result = new Array(promises.length);
 		var c = 0;
