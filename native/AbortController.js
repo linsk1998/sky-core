@@ -1,1 +1,1 @@
-export var AbortController = window.AbortController;
+export var AbortController = this.AbortController;

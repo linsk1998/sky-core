@@ -2,7 +2,7 @@
 	"name": "sky-core",
 	"description": "Javascript toolkit core library",
 	"deprecated": false,
-	"version": "0.23.0",
+	"version": "0.23.1",
 	"keywords": [
 		"polyfill",
 		"core-js",
