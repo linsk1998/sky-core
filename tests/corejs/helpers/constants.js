@@ -1,3 +1,5 @@
+import getPrototypeOf from "sky-core/pure/Object/getPrototypeOf";
+
 export var DESCRIPTORS = !!(() => {
 	return !!Object.defineProperties || !!Object.prototype.__defineSetter__;
 })();
@@ -49,7 +51,7 @@ export var CORRECT_PROTOTYPE_GETTER = !function() {
 	F.prototype.constructor = null;
 
 	try {
-		return Object.getPrototypeOf(new F()) !== F.prototype;
+		return getPrototypeOf(new F()) !== F.prototype;
 	} catch {
 		return true;
 	}

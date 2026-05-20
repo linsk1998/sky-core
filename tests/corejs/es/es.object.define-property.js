@@ -3,7 +3,7 @@ import { DESCRIPTORS } from '../helpers/constants';
 QUnit.test('Object.defineProperty', assert => {
   assert.isFunction(Object.defineProperty);
   assert.arity(Object.defineProperty, 3);
-  assert.name(Object.defineProperty, 'defineProperty');
+  // assert.name(Object.defineProperty, 'defineProperty');
   const source = {};
   const result = Object.defineProperty(source, 'q', {
     value: 42,

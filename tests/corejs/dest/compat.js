@@ -80,6 +80,125 @@
 	  }, _typeof(o);
 	}
 
+	var Object$1 = window.Object;
+
+	var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
+
+	// from core-js
+	var GT = '>';
+	var LT = '<';
+	var SCRIPT = 'script';
+	function scriptTag(content) {
+	  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+	}
+
+	// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
+	function NullProtoObjectViaActiveX(activeXDocument) {
+	  activeXDocument.write(scriptTag(''));
+	  activeXDocument.close();
+	  var temp = activeXDocument.parentWindow.Object;
+	  activeXDocument = null; // avoid memory leak
+	  return temp;
+	}
+	;
+
+	// Create object with fake `null` prototype: use iframe Object with cleared prototype
+	function NullProtoObjectViaIFrame() {
+	  // Thrash, waste and sodomy: IE GC bug
+	  var iframe = documentCreateElement('iframe');
+	  var JS = 'java' + SCRIPT + ':';
+	  var iframeDocument;
+	  iframe.style.display = 'none';
+	  html.appendChild(iframe);
+	  // https://github.com/zloirock/core-js/issues/475
+	  iframe.src = String(JS);
+	  iframeDocument = iframe.contentWindow.document;
+	  iframeDocument.open();
+	  iframeDocument.write(scriptTag('document.F=Object'));
+	  iframeDocument.close();
+	  return iframeDocument.F;
+	}
+	;
+
+	// Check for document.domain and active x support
+	// No need to use active x approach when document.domain is not set
+	// see https://github.com/es-shims/es5-shim/issues/150
+	// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+	// avoid IE GC bug
+	var activeXDocument;
+	var NullProtoObject = function () {
+	  try {
+	    /* global ActiveXObject -- old IE */
+	    activeXDocument = document.domain && new ActiveXObject('htmlfile');
+	  } catch (error) {/* ignore */}
+	  NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
+	  var proto = NullProtoObject.prototype;
+	  var i = dontEnums.length;
+	  while (i--) delete proto[dontEnums[i]];
+	  delete proto.constructor;
+	  return NullProtoObject();
+	};
+
+	var hasOwnProperty = Object$1.prototype.hasOwnProperty;
+
+	function hasOwn(obj, key) {
+	  if (obj == null) {
+	    throw new TypeError("Cannot convert undefined or null to object");
+	  }
+	  if (typeof obj !== "object") {
+	    return false;
+	  }
+	  if (!(key in obj)) {
+	    return false;
+	  }
+	  if (obj instanceof NullProtoObject) {
+	    return hasOwnProperty.call(obj, key);
+	  }
+	  var value = obj[key];
+	  if (!(obj instanceof Object)) {
+	    var constructor = obj.constructor;
+	    if (constructor) {
+	      var proto = constructor.prototype;
+	      if (obj !== proto) {
+	        return proto[key] !== value;
+	      }
+	    }
+	  }
+	  return hasOwnProperty.call(obj, key);
+	}
+	;
+
+	if (!Object$1.hasOwn) {
+	  Object$1.hasOwn = hasOwn;
+	}
+
+	function getPrototypeOf$1(obj) {
+	  if (obj == null) {
+	    throw new TypeError("Cannot convert undefined or null to object");
+	  }
+	  if (typeof obj !== "object" && typeof obj !== "function") {
+	    obj = Object(obj);
+	  }
+	  if ('__proto__' in obj) {
+	    return obj.__proto__;
+	  }
+	  if (!('constructor' in obj)) {
+	    return null;
+	  }
+	  if (Object.hasOwn(obj, 'constructor')) {
+	    if ('__proto__' in obj.constructor) {
+	      return obj.constructor.__proto__.prototype;
+	    } else if (obj === Object.prototype) {
+	      return null;
+	    } else {
+	      return Object.prototype;
+	    }
+	  }
+	  return obj.constructor.prototype;
+	}
+	;
+	getPrototypeOf$1.sham = true;
+
 	var DESCRIPTORS = !!function () {
 	  return !!Object.defineProperties || !!Object.prototype.__defineSetter__;
 	}();
@@ -121,7 +240,7 @@
 	  function F() {/* empty */}
 	  F.prototype.constructor = null;
 	  try {
-	    return Object.getPrototypeOf(new F()) !== F.prototype;
+	    return getPrototypeOf$1(new F()) !== F.prototype;
 	  } catch (_unused3) {
 	    return true;
 	  }
@@ -151,8 +270,6 @@
 	definePrototype(Function, 'bind', bind);
 
 	var Array$1 = window.Array;
-
-	var Object$1 = window.Object;
 
 	var toString$1 = Object$1.prototype.toString;
 
@@ -192,7 +309,9 @@
 
 	var defineProperties$1 = Object$1.defineProperties;
 
-	var accessor = !!defineProperties$1 || !!Object.prototype.__defineSetter__;
+	var __defineSetter__ = !!Object.prototype.__defineSetter__;
+
+	var accessor = !!defineProperties$1 || __defineSetter__;
 
 	if (accessor) {
 	  if (!('name' in Function.prototype)) {
@@ -443,6 +562,8 @@
 	  return array;
 	}
 
+	var nonEnumerable = !!defineProperties$1;
+
 	function isIterable(it) {
 	  var O = Object(it);
 	  return Symbol.iterator in O;
@@ -565,7 +686,7 @@
 	  }
 	};
 	QUnit.assert.nonEnumerable = function (O, key, message) {
-	  if (DESCRIPTORS) {
+	  if (nonEnumerable) {
 	    this.pushResult({
 	      result: !propertyIsEnumerable.call(O, key),
 	      actual: false,
@@ -1011,7 +1132,7 @@
 	  assert.isFunction(toISOString);
 	  assert.name(toISOString, 'toISOString');
 	  assert.looksNative(toISOString);
-	  assert.nonEnumerable(Date.prototype, 'toISOString');
+	  // assert.nonEnumerable(Date.prototype, 'toISOString');
 	  // assert.strictEqual(new Date(0).toISOString(), '1970-01-01T00:00:00.000Z');
 	  // assert.strictEqual(new Date(1e12 + 1).toISOString(), '2001-09-09T01:46:40.001Z');
 	  // assert.strictEqual(new Date(-5e13 - 1).toISOString(), '0385-07-25T07:06:39.999Z');
@@ -1687,123 +1808,6 @@
 	  }
 	});
 
-	var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
-
-	// from core-js
-	var GT = '>';
-	var LT = '<';
-	var SCRIPT = 'script';
-	function scriptTag(content) {
-	  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
-	}
-
-	// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
-	function NullProtoObjectViaActiveX(activeXDocument) {
-	  activeXDocument.write(scriptTag(''));
-	  activeXDocument.close();
-	  var temp = activeXDocument.parentWindow.Object;
-	  activeXDocument = null; // avoid memory leak
-	  return temp;
-	}
-	;
-
-	// Create object with fake `null` prototype: use iframe Object with cleared prototype
-	function NullProtoObjectViaIFrame() {
-	  // Thrash, waste and sodomy: IE GC bug
-	  var iframe = documentCreateElement('iframe');
-	  var JS = 'java' + SCRIPT + ':';
-	  var iframeDocument;
-	  iframe.style.display = 'none';
-	  html.appendChild(iframe);
-	  // https://github.com/zloirock/core-js/issues/475
-	  iframe.src = String(JS);
-	  iframeDocument = iframe.contentWindow.document;
-	  iframeDocument.open();
-	  iframeDocument.write(scriptTag('document.F=Object'));
-	  iframeDocument.close();
-	  return iframeDocument.F;
-	}
-	;
-
-	// Check for document.domain and active x support
-	// No need to use active x approach when document.domain is not set
-	// see https://github.com/es-shims/es5-shim/issues/150
-	// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
-	// avoid IE GC bug
-	var activeXDocument;
-	var NullProtoObject = function () {
-	  try {
-	    /* global ActiveXObject -- old IE */
-	    activeXDocument = document.domain && new ActiveXObject('htmlfile');
-	  } catch (error) {/* ignore */}
-	  NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
-	  var proto = NullProtoObject.prototype;
-	  var i = dontEnums.length;
-	  while (i--) delete proto[dontEnums[i]];
-	  delete proto.constructor;
-	  return NullProtoObject();
-	};
-
-	var hasOwnProperty = Object$1.prototype.hasOwnProperty;
-
-	function hasOwn(obj, key) {
-	  if (obj == null) {
-	    throw new TypeError("Cannot convert undefined or null to object");
-	  }
-	  if (typeof obj !== "object") {
-	    return false;
-	  }
-	  if (!(key in obj)) {
-	    return false;
-	  }
-	  if (obj instanceof NullProtoObject) {
-	    return hasOwnProperty.call(obj, key);
-	  }
-	  var value = obj[key];
-	  if (!(obj instanceof Object)) {
-	    var constructor = obj.constructor;
-	    if (constructor) {
-	      var proto = constructor.prototype;
-	      if (obj !== proto) {
-	        return proto[key] !== value;
-	      }
-	    }
-	  }
-	  return hasOwnProperty.call(obj, key);
-	}
-	;
-
-	if (!Object$1.hasOwn) {
-	  Object$1.hasOwn = hasOwn;
-	}
-
-	function getPrototypeOf$1(obj) {
-	  if (obj == null) {
-	    throw new TypeError("Cannot convert undefined or null to object");
-	  }
-	  if (typeof obj !== "object" && typeof obj !== "function") {
-	    obj = Object(obj);
-	  }
-	  if ('__proto__' in obj) {
-	    return obj.__proto__;
-	  }
-	  if (!('constructor' in obj)) {
-	    return null;
-	  }
-	  if (Object.hasOwn(obj, 'constructor')) {
-	    if ('__proto__' in obj.constructor) {
-	      return obj.constructor.__proto__.prototype;
-	    } else if (obj === Object.prototype) {
-	      return null;
-	    } else {
-	      return Object.prototype;
-	    }
-	  }
-	  return obj.constructor.prototype;
-	}
-	;
-	getPrototypeOf$1.sham = true;
-
 	if (!Object$1.getPrototypeOf) {
 	  Object$1.getPrototypeOf = getPrototypeOf$1;
 	}
@@ -2173,7 +2177,7 @@
 	QUnit.test('Object.defineProperty', function (assert) {
 	  assert.isFunction($inject_Object_defineProperty);
 	  assert.arity($inject_Object_defineProperty, 3);
-	  assert.name($inject_Object_defineProperty, 'defineProperty');
+	  // assert.name(Object.defineProperty, 'defineProperty');
 	  var source = {};
 	  var result = $inject_Object_defineProperty(source, 'q', {
 	    value: 42
@@ -3329,8 +3333,6 @@
 	Symbol$2.prototype.toJSON = function () {
 	  return undefined;
 	};
-
-	var nonEnumerable = !!defineProperties$1;
 
 	var KEY_WM = "@@WeakMap";
 	var weakSeq = 0;

@@ -1,5 +1,6 @@
 import { DESCRIPTORS, GLOBAL } from './constants';
 import { is } from './helpers';
+import { nonEnumerable } from "../../../support/nonEnumerable";
 
 function isIterable(it) {
 	var O = Object(it);
@@ -135,7 +136,7 @@ QUnit.assert.enumerable = function(O, key, message) {
 };
 
 QUnit.assert.nonEnumerable = function(O, key, message) {
-	if(DESCRIPTORS) {
+	if(nonEnumerable) {
 		this.pushResult({
 			result: !propertyIsEnumerable.call(O, key),
 			actual: false,

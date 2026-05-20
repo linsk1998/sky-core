@@ -1,5 +1,7 @@
 import { nonEnumerable } from "../support/nonEnumerable";
 import { defineProperty } from "../native/Object/defineProperty";
+import { hasV8DefineBug } from "../support/hasV8DefineBug";
+import { noop } from "../utils/noop";
 
 var symbol_sqe = 0;
 export var allSymbols = {};
@@ -18,6 +20,14 @@ export function Symbol(desc) {
 		defineProperty(Object.prototype, key, {
 			enumerable: false, configurable: true,
 			set: function(value) {
+				if(hasV8DefineBug) {
+					defineProperty(this, key, {
+						get: noop,
+						set: noop,
+						enumerable: false,
+						configurable: true
+					});
+				}
 				defineProperty(this, key, {
 					enumerable: false, configurable: true, writable: true, value: value
 				});
