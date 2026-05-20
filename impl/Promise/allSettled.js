@@ -2,10 +2,10 @@ import { slice } from "../../native/Array/prototype/slice";
 import { isFunction } from "../../utils/isFunction";
 
 export function allSettled(promises) {
-	// if(!Array.isArray(promises)) {
-	// 	return Promise.reject(new TypeError('You must pass an array to allSettled.'));
-	// }
-	return new Promise(function(resolve, reject) {
+	if(!promises) {
+		return this.reject(new TypeError('You must pass promises to allSettled.'));
+	}
+	return new this(function(resolve, reject) {
 		var array = slice.call(promises);
 		if(array.length == 0) return resolve(array);
 		var c = 0;

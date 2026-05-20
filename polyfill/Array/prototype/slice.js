@@ -1,5 +1,5 @@
-var k = 'slice';
-var slice_native = Array.prototype[k];
+import { slice as slice_native } from "../../../native/Array/prototype/slice";
+
 function slice(start, end) {
 	if(this instanceof Object) {
 		if(end === undefined) {
@@ -22,6 +22,6 @@ function slice(start, end) {
 	}
 	return r;
 }
-if(![1][k](0, undefined).length) {
-	Array.prototype[k] = slice;
+if(![1].slice(0, undefined).length) {
+	Array.prototype.slice = slice;
 }

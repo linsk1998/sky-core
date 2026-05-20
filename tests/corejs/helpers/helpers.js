@@ -60,9 +60,9 @@ return class extends Parent { /* empty */ };
 	} catch { /* empty */ }
 })();
 
-export function timeLimitedPromise(time, promise) {
+export function timeLimitedPromise(time, fn) {
 	return Promise.race([
-		promise, new Promise((resolve, reject) => {
+		new Promise(fn), new Promise((resolve, reject) => {
 			setTimeout(reject, time);
 		}),
 	]);

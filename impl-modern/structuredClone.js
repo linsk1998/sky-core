@@ -106,6 +106,8 @@ export function structuredClone(obj) {
 			return new RegExp(obj);
 		}
 		throw new Error("Failed to execute 'structuredClone' on Function");
+	} else if(typeof obj === "symbol") {
+		throw new Error("Failed to execute 'structuredClone' on Symbol");
 	} else {
 		return obj;
 	}

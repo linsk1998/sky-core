@@ -170,11 +170,10 @@ module.exports = [
 
 		},
 		exclude: [
+			"tests/corejs/helpers/*",
 			"native/**/*",
 			"polyfill/**/*",
-			"polyfill-compat/**/*",
-			"polyfill-modern/**/*",
-			"tests/corejs/helpers/*"
+			"polyfill-*/**/*"
 		]
 	}),
 	//以下是prototype的修改
@@ -286,7 +285,10 @@ module.exports = [
 			".toWellFormed": "sky-core/polyfill/String/prototype/toWellFormed",
 		},
 		exclude: [
-			"tests/corejs/helpers/*"
+			"tests/corejs/helpers/*",
+			"native/**/*",
+			"polyfill/**/*",
+			"polyfill-*/**/*"
 		]
 	}),
 	inject({

@@ -1,24 +1,28 @@
 import { timeLimitedPromise } from '../helpers/helpers';
 
-QUnit.asyncTest('setTimeout / clearTimeout', assert => {
+QUnit.asyncTest('setTimeout / clearTimeout', function() {
   expect(1);
-  timeLimitedPromise(1000, new Promise(resolve => {
-    setTimeout((a, b) => { resolve(a + b); }, 30, 'a', 'b');
-  })).then(it => {
-    assert.strictEqual(it, 'ab', 'setTimeout works with additional args');
-    start();
-  }).catch(() => {
-    assert.ok(false, 'setTimeout works with additional args');
+  timeLimitedPromise(1000, function(resolve) {
+    setTimeout(function(a, b) {
+      resolve(a + b);
+    }, 10, 'a', 'b');
+  }).then(function(it) {
+    QUnit.strictEqual(it, 'ab', 'setTimeout works with additional args');
+  }).catch(function() {
+    QUnit.ok(false, 'setTimeout works with additional args');
+  }).then(function() {
     start();
   });
-
-  timeLimitedPromise(1000, new Promise(resolve => {
-    clearTimeout(setTimeout(resolve, 30));
-  })).then(() => {
-    assert.ok(false, 'clearImmediate works with wraped setTimeout');
-    start();
-  }).catch(() => {
-    assert.ok(true, 'clearImmediate works with wraped setTimeout');
+});
+QUnit.asyncTest('setTimeout / clearTimeout', function() {
+  expect(1);
+  timeLimitedPromise(50, function(resolve) {
+    clearTimeout(setTimeout(resolve, 10));
+  }).then(function() {
+    QUnit.ok(false, 'clearImmediate works with wraped setTimeout');
+  }).catch(function() {
+    QUnit.ok(true, 'clearImmediate works with wraped setTimeout');
+  }).then(function() {
     start();
   });
 });
@@ -26,7 +30,7 @@ QUnit.asyncTest('setTimeout / clearTimeout', assert => {
 QUnit.asyncTest('setInterval / clearInterval', assert => {
   expect(1);
 
-  timeLimitedPromise(1000, new Promise((resolve, reject) => {
+  timeLimitedPromise(1000, (resolve, reject) => {
     let i = 0;
     const interval = setInterval((a, b) => {
       if(a + b !== 'ab' || i > 2) reject({ a, b, i });
@@ -35,7 +39,7 @@ QUnit.asyncTest('setInterval / clearInterval', assert => {
         setTimeout(resolve, 30);
       }
     }, 5, 'a', 'b');
-  })).then(() => {
+  }).then(() => {
     assert.ok(true, 'setInterval & clearInterval works with additional args');
   }).catch(error => {
     if(!error) error = {};

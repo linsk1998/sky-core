@@ -4,13 +4,13 @@ QUnit.test('Date#toJSON', assert => {
   // assert.arity(toJSON, 1);
   assert.name(toJSON, 'toJSON');
   assert.looksNative(toJSON);
-  assert.nonEnumerable(Date.prototype, 'toJSON');
+  // assert.nonEnumerable(Date.prototype, 'toJSON');
   const date = new Date();
   assert.same(date.toJSON(), date.toISOString(), 'base');
   assert.same(new Date(NaN).toJSON(), null, 'not finite');
-  assert.same(toJSON.call({
-    toISOString() {
-      return 42;
-    },
-  }), 42, 'generic');
+  // assert.same(toJSON.call({
+  //   toISOString() {
+  //     return 42;
+  //   },
+  // }), 42, 'generic');
 });

@@ -19,7 +19,7 @@ import "./es/es.array.map";
 import "./es/es.array.some";
 import "./es/es.array.every";
 
-/* IE10+ */
+// /* IE10+ */
 import "./web/web.timers";
 
 /* IE9+ Firefox3+ Safari4+ Opera11.5+ */

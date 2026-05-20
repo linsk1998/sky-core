@@ -180,12 +180,17 @@ module.exports = [
 			// 'Event': "sky-core/polyfill/Event",
 		},
 		exclude: [
-			"tests/corejs/helpers/*"
+			"tests/corejs/helpers/*",
+			"native/**/*",
+			"polyfill/**/*",
+			"polyfill-*/**/*"
 		]
 	}),
 	//以下是prototype的修改
 	polyfill({
 		modules: {
+			// firefox3
+			".slice": "sky-core/polyfill/Array/prototype/slice",
 			// breaking change
 			'.toFixed': "sky-core/polyfill/Number/prototype/toFixed",
 			".toJSON": [
@@ -281,7 +286,10 @@ module.exports = [
 			".toWellFormed": "sky-core/polyfill/String/prototype/toWellFormed",
 		},
 		exclude: [
-			"tests/corejs/helpers/*"
+			"tests/corejs/helpers/*",
+			"native/**/*",
+			"polyfill/**/*",
+			"polyfill-*/**/*"
 		]
 	}),
 	inject({

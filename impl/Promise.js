@@ -80,22 +80,25 @@ function nextPromise(before, after, resolve, reject) {
 function returnArg1(arg1) {
 	return arg1;
 }
+function throwArg1(arg1) {
+	throw arg1;
+}
 Promise.prototype.then = function then(onResolved, onRejected) {
 	// var Class = speciesConstructor(this, Promise);
 	var me = this;
 	onResolved = onResolved || returnArg1;
-	onRejected = onRejected || returnArg1;
+	onRejected = onRejected || throwArg1;
 	return new Promise(function(resolve, reject) {
 		switch(me._state) {
 			case RESOLVED:
 				queueMicrotask(nextPromise(onResolved, resolve, resolve, reject), me._value);
 				break;
 			case REJECTED:
-				queueMicrotask(nextPromise(onRejected, reject, resolve, reject), me._value);
+				queueMicrotask(nextPromise(onRejected, resolve, resolve, reject), me._value);
 				break;
 			default:
 				me._resolveds.push(nextPromise(onResolved, resolve, resolve, reject));
-				me._rejecteds.push(nextPromise(onRejected, reject, resolve, reject));
+				me._rejecteds.push(nextPromise(onRejected, resolve, resolve, reject));
 		}
 	});
 };
@@ -116,35 +119,38 @@ function RejectPromise(value) {
 RejectPromise.prototype = Promise.prototype;
 
 Promise.resolve = function resolve(value) {
-	if(value && typeof value === "object" && value.constructor === this) {
-		return value;
-	}
 	if(!this) {
 		throw TypeError("Promise.resolve called on non-object");
 	}
 	if(!isFunction(this)) {
 		throw TypeError(this + " is not a constructor");
 	}
-	return new ResolvePromise(value);
-	// var Class = this;
-	// if(Class === Promise) {
-	// }
-	// var promiseCapability = new PromiseCapability(Class);
-	// var resolve = promiseCapability.resolve;
-	// resolve(value);
-	// return promiseCapability.promise;
+	if(value != null) {
+		if(value.constructor === this) {
+			return value;
+		}
+		if(isFunction(value.then)) {
+			return new this(function(resolve, reject) {
+				value.then(resolve, reject);
+			});
+		}
+	}
+	if(this === Promise) {
+		return new ResolvePromise(value);
+	}
+	return new this(function(resolve) { resolve(value); });
 };
 Promise.reject = function reject(value) {
-	if(value && typeof value === "object" && value.constructor === this) {
-		return value;
-	}
 	if(!this) {
 		throw TypeError("Promise.resolve called on non-object");
 	}
 	if(!isFunction(this)) {
 		throw TypeError(this + " is not a constructor");
 	}
-	return new RejectPromise(value);
+	if(this === Promise) {
+		return new RejectPromise(value);
+	}
+	return new this(function(resolve, reject) { reject(value); });
 };
 
 Promise.all = function(promises) {
@@ -178,6 +184,7 @@ Promise.race = function(promises) {
 	if(!Array.isArray(promises)) {
 		throw new TypeError('You must pass an array to all.');
 	}
+	if(promises.length == 0) return Promise.resolve([]);
 	return new Promise(function(resolve, reject) {
 		var i = promises.length;
 		while(i--) {
