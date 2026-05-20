@@ -93,9 +93,6 @@
 	}
 	;
 
-	function noop() {}
-	;
-
 	function ff_defineProperty(obj, prop, descriptor) {
 	  if (!isNotNullObject(obj)) {
 	    throw new TypeError("Object.defineProperty called on non-object");
@@ -112,10 +109,15 @@
 	}
 	;
 	function v8_defineProperty(obj, prop, descriptor) {
-	  if (descriptor.configurable && descriptor.writable) {
-	    defineProperty(obj, prop, {
-	      get: noop,
-	      set: noop,
+	  if (descriptor.configurable && descriptor.writable && 'value' in descriptor) {
+	    var value = descriptor.value;
+	    return defineProperty(obj, prop, {
+	      get: function () {
+	        return value;
+	      },
+	      set: function (v) {
+	        value = v;
+	      },
 	      enumerable: false,
 	      configurable: true
 	    });
@@ -3092,6 +3094,9 @@
 	  assert.strictEqual(Number.MIN_SAFE_INTEGER, -Math.pow(2, 53) + 1, 'Is -2^53 + 1');
 	});
 
+	function noop() {}
+	;
+
 	var symbol_sqe$1 = 0;
 	var allSymbols$1 = {};
 	function symbol$1(desc) {
@@ -3442,9 +3447,9 @@
 	  // };
 	  // new WeakMap(array);
 	  // assert.ok(done);
-	  object = {};
+	  // object = {};
 	  new WeakMap().set(object, 1);
-	  if (DESCRIPTORS) {
+	  if (nonEnumerable) {
 	    var results = [];
 	    for (var key in object) results.push(key);
 	    assert.arrayEqual(results, []);
@@ -3704,9 +3709,9 @@
 	  // };
 	  // new WeakSet(array);
 	  // assert.ok(done);
-	  object = {};
+	  // object = {};
 	  new WeakSet().add(object);
-	  if (DESCRIPTORS) {
+	  if (nonEnumerable) {
 	    var results = [];
 	    for (var key in object) results.push(key);
 	    assert.arrayEqual(results, []);

@@ -1,3 +1,4 @@
+import { nonEnumerable } from '../../../support/nonEnumerable';
 import { DESCRIPTORS, GLOBAL, NATIVE } from '../helpers/constants';
 import { createIterable, nativeSubclass } from '../helpers/helpers';
 
@@ -45,9 +46,9 @@ QUnit.test('WeakMap', assert => {
   // };
   // new WeakMap(array);
   // assert.ok(done);
-  object = {};
+  // object = {};
   new WeakMap().set(object, 1);
-  if(DESCRIPTORS) {
+  if(nonEnumerable) {
     const results = [];
     for(const key in object) results.push(key);
     assert.arrayEqual(results, []);

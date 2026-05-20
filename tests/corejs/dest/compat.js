@@ -3488,9 +3488,9 @@
 	  // };
 	  // new WeakMap(array);
 	  // assert.ok(done);
-	  object = {};
+	  // object = {};
 	  new WeakMap().set(object, 1);
-	  if (DESCRIPTORS) {
+	  if (nonEnumerable) {
 	    var results = [];
 	    for (var key in object) results.push(key);
 	    assert.arrayEqual(results, []);
@@ -3686,9 +3686,9 @@
 	  // };
 	  // new WeakSet(array);
 	  // assert.ok(done);
-	  object = {};
+	  // object = {};
 	  new WeakSet().add(object);
-	  if (DESCRIPTORS) {
+	  if (nonEnumerable) {
 	    var results = [];
 	    for (var key in object) results.push(key);
 	    assert.arrayEqual(results, []);

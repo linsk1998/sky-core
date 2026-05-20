@@ -1,6 +1,5 @@
 import { isNotNullObject } from "../../utils/isNotNullObject";
 import { defineProperty } from "../../native/Object/defineProperty";
-import { noop } from "../../utils/noop";
 
 
 export function ff_defineProperty(obj, prop, descriptor) {
@@ -19,10 +18,11 @@ export function ff_defineProperty(obj, prop, descriptor) {
 };
 
 export function v8_defineProperty(obj, prop, descriptor) {
-	if(descriptor.configurable && descriptor.writable) {
-		defineProperty(obj, prop, {
-			get: noop,
-			set: noop,
+	if(descriptor.configurable && descriptor.writable && 'value' in descriptor) {
+		var value = descriptor.value;
+		return defineProperty(obj, prop, {
+			get: function() { return value; },
+			set: function(v) { value = v; },
 			enumerable: false,
 			configurable: true
 		});

@@ -2613,9 +2613,9 @@ return class extends Parent { /* empty */ };
 	  // };
 	  // new WeakMap(array);
 	  // assert.ok(done);
-	  object = {};
+	  // object = {};
 	  new WeakMap().set(object, 1);
-	  if (DESCRIPTORS) {
+	  if (nonEnumerable) {
 	    const results = [];
 	    for (const key in object) results.push(key);
 	    assert.arrayEqual(results, []);
@@ -2821,9 +2821,9 @@ return class extends Parent { /* empty */ };
 	  // };
 	  // new WeakSet(array);
 	  // assert.ok(done);
-	  object = {};
+	  // object = {};
 	  new WeakSet().add(object);
-	  if (DESCRIPTORS) {
+	  if (nonEnumerable) {
 	    const results = [];
 	    for (const key in object) results.push(key);
 	    assert.arrayEqual(results, []);
