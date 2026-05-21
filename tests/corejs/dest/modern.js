@@ -5,7 +5,7 @@
 	var getPrototypeOf$2 = Object$1.getPrototypeOf;
 
 	function ff_getPrototypeOf(object) {
-	  return object.__proto__;
+	  return object.__proto__ || null;
 	}
 	;
 	function ie_getPrototypeOf(object) {
@@ -1042,23 +1042,7 @@
 
 	var Date$1 = window.Date;
 
-	var toJSON$1 = Date$1.prototype.toJSON;
-
-	function toJSON(_) {
-	  if (isNaN(this.getTime())) {
-	    return null;
-	  }
-	  return toJSON$1.call(this);
-	}
-	;
-
-	try {
-	  if (new Date$1(NaN).toJSON() !== null) {
-	    Date$1.prototype.toJSON = toJSON;
-	  }
-	} catch (e) {
-	  Date$1.prototype.toJSON = toJSON;
-	}
+	var toJSON$2 = Date$1.prototype.toJSON;
 
 	function prefixIntrger2(number) {
 	  if (number < 10) {
@@ -1082,6 +1066,34 @@
 	    throw new RangeError("Invalid time value");
 	  }
 	  return this.getUTCFullYear() + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
+	}
+
+	function toJSON$1(_) {
+	  if (isNaN(this.getTime())) {
+	    return null;
+	  }
+	  return toISOString.call(this);
+	}
+	;
+
+	function toJSON(_) {
+	  if (isNaN(this.getTime())) {
+	    return null;
+	  }
+	  return toJSON$2.call(this);
+	}
+	;
+
+	if (toJSON$2) {
+	  try {
+	    if (new Date(NaN).toJSON() !== null) {
+	      Date.prototype.toJSON = toJSON;
+	    }
+	  } catch (e) {
+	    Date.prototype.toJSON = toJSON;
+	  }
+	} else {
+	  Date.prototype.toJSON = toJSON$1;
 	}
 
 	// safari 5
@@ -1482,6 +1494,42 @@
 	  });
 	});
 
+	var Error$2 = window.Error;
+
+	function Error$1(message) {
+	  this.message = message === undefined ? "" : String(message);
+	  var options = arguments[1];
+	  if (typeof options === "object" && options !== null) {
+	    if ('cause' in options) {
+	      this.cause = options.cause;
+	    }
+	  }
+	}
+	Error$1.prototype = Error$2.prototype;
+	window.Error = Error$1;
+
+	function reduce(callback) {
+	  var i, value;
+	  if (arguments.length >= 2) {
+	    value = arguments[1];
+	    i = 0;
+	  } else if (this.length > 0) {
+	    value = this[0];
+	    i = 1;
+	  } else {
+	    throw new Error("Reduce of empty array with no initial value");
+	  }
+	  while (i < this.length) {
+	    if (i in this) {
+	      value = callback(value, this[i], i, this);
+	    }
+	    i++;
+	  }
+	  return value;
+	}
+
+	definePrototype(Array, 'reduce', reduce);
+
 	QUnit.test('Array#reduce', function (assert) {
 	  var reduce = Array.prototype.reduce;
 	  assert.isFunction(reduce);
@@ -1533,6 +1581,26 @@
 	    }, TypeError);
 	  }
 	});
+
+	function reduceRight(callback) {
+	  var i = this.length,
+	    value;
+	  if (arguments.length >= 2) {
+	    value = arguments[1];
+	  } else if (this.length > 0) {
+	    value = this[--i];
+	  } else {
+	    throw new Error("Reduce of empty array with no initial value");
+	  }
+	  while (i-- > 0) {
+	    if (i in this) {
+	      value = callback(value, this[i], i, this);
+	    }
+	  }
+	  return value;
+	}
+
+	definePrototype(Array, 'reduceRight', reduceRight);
 
 	QUnit.test('Array#reduceRight', function (assert) {
 	  var reduceRight = Array.prototype.reduceRight;
@@ -2494,20 +2562,6 @@
 	;
 
 	definePrototype(Promise$2, 'finally', promise_finally);
-
-	var Error$2 = window.Error;
-
-	function Error$1(message) {
-	  this.message = message === undefined ? "" : String(message);
-	  var options = arguments[1];
-	  if (typeof options === "object" && options !== null) {
-	    if ('cause' in options) {
-	      this.cause = options.cause;
-	    }
-	  }
-	}
-	Error$1.prototype = Error$2.prototype;
-	window.Error = Error$1;
 
 	var Symbol$7 = GLOBAL.Symbol || {};
 	var setPrototypeOf = Object.setPrototypeOf,
@@ -6670,6 +6724,34 @@
 	  assert.strictEqual(Math.clz32(Math.pow(2, 32)), 32);
 	});
 
+	function isRegExp(obj) {
+	  return toString$1.call(obj) === '[object RegExp]';
+	}
+	;
+
+	function fix_RegExp(NativeRegExp) {
+	  function RegExp(source) {
+	    if (isRegExp(source)) {
+	      var flags = "";
+	      if (source.global) flags += "g";
+	      if (source.ignoreCase) flags += "i";
+	      if (source.multiline) flags += "m";
+	      return new NativeRegExp(source.source, flags);
+	    }
+	    return new NativeRegExp(source, arguments[1]);
+	  }
+	  ;
+	  RegExp.__proto__ = NativeRegExp;
+	  RegExp.prototype = NativeRegExp.prototype;
+	  return RegExp;
+	}
+
+	// 低版本浏览器中new RegExp(obj)传入的obj是RegExp对象返回本身
+	var p = /p/;
+	if (new RegExp(p) === p) {
+	  window.RegExp = fix_RegExp(RegExp);
+	}
+
 	function startsWith(search) {
 	  if (search instanceof RegExp) {
 	    throw new TypeError("First argument must not be a regular expression");
@@ -8675,11 +8757,6 @@
 	  });
 	});
 
-	function isRegExp(obj) {
-	  return toString$1.call(obj) === '[object RegExp]';
-	}
-	;
-
 	var stringEscapes = {
 	  '\\': '\\',
 	  "'": "'",
@@ -8804,7 +8881,7 @@
 	    }
 	  }
 	}
-	inherits(AggregateError$1, Error$2);
+	inherits(AggregateError$1, Error);
 	AggregateError$1.prototype.name = "AggregateError";
 
 	if (!window.AggregateError) {
@@ -9169,7 +9246,9 @@
 	  if (document.createEvent) {
 	    window.Event = function (type, init) {
 	      var e = document.createEvent('Event');
-	      e.isTrusted = false;
+	      if (!('isTrusted' in e)) {
+	        e.isTrusted = false;
+	      }
 	      if (init) {
 	        e.initEvent(type, init.bubbles, init.cancelable);
 	      } else {

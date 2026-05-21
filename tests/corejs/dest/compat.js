@@ -8365,7 +8365,7 @@
 	    }
 	  }
 	}
-	inherits(AggregateError$1, Error$2);
+	inherits(AggregateError$1, Error);
 	AggregateError$1.prototype.name = "AggregateError";
 
 	if (!window.AggregateError) {

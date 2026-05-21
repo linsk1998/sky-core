@@ -138,7 +138,7 @@
 	getPrototypeOf$2.sham = true;
 
 	function ff_getPrototypeOf(object) {
-		return object.__proto__;
+		return object.__proto__ || null;
 	};
 	function ie_getPrototypeOf(object) {
 		if('__proto__' in object) {
@@ -6379,8 +6379,6 @@ return class extends Parent { /* empty */ };
 	  assert.same('[object Object]'.replaceAll(object, 'a'), 'a');
 	});
 
-	var Error$1 = window.Error;
-
 	function AggregateError$1(errors, message) {
 		if(!(this instanceof AggregateError$1)) {
 			return new AggregateError$1(errors, message);
@@ -6394,8 +6392,27 @@ return class extends Parent { /* empty */ };
 			}
 		}
 	}
-	inherits(AggregateError$1, Error$1);
+	inherits(AggregateError$1, Error);
 	AggregateError$1.prototype.name = "AggregateError";
+
+	var Error$1 = window.Error;
+
+	try {
+		throw new Error$1("", { cause: 1 });
+	} catch(e) {
+		if(!('cause' in e)) {
+			window.Error = class Error extends Error$1 {
+				constructor(message) {
+					super(message);
+					if(typeof options === "object" && options !== null) {
+						if('cause' in options) {
+							this.cause = options.cause;
+						}
+					}
+				}
+			};
+		}
+	}
 
 	if(!window.AggregateError) {
 		window.AggregateError = AggregateError$1;

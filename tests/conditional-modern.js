@@ -4,6 +4,8 @@ const inject = require("@rollup/plugin-inject");
 module.exports = [
 	polyfill({
 		modules: {
+			// Safari 5
+			'RegExp': "sky-core/polyfill/RegExp",
 			'Event': "sky-core/polyfill/Event",
 			'Error': "sky-core/polyfill/Error",
 			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill

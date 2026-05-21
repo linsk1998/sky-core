@@ -14,7 +14,9 @@ if(!supportEvent) {
 	if(document.createEvent) {
 		window.Event = function(type, init) {
 			var e = document.createEvent('Event');
-			e.isTrusted = false;
+			if(!('isTrusted' in e)) {
+				e.isTrusted = false;
+			}
 			if(init) {
 				e.initEvent(type, init.bubbles, init.cancelable);
 			} else {

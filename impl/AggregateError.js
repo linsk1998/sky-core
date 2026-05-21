@@ -1,5 +1,4 @@
 import { inherits } from "sky-core";
-import { Error } from "../native/Error";
 
 function AggregateError(errors, message) {
 	if(!(this instanceof AggregateError)) {
