@@ -1,5 +1,6 @@
 // Originally from: https://github.com/web-platform-tests/wpt/blob/4b35e758e2fc4225368304b02bcec9133965fd1a/IndexedDB/structured-clone.any.js
 // Copyright © web-platform-tests contributors. Available under the 3-Clause BSD License.
+import { blobSupported } from '../../../support/blob';
 import { GLOBAL } from '../helpers/constants.js';
 import { bufferToArray, fromSource } from '../helpers/helpers.js';
 
@@ -394,7 +395,7 @@ if(typeof DOMRectReadOnly == 'function' && typeof DOMRectReadOnly.fromRect == 'f
 // 	});
 // }
 
-if(typeof Blob === "function") QUnit.test('Blob', assert => {
+if(blobSupported) QUnit.test('Blob', assert => {
 	cloneObjectTest(
 		assert,
 		new Blob(['This is a test.'], { type: 'a/b' }),

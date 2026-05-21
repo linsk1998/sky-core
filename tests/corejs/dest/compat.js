@@ -8784,6 +8784,19 @@
 	  }
 	}
 
+	var Blob$1 = window.Blob;
+
+	var blobSupported = false;
+	var blobSupportsArrayBufferView = false;
+	try {
+	  // Check if Blob constructor is supported
+	  blobSupported = new Blob$1(["ä"]).size === 2;
+
+	  // Check if Blob constructor supports ArrayBufferViews
+	  // Fails in Safari 6, so we need to map to ArrayBuffers there.
+	  blobSupportsArrayBufferView = new Blob$1([new Uint8Array([1, 2])]).size === 2;
+	} catch (e) {}
+
 	var from = Array.from;
 	var assign = Object.assign;
 	var getPrototypeOf = Object.getPrototypeOf;
@@ -9132,7 +9145,7 @@
 	// 	});
 	// }
 
-	if (typeof Blob === "function") QUnit.test('Blob', function (assert) {
+	if (blobSupported) QUnit.test('Blob', function (assert) {
 	  cloneObjectTest(assert, new Blob(['This is a test.'], {
 	    type: 'a/b'
 	  }), function (orig, clone) {

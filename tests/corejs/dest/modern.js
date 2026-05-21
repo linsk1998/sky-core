@@ -9118,6 +9118,17 @@
 
 	var Blob$2 = window.Blob;
 
+	var blobSupported = false;
+	var blobSupportsArrayBufferView = false;
+	try {
+	  // Check if Blob constructor is supported
+	  blobSupported = new Blob$2(["ä"]).size === 2;
+
+	  // Check if Blob constructor supports ArrayBufferViews
+	  // Fails in Safari 6, so we need to map to ArrayBuffers there.
+	  blobSupportsArrayBufferView = new Blob$2([new Uint8Array([1, 2])]).size === 2;
+	} catch (e) {}
+
 	// Helper function that maps ArrayBufferViews to ArrayBuffers
 	// Used by BlobBuilder constructor and old browsers that didn't
 	// support it in the Blob constructor.
@@ -9159,16 +9170,6 @@
 	}
 
 	var Blob$1 = Blob$2;
-	var blobSupported = false;
-	var blobSupportsArrayBufferView = false;
-	try {
-	  // Check if Blob constructor is supported
-	  blobSupported = new Blob$1(["ä"]).size === 2;
-
-	  // Check if Blob constructor supports ArrayBufferViews
-	  // Fails in Safari 6, so we need to map to ArrayBuffers there.
-	  blobSupportsArrayBufferView = new Blob$1([new Uint8Array([1, 2])]).size === 2;
-	} catch (e) {}
 	if (!blobSupported) {
 	  var BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
 	  var blobBuilderSupported = BlobBuilder && BlobBuilder.prototype.append && BlobBuilder.prototype.getBlob;
@@ -9207,6 +9208,7 @@
 	var FormData = window.FormData;
 
 	function fixFormData() {
+	  if (!FormData) return;
 	  var append = FormData.prototype.append;
 	  FormData.prototype.append = function (key, data) {
 	    if (arguments.length <= 2 && blob && blob.toString() === '[object File]') {
@@ -9707,7 +9709,7 @@
 	// 	});
 	// }
 
-	if (typeof Blob === "function") QUnit.test('Blob', function (assert) {
+	if (blobSupported) QUnit.test('Blob', function (assert) {
 	  cloneObjectTest(assert, new Blob(['This is a test.'], {
 	    type: 'a/b'
 	  }), function (orig, clone) {
