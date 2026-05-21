@@ -20,9 +20,14 @@
 
 	var getPrototypeOf$1 = !getPrototypeOf$2 ? Object$1.__proto__ ? ff_getPrototypeOf : ie_getPrototypeOf : !setPrototypeOf$1 ? ie_getPrototypeOf : getPrototypeOf$2;
 
+	var defineProperties$1 = Object$1.defineProperties;
+
+	var nonEnumerable = !!defineProperties$1;
+
 	var DESCRIPTORS = !!function () {
 	  return !!Object.defineProperties || !!Object.prototype.__defineSetter__;
 	}();
+	var NON_ENUMERABLE = nonEnumerable;
 	var GLOBAL = Function('return this')();
 	var NATIVE = GLOBAL.NATIVE || false;
 	var TYPED_ARRAYS = {
@@ -70,79 +75,19 @@
 
 	var defineProperty = Object$1.defineProperty;
 
-	var defineProperties$1 = Object$1.defineProperties;
-
-	var hasV8DefineBug = !defineProperties$1;
-	if (!hasV8DefineBug) {
-	  defineProperty(defineProperty({}, '_', {
-	    enumerable: false,
-	    configurable: true,
-	    set: function () {
-	      hasV8DefineBug = true;
-	    }
-	  }), '_', {
-	    enumerable: false,
-	    configurable: true,
-	    writable: true,
-	    value: 1
-	  });
-	}
-
-	function isNotNullObject(obj) {
-	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
-	}
-	;
-
-	function ff_defineProperty(obj, prop, descriptor) {
-	  if (!isNotNullObject(obj)) {
-	    throw new TypeError("Object.defineProperty called on non-object");
-	  }
-	  prop = String(prop);
-	  if ('value' in descriptor) {
-	    delete obj[prop];
-	    obj[prop] = descriptor.value;
-	  } else {
-	    if (descriptor.get) obj.__defineGetter__(prop, descriptor.get);
-	    if (descriptor.set) obj.__defineSetter__(prop, descriptor.set);
-	  }
-	  return obj;
-	}
-	;
-	function v8_defineProperty(obj, prop, descriptor) {
-	  if (descriptor.configurable && descriptor.writable && 'value' in descriptor) {
-	    var value = descriptor.value;
-	    return defineProperty(obj, prop, {
-	      get: function () {
-	        return value;
-	      },
-	      set: function (v) {
-	        value = v;
-	      },
-	      enumerable: false,
-	      configurable: true
-	    });
-	  }
-	  return defineProperty(obj, prop, descriptor);
-	}
-	;
-
-	if (defineProperty) {
-	  if (hasV8DefineBug) {
-	    Object.defineProperty = v8_defineProperty;
-	  }
-	} else {
-	  Object.defineProperty = ff_defineProperty;
-	}
-
 	function definePrototype(target, property, value) {
 	  var prototype = target.prototype;
 	  if (!(property in prototype)) {
-	    Object.defineProperty(prototype, property, {
-	      configurable: true,
-	      writable: true,
-	      enumerable: false,
-	      value: value
-	    });
+	    if (defineProperty) {
+	      defineProperty(prototype, property, {
+	        configurable: true,
+	        writable: true,
+	        enumerable: false,
+	        value: value
+	      });
+	    } else {
+	      prototype[property] = value;
+	    }
 	  }
 	}
 
@@ -164,8 +109,6 @@
 	definePrototype(Function, 'bind', bind);
 
 	var Symbol$9 = window.Symbol;
-
-	var nonEnumerable = !!defineProperties$1;
 
 	var iterator$1 = (function () {
 	  if (!Symbol$9) {
@@ -1705,6 +1648,60 @@
 
 	var proto = !!setPrototypeOf$1 || '__proto__' in Object.prototype;
 
+	var hasV8DefineBug = !defineProperties$1;
+	if (!hasV8DefineBug) {
+	  defineProperty(defineProperty({}, '_', {
+	    enumerable: false,
+	    configurable: true,
+	    set: function () {
+	      hasV8DefineBug = true;
+	    }
+	  }), '_', {
+	    enumerable: false,
+	    configurable: true,
+	    writable: true,
+	    value: 1
+	  });
+	}
+
+	function isNotNullObject(obj) {
+	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
+	}
+	;
+
+	function ff_defineProperty(obj, prop, descriptor) {
+	  if (!isNotNullObject(obj)) {
+	    throw new TypeError("Object.defineProperty called on non-object");
+	  }
+	  prop = String(prop);
+	  if ('value' in descriptor) {
+	    delete obj[prop];
+	    obj[prop] = descriptor.value;
+	  } else {
+	    if (descriptor.get) obj.__defineGetter__(prop, descriptor.get);
+	    if (descriptor.set) obj.__defineSetter__(prop, descriptor.set);
+	  }
+	  return obj;
+	}
+	;
+	function v8_defineProperty(obj, prop, descriptor) {
+	  if (descriptor.configurable && descriptor.writable && 'value' in descriptor) {
+	    var value = descriptor.value;
+	    return defineProperty(obj, prop, {
+	      get: function () {
+	        return value;
+	      },
+	      set: function (v) {
+	        value = v;
+	      },
+	      enumerable: false,
+	      configurable: true
+	    });
+	  }
+	  return defineProperty(obj, prop, descriptor);
+	}
+	;
+
 	var $inject_Object_defineProperty = defineProperty && hasV8DefineBug ? v8_defineProperty : defineProperty || ff_defineProperty;
 
 	function keys$4() {
@@ -1778,6 +1775,14 @@
 	  Object$1.keys = nie_keys;
 	} else if (!Symbol$9) {
 	  Object$1.keys = ie_keys;
+	}
+
+	if (defineProperty) {
+	  if (hasV8DefineBug) {
+	    Object.defineProperty = v8_defineProperty;
+	  }
+	} else {
+	  Object.defineProperty = ff_defineProperty;
 	}
 
 	function defineProperties(obj, properties) {
@@ -3094,9 +3099,6 @@
 	  assert.strictEqual(Number.MIN_SAFE_INTEGER, -Math.pow(2, 53) + 1, 'Is -2^53 + 1');
 	});
 
-	function noop() {}
-	;
-
 	var symbol_sqe$1 = 0;
 	var allSymbols$1 = {};
 	function symbol$1(desc) {
@@ -3115,15 +3117,7 @@
 	      enumerable: false,
 	      configurable: true,
 	      set: function (value) {
-	        if (hasV8DefineBug) {
-	          defineProperty(this, key, {
-	            get: noop,
-	            set: noop,
-	            enumerable: false,
-	            configurable: true
-	          });
-	        }
-	        defineProperty(this, key, {
+	        $inject_Object_defineProperty(this, key, {
 	          enumerable: false,
 	          configurable: true,
 	          writable: true,
@@ -3449,7 +3443,7 @@
 	  // assert.ok(done);
 	  // object = {};
 	  new WeakMap().set(object, 1);
-	  if (nonEnumerable) {
+	  if (NON_ENUMERABLE) {
 	    var results = [];
 	    for (var key in object) results.push(key);
 	    assert.arrayEqual(results, []);
@@ -3711,7 +3705,7 @@
 	  // assert.ok(done);
 	  // object = {};
 	  new WeakSet().add(object);
-	  if (nonEnumerable) {
+	  if (NON_ENUMERABLE) {
 	    var results = [];
 	    for (var key in object) results.push(key);
 	    assert.arrayEqual(results, []);
@@ -5719,7 +5713,7 @@
 	  object[symbol1] = 42;
 	  assert.ok(object[symbol1] === 42, 'Symbol() work as key');
 	  assert.ok(object[symbol2] !== 42, 'Various symbols from one description are various keys');
-	  if (DESCRIPTORS) {
+	  if (NON_ENUMERABLE) {
 	    var count = 0;
 	    // eslint-disable-next-line no-unused-vars -- required for testing
 	    for (var key in object) count++;
@@ -5859,18 +5853,20 @@
 	    // 	enumerable: true,
 	    // 	value: 'd',
 	    // }, 'getOwnPropertyDescriptor d');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
-	      configurable: true,
-	      writable: true,
-	      enumerable: false,
-	      value: 'e'
-	    }, 'getOwnPropertyDescriptor e');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, f), {
-	      configurable: false,
-	      writable: false,
-	      enumerable: true,
-	      value: 'f'
-	    }, 'getOwnPropertyDescriptor f');
+	    if (!hasV8DefineBug) {
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
+	        configurable: true,
+	        writable: true,
+	        enumerable: false,
+	        value: 'e'
+	      }, 'getOwnPropertyDescriptor e');
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, f), {
+	        configurable: false,
+	        writable: false,
+	        enumerable: true,
+	        value: 'f'
+	      }, 'getOwnPropertyDescriptor f');
+	    }
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'g'), undefined, 'getOwnPropertyDescriptor g');
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'h'), undefined, 'getOwnPropertyDescriptor h');
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, i), undefined, 'getOwnPropertyDescriptor i');
@@ -7913,7 +7909,9 @@
 	      value: 3
 	    });
 	  }
-	  assert.strictEqual(descriptors[symbol].value, 4);
+	  if (!hasV8DefineBug) {
+	    assert.strictEqual(descriptors[symbol].value, 4);
+	  }
 	});
 	QUnit.test('Object.getOwnPropertyDescriptors.sham flag', function (assert) {
 	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);

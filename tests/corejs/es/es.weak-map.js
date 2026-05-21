@@ -1,5 +1,4 @@
-import { nonEnumerable } from '../../../support/nonEnumerable';
-import { DESCRIPTORS, GLOBAL, NATIVE } from '../helpers/constants';
+import { NON_ENUMERABLE, GLOBAL, NATIVE } from '../helpers/constants';
 import { createIterable, nativeSubclass } from '../helpers/helpers';
 
 const { ownKeys } = GLOBAL.Reflect || {};
@@ -48,7 +47,7 @@ QUnit.test('WeakMap', assert => {
   // assert.ok(done);
   // object = {};
   new WeakMap().set(object, 1);
-  if(nonEnumerable) {
+  if(NON_ENUMERABLE) {
     const results = [];
     for(const key in object) results.push(key);
     assert.arrayEqual(results, []);

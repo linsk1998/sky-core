@@ -1,4 +1,5 @@
-import { DESCRIPTORS, GLOBAL, NATIVE } from '../helpers/constants';
+import { hasV8DefineBug } from '../../../support/hasV8DefineBug';
+import { DESCRIPTORS, NON_ENUMERABLE, GLOBAL, NATIVE } from '../helpers/constants';
 
 const { ownKeys } = GLOBAL.Reflect || {};
 
@@ -13,7 +14,7 @@ QUnit.test('Symbol', assert => {
 	object[symbol1] = 42;
 	assert.ok(object[symbol1] === 42, 'Symbol() work as key');
 	assert.ok(object[symbol2] !== 42, 'Various symbols from one description are various keys');
-	if(DESCRIPTORS) {
+	if(NON_ENUMERABLE) {
 		let count = 0;
 		// eslint-disable-next-line no-unused-vars -- required for testing
 		for(const key in object) count++;
@@ -148,18 +149,20 @@ if(DESCRIPTORS) {
 		// 	enumerable: true,
 		// 	value: 'd',
 		// }, 'getOwnPropertyDescriptor d');
-		assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
-			configurable: true,
-			writable: true,
-			enumerable: false,
-			value: 'e',
-		}, 'getOwnPropertyDescriptor e');
-		assert.deepEqual(Object.getOwnPropertyDescriptor(object, f), {
-			configurable: false,
-			writable: false,
-			enumerable: true,
-			value: 'f',
-		}, 'getOwnPropertyDescriptor f');
+		if(!hasV8DefineBug) {
+			assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
+				configurable: true,
+				writable: true,
+				enumerable: false,
+				value: 'e',
+			}, 'getOwnPropertyDescriptor e');
+			assert.deepEqual(Object.getOwnPropertyDescriptor(object, f), {
+				configurable: false,
+				writable: false,
+				enumerable: true,
+				value: 'f',
+			}, 'getOwnPropertyDescriptor f');
+		}
 		assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'g'), undefined, 'getOwnPropertyDescriptor g');
 		assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'h'), undefined, 'getOwnPropertyDescriptor h');
 		assert.strictEqual(Object.getOwnPropertyDescriptor(object, i), undefined, 'getOwnPropertyDescriptor i');

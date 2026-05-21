@@ -1,8 +1,11 @@
 import getPrototypeOf from "sky-core/pure/Object/getPrototypeOf";
+import { nonEnumerable } from "../../../support/nonEnumerable";
 
 export var DESCRIPTORS = !!(() => {
 	return !!Object.defineProperties || !!Object.prototype.__defineSetter__;
 })();
+
+export var NON_ENUMERABLE = nonEnumerable;
 
 export var GLOBAL = Function('return this')();
 

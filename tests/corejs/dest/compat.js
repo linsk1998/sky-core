@@ -199,9 +199,14 @@
 	;
 	getPrototypeOf$1.sham = true;
 
+	var defineProperties$1 = Object$1.defineProperties;
+
+	var nonEnumerable = !!defineProperties$1;
+
 	var DESCRIPTORS = !!function () {
 	  return !!Object.defineProperties || !!Object.prototype.__defineSetter__;
 	}();
+	var NON_ENUMERABLE = nonEnumerable;
 	var GLOBAL = Function('return this')();
 	var NATIVE = GLOBAL.NATIVE || false;
 	var TYPED_ARRAYS = {
@@ -306,8 +311,6 @@
 	if (![1].slice(0, undefined).length) {
 	  Array.prototype.slice = slice$1;
 	}
-
-	var defineProperties$1 = Object$1.defineProperties;
 
 	var __defineSetter__ = !!Object.prototype.__defineSetter__;
 
@@ -561,8 +564,6 @@
 	  }
 	  return array;
 	}
-
-	var nonEnumerable = !!defineProperties$1;
 
 	function isIterable(it) {
 	  var O = Object(it);
@@ -3490,7 +3491,7 @@
 	  // assert.ok(done);
 	  // object = {};
 	  new WeakMap().set(object, 1);
-	  if (nonEnumerable) {
+	  if (NON_ENUMERABLE) {
 	    var results = [];
 	    for (var key in object) results.push(key);
 	    assert.arrayEqual(results, []);
@@ -3688,7 +3689,7 @@
 	  // assert.ok(done);
 	  // object = {};
 	  new WeakSet().add(object);
-	  if (nonEnumerable) {
+	  if (NON_ENUMERABLE) {
 	    var results = [];
 	    for (var key in object) results.push(key);
 	    assert.arrayEqual(results, []);
@@ -5217,6 +5218,22 @@
 	  };
 	}
 
+	var hasV8DefineBug = !defineProperties$1;
+	if (!hasV8DefineBug) {
+	  defineProperty$1(defineProperty$1({}, '_', {
+	    enumerable: false,
+	    configurable: true,
+	    set: function () {
+	      hasV8DefineBug = true;
+	    }
+	  }), '_', {
+	    enumerable: false,
+	    configurable: true,
+	    writable: true,
+	    value: 1
+	  });
+	}
+
 	var _ref = GLOBAL.Reflect || {},
 	  ownKeys = _ref.ownKeys;
 	QUnit.test('Symbol', function (assert) {
@@ -5230,7 +5247,7 @@
 	  object[symbol1] = 42;
 	  assert.ok(object[symbol1] === 42, 'Symbol() work as key');
 	  assert.ok(object[symbol2] !== 42, 'Various symbols from one description are various keys');
-	  if (DESCRIPTORS) {
+	  if (NON_ENUMERABLE) {
 	    var count = 0;
 	    // eslint-disable-next-line no-unused-vars -- required for testing
 	    for (var key in object) count++;
@@ -5370,18 +5387,20 @@
 	    // 	enumerable: true,
 	    // 	value: 'd',
 	    // }, 'getOwnPropertyDescriptor d');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
-	      configurable: true,
-	      writable: true,
-	      enumerable: false,
-	      value: 'e'
-	    }, 'getOwnPropertyDescriptor e');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, f), {
-	      configurable: false,
-	      writable: false,
-	      enumerable: true,
-	      value: 'f'
-	    }, 'getOwnPropertyDescriptor f');
+	    if (!hasV8DefineBug) {
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
+	        configurable: true,
+	        writable: true,
+	        enumerable: false,
+	        value: 'e'
+	      }, 'getOwnPropertyDescriptor e');
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, f), {
+	        configurable: false,
+	        writable: false,
+	        enumerable: true,
+	        value: 'f'
+	      }, 'getOwnPropertyDescriptor f');
+	    }
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'g'), undefined, 'getOwnPropertyDescriptor g');
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'h'), undefined, 'getOwnPropertyDescriptor h');
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, i), undefined, 'getOwnPropertyDescriptor i');
@@ -7427,7 +7446,9 @@
 	      value: 3
 	    });
 	  }
-	  assert.strictEqual(descriptors[symbol$1].value, 4);
+	  if (!hasV8DefineBug) {
+	    assert.strictEqual(descriptors[symbol$1].value, 4);
+	  }
 	});
 	QUnit.test('Object.getOwnPropertyDescriptors.sham flag', function (assert) {
 	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);

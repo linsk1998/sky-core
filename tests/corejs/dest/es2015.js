@@ -156,9 +156,14 @@
 			ie_getPrototypeOf :
 			Object$1.getPrototypeOf;
 
+	var defineProperties = Object$1.defineProperties;
+
+	var nonEnumerable = !!defineProperties;
+
 	var DESCRIPTORS = !!(() => {
 	  return !!Object.defineProperties || !!Object.prototype.__defineSetter__;
 	})();
+	var NON_ENUMERABLE = nonEnumerable;
 	var GLOBAL = Function('return this')();
 	var NATIVE = GLOBAL.NATIVE || false;
 	var TYPED_ARRAYS = {
@@ -303,10 +308,6 @@ return class extends Parent { /* empty */ };
 	  }
 	  return array;
 	}
-
-	var defineProperties = Object$1.defineProperties;
-
-	var nonEnumerable = !!defineProperties;
 
 	function isIterable(it) {
 	  var O = Object(it);
@@ -845,15 +846,21 @@ return class extends Parent { /* empty */ };
 		Date$1.prototype.toJSON = toJSON;
 	}
 
+	var defineProperty = Object$1.defineProperty;
+
 	function definePrototype(target, property, value) {
 		var prototype = target.prototype;
 		if(!(property in prototype)) {
-			Object.defineProperty(prototype, property, {
-				configurable: true,
-				writable: true,
-				enumerable: false,
-				value: value
-			});
+			if(defineProperty) {
+				defineProperty(prototype, property, {
+					configurable: true,
+					writable: true,
+					enumerable: false,
+					value: value
+				});
+			} else {
+				prototype[property] = value;
+			}
 		}
 	}
 
@@ -2615,7 +2622,7 @@ return class extends Parent { /* empty */ };
 	  // assert.ok(done);
 	  // object = {};
 	  new WeakMap().set(object, 1);
-	  if (nonEnumerable) {
+	  if (NON_ENUMERABLE) {
 	    const results = [];
 	    for (const key in object) results.push(key);
 	    assert.arrayEqual(results, []);
@@ -2823,7 +2830,7 @@ return class extends Parent { /* empty */ };
 	  // assert.ok(done);
 	  // object = {};
 	  new WeakSet().add(object);
-	  if (nonEnumerable) {
+	  if (NON_ENUMERABLE) {
 	    const results = [];
 	    for (const key in object) results.push(key);
 	    assert.arrayEqual(results, []);
@@ -3953,6 +3960,24 @@ return class extends Parent { /* empty */ };
 	  // }, 'uses ToLength');
 	});
 
+	var hasV8DefineBug = !defineProperties;
+
+	if(!hasV8DefineBug) {
+		defineProperty(
+			defineProperty({}, '_', {
+				enumerable: false,
+				configurable: true,
+				set: function() {
+					hasV8DefineBug = true;
+				}
+			}), '_', {
+			enumerable: false,
+			configurable: true,
+			writable: true,
+			value: 1
+		});
+	}
+
 	const {
 	  ownKeys
 	} = GLOBAL.Reflect || {};
@@ -3967,7 +3992,7 @@ return class extends Parent { /* empty */ };
 	  object[symbol1] = 42;
 	  assert.ok(object[symbol1] === 42, 'Symbol() work as key');
 	  assert.ok(object[symbol2] !== 42, 'Various symbols from one description are various keys');
-	  if (DESCRIPTORS) {
+	  if (NON_ENUMERABLE) {
 	    let count = 0;
 	    // eslint-disable-next-line no-unused-vars -- required for testing
 	    for (const key in object) count++;
@@ -4099,18 +4124,20 @@ return class extends Parent { /* empty */ };
 	    // 	enumerable: true,
 	    // 	value: 'd',
 	    // }, 'getOwnPropertyDescriptor d');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
-	      configurable: true,
-	      writable: true,
-	      enumerable: false,
-	      value: 'e'
-	    }, 'getOwnPropertyDescriptor e');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, f), {
-	      configurable: false,
-	      writable: false,
-	      enumerable: true,
-	      value: 'f'
-	    }, 'getOwnPropertyDescriptor f');
+	    if (!hasV8DefineBug) {
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, e), {
+	        configurable: true,
+	        writable: true,
+	        enumerable: false,
+	        value: 'e'
+	      }, 'getOwnPropertyDescriptor e');
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, f), {
+	        configurable: false,
+	        writable: false,
+	        enumerable: true,
+	        value: 'f'
+	      }, 'getOwnPropertyDescriptor f');
+	    }
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'g'), undefined, 'getOwnPropertyDescriptor g');
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'h'), undefined, 'getOwnPropertyDescriptor h');
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, i), undefined, 'getOwnPropertyDescriptor i');
@@ -5584,7 +5611,9 @@ return class extends Parent { /* empty */ };
 	      value: 3
 	    });
 	  }
-	  assert.strictEqual(descriptors[symbol].value, 4);
+	  if (!hasV8DefineBug) {
+	    assert.strictEqual(descriptors[symbol].value, 4);
+	  }
 	});
 	QUnit.test('Object.getOwnPropertyDescriptors.sham flag', assert => {
 	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);
@@ -7587,8 +7616,6 @@ return class extends Parent { /* empty */ };
 	  }
 	  assert.throws(() => toWellFormed.call(Symbol('toWellFormed test')), 'throws on symbol context');
 	});
-
-	var defineProperty = Object$1.defineProperty;
 
 	var iterator = (function() {
 		if(!Symbol$6) {

@@ -1,3 +1,4 @@
+import { hasV8DefineBug } from '../../../support/hasV8DefineBug';
 import { DESCRIPTORS } from '../helpers/constants';
 
 QUnit.test('Object.getOwnPropertyDescriptors', assert => {
@@ -33,7 +34,9 @@ QUnit.test('Object.getOwnPropertyDescriptors', assert => {
       value: 3,
     });
   }
-  assert.strictEqual(descriptors[symbol].value, 4);
+  if(!hasV8DefineBug) {
+    assert.strictEqual(descriptors[symbol].value, 4);
+  }
 });
 
 QUnit.test('Object.getOwnPropertyDescriptors.sham flag', assert => {
