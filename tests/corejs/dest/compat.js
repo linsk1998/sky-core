@@ -5150,11 +5150,6 @@
 
 	var JSON$1 = window.JSON;
 
-	function isSymbol(obj) {
-	  return typeof obj === "object" && obj instanceof Symbol$2;
-	}
-	;
-
 	var rx_escapable = /[\\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
 	function escapeString(str) {
 	  //from lodash
@@ -5177,6 +5172,7 @@
 	function stringify(obj) {
 	  switch (obj) {
 	    case undefined:
+	      break;
 	    case null:
 	      return "null";
 	    case false:
@@ -5190,7 +5186,7 @@
 	        case '[object Number]':
 	          return isNaN(obj) ? "null" : obj.toString();
 	        case '[object Array]':
-	          return "[" + obj.map(stringify).join(",") + "]";
+	          return "[" + obj.map(arrayItemStringify).join(",") + "]";
 	        default:
 	          if (obj.toJSON && isFunction(obj.toJSON)) {
 	            return stringify(obj.toJSON());
@@ -5200,15 +5196,19 @@
 	          for (var i = 0; i < ownKeys.length; i++) {
 	            var key = ownKeys[i];
 	            var value = obj[key];
-	            if (value !== void 0) {
-	              if (!isFunction(value) && !isSymbol(value)) {
-	                items.push('"' + escapeString(key) + '":' + stringify(value));
-	              }
+	            if (value !== void 0 && !isFunction(value)) {
+	              value = stringify(value);
+	              if (value) items.push('"' + escapeString(key) + '":' + value);
 	            }
 	          }
 	          return "{" + items.join(",") + "}";
 	      }
 	  }
+	}
+	function arrayItemStringify(value) {
+	  value = stringify(value);
+	  if (value === void 0) return "null";
+	  return value;
 	}
 
 	if (!JSON$1) {
@@ -5345,13 +5345,28 @@
 	    var object = Object.create(prototype);
 	    object.a = 'a';
 	    object[d] = 'd';
-	    $inject_Object_defineProperty(object, 'b', {
-	      value: 'b'
-	    });
-	    $inject_Object_defineProperty(object, 'c', {
-	      value: 'c',
-	      enumerable: true
-	    });
+	    if (NON_ENUMERABLE) {
+	      $inject_Object_defineProperty(object, 'b', {
+	        value: 'b'
+	      });
+	      $inject_Object_defineProperty(object, 'c', {
+	        value: 'c',
+	        enumerable: true
+	      });
+	    } else {
+	      $inject_Object_defineProperty(object, 'enumerable', {
+	        configurable: true,
+	        writable: true,
+	        enumerable: false,
+	        value: '1'
+	      });
+	      $inject_Object_defineProperty(object, 'configurable', {
+	        configurable: false,
+	        writable: true,
+	        enumerable: true,
+	        value: '1'
+	      });
+	    }
 	    $inject_Object_defineProperty(object, e, {
 	      configurable: true,
 	      writable: true,
@@ -5369,18 +5384,33 @@
 	      enumerable: true,
 	      value: 'a'
 	    }, 'getOwnPropertyDescriptor a');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'b'), {
-	      configurable: false,
-	      writable: false,
-	      enumerable: false,
-	      value: 'b'
-	    }, 'getOwnPropertyDescriptor b');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'c'), {
-	      configurable: false,
-	      writable: false,
-	      enumerable: true,
-	      value: 'c'
-	    }, 'getOwnPropertyDescriptor c');
+	    if (NON_ENUMERABLE) {
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'b'), {
+	        configurable: false,
+	        writable: false,
+	        enumerable: false,
+	        value: 'b'
+	      }, 'getOwnPropertyDescriptor b');
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'c'), {
+	        configurable: false,
+	        writable: false,
+	        enumerable: true,
+	        value: 'c'
+	      }, 'getOwnPropertyDescriptor c');
+	    } else {
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'enumerable'), {
+	        configurable: true,
+	        writable: true,
+	        enumerable: true,
+	        value: '1'
+	      }, 'getOwnPropertyDescriptor enumerable');
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'configurable'), {
+	        configurable: true,
+	        writable: true,
+	        enumerable: true,
+	        value: '1'
+	      }, 'getOwnPropertyDescriptor configurable');
+	    }
 	    // assert.deepEqual(Object.getOwnPropertyDescriptor(object, d), {
 	    // 	configurable: true,
 	    // 	writable: true,
@@ -5406,9 +5436,13 @@
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, i), undefined, 'getOwnPropertyDescriptor i');
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, j), undefined, 'getOwnPropertyDescriptor j');
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'k'), undefined, 'getOwnPropertyDescriptor k');
-	    assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, 'toString').enumerable, false, 'getOwnPropertyDescriptor on Object.prototype');
-	    // assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, d), undefined, 'getOwnPropertyDescriptor on Object.prototype missed symbol');
-	    assert.strictEqual(Object.keys(object).length, 2, 'Object.keys');
+	    if (NON_ENUMERABLE) {
+	      assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, 'toString').enumerable, false, 'getOwnPropertyDescriptor on Object.prototype');
+	      // assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, d), undefined, 'getOwnPropertyDescriptor on Object.prototype missed symbol');
+	      assert.strictEqual(Object.keys(object).length, 2, 'Object.keys');
+	    } else {
+	      assert.strictEqual(Object.keys(object).length, 3, 'Object.keys');
+	    }
 	    assert.strictEqual(Object.getOwnPropertyNames(object).length, 3, 'Object.getOwnPropertyNames');
 	    assert.strictEqual(Object.getOwnPropertySymbols(object).length, 3, 'Object.getOwnPropertySymbols');
 	    // assert.strictEqual(ownKeys(object).length, 6, 'Reflect.ownKeys');
@@ -7067,7 +7101,10 @@
 	        }
 	      } else {
 	        forOwn(obj, function (value, key) {
-	          to[key] = value;
+	          var desc = Object.getOwnPropertyDescriptor(obj, key);
+	          if (!desc || 'value' in desc) {
+	            to[key] = value;
+	          }
 	        });
 	        var ownKeys = Object.getOwnPropertySymbols(obj);
 	        for (j = 0; j < ownKeys.length; j++) {
@@ -7431,14 +7468,14 @@
 	    writable: true,
 	    value: 2
 	  });
-	  if (DESCRIPTORS) {
+	  if (NON_ENUMERABLE) {
 	    assert.deepEqual(descriptors.e, {
 	      enumerable: false,
 	      configurable: false,
 	      writable: false,
 	      value: 3
 	    });
-	  } else {
+	  } else if (!DESCRIPTORS) {
 	    assert.deepEqual(descriptors.e, {
 	      enumerable: true,
 	      configurable: true,
@@ -9521,6 +9558,11 @@
 	  }, _array$constructor);
 	  // assert.true(array.with(1, 2) instanceof Array, 'non-generic');
 	});
+
+	function isSymbol(obj) {
+	  return typeof obj === "object" && obj instanceof Symbol$2;
+	}
+	;
 
 	function isWellFormed() {
 	  if (this == null) {

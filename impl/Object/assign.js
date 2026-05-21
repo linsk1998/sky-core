@@ -16,7 +16,10 @@ export function assign(target, varArgs) {
 				}
 			} else {
 				forOwn(obj, function(value, key) {
-					to[key] = value;
+					var desc = Object.getOwnPropertyDescriptor(obj, key);
+					if(!desc || 'value' in desc) {
+						to[key] = value;
+					}
 				});
 				var ownKeys = Object.getOwnPropertySymbols(obj);
 				for(j = 0; j < ownKeys.length; j++) {

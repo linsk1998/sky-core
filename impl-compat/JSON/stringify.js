@@ -1,6 +1,5 @@
 import { toString } from "../../native/Object/prototype/toString";
 import { slice } from "../../native/String/prototype/slice";
-import { isSymbol } from "../../utils-compat/isSymbol";
 import { isFunction } from "../../utils/isFunction";
 
 var rx_escapable = /[\\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
@@ -20,6 +19,7 @@ export function escapeString(str) {//from lodash
 export function stringify(obj) {
 	switch(obj) {
 		case undefined:
+			break;
 		case null:
 			return "null";
 		case false:
@@ -33,7 +33,7 @@ export function stringify(obj) {
 				case '[object Number]':
 					return isNaN(obj) ? "null" : obj.toString();
 				case '[object Array]':
-					return "[" + obj.map(stringify).join(",") + "]";
+					return "[" + obj.map(arrayItemStringify).join(",") + "]";
 				default:
 					if(obj.toJSON && isFunction(obj.toJSON)) {
 						return stringify(obj.toJSON());
@@ -43,13 +43,18 @@ export function stringify(obj) {
 					for(var i = 0; i < ownKeys.length; i++) {
 						var key = ownKeys[i];
 						var value = obj[key];
-						if(value !== void 0) {
-							if(!isFunction(value) && !isSymbol(value)) {
-								items.push('"' + escapeString(key) + '":' + stringify(value));
-							}
+						if(value !== void 0 && !isFunction(value)) {
+							value = stringify(value);
+							if(value) items.push('"' + escapeString(key) + '":' + value);
 						}
 					}
 					return "{" + items.join(",") + "}";
 			}
 	}
+}
+
+function arrayItemStringify(value) {
+	value = stringify(value);
+	if(value === void 0) return "null";
+	return value;
 }

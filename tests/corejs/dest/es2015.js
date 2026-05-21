@@ -4082,13 +4082,28 @@ return class extends Parent { /* empty */ };
 	    const object = Object.create(prototype);
 	    object.a = 'a';
 	    object[d] = 'd';
-	    Object.defineProperty(object, 'b', {
-	      value: 'b'
-	    });
-	    Object.defineProperty(object, 'c', {
-	      value: 'c',
-	      enumerable: true
-	    });
+	    if (NON_ENUMERABLE) {
+	      Object.defineProperty(object, 'b', {
+	        value: 'b'
+	      });
+	      Object.defineProperty(object, 'c', {
+	        value: 'c',
+	        enumerable: true
+	      });
+	    } else {
+	      Object.defineProperty(object, 'enumerable', {
+	        configurable: true,
+	        writable: true,
+	        enumerable: false,
+	        value: '1'
+	      });
+	      Object.defineProperty(object, 'configurable', {
+	        configurable: false,
+	        writable: true,
+	        enumerable: true,
+	        value: '1'
+	      });
+	    }
 	    Object.defineProperty(object, e, {
 	      configurable: true,
 	      writable: true,
@@ -4106,18 +4121,33 @@ return class extends Parent { /* empty */ };
 	      enumerable: true,
 	      value: 'a'
 	    }, 'getOwnPropertyDescriptor a');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'b'), {
-	      configurable: false,
-	      writable: false,
-	      enumerable: false,
-	      value: 'b'
-	    }, 'getOwnPropertyDescriptor b');
-	    assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'c'), {
-	      configurable: false,
-	      writable: false,
-	      enumerable: true,
-	      value: 'c'
-	    }, 'getOwnPropertyDescriptor c');
+	    if (NON_ENUMERABLE) {
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'b'), {
+	        configurable: false,
+	        writable: false,
+	        enumerable: false,
+	        value: 'b'
+	      }, 'getOwnPropertyDescriptor b');
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'c'), {
+	        configurable: false,
+	        writable: false,
+	        enumerable: true,
+	        value: 'c'
+	      }, 'getOwnPropertyDescriptor c');
+	    } else {
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'enumerable'), {
+	        configurable: true,
+	        writable: true,
+	        enumerable: true,
+	        value: '1'
+	      }, 'getOwnPropertyDescriptor enumerable');
+	      assert.deepEqual(Object.getOwnPropertyDescriptor(object, 'configurable'), {
+	        configurable: true,
+	        writable: true,
+	        enumerable: true,
+	        value: '1'
+	      }, 'getOwnPropertyDescriptor configurable');
+	    }
 	    // assert.deepEqual(Object.getOwnPropertyDescriptor(object, d), {
 	    // 	configurable: true,
 	    // 	writable: true,
@@ -4143,9 +4173,13 @@ return class extends Parent { /* empty */ };
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, i), undefined, 'getOwnPropertyDescriptor i');
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, j), undefined, 'getOwnPropertyDescriptor j');
 	    assert.strictEqual(Object.getOwnPropertyDescriptor(object, 'k'), undefined, 'getOwnPropertyDescriptor k');
-	    assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, 'toString').enumerable, false, 'getOwnPropertyDescriptor on Object.prototype');
-	    // assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, d), undefined, 'getOwnPropertyDescriptor on Object.prototype missed symbol');
-	    assert.strictEqual(Object.keys(object).length, 2, 'Object.keys');
+	    if (NON_ENUMERABLE) {
+	      assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, 'toString').enumerable, false, 'getOwnPropertyDescriptor on Object.prototype');
+	      // assert.strictEqual(Object.getOwnPropertyDescriptor(Object.prototype, d), undefined, 'getOwnPropertyDescriptor on Object.prototype missed symbol');
+	      assert.strictEqual(Object.keys(object).length, 2, 'Object.keys');
+	    } else {
+	      assert.strictEqual(Object.keys(object).length, 3, 'Object.keys');
+	    }
 	    assert.strictEqual(Object.getOwnPropertyNames(object).length, 3, 'Object.getOwnPropertyNames');
 	    assert.strictEqual(Object.getOwnPropertySymbols(object).length, 3, 'Object.getOwnPropertySymbols');
 	    // assert.strictEqual(ownKeys(object).length, 6, 'Reflect.ownKeys');
@@ -5596,14 +5630,14 @@ return class extends Parent { /* empty */ };
 	    writable: true,
 	    value: 2
 	  });
-	  if (DESCRIPTORS) {
+	  if (NON_ENUMERABLE) {
 	    assert.deepEqual(descriptors.e, {
 	      enumerable: false,
 	      configurable: false,
 	      writable: false,
 	      value: 3
 	    });
-	  } else {
+	  } else if (!DESCRIPTORS) {
 	    assert.deepEqual(descriptors.e, {
 	      enumerable: true,
 	      configurable: true,

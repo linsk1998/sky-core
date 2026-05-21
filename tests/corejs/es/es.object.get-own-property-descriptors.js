@@ -1,5 +1,5 @@
 import { hasV8DefineBug } from '../../../support/hasV8DefineBug';
-import { DESCRIPTORS } from '../helpers/constants';
+import { DESCRIPTORS, NON_ENUMERABLE } from '../helpers/constants';
 
 QUnit.test('Object.getOwnPropertyDescriptors', assert => {
   assert.isFunction(Object.getOwnPropertyDescriptors);
@@ -19,14 +19,14 @@ QUnit.test('Object.getOwnPropertyDescriptors', assert => {
     writable: true,
     value: 2,
   });
-  if(DESCRIPTORS) {
+  if(NON_ENUMERABLE) {
     assert.deepEqual(descriptors.e, {
       enumerable: false,
       configurable: false,
       writable: false,
       value: 3,
     });
-  } else {
+  } else if(!DESCRIPTORS) {
     assert.deepEqual(descriptors.e, {
       enumerable: true,
       configurable: true,
