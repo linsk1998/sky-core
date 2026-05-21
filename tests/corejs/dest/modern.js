@@ -4,11 +4,30 @@
 
 	var getPrototypeOf$2 = Object$1.getPrototypeOf;
 
-	function ff_getPrototypeOf(object) {
+	var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
+
+	var nullProto = {};
+	nullProto.__proto__ = null;
+	if (nullProto.__proto__) {
+	  var i = dontEnums.length;
+	  while (i--) {
+	    nullProto[dontEnums[i]] = undefined;
+	  }
+	} else {
+	  nullProto = null;
+	}
+
+	function getPrototypeOf$ff(object) {
 	  return object.__proto__ || null;
 	}
 	;
-	function ie_getPrototypeOf(object) {
+	function getPrototypeOf$o(object) {
+	  var __proto__ = object.__proto__;
+	  return __proto__ === nullProto ? null : __proto__;
+	}
+	;
+	var getPrototypeOf$legacy = nullProto ? getPrototypeOf$o : getPrototypeOf$ff;
+	function getPrototypeOf$ie(object) {
 	  if ('__proto__' in object) {
 	    return object.__proto__;
 	  }
@@ -18,7 +37,7 @@
 
 	var setPrototypeOf$1 = Object$1.setPrototypeOf;
 
-	var getPrototypeOf$1 = !getPrototypeOf$2 ? Object$1.__proto__ ? ff_getPrototypeOf : ie_getPrototypeOf : !setPrototypeOf$1 ? ie_getPrototypeOf : getPrototypeOf$2;
+	var getPrototypeOf$1 = !getPrototypeOf$2 ? Object$1.__proto__ ? getPrototypeOf$legacy : getPrototypeOf$ie : !setPrototypeOf$1 ? getPrototypeOf$ie : getPrototypeOf$2;
 
 	var defineProperties$1 = Object$1.defineProperties;
 
@@ -1014,35 +1033,7 @@
 	  // assert.throws(() => toFixed.call(undefined, 1), TypeError, '? thisNumberValue(this value)');
 	});
 
-	QUnit.test('Number#toPrecision', function (assert) {
-	  var toPrecision = Number.prototype.toPrecision;
-	  assert.isFunction(toPrecision);
-	  assert.name(toPrecision, 'toPrecision');
-	  assert.arity(toPrecision, 1);
-	  assert.looksNative(toPrecision);
-	  assert.nonEnumerable(Number.prototype, 'toPrecision');
-	  assert.same(0.00008.toPrecision(3), '0.0000800', '0.00008.toPrecision(3)');
-	  assert.same(1.255.toPrecision(2), '1.3', '1.255.toPrecision(2)');
-	  assert.same(1843654265.0774949.toPrecision(13), '1843654265.077', '1843654265.0774949.toPrecision(13)');
-	  assert.same(NaN.toPrecision(1), 'NaN', 'If x is NaN, return the String "NaN".');
-	  assert.same(123.456.toPrecision(), '123.456', 'If precision is undefined, return ! ToString(x).');
-	  // assert.same(123.456.toPrecision(undefined), '123.456', 'If precision is undefined, return ! ToString(x).');
-	  assert["throws"](function () {
-	    return 0.9.toPrecision(0);
-	  }, RangeError, 'If p < 1 or p > 21, throw a RangeError exception.');
-	  assert["throws"](function () {
-	    return 0.9.toPrecision(101);
-	  }, RangeError, 'If p < 1 or p > 21, throw a RangeError exception.');
-	  // assert.throws(() => toPrecision.call({}, 1), TypeError, '? thisNumberValue(this value)');
-	  // assert.throws(() => toPrecision.call('123', 1), TypeError, '? thisNumberValue(this value)');
-	  // assert.throws(() => toPrecision.call(false, 1), TypeError, '? thisNumberValue(this value)');
-	  // assert.throws(() => toPrecision.call(null, 1), TypeError, '? thisNumberValue(this value)');
-	  // assert.throws(() => toPrecision.call(undefined, 1), TypeError, '? thisNumberValue(this value)');
-	});
-
 	var Date$1 = window.Date;
-
-	var toJSON$2 = Date$1.prototype.toJSON;
 
 	function prefixIntrger2(number) {
 	  if (number < 10) {
@@ -1068,7 +1059,7 @@
 	  return this.getUTCFullYear() + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
 	}
 
-	function toJSON$1(_) {
+	function toJSON(_) {
 	  if (isNaN(this.getTime())) {
 	    return null;
 	  }
@@ -1076,24 +1067,12 @@
 	}
 	;
 
-	function toJSON(_) {
-	  if (isNaN(this.getTime())) {
-	    return null;
+	try {
+	  if (!('toJSON' in Date$1.prototype) || new Date$1(0).toJSON() !== '1970-01-01T00:00:00.000Z' || new Date$1(NaN).toJSON() !== null) {
+	    Date$1.prototype.toJSON = toJSON;
 	  }
-	  return toJSON$2.call(this);
-	}
-	;
-
-	if (toJSON$2) {
-	  try {
-	    if (new Date(NaN).toJSON() !== null) {
-	      Date.prototype.toJSON = toJSON;
-	    }
-	  } catch (e) {
-	    Date.prototype.toJSON = toJSON;
-	  }
-	} else {
-	  Date.prototype.toJSON = toJSON$1;
+	} catch (e) {
+	  Date$1.prototype.toJSON = toJSON;
 	}
 
 	// safari 5
@@ -1706,10 +1685,10 @@
 
 	if (!getPrototypeOf$2) {
 	  if ('__proto__' in Object$1.prototype) {
-	    Object$1.getPrototypeOf = ff_getPrototypeOf;
+	    Object$1.getPrototypeOf = getPrototypeOf$legacy;
 	  }
 	} else if (!setPrototypeOf$1) {
-	  Object$1.getPrototypeOf = ie_getPrototypeOf;
+	  Object$1.getPrototypeOf = getPrototypeOf$ie;
 	}
 
 	var create$2 = Object$1.create;
@@ -1885,6 +1864,10 @@
 
 	var $inject_Object_defineProperties = Object$1.defineProperties || defineProperties;
 
+	if (!defineProperties$1) {
+	  Object$1.defineProperties = defineProperties;
+	}
+
 	function ff_setPrototypeOf(obj, proto) {
 	  obj.__proto__ = proto;
 	  return obj;
@@ -1907,19 +1890,25 @@
 	  }
 	}
 
-	if (!defineProperties$1) {
-	  Object$1.defineProperties = defineProperties;
-	}
-
-	function create$1(proto, properties) {
+	var create$1 = nullProto ? function create(proto, properties) {
+	  var o = {};
+	  if (proto === null) {
+	    o.__proto__ = nullProto;
+	  } else {
+	    o.__proto__ = proto;
+	  }
+	  if (properties) {
+	    $inject_Object_defineProperties(o, properties);
+	  }
+	  return o;
+	} : function create(proto, properties) {
 	  var o = {};
 	  Object.setPrototypeOf(o, proto);
 	  if (properties) {
 	    $inject_Object_defineProperties(o, properties);
 	  }
 	  return o;
-	}
-	;
+	};
 
 	if (!create$2) {
 	  if (proto) {

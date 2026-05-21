@@ -2,13 +2,13 @@ import { Object } from "../../native/Object";
 import { setPrototypeOf } from "../../native/Object/setPrototypeOf";
 import { getPrototypeOf } from "../../native/Object/getPrototypeOf";
 import { getPrototypeOf as compat_getPrototypeOf } from "../../impl-compat/Object/getPrototypeOf";
-import { ff_getPrototypeOf, ie_getPrototypeOf } from "../../impl-modern/Object/getPrototypeOf";
+import { getPrototypeOf$legacy, getPrototypeOf$ie } from "../../impl-modern/Object/getPrototypeOf";
 
 export default !getPrototypeOf ?
 	Object.__proto__ ?
-		ff_getPrototypeOf :
+		getPrototypeOf$legacy :
 		compat_getPrototypeOf
 	:
 	!setPrototypeOf ?
-		ie_getPrototypeOf :
-		Object.getPrototypeOf;
+		getPrototypeOf$ie :
+		getPrototypeOf;

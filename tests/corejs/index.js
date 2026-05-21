@@ -4,7 +4,6 @@ import "./es/es.array.slice";
 import "./es/es.array.splice";
 
 import "./es/es.number.to-fixed";
-import "./es/es.number.to-precision";
 
 import "./es/es.date.to-json";
 import "./es/es.date.to-iso-string";
