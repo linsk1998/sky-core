@@ -15,11 +15,6 @@
 	"module": "dist/utils.esm.js",
 	"scripts": {
 		"build:utils": "rollup --config build/rollup.config.utils.js",
-		"build:es": "rollup --config build/rollup.config.es.js && rollup --config build/rollup.config.es-compat.js && rollup --config build/rollup.config.es-modern.js",
-		"build:web": "rollup --config build/rollup.config.web.js && rollup --config build/rollup.config.web-compat.js && rollup --config build/rollup.config.web-modern.js",
-		"build:polyfill": "rollup --config build/rollup.config.polyfill.js && rollup --config build/rollup.config.polyfill-compat.js && rollup --config build/rollup.config.polyfill-modern.js",
-		"build:sky": "rollup --config build/rollup.config.sky.js && rollup --config build/rollup.config.sky-compat.js && rollup --config build/rollup.config.sky-modern.js",
-		"build:advance": "rollup --config build/rollup.config.advance-es2015.js && rollup --config build/rollup.config.advance-modern.js && rollup --config build/rollup.config.advance-compat.js",
 		"test:corejs": "rollup --config tests/corejs/rollup.config.js",
 		"test:ie8": "rollup --config tests/ie8/rollup.config.ie8.js",
 		"test:lambdatest": "node tests/action-lambdatest.js",

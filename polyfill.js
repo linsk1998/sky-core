@@ -1,3 +1,0 @@
-
-import "./es";
-import "./web";

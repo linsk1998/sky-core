@@ -1,7 +1,4 @@
 declare module "sky-core" {
-	export function overload(args: ArrayLike<any>, thisVal: any): any;
-	export function overload(checks: ((arg: any) => boolean)[], thisVal: any, target: Function): void;
-
 	export function isArray(arg: any): arg is any[];
 	export function isDate(arg: any): arg is Date;
 	export function isRegExp(arg: any): arg is RegExp;
