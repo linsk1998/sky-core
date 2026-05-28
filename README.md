@@ -10,10 +10,20 @@ sky-core是一个处理浏览器兼容问题的polyfill库和工具库。
 
 # 特色
 
-* 可打包为 IE9以下专用版、IE9+非IE版、ESM版、通用版 这4个版本。在现代浏览器中就不会载入多余的兼容代码了。
+* 专为按条件打包而设计，按照不同的浏览器分5个版本。在现代浏览器中就不会载入多余的兼容代码了。
 * 包含许多Web API的polyfill。比如document.head等。
 * 可以配合Typescript和Babel使用。
 * 包含无污染版，和有污染版。如果一个有的库需要polyfill，有的不需要，则可以使用无污染版。
+
+# 不同条件的兼容性
+
+| 代号 | 支持特性 | 浏览器 |
+| ----- | ----- | ----- |
+| jscript | IE9以下 | IE5.5~IE8 |
+| legacy | 除了上面的以外，所有不支持document.currentScript的浏览器 | IE9~11, Firefox2~3.6, Chrome4~28, Safari3.1~7.1, Opera10~15 |
+| classic | 支持document.currentScript，但不支持module的浏览器 | Chrome29~62, Safari8~11.0, Edge12~18, Firefox4~66, Opera16~49 |
+| since18 | 支持module | Chrome63+, Safari11.1+, Firefox67+, Edge79+, Opera50+ |
+| 开发中 | 支持top-level-await | Chrome89+, Safari27+, Firefox90+, Edge89+, Opera75+ |
 
 # 安装
 
@@ -208,10 +218,10 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 # 不支持的功能
 
 * 不支持IE11开发工具仿真IE8及以下版本（真机支持）。
-* 不支持伪装成Native函数，函数toString()不会返回“native code”。
-* 不支持function .prototype .name。
-* 不支持不可枚举
-* Symbol WellKnow 只支持hasInstance、iterator
+* 不支持伪装成Native函数，函数toString()不会返回“native code”。（不影响使用）
+* 不支持function.prototype.name。（这要rollup、Babel、Teser共同作用才能实现）
+* 不支持不可枚举。（浏览器限制本来无法实现）
+* Symbol WellKnow 只支持hasInstance、iterator。（浏览器限制本来无法实现）
 
 # 参考项目
 
