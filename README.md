@@ -229,3 +229,13 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 * [whatwg-fetch](https://www.npmjs.com/package/whatwg-fetch)
 * [Blob.js](https://github.com/eligrey/Blob.js)
 * [cookie-store](https://github.com/markcellus/cookie-store)
+
+# 特性以及建议使用方式
+
++ 修复原生功能的，不提供pure功能
+
+| 特性 | 建议使用方式 | 原因 |
+| ----- | ----- | ----- |
+| RegExp | polyfill | 修复原生功能 |
+| Event | pure | DOM相关 |
+| Error | polyfill | 修复原生功能 |

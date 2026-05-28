@@ -4,6 +4,8 @@ const inject = require("@rollup/plugin-inject");
 module.exports = [
 	polyfill({
 		polluting: {
+			// Safari 5
+			'RegExp': "sky-core/polyfill/RegExp",
 			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
 			//简易版的实现，仅适用于解析内容安全的json
 			// IE8+ Chrome4+ Safari4+ Firfox3.5+ Opera11.5+
@@ -20,6 +22,8 @@ module.exports = [
 			// "console": "sky-core/polyfill/console",
 			// IE9+ Chrome4+ Safari5.1+ Firfox4+ Opera11.5+
 			'document.head': "sky-core/polyfill/document/head",
+			// Firfox9+ Opera12.1+
+			'document.scripts': "sky-core/polyfill/document/scripts",
 			// Edge12+ Safari4+ Chrome4+ Firfox4+ Opera11.5+
 			'document.baseURI': "sky-core/polyfill/document/baseURI",
 			// IE9+ Safari4+ Chrome4+ Firfox2+ Opera11.5+
@@ -48,22 +52,29 @@ module.exports = [
 			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
 			"Object.keys": "sky-core/polyfill/Object/keys",
 			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
-			// "Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
+			"Object.defineProperty": "sky-core/polyfill/Object/defineProperty",
 			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
 			"Object.getOwnPropertyDescriptor": "sky-core/polyfill/Object/getOwnPropertyDescriptor",
 			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
 			"Object.getOwnPropertyNames": "sky-core/polyfill/Object/getOwnPropertyNames",
 			/* IE9+ Firefox4+ Safari5.1+ Opera12.1+ */
-			// "Object.defineProperties": "sky-core/polyfill/Object/defineProperties",
+			"Object.defineProperties": "sky-core/polyfill/Object/defineProperties",
 			/* IE11+ Chrome34+ Firefox31+ Safari9+ Opera12.1+ */
-			// "Object.setPrototypeOf": "sky-core/polyfill/Object/setPrototypeOf",
+			"Object.setPrototypeOf": "sky-core/polyfill/Object/setPrototypeOf",
+			// Edge12+ Chrome15+ Firefox11+ Safari6+ Opera11.5+
+			'Event': "sky-core/polyfill/Event",
 			/* Edge12+ Chrome19 Firefox22+ Safari9+ */
 			"Object.is": "sky-core/polyfill/Object/is",
 
 			// IE11+ Chrome8+ Safari5.1+ Firfox21+ Opera15+
 			'location.origin': "sky-core/polyfill/location",
-			// Edge12+ Chrome15+ Firefox11+ Safari6+ Opera11.5+
-			'Event': "sky-core/polyfill/Event",
+
+			/* Edge12+ Chrome32 Firefox4+ */
+			'URL': "sky-core/polyfill/URL",
+			'URLSearchParams': "sky-core/polyfill/URLSearchParams",
+
+			/* Chrome38 firefox28 Safari10 Android4.4.4 */
+			"File": "sky-core/polyfill/File",
 
 			// Chrome41+ Edge12 Safari9+ Firfox32+ Opera32+
 			"Array.from": [
@@ -166,10 +177,10 @@ module.exports = [
 			/* Chrome119+ Firefox121+ Safari17.4+ */
 			"Promise.withResolvers": "sky-core/polyfill/Promise/withResolvers",
 
-			//URL 这个polyfil支持accessor，但不支持自动转string和JSON，需要用.href获取
-			"URL": "sky-core/polyfill/URL",
-			"URLSearchParams": "sky-core/polyfill/URLSearchParams",
-
+			// "console": "sky-core/polyfill/console",
+			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
+			// "localStorage": "sky-core/polyfill/localStorage",
+			// "sessionStorage": "sky-core/polyfill/sessionStorage",
 		},
 		exclude: [
 			"tests/corejs/helpers/*",
@@ -181,6 +192,8 @@ module.exports = [
 	//以下是prototype的修改
 	polyfill({
 		modules: {
+			// firefox3
+			".slice": "sky-core/polyfill/Array/prototype/slice",
 			// breaking change
 			'.toFixed': "sky-core/polyfill/Number/prototype/toFixed",
 			".toJSON": [
@@ -199,28 +212,17 @@ module.exports = [
 				"sky-core/polyfill/Array/prototype/includes",
 			],
 			//DOM
-			// ".contains": "sky-core/polyfill/Element/prototype/contains",
-			// ".children": "sky-core/polyfill/Element/prototype/children",
-			// ".innerText": "sky-core/polyfill/Element/prototype/innerText",
-			// ES3
-			".slice": "sky-core/polyfill/Array/prototype/slice",
-			".splice": "sky-core/polyfill/Array/prototype/splice",
-
-			//ES5 Array
-			".indexOf": "sky-core/polyfill/Array/prototype/indexOf",
-			".lastIndexOf": "sky-core/polyfill/Array/prototype/lastIndexOf",
-			".forEach": "sky-core/polyfill/Array/prototype/forEach",
-			".filter": "sky-core/polyfill/Array/prototype/filter",
-			".map": "sky-core/polyfill/Array/prototype/map",
-			".some": "sky-core/polyfill/Array/prototype/some",
-			".every": "sky-core/polyfill/Array/prototype/every",
+			".contains": "sky-core/polyfill/Element/prototype/contains",
+			".children": "sky-core/polyfill/Element/prototype/children",
+			".innerText": "sky-core/polyfill/Element/prototype/innerText",
 			// toLocaleFormat 这个只有火狐支持，非标准
 			".toLocaleFormat": "sky-core/polyfill/Date/prototype/toLocaleFormat",
+			//toISOString的兼容性还过的去，可以不要
 			".toISOString": "sky-core/polyfill/Date/prototype/toISOString",
 			//部分版本chrome，toLocaleString只支持英文，这里给替换成了一个全球可读性都比较好的格式
-			// ".toLocaleDateString": "sky-core/polyfill/Date/prototype/toLocaleDateString",
-			// ".toLocaleString": "sky-core/polyfill/Date/prototype/toLocaleString",
-			// ".toLocaleTimeString": "sky-core/polyfill/Date/prototype/toLocaleTimeString",
+			".toLocaleDateString": "sky-core/polyfill/Date/prototype/toLocaleDateString",
+			".toLocaleString": "sky-core/polyfill/Date/prototype/toLocaleString",
+			".toLocaleTimeString": "sky-core/polyfill/Date/prototype/toLocaleTimeString",
 			/* IE9+ Firefox3+ Safari4+ Opera11.5+ */
 			".reduce": "sky-core/polyfill/Array/prototype/reduce",
 			".reduceRight": "sky-core/polyfill/Array/prototype/reduceRight",
@@ -299,15 +301,12 @@ module.exports = [
 			"setInterval": "sky-core/pure/setInterval",
 			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
-			"Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
 			"Symbol.asyncIterator": "sky-core/pure/Symbol/asyncIterator",
 			"Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
 			"Symbol.iterator": "sky-core/pure/Symbol/iterator",
 			"Symbol.for": "sky-core/pure/Symbol/for",
 			"Symbol.keyFor": "sky-core/pure/Symbol/keyFor",
 			"Symbol": "sky-core/pure/Symbol",
-			// 由于有比较多的库使用XMLHttpRequest来判断浏览器版本，污染全局变量会导致判断错误，因此建议只在需要用的地方注入
-			"XMLHttpRequest": "sky-core/pure/XMLHttpRequest"
 		},
 		include: [
 			"impl/**/*",

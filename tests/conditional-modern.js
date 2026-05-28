@@ -3,11 +3,7 @@ const inject = require("@rollup/plugin-inject");
 
 module.exports = [
 	polyfill({
-		modules: {
-			// Safari 5
-			'RegExp': "sky-core/polyfill/RegExp",
-			'Event': "sky-core/polyfill/Event",
-			'Error': "sky-core/polyfill/Error",
+		polluting: {
 			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
 			//简易版的实现，仅适用于解析内容安全的json
 			// IE8+ Chrome4+ Safari4+ Firfox3.5+ Opera11.5+
@@ -63,7 +59,9 @@ module.exports = [
 			"Object.defineProperties": "sky-core/polyfill/Object/defineProperties",
 			/* IE11+ Chrome34+ Firefox31+ Safari9+ Opera12.1+ */
 			"Object.setPrototypeOf": "sky-core/polyfill/Object/setPrototypeOf",
-			/* Edge12+ Chrome19 Firefox22+ Safari9+ */
+			// Edge12+ Chrome15+ Firefox11+ Safari6+ Opera11.5+
+			'Event': "sky-core/polyfill/Event",
+			/* Edge12+ Chrome19+ Firefox22+ Safari9+ */
 			"Object.is": "sky-core/polyfill/Object/is",
 
 			// IE11+ Chrome8+ Safari5.1+ Firfox21+ Opera15+
@@ -164,6 +162,8 @@ module.exports = [
 			/* Chrome85+ Firefox79+ Safari14+*/
 			'Promise.any': "sky-core/polyfill/Promise/any",
 			'AggregateError': "sky-core/polyfill/AggregateError",
+			/* Chrome93+ Firefox91+ Safari15+*/
+			'Error': "sky-core/polyfill/Error", // cause
 			/* Chrome93+ Firefox92+ Safari15.4+*/
 			"Object.hasOwn": "sky-core/polyfill/Object/hasOwn",
 			/* Chrome98+ Firefox94+ Safari15.4+*/
@@ -179,7 +179,6 @@ module.exports = [
 			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
 			// "localStorage": "sky-core/polyfill/localStorage",
 			// "sessionStorage": "sky-core/polyfill/sessionStorage",
-			// 'Event': "sky-core/polyfill/Event",
 		},
 		exclude: [
 			"tests/corejs/helpers/*",

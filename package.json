@@ -62,7 +62,7 @@
 		"rollup": "^2.45.2",
 		"rollup-plugin-es3ify": "0.0.4",
 		"rollup-plugin-import": "^1.0.2",
-		"rollup-plugin-polyfill-inject": "^1.0.3",
+		"rollup-plugin-polyfill-inject": "^3.2.0",
 		"selenium-webdriver": "^4.29.0"
 	}
 }

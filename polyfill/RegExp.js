@@ -5,4 +5,3 @@ var p = /p/;
 if(new RegExp(p) === p) {
 	window.RegExp = fix_RegExp(RegExp);
 }
-

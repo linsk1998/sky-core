@@ -1,13 +1,10 @@
 import { Error as native_Error } from "../native/Error";
+import { fix_Error$proto } from "../impl/error/fix_Error$proto";
 
-function Error(message) {
-	this.message = message === undefined ? "" : String(message);
-	var options = arguments[1];
-	if(typeof options === "object" && options !== null) {
-		if('cause' in options) {
-			this.cause = options.cause;
-		}
+try {
+	throw new native_Error("", { cause: 1 });
+} catch(e) {
+	if(!('cause' in e)) {
+		window.Error = fix_Error$proto(native_Error.prototype);
 	}
 }
-Error.prototype = native_Error.prototype;
-window.Error = Error;
