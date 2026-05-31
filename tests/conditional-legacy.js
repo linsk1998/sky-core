@@ -4,9 +4,10 @@ const inject = require("@rollup/plugin-inject");
 module.exports = [
 	polyfill({
 		polluting: {
+			// firefox3
+			".slice": "sky-core/polyfill/Array/prototype/slice",
 			// Safari 5
 			'RegExp': "sky-core/polyfill/RegExp",
-			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
 			//简易版的实现，仅适用于解析内容安全的json
 			// IE8+ Chrome4+ Safari4+ Firfox3.5+ Opera11.5+
 			"JSON": "sky-core/polyfill/JSON",
@@ -15,11 +16,18 @@ module.exports = [
 				// IE8+ Chrome4+ Safari4+ Firfox2+ Opera11.5+
 				"sky-core/polyfill/Date/prototype/toJSON"
 			],
+			".toJSON": [
+				"sky-core/polyfill/Date/prototype/toJSON"
+			],
+			//这个实现纯内存的，只为避免报错，无法持久化。如果需要持久化，要使用flash版的polyfill
 			// IE8+ Chrome4+ Safari4+ Firfox3.5+ Opera11.5+
 			"localStorage": "sky-core/polyfill/localStorage",
 			"sessionStorage": "sky-core/polyfill/sessionStorage",
 			// IE10+ Chrome4+ Safari3.1+ Firfox4+ Opera11.5+
 			// "console": "sky-core/polyfill/console",
+			// breaking change
+			// Firefox4+ Safari5.1+ Opera15+
+			'.toFixed': "sky-core/polyfill/Number/prototype/toFixed",
 			// IE9+ Chrome4+ Safari5.1+ Firfox4+ Opera11.5+
 			'document.head': "sky-core/polyfill/document/head",
 			// Firfox9+ Opera12.1+
@@ -192,13 +200,6 @@ module.exports = [
 	//以下是prototype的修改
 	polyfill({
 		modules: {
-			// firefox3
-			".slice": "sky-core/polyfill/Array/prototype/slice",
-			// breaking change
-			'.toFixed': "sky-core/polyfill/Number/prototype/toFixed",
-			".toJSON": [
-				"sky-core/polyfill/Date/prototype/toJSON"
-			],
 			'.at': [
 				/* Chrome41+ Firefox34+ Safari9.1+*/
 				"sky-core/polyfill/String/prototype/at",

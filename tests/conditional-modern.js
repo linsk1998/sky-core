@@ -4,7 +4,6 @@ const inject = require("@rollup/plugin-inject");
 module.exports = [
 	polyfill({
 		polluting: {
-			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
 			//简易版的实现，仅适用于解析内容安全的json
 			// IE8+ Chrome4+ Safari4+ Firfox3.5+ Opera11.5+
 			"JSON": "sky-core/polyfill/JSON",
@@ -13,9 +12,6 @@ module.exports = [
 				// IE8+ Chrome4+ Safari4+ Firfox2+ Opera11.5+
 				"sky-core/polyfill/Date/prototype/toJSON"
 			],
-			// IE8+ Chrome4+ Safari4+ Firfox3.5+ Opera11.5+
-			"localStorage": "sky-core/polyfill/localStorage",
-			"sessionStorage": "sky-core/polyfill/sessionStorage",
 			// IE10+ Chrome4+ Safari3.1+ Firfox4+ Opera11.5+
 			// "console": "sky-core/polyfill/console",
 			// IE9+ Chrome4+ Safari5.1+ Firfox4+ Opera11.5+
