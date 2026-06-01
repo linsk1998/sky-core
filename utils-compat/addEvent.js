@@ -1,5 +1,5 @@
 import { isNotNullObject } from "../utils/isNotNullObject";
-import { notCapture } from "../impl/Event";
+import { notCapture } from "../impl/event/notCapture";
 import { attachEvent } from "./attachEvent";
 import { fixEvent } from "./fixEvent";
 

@@ -1,4 +1,4 @@
-import { notCapture } from "../impl/Event";
+import { notCapture } from "../impl/event/notCapture";
 
 export function fireEvent(ele, type, props) {
 	var e = document.createEvent('Event');

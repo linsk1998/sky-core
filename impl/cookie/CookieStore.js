@@ -1,5 +1,5 @@
 import "sky-core/polyfill/Array/prototype/filter";
-import { EventTarget } from "../EventTarget";
+import { EventTarget } from "../event/EventTarget";
 import { inherits } from "sky-core/utils/inherits";
 import { parseCookie } from "./parseCookie";
 import { setCookie } from "./setCookie";

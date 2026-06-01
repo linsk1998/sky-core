@@ -1,5 +1,5 @@
 import { inherits } from "sky-core/utils/inherits";
-import { EventTarget } from "./EventTarget";
+import { EventTarget } from "./event/EventTarget";
 
 function AbortSignal() {
 	EventTarget.call(this);
