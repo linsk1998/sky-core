@@ -1,5 +1,6 @@
+import { getCookie as getCookie$impl } from "../impl/cookie/getCookie";
 
-export function getCookie(name){
-	var arr=document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
-	if(arr != null) return decodeURIComponent(arr[2]); return null;
+export function getCookie(name) {
+	var value = getCookie$impl(name);
+	if(value != null) return decodeURIComponent(value); return null;
 };

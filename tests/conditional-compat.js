@@ -18,7 +18,7 @@ module.exports = [
 			".toJSON": [
 				"sky-core/polyfill/Date/prototype/toJSON"
 			],
-			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
+			//这个实现基于IE的userData功能，只在同目录的HTML有效。如果需要html跨目录，要使用flash版的polyfill
 			// IE8+ Chrome4+ Safari4+ Firfox3.5+ Opera11.5+
 			"localStorage": "sky-core/polyfill/localStorage",
 			"sessionStorage": "sky-core/polyfill/sessionStorage",

@@ -1,7 +1,7 @@
 import { SessionStorage } from "../impl/storage/SessionStorage";
 import { Storage } from "../impl/storage/Storage";
-import { getCookie } from "../utils/getCookie";
-import { setCookie } from "../utils/setCookie";
+import { getCookie } from "../impl/cookie/getCookie";
+import { setCookie } from "../impl/cookie/setCookie";
 
 if(!window.sessionStorage) {
 	var ele = document.createElement("sessionStorage");
