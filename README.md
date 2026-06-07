@@ -21,8 +21,8 @@ sky-core是一个处理浏览器兼容问题的polyfill库和工具库。
 | ----- | ----- | ----- |
 | jscript | IE9以下 | IE5.5~IE8 |
 | legacy | 除了上面的以外，所有不支持document.currentScript的浏览器 | IE9~11, Firefox2~3.6, Chrome4~28, Safari3.1~7.1, Opera10~15 |
-| classic | 支持document.currentScript，但不支持module的浏览器 | Chrome29~62, Safari8~11.0, Edge12~18, Firefox4~66, Opera16~49 |
-| since18 | 支持module | Chrome63+, Safari11.1+, Firefox67+, Edge79+, Opera50+ |
+| classic | 支持document.currentScript，但不支持module的浏览器 | Chrome29~62, Safari8~10.0, Edge12~18, Firefox4~66, Opera16~49 |
+| since17 | 支持module | Chrome63+, Safari10.1+, Firefox67+, Edge79+, Opera50+ |
 | 开发中 | 支持top-level-await | Chrome89+, Safari27+, Firefox90+, Edge89+, Opera75+ |
 
 # 安装
@@ -233,6 +233,8 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 # 特性以及建议使用方式
 
 + 修复原生功能的，现有业务代码不太可能使用 if(xxx) 的方式进行业务层处理，因此建议直接由污染修复原生问题。
++ 无法完美实现原生功能的，推荐使用pure模式，业务上要考虑不支持的场景。
++ 原型链功能，推荐使用污染修复原生添加功能，因为非typescript无法知道对象类型，有可能是自定义类型，恰好有相同方法。
 
 | 特性 | 建议使用方式 | 原因 |
 | ----- | ----- | ----- |
@@ -241,3 +243,9 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Error | polyfill | 修复原生功能 |
 | Date | polyfill | 修复原生功能 |
 | parseInt | polyfill | 修复原生功能 |
+| Object.preventExtensions | pure | 无法真正实现 |
+| Object.seal | pure | 无法真正实现 |
+| Object.freeze | pure | 无法真正实现 |
+| Object.isExtensible | pure | 无法真正实现 |
+| Object.isSealed | pure | 无法真正实现 |
+| Object.isFrozen | pure | 无法真正实现 |

@@ -65,14 +65,6 @@ module.exports = [
 			// IE9+ Chrome23+ Safari6+ Firfox21+ Opera15+
 			'parseInt': "sky-core/polyfill/parseInt",
 
-			/* IE9+ Chrome6+ Firefox4+ Safari5.1+ Opera12.1+ */
-			"Object.preventExtensions": "sky-core/polyfill/Object/preventExtensions",
-			"Object.seal": "sky-core/polyfill/Object/seal",
-			"Object.freeze": "sky-core/polyfill/Object/freeze",
-			"Object.isExtensible": "sky-core/polyfill/Object/isExtensible",
-			"Object.isSealed": "sky-core/polyfill/Object/isSealed",
-			"Object.isFrozen": "sky-core/polyfill/Object/isFrozen",
-
 			/* IE9+ Firefox3.5+ Safari5+ Opera12.1+ */
 			"Object.getPrototypeOf": "sky-core/polyfill/Object/getPrototypeOf",
 			/* IE9+ Firefox4+ Safari5+ Opera12.5+ */
@@ -283,6 +275,15 @@ module.exports = [
 		pure: {
 			// 由于有比较多的库使用XMLHttpRequest来判断浏览器版本，污染全局变量会导致判断错误，因此建议只在需要用的地方注入
 			"XMLHttpRequest": "sky-core/pure/XMLHttpRequest",
+
+			/* IE9+ Chrome6+ Firefox4+ Safari5.1+ Opera12.1+ */
+			"Object.preventExtensions": "sky-core/polyfill/Object/preventExtensions",
+			"Object.seal": "sky-core/polyfill/Object/seal",
+			"Object.freeze": "sky-core/polyfill/Object/freeze",
+			"Object.isExtensible": "sky-core/polyfill/Object/isExtensible",
+			"Object.isSealed": "sky-core/polyfill/Object/isSealed",
+			"Object.isFrozen": "sky-core/polyfill/Object/isFrozen",
+
 			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
 			"Symbol.hasInstance": "sky-core/pure/Symbol/hasInstance",
