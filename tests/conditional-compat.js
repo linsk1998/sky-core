@@ -1,5 +1,4 @@
 const polyfill = require("rollup-plugin-polyfill-inject");
-const inject = require("@rollup/plugin-inject");
 
 module.exports = [
 	polyfill({
@@ -59,8 +58,7 @@ module.exports = [
 			// IE9+ Safari4+ Chrome4+ Firfox2+ Opera11.5+
 			"Date.now": "sky-core/polyfill/Date/now",
 			// IE9+ Safari5.1+ Chrome6+ Firfox4+ Opera11.5+
-			// "Date": "sky-core/polyfill/Date/constructor",
-			// "Date.parse": "sky-core/polyfill/Date/parse",
+			"Date": "sky-core/polyfill/Date/constructor",
 			/* IE9+ Firefox4+ Safari5+ Opera11.5+ */
 			"Array.isArray": "sky-core/polyfill/Array/isArray",
 			// breaking change

@@ -239,3 +239,4 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | RegExp | polyfill | 修复原生功能 |
 | Event | pure | DOM相关 |
 | Error | polyfill | 修复原生功能 |
+| Date | polyfill | 修复原生功能 |
