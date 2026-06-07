@@ -232,7 +232,7 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 
 # 特性以及建议使用方式
 
-+ 修复原生功能的，不提供pure功能
++ 修复原生功能的，现有业务代码不太可能使用 if(xxx) 的方式进行业务层处理，因此建议直接由污染修复原生问题。
 
 | 特性 | 建议使用方式 | 原因 |
 | ----- | ----- | ----- |
@@ -240,3 +240,4 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Event | pure | DOM相关 |
 | Error | polyfill | 修复原生功能 |
 | Date | polyfill | 修复原生功能 |
+| parseInt | polyfill | 修复原生功能 |
