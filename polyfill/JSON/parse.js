@@ -1,5 +1,5 @@
 import { JSON } from "../../native/JSON";
-import { parse } from "../impl-compat/JSON/parse";
+import { parse } from "../../impl/JSON/parse";
 
 if(!JSON) {
 	window.JSON = JSON = {};

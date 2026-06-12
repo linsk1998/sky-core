@@ -1,9 +1,10 @@
 import { JSON } from "../native/JSON";
-import { stringify } from "../impl-compat/JSON/stringify";
+import { stringify } from "../impl/JSON/stringify";
+import { parse } from "../impl/JSON/parse";
 
 if(!JSON) {
 	window.JSON = {
 		stringify: stringify,
-		parse: new Function("json", "return eval('(' + json + ')')")
+		parse: parse
 	};
 }

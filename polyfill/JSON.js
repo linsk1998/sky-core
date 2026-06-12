@@ -1,8 +1,8 @@
 import { JSON } from "../native/JSON";
 import { nonEnumerable } from "../support/nonEnumerable";
-import { stringify } from "../impl-compat/JSON/stringify";
-import { parse } from "../impl-compat/JSON/parse";
-import { fix_stringify } from "../impl-modern/JSON/stringify";
+import { stringify } from "../impl/JSON/stringify";
+import { parse } from "../impl/JSON/parse";
+import { fix_stringify } from "../impl/JSON/fix_stringify";
 
 if(!JSON) {
 	window.JSON = {
