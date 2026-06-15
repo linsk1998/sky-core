@@ -1,5 +1,5 @@
 import { Object } from "../../native/Object";
-import { entries } from "../../impl/Object/entries";
+import { entries } from "../../impl/object/enum/entries";
 
 if(!Object.entries) {
 	Object.entries = entries;

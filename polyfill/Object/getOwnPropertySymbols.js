@@ -2,7 +2,7 @@ import { Symbol } from "../../native/Symbol";
 import { getOwnPropertySymbols as native_getOwnPropertySymbols } from "../../native/Object/getOwnPropertySymbols";
 import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
 import { isPrimitive } from "../../utils/isPrimitive";
-import { getOwnPropertySymbols as getOwnPropertySymbols$enum, getOwnPropertySymbols$property } from "../../impl/Object/getOwnPropertySymbols";
+import { getOwnPropertySymbols as getOwnPropertySymbols$enum, getOwnPropertySymbols$property } from "../../impl/object/enum/getOwnPropertySymbols";
 
 if(Symbol) {
 	try {

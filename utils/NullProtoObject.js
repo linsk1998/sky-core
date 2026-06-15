@@ -1,0 +1,31 @@
+import { dontEnums } from "../../utils-compat/dontEnums";
+import { scriptTag, NullProtoObjectViaIFrame } from "../utils-legacy/NullProtoObject";
+
+// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
+function NullProtoObjectViaActiveX(activeXDocument) {
+	activeXDocument.write(scriptTag(''));
+	activeXDocument.close();
+	var temp = activeXDocument.parentWindow.Object;
+	activeXDocument = null; // avoid memory leak
+	return temp;
+};
+
+
+// Check for document.domain and active x support
+// No need to use active x approach when document.domain is not set
+// see https://github.com/es-shims/es5-shim/issues/150
+// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+// avoid IE GC bug
+var activeXDocument;
+export var NullProtoObject = function() {
+	try {
+		/* global ActiveXObject -- old IE */
+		activeXDocument = document.domain && new ActiveXObject('htmlfile');
+	} catch(error) { /* ignore */ }
+	NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
+	var proto = NullProtoObject.prototype;
+	var i = dontEnums.length;
+	while(i--) delete proto[dontEnums[i]];
+	delete proto.constructor;
+	return NullProtoObject();
+};

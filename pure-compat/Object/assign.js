@@ -1,2 +1,2 @@
-import { assign } from "../../impl/Object/assign";
+import { assign } from "../../impl/object/enum/assign";
 export default assign;

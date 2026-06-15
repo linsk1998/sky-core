@@ -1,4 +1,4 @@
 
-import { freeze } from "../../impl/Object/freeze";
+import { freeze } from "../../impl/object/restrict/freeze";
 
 export default Object.freeze || freeze;

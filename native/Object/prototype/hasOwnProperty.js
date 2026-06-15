@@ -1,2 +1,3 @@
-import { Object } from "../../Object";
-export var hasOwnProperty = Object.prototype.hasOwnProperty;
+import { prototype } from "../prototype";
+
+export var hasOwnProperty = prototype.hasOwnProperty;

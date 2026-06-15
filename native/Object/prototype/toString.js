@@ -1,2 +1,3 @@
-import { Object } from "../../Object";
-export var toString = Object.prototype.toString;
+import { prototype } from "../prototype";
+
+export var toString = prototype.toString;

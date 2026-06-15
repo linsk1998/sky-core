@@ -243,6 +243,9 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Error | polyfill | 修复原生功能 |
 | Date | polyfill | 修复原生功能 |
 | parseInt | polyfill | 修复原生功能 |
+| JSON | polyfill | 修复原生功能 |
+| Object.defineProperty | pure | 无法真正实现 |
+| Object.defineProperties | pure | 无法真正实现 |
 | Object.preventExtensions | pure | 无法真正实现 |
 | Object.seal | pure | 无法真正实现 |
 | Object.freeze | pure | 无法真正实现 |

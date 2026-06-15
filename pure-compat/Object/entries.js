@@ -1,2 +1,2 @@
-import { entries } from "../../impl/Object/entries";
+import { entries } from "../../impl/object/enum/entries";
 export default entries; 

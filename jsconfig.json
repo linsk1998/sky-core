@@ -4,14 +4,16 @@
 			"DOM",
 			"ESNext"
 		],
-		"baseUrl": ".",
 		"paths": {
 			"sky-core/pure/*": [
-				"pure/*"
+				"./pure/*"
 			],
 			"sky-core/polyfill/*": [
-				"polyfill/*"
-			]
+				"./polyfill/*"
+			],
+			"sky-core/utils/*": [
+				"./utils/*"
+			],
 		},
 		"allowJs": true,
 		"module": "ES2020"

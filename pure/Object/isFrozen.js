@@ -1,3 +1,3 @@
-import { isFrozen } from "../../impl/Object/isFrozen";
+import { isFrozen } from "../../impl/object/restrict/isFrozen";
 
 export default Object.isFrozen || isFrozen;

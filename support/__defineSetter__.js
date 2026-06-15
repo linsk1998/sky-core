@@ -1,1 +1,1 @@
-export var __defineSetter__ = !!Object.prototype.__defineSetter__;
+export var __defineSetter__ = '__defineSetter__' in Object.prototype;

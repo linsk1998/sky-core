@@ -1,3 +1,3 @@
-import { seal } from "../../impl/Object/seal";
+import { seal } from "../../impl/object/restrict/seal";
 
 export default Object.seal || seal;

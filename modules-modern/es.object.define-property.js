@@ -1,1 +1,1 @@
-import "../polyfill-modern/Object/defineProperty";
+import "../polyfill-legacy/Object/defineProperty";

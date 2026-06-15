@@ -2,15 +2,17 @@ import { defineProperty } from "../../native/Object/defineProperty";
 import { defineProperties } from "../../native/Object/defineProperties";
 import { __defineSetter__ } from "../../support/__defineSetter__";
 import { hasV8DefineBug } from "../../support/hasV8DefineBug";
-import { ff_defineProperty, v8_defineProperty } from "../../impl-modern/Object/defineProperty";
-import { compat_defineProperty, ie8_defineProperty } from "../../impl-compat/Object/defineProperty";
+import { defineProperty$ff } from "../../impl/object/accessor/defineProperty$ff";
+import { defineProperty$ie8 } from "../../impl/object/accessor/defineProperty$ie8";
+import { defineProperty$v8 } from "../../impl/object/accessor/defineProperty$v8";
+import { defineProperty$es3 } from "../../impl/object/accessor/defineProperty$es3";
 
 export default defineProperty
 	? (!defineProperties
-		? ie8_defineProperty
+		? defineProperty$ie8
 		: hasV8DefineBug
-			? v8_defineProperty
+			? defineProperty$v8
 			: defineProperty)
 	: (__defineSetter__
-		? ff_defineProperty
-		: compat_defineProperty);
+		? defineProperty$ff
+		: defineProperty$es3);
