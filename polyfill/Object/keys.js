@@ -1,15 +1,16 @@
 import { Symbol } from "../../native/Symbol";
 import { Object } from "../../native/Object";
-import { keys as compat_keys } from "../../impl-compat/Object/keys";
-import { nie_keys, ie_keys } from "../../impl-modern/Object/keys";
+import { keys as keys$jscript } from "../../impl/object/enum/keys$jscript";
+import { keys$es3 } from "../../impl/object/enum/keys$es3";
+import { keys$fixSymbol } from "../../impl/object/enum/keys$fixSymbol";
 import { hasEnumBug } from "../../utils/hasEnumBug";
 
 if(!Object.keys) {
 	if(hasEnumBug) {
-		Object.keys = compat_keys;
+		Object.keys = keys$jscript;
 	} else {
-		Object.keys = nie_keys;
+		Object.keys = keys$es3;
 	}
 } else if(!Symbol) {
-	Object.keys = ie_keys;
+	Object.keys = keys$fixSymbol;
 }

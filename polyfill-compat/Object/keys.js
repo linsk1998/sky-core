@@ -1,5 +1,6 @@
 import { Object } from "../../native/Object";
-import { keys as compat_keys } from "../../impl-compat/Object/keys";
+import { keys as keys$jscript } from "../../impl/object/enum/keys$jscript";
+
 if(!Object.keys) {
-	Object.keys = compat_keys;
+	Object.keys = keys$jscript;
 }

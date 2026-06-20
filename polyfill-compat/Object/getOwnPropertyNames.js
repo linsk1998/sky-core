@@ -1,5 +1,5 @@
 import { Object } from "../../native/Object";
-import { getOwnPropertyNames as compat_getOwnPropertyNames } from "../../impl-compat/Object/getOwnPropertyNames";
+import { getOwnPropertyNames$jscript } from "../../impl/object/enum/getOwnPropertyNames$jscript";
 if(!Object.getOwnPropertyNames) {
-	Object.getOwnPropertyNames = compat_getOwnPropertyNames;
+	Object.getOwnPropertyNames = getOwnPropertyNames$jscript;
 }

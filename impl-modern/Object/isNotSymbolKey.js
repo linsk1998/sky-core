@@ -1,3 +1,2 @@
-export function isNotSymbolKey(key) {
-	return key.substring(0, 2) !== "@@";
-}
+// Re-exported from new location for backward compatibility
+export { isNotSymbolKey } from "../../impl/object/enum/isNotSymbolKey";

@@ -1,15 +1,17 @@
 import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
 import { Symbol } from "../../native/Symbol";
-import { getOwnPropertyNames as compat_getOwnPropertyNames } from "../../impl-compat/Object/getOwnPropertyNames";
-import { ff_getOwnPropertyNames, ie_getOwnPropertyNames } from "../../impl-modern/Object/getOwnPropertyNames";
+import { getOwnPropertyNames$jscript } from "../../impl/object/enum/getOwnPropertyNames$jscript";
+import { getOwnPropertyNames$ff } from "../../impl/object/enum/getOwnPropertyNames$ff";
+import { getOwnPropertyNames$fixSymbol } from "../../impl/object/enum/getOwnPropertyNames$fixSymbol";
+
 if(getOwnPropertyNames) {
 	if(!Symbol) {
-		Object.getOwnPropertyNames = ie_getOwnPropertyNames;
+		Object.getOwnPropertyNames = getOwnPropertyNames$fixSymbol;
 	}
 } else {
 	if(Object.prototype.__defineSetter__) {
-		Object.getOwnPropertyNames = ff_getOwnPropertyNames;
+		Object.getOwnPropertyNames = getOwnPropertyNames$ff;
 	} else {
-		Object.getOwnPropertyNames = compat_getOwnPropertyNames;
+		Object.getOwnPropertyNames = getOwnPropertyNames$jscript;
 	}
 }

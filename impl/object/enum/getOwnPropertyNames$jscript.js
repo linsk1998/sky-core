@@ -1,11 +1,11 @@
-import { isJsObject } from "../../utils-compat/isJsObject";
-import { dontEnums } from "../../utils-compat/dontEnums";
-import { hasEnumBug } from "../../utils/hasEnumBug";
-import { getPrototypeOf } from "./getPrototypeOf";
-import { isString } from "../../utils/isString";
-import { isArray } from "../../impl/Array/isArray";
+import { isJsObject } from "sky-core/utils-compat/isJsObject";
+import { dontEnums } from "sky-core/utils-compat/dontEnums";
+import { hasEnumBug } from "sky-core/utils/hasEnumBug";
+import { getPrototypeOf } from "../../Reflect/getPrototypeOf";
+import { isString } from "sky-core/utils/isString";
+import { isArray } from "../../Array/isArray";
 
-export function getOwnPropertyNames(obj) {
+export function getOwnPropertyNames$jscript(obj) {
 	if(obj == null) {
 		throw new TypeError("Cannot convert undefined or null to object");
 	}
@@ -55,4 +55,4 @@ export function getOwnPropertyNames(obj) {
 		}
 	}
 	return result;
-};
+}

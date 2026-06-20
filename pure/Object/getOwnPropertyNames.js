@@ -1,5 +1,5 @@
 
-import { getOwnPropertyNames as compat_getOwnPropertyNames } from "../../impl-compat/Object/getOwnPropertyNames";
-import { getOwnPropertyNames as modern_getOwnPropertyNames } from "../../impl-modern/Object/getOwnPropertyNames";
+import { getOwnPropertyNames as getOwnPropertyNames$jscript } from "../../impl/object/enum/getOwnPropertyNames$jscript";
+import { getOwnPropertyNames as getOwnPropertyNames$ff } from "../../impl/object/enum/getOwnPropertyNames$ff";
 
-export default Object.getOwnPropertyNames || (Object.prototype.__defineSetter__ ? modern_getOwnPropertyNames : compat_getOwnPropertyNames);
+export default Object.getOwnPropertyNames || (Object.prototype.__defineSetter__ ? getOwnPropertyNames$ff : getOwnPropertyNames$jscript);

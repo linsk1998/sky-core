@@ -1,2 +1,2 @@
-import { getOwnPropertyNames } from "../../impl-compat/Object/getOwnPropertyNames";
-export default getOwnPropertyNames;
+import { getOwnPropertyNames$jscript } from "../../impl/object/enum/getOwnPropertyNames$jscript";
+export default getOwnPropertyNames$jscript;
