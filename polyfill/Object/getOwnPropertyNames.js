@@ -1,7 +1,8 @@
+import { hasEnumBug } from "sky-core/utils/hasEnumBug";
 import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
 import { Symbol } from "../../native/Symbol";
 import { getOwnPropertyNames$jscript } from "../../impl/object/enum/getOwnPropertyNames$jscript";
-import { getOwnPropertyNames$ff } from "../../impl/object/enum/getOwnPropertyNames$ff";
+import { getOwnPropertyNames$ff } from "../../impl/object/enum/getOwnPropertyNames$es3";
 import { getOwnPropertyNames$fixSymbol } from "../../impl/object/enum/getOwnPropertyNames$fixSymbol";
 
 if(getOwnPropertyNames) {
@@ -9,9 +10,9 @@ if(getOwnPropertyNames) {
 		Object.getOwnPropertyNames = getOwnPropertyNames$fixSymbol;
 	}
 } else {
-	if(Object.prototype.__defineSetter__) {
-		Object.getOwnPropertyNames = getOwnPropertyNames$ff;
-	} else {
+	if(hasEnumBug) {
 		Object.getOwnPropertyNames = getOwnPropertyNames$jscript;
+	} else {
+		Object.getOwnPropertyNames = getOwnPropertyNames$ff;
 	}
 }

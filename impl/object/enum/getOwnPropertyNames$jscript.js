@@ -45,13 +45,11 @@ export function getOwnPropertyNames$jscript(obj) {
 			result.push(key);
 		}
 	}
-	if(hasEnumBug) {
-		var i = dontEnums.length;
-		while(i-- > 0) {
-			key = dontEnums[i];
-			if(Object.hasOwn(obj, key)) {
-				result.push(key);
-			}
+	var i = dontEnums.length;
+	while(i-- > 0) {
+		key = dontEnums[i];
+		if(Object.hasOwn(obj, key)) {
+			result.push(key);
 		}
 	}
 	return result;

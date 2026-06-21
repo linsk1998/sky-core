@@ -1,6 +1,5 @@
 import { isJsObject } from "sky-core/utils-compat/isJsObject";
 import { dontEnums } from "sky-core/utils-compat/dontEnums";
-import { hasEnumBug } from "sky-core/utils/hasEnumBug";
 import { getPrototypeOf } from "../../Reflect/getPrototypeOf";
 
 export function keys$jscript(obj) {
@@ -38,13 +37,11 @@ export function keys$jscript(obj) {
 			}
 		}
 	}
-	if(hasEnumBug) {
-		var i = dontEnums.length;
-		while(i-- > 0) {
-			key = dontEnums[i];
-			if(Object.hasOwn(obj, key)) {
-				result.push(key);
-			}
+	var i = dontEnums.length;
+	while(i-- > 0) {
+		key = dontEnums[i];
+		if(Object.hasOwn(obj, key)) {
+			result.push(key);
 		}
 	}
 	return result;
