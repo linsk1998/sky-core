@@ -1,0 +1,1 @@
+export { sign as default } from "../../impl/Math/sign";

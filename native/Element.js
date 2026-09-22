@@ -1,0 +1,1 @@
+export var Element = window.Element;

@@ -1,0 +1,1 @@
+export { cbrt as default } from "../../impl/Math/cbrt";

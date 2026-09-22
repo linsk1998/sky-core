@@ -1,0 +1,13 @@
+export function keys$es3(obj) {
+	if(obj == null) {
+		throw new TypeError("Cannot convert undefined or null to object");
+	}
+	var result = [];
+	for(var key in obj) {
+		var prefix = key.substring(0, 2);
+		if(prefix !== "@@" && prefix !== '__' && Object.hasOwn(obj, key)) {
+			result.push(key);
+		}
+	}
+	return result;
+}

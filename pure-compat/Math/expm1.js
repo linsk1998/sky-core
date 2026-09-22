@@ -1,0 +1,1 @@
+export { expm1 as default } from "../../impl/Math/expm1";

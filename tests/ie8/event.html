@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Test Event</title>
+	<style>
+		#container {
+			border: solid 1px #000;
+			padding: 10px;
+		}
+
+		#output {
+			padding: 10px;
+		}
+	</style>
+	<script src="../dest/polyfill.js"></script>
+</head>
+
+<body>
+	<pre id="output"></pre>
+	<div id="container">
+		<button id="btn" type="button">按钮</button>
+	</div>
+	<button type="button" onclick="clearOutput()">清除输出</button>
+	<button type="button" onclick="onAddEvent()">添加事件</button>
+	<button type="button" onclick="onRemoveEvent()">移除事件</button>
+	<button type="button" onclick="onDispatchEvent()">触发事件</button>
+	<script>
+		function onclick(e) {
+			document.getElementById("output").textContent += "点击了按钮";
+		}
+		function onAddEvent() {
+			document.getElementById("btn").addEventListener('click', onclick);
+		}
+		function onRemoveEvent() {
+			document.getElementById("btn").removeEventListener('click', onclick);
+		}
+		function onDispatchEvent() {
+			document.getElementById("btn").dispatchEvent(new Event('click'));
+		}
+		function clearOutput() {
+			document.getElementById("output").textContent = "";
+		}
+	</script>
+</body>
+
+</html>

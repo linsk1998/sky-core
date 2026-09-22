@@ -1,0 +1,1 @@
+export { tanh as default } from "../../impl/Math/tanh";

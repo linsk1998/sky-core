@@ -1,0 +1,1 @@
+export { trunc as default } from "../../impl/Math/trunc";

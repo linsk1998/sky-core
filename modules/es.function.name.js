@@ -1,0 +1,1 @@
+import "../polyfill/Function/prototype/name";

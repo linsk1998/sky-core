@@ -1,0 +1,18 @@
+{
+	"editor.formatOnType": true,
+	"editor.formatOnSave": true,
+	"editor.formatOnPaste": true,
+	"editor.insertSpaces": false,
+	"javascript.format.semicolons": "insert",
+	"javascript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+	"javascript.format.insertSpaceAfterKeywordsInControlFlowStatements": false,
+	"typescript.format.semicolons": "insert",
+	"typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+	"typescript.format.insertSpaceAfterKeywordsInControlFlowStatements": false,
+	"editor.renderWhitespace": "all",
+	"editor.wordWrap": "on",
+	"javascript.preferences.importModuleSpecifier": "relative",
+	"html.format.wrapAttributes": "preserve",
+	"html.format.wrapLineLength": 0,
+	"html.format.unformatted": "script,style"
+}

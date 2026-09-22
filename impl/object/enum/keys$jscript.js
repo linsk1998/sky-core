@@ -1,0 +1,48 @@
+import { isJsObject } from "sky-core/utils-compat/isJsObject";
+import { dontEnums } from "sky-core/utils-compat/dontEnums";
+import { getPrototypeOf } from "../../Reflect/getPrototypeOf";
+
+export function keys$jscript(obj) {
+	if(obj == null) {
+		throw new TypeError("Cannot convert undefined or null to object");
+	}
+	var result = [], key;
+	var jsObject = isJsObject(obj);
+	if(!jsObject) {
+		var proto = getPrototypeOf(obj);
+		if(proto) {
+			for(key in obj) {
+				switch(key.substring(0, 2)) {
+					case "__":
+					case "@@":
+						continue;
+				}
+				if(proto[key] !== obj[key]) {
+					result.push(key);
+				}
+			}
+			return result;
+		}
+	}
+	for(key in obj) {
+		switch(key.substring(0, 2)) {
+			case "__":
+			case "@@":
+				continue;
+		}
+		if(Object.hasOwn(obj, key)) {
+			var desc = obj["@@desc:" + key];
+			if(!desc || desc.enumerable) {
+				result.push(key);
+			}
+		}
+	}
+	var i = dontEnums.length;
+	while(i-- > 0) {
+		key = dontEnums[i];
+		if(Object.hasOwn(obj, key)) {
+			result.push(key);
+		}
+	}
+	return result;
+}

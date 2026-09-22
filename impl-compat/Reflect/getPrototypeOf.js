@@ -1,0 +1,1 @@
+export {getPrototypeOf} from "../Object/getPrototypeOf";

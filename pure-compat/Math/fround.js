@@ -1,0 +1,1 @@
+export { fround as default } from "../../impl/Math/fround";

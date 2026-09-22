@@ -1,0 +1,1 @@
+import "../../../polyfill-compat/Date/prototype/toISOString";

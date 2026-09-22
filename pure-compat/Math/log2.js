@@ -1,0 +1,1 @@
+export { log2 as default } from "../../impl/Math/log2";

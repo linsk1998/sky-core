@@ -1,0 +1,1 @@
+window.outerWidth = screen.availWidth;

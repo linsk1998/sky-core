@@ -1,0 +1,1 @@
+export default document.scripts ? document : { scripts: document.getElementsByTagName("SCRIPT") };

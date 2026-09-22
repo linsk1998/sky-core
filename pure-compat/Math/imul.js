@@ -1,0 +1,1 @@
+export { imul as default } from "../../impl/Math/imul";

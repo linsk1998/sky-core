@@ -1,0 +1,1 @@
+export var __defineSetter__ = '__defineSetter__' in Object.prototype;

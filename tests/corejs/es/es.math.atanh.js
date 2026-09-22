@@ -1,0 +1,21 @@
+QUnit.test('Math.atanh', assert => {
+  assert.isFunction(Math.atanh);
+  assert.name(Math.atanh, 'atanh');
+  assert.arity(Math.atanh, 1);
+  assert.looksNative(Math.atanh);
+  // assert.nonEnumerable(Math, 'atanh');
+  assert.same(Math.atanh(NaN), NaN);
+  assert.same(Math.atanh(-2), NaN);
+  assert.same(Math.atanh(-1.5), NaN);
+  assert.same(Math.atanh(2), NaN);
+  assert.same(Math.atanh(1.5), NaN);
+  assert.strictEqual(Math.atanh(-1), -Infinity);
+  assert.strictEqual(Math.atanh(1), Infinity);
+  assert.same(Math.atanh(0), 0);
+  assert.same(Math.atanh(-0), -0);
+  assert.same(Math.atanh(-1e300), NaN);
+  assert.same(Math.atanh(1e300), NaN);
+  assert.epsilon(Math.atanh(0.5), 0.5493061443340549);
+  assert.epsilon(Math.atanh(-0.5), -0.5493061443340549);
+  assert.epsilon(Math.atanh(0.444), 0.47720201260109457);
+});

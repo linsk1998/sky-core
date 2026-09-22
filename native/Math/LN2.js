@@ -1,0 +1,1 @@
+export var LN2 = Math.LN2;

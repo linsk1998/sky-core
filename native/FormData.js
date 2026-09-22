@@ -1,0 +1,1 @@
+export var FormData = window.FormData;

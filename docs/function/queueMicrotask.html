@@ -1,0 +1,44 @@
+<!-- quirks -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<meta name="renderer" content="webkit"/>
+	<title>其他</title>
+	<link href="../ting-quirks.css" rel="stylesheet"/>
+	<!--[if lt IE 9]><script src="../dist/sky-compat.js"></script><![endif]-->
+	<!--[if gte IE 9]><!--><script src="../dist/sky-modern.js"></script><!--><![endif]-->
+	<script src="../demo.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+	<h3>queueMicrotask</h3>
+	<p>在浏览器完成后面的其他语句后,就立刻执行这个回调函数。多层queueMicrotask在setTimeout 0之前执行。</p>
+	<pre class="code">setTimeout(function(){alert(2)},0);
+queueMicrotask(function(){
+	queueMicrotask(function(){
+		queueMicrotask(function(){
+			queueMicrotask(function(){
+				queueMicrotask(function(){
+					queueMicrotask(function(){
+						queueMicrotask(function(){
+							alert(1);
+						});
+					});
+				});
+			});
+		});
+	});
+});
+queueMicrotask(function(){
+	alert(0);
+});</pre>
+	<div class="btn-toolbar">
+		<a class="btn btn-primary" href="javascript:void 0;" onclick="run(this)">运行</a>
+	</div>
+</div>
+</body>
+</html>

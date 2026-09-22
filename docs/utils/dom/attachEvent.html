@@ -1,0 +1,188 @@
+<!-- quirks -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<meta name="renderer" content="webkit"/>
+	<title>元素操作</title>
+	<link href="../../ting-quirks.css" rel="stylesheet"/>
+	<!--[if lt IE 9]><script src="../../dist/sky-compat.js"></script><![endif]-->
+	<!--[if gte IE 9]><!--><script src="../../dist/sky-modern.js"></script><!--><![endif]-->
+	<script src="../../demo.js"></script>
+</head>
+<body>
+	<div class="container-fluid">
+		<script>
+			Sky.attachEvent(document,'DOMContentLoaded',function(){
+				alert("DOMContentLoaded");
+			});
+		</script>
+		<h3 id="attachEvent">Sky.attachEvent detachEvent trigger</h3>
+		<p>绑定事件 解除绑定 触发事件</p>
+		<div class="alert alert-info">
+			<p>只是做了最基本的封装。没有修改this、没有判断多次绑定。</p>
+			<p>是为进一封装的。</p>
+		</div>
+		<div class="alert alert-info" id="attachWrap">
+			<a class="btn btn-default" href='javascript:void 0' id="attachBtn">测试按钮</a>
+		</div>
+		<script>
+			var attachBtn=Sky.byId("attachBtn");
+			var attachWrap=Sky.byId("attachWrap");
+
+			function testHandle(e){
+				e=Sky.fixEvent(attachBtn,'click',e);
+				alert(e.target.tagName+" "+e.type+"事件测试:clientX="+e.clientX);
+			}
+			Sky.attachEvent(attachWrap,'click',function(e){
+				e=Sky.fixEvent(attachWrap,'click',e);
+				alert(e.target.tagName+" "+e.type+"事件冒泡");
+			});
+		</script>
+		<div class="btn-toolbar">
+			<a class="btn btn-primary" href="javascript:Sky.attachEvent(attachBtn,'click',testHandle);void 0">绑定事件</a>
+			<a class="btn btn-primary" href="javascript:Sky.detachEvent(attachBtn,'click',testHandle);void 0">解除绑定</a>
+			<a class="btn btn-primary" href="javascript:Sky.trigger(attachBtn,'click',{clientX:66});void 0">强制触发click</a>
+		</div>
+		<h3 id="wheel">wheel事件</h3>
+		<div id="wheelWrap" class="alert alert-info">
+			<p>在这个框框中滚动鼠标中键：<span id="wheelResult"></span></p>
+		</div>
+		<script>
+				Sky.attachEvent(Sky.byId("wheelWrap"),'wheel',function(e){
+					e=Sky.fixEvent(Sky.byId("wheelWrap"),'wheel',e);
+					Sky.byId("wheelResult").innerText=e.wheelDelta;
+					e.preventDefault();
+				});
+		</script>
+		<h3 id="mouseenter">mouseenter mouseleave事件</h3>
+		<div id="mouseenter1" style="background:#999; padding:10px 0; position:relative; margin-bottom:12px;">
+			aa
+			<div id="mouseenter2" style="background:#333; color:#FFF; padding:10px 0;"></div>
+			bb
+		</div>
+		<script>
+			var mouseenter=0;
+			var mouseleave=0;
+			var mouseover=0;
+			var mouseout=0;
+			showEventCount();
+			function showEventCount(){
+				Sky.byId("mouseenter2").innerHTML=
+				("mouseenter:"+mouseenter+
+				"，mouseleave:"+mouseleave+
+				"，mouseover:"+mouseover+
+				"，mouseout:"+mouseout);
+			}
+			function mouseenterHandler(e){
+				try{
+					e=Sky.fixEvent(Sky.byId("mouseenter1"),'mouseenter',e);
+				}catch(e){
+					return ;
+				}
+				mouseenter++;
+				showEventCount();
+			}
+			function mouseleaveHandler(e){
+				try{
+					e=Sky.fixEvent(Sky.byId("mouseenter1"),'mouseleave',e);
+				}catch(e){
+					return ;
+				}
+				mouseleave++;
+				showEventCount();
+			}
+			function mouseoverHandler(e){
+				try{
+					e=Sky.fixEvent(Sky.byId("mouseenter1"),'mouseover',e);
+				}catch(e){
+					return ;
+				}
+				mouseover++;
+				showEventCount();
+			}
+			function mouseoutHandler(e){
+				try{
+					e=Sky.fixEvent(Sky.byId("mouseenter1"),'mouseout',e);
+				}catch(e){
+					return ;
+				}
+				mouseout++;
+				showEventCount();
+			}
+			function bindAll(){
+				var mouseenter1=Sky.byId("mouseenter1");
+				Sky.attachEvent(mouseenter1,'mouseenter',mouseenterHandler);
+				Sky.attachEvent(mouseenter1,'mouseleave',mouseleaveHandler);
+				Sky.attachEvent(mouseenter1,'mouseover',mouseoverHandler);
+				Sky.attachEvent(mouseenter1,'mouseout',mouseoutHandler);
+			}
+			function unbindAll(){
+				var mouseenter1=Sky.byId("mouseenter1");
+				Sky.detachEvent(mouseenter1,'mouseenter',mouseenterHandler);
+				Sky.detachEvent(mouseenter1,'mouseleave',mouseleaveHandler);
+				Sky.detachEvent(mouseenter1,'mouseover',mouseoverHandler);
+				Sky.detachEvent(mouseenter1,'mouseout',mouseoutHandler);
+			}
+			function dispatchAll(){
+				var mouseenter1=Sky.byId("mouseenter1");
+				Sky.trigger(mouseenter1,'mouseenter');
+				Sky.trigger(mouseenter1,'mouseleave');
+				Sky.trigger(mouseenter1,'mouseover');
+				Sky.trigger(mouseenter1,'mouseout');
+			}
+			function clearAll(){
+				mouseenter=0;
+				mouseleave=0;
+				mouseover=0;
+				mouseout=0;
+				showEventCount();
+			}
+		</script>
+		<div class="btn-toolbar">
+			<a class="btn btn-primary" href='javascript:bindAll();void 0'>绑定事件</a>
+			<a class="btn btn-primary" href='javascript:unbindAll();void 0'>解除绑定</a>
+			<a class="btn btn-primary" href='javascript:dispatchAll();void 0'>强制触发</a>
+			<a class="btn btn-primary" href='javascript:clearAll();void 0'>统计清0</a>
+		</div>
+		<h3 id="input">input事件</h3>
+		<p>监视输入:</p>
+		<form name="inputForm">
+			<input type="text" value="" name="eg">
+		</form>
+		<script>
+			var textNode=document.createTextNode("");
+			Sky.getPrevElement(document.inputForm).appendChild(textNode);
+			function inputHandler(e){
+				e=Sky.fixEvent(document.inputForm.eg,'input',e);
+				textNode.data=e.target.value;
+			}
+		</script>
+		<div class="btn-toolbar">
+			<a class="btn btn-primary" href='javascript:Sky.attachEvent(document.inputForm.eg,"input",inputHandler);void 0'>绑定事件</a>
+			<a class="btn btn-primary" href='javascript:Sky.detachEvent(document.inputForm.eg,"input",inputHandler);void 0'>解除绑定</a>
+			<a class="btn btn-primary" href='javascript:Sky.trigger(document.inputForm.eg,"input");void 0'>强制触发</a>
+		</div>
+		<div class="alert alert-warning">
+			<p>input事件不能代替change事件。</p>
+			<p>input+change校验也不能代替submit中校验。</p>
+		</div>
+		<form id="submit-eg" name="submitForm" >
+			<button type="submit">提交</button>
+		</form>
+		<script>
+			function submitHandler(e){
+				alert(1);
+				return false;
+			}
+		</script>
+		<div class="btn-toolbar">
+			<a class="btn btn-primary" href='javascript:Sky.attachEvent(document.submitForm,"submit",submitHandler);void 0'>绑定事件</a>
+			<a class="btn btn-primary" href='javascript:Sky.detachEvent(document.submitForm,"submit",submitHandler);void 0'>解除绑定</a>
+		</div>
+	</div>
+</body>
+</html>

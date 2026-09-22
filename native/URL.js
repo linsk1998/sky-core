@@ -1,0 +1,1 @@
+export var URL = window.URL || window.webkitURL;

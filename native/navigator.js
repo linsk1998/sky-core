@@ -1,0 +1,1 @@
+export var navigator = window.navigator;

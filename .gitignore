@@ -1,0 +1,7 @@
+dist/*
+node_modules/*
+package-lock.json
+qunit/bower_components/*
+qunit/impure-universal/*.js
+test/*
+*.zip

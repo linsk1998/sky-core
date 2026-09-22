@@ -1,0 +1,1 @@
+export var ceil = Math.ceil;

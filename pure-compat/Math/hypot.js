@@ -1,0 +1,1 @@
+export { hypot as default } from "../../impl/Math/hypot";

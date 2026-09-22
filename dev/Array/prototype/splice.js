@@ -1,0 +1,10 @@
+var n = Array.prototype.splice;
+Array.prototype.splice = function splice() {
+	if(typeof this == "string" || this instanceof String) {
+		throw new TypeError("Splice function should not call a string.");
+	}
+	if(arguments < 2) {
+		throw new TypeError("Splice function lost arguments.");
+	}
+	n.apply(this, arguments);
+};

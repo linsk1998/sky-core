@@ -1,0 +1,1 @@
+import "../../../polyfill-modern/Date/prototype/toLocaleTimeString";

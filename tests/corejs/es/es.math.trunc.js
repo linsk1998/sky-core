@@ -1,0 +1,22 @@
+QUnit.test('Math.trunc', assert => {
+  assert.isFunction(Math.trunc);
+  assert.name(Math.trunc, 'trunc');
+  assert.arity(Math.trunc, 1);
+  assert.looksNative(Math.trunc);
+  // assert.nonEnumerable(Math, 'trunc');
+  assert.same(Math.trunc(NaN), NaN, 'NaN -> NaN');
+  assert.same(Math.trunc(-0), -0, '-0 -> -0');
+  assert.same(Math.trunc(0), 0, '0 -> 0');
+  assert.same(Math.trunc(Infinity), Infinity, 'Infinity -> Infinity');
+  assert.same(Math.trunc(-Infinity), -Infinity, '-Infinity -> -Infinity');
+  assert.same(Math.trunc(null), 0, 'null -> 0');
+  assert.same(Math.trunc({}), NaN, '{} -> NaN');
+  assert.strictEqual(Math.trunc([]), 0, '[] -> 0');
+  assert.strictEqual(Math.trunc(1.01), 1, '1.01 -> 0');
+  assert.strictEqual(Math.trunc(1.99), 1, '1.99 -> 0');
+  assert.strictEqual(Math.trunc(-1), -1, '-1 -> -1');
+  assert.strictEqual(Math.trunc(-1.99), -1, '-1.99 -> -1');
+  assert.strictEqual(Math.trunc(-555.555), -555, '-555.555 -> -555');
+  assert.strictEqual(Math.trunc(0x20000000000001), 0x20000000000001, '0x20000000000001 -> 0x20000000000001');
+  assert.strictEqual(Math.trunc(-0x20000000000001), -0x20000000000001, '-0x20000000000001 -> -0x20000000000001');
+});

@@ -1,0 +1,72 @@
+<!-- quirks -->
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="renderer" content="webkit" />
+	<title>扩展对象</title>
+	<link href="../ting-quirks.css" rel="stylesheet" />
+	<!--[if lt IE 9]><script src="../dist/sky-compat.js"></script><![endif]-->
+	<!--[if gte IE 9]><!-->
+	<script src="../dist/sky-modern.js"></script><!--><![endif]-->
+	<script src="../../polyfill/navigator/mediaDevices.js"></script>
+	<script src="../../polyfill/navigator/mediaDevices/getUserMedia.js"></script>
+	<script src="../../polyfill/HTMLVideoElement/prototype/srcObject.js"></script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<button type="button" onclick="getUserMedia()">video</button>
+		<button type="button" onclick="getUserMedia()">video</button>
+		<script>
+			function getUserMedia() {
+				navigator.mediaDevices.getUserMedia({
+					video: true
+				}).then(function(stream) {
+					video.srcObject = stream;
+					video.play();
+				}, function(e) {
+					console.error(e);
+				});
+			}
+		</script>
+		<div>
+			<video id="video"></video>
+		</div>
+		<button type="button" onclick="closeVideo()">close</button>
+		<div>
+			<button type=" button" onclick="toCanvas()">canvas</button>
+		</div>
+		<script>
+			function toCanvas() {
+				canvas.width = video.videoWidth;
+				canvas.height = video.videoHeight;
+				var context2d = canvas.getContext("2d");
+				context2d.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+			}
+			function closeVideo() {
+				if(video.srcObject.getTracks) {
+					var tracks = video.srcObject.getTracks();
+					for(var i = 0; i < tracks.length; i++) {
+						var track = tracks[i];
+						track.stop();
+					}
+				} else if(video.srcObject.stop) {
+					video.srcObject.stop();
+				}
+				video.srcObject = null;
+			}
+		</script>
+		<canvas id="canvas"></canvas>
+		<script>
+			var canvas = document.getElementById("canvas");
+			var video = document.getElementById("video");
+		</script>
+	</div>
+</body>
+
+</html>

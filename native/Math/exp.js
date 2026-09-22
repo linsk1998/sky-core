@@ -1,0 +1,1 @@
+export var exp = Math.exp;
