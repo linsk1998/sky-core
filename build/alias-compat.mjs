@@ -7,13 +7,7 @@ if(__filename.match(/^\/[A-Z]:\//i)) {
 }
 var __dirname = path.dirname(__filename);
 
-export var modules = fs.readdirSync(path.resolve(__dirname, "../modules-compat")).map(function(file) {
-	var name = file.replace(/\.js$/i, "");
-	return { find: "core-js/modules/" + name, replacement: path.resolve(__dirname, "../modules-compat/" + name) };
-}).concat([
-	{ find: "core-js/modules/esnext.global-this", replacement: path.resolve(__dirname, "../modules/es.global-this") },
-	{ find: "core-js/modules", replacement: path.resolve(__dirname, "../modules") }
-]);
+export var modules = [];
 export var utils = fs.readdirSync(path.resolve(__dirname, "../utils-compat")).map(function(file) {
 	var name = file.replace(/\.js$/i, "");
 	return { find: "sky-core/utils/" + name, replacement: path.resolve(__dirname, "../utils-compat/" + name) };

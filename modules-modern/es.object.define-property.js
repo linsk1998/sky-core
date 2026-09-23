@@ -1,1 +1,0 @@
-import "../polyfill-legacy/Object/defineProperty";

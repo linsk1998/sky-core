@@ -1,1 +1,0 @@
-import "../polyfill-compat/Object/create";

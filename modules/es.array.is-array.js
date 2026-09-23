@@ -1,1 +1,0 @@
-import "../polyfill/Array/isArray";

@@ -2,13 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 
-exports.modules = fs.readdirSync(path.resolve(__dirname, "../modules-modern")).map(function(file) {
-	var name = file.replace(/\.js$/i, "");
-	return { find: "core-js/modules/" + name, replacement: path.resolve(__dirname, "../modules-modern/" + name) };
-}).concat([
-	{ find: "core-js/modules/esnext.global-this", replacement: path.resolve(__dirname, "../modules/es.global-this") },
-	{ find: "core-js/modules", replacement: path.resolve(__dirname, "../modules") }
-]);
+exports.modules = [];
 exports.utils = fs.readdirSync(path.resolve(__dirname, "../utils-es2015")).map(function(file) {
 	var name = file.replace(/\.js$/i, "");
 	return { find: "sky-core/utils/" + name, replacement: path.resolve(__dirname, "../utils-es2015/" + name) };
