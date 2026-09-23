@@ -1,15 +1,12 @@
-import { crypto } from "../../native/crypto";
-
 export function randomUUID() {
-	var bytes = new Uint8Array(16);
-	crypto.getRandomValues(bytes);
+	var bytes = new Array(16);
+	for(var i = 0; i < 16; i++) {
+		bytes[i] = Math.floor(Math.random() * 256);
+	}
 	// version 4
 	bytes[6] = (bytes[6] & 0x0f) | 0x40;
 	// variant RFC 4122
 	bytes[8] = (bytes[8] & 0x3f) | 0x80;
-	return format(bytes);
-}
-function format(bytes) {
 	var hex = new Array(16);
 	for(var i = 0; i < 16; i++) {
 		var h = bytes[i].toString(16);

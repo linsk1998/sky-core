@@ -240,7 +240,6 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | ----- | ----- | ----- |
 | RegExp | polyfill | 修复原生功能 |
 | Event | pure | DOM相关 |
-| crypto.randomUUID | pure | 无 crypto.getRandomValues 时退化为 Math.random，无法保证加密安全性 |
 | Error | polyfill | 修复原生功能 |
 | Date | polyfill | 修复原生功能 |
 | parseInt | polyfill | 修复原生功能 |
@@ -253,3 +252,4 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Object.isExtensible | pure | 无法真正实现 |
 | Object.isSealed | pure | 无法真正实现 |
 | Object.isFrozen | pure | 无法真正实现 |
+| crypto.randomUUID | pure | 含名字空间 |
