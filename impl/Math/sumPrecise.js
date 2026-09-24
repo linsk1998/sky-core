@@ -1,12 +1,14 @@
 import { abs } from "../../native/Math/abs";
-import { Symbol } from "../../native/Symbol";
+import { createIteratorHelper } from "../../utils/createIteratorHelper";
 
-// Neumaier (compensated) summation: substantially more accurate than naive
-// accumulation. Accepts an iterable (Symbol.iterator) or an array-like.
-// Traversal mirrors the style of impl/Math/hypot.js (plain while loop over
-// arguments), extended to iterables via createIteratorHelper-style probing.
-var hasIterator = typeof Symbol !== "undefined" && Symbol && typeof Symbol.iterator !== "undefined";
+// Neumaier (compensated) summation over an iterable.
+// Only iterables are accepted (no array-like fallback); a non-iterable
+// input throws TypeError, mirroring impl-modern/Set.js.
 export function sumPrecise(values) {
+	var _iterator = createIteratorHelper(values), _step;
+	if(!_iterator) {
+		throw new TypeError(typeof values + " " + values + " is not iterable.");
+	}
 	var sum = 0;
 	var c = 0;
 	function add(x) {
@@ -18,18 +20,14 @@ export function sumPrecise(values) {
 		}
 		sum = t;
 	}
-	if(hasIterator && values && typeof values[Symbol.iterator] === "function") {
-		var it = values[Symbol.iterator]();
-		var step;
-		while(!(step = it.next()).done) {
-			add(step.value);
+	try {
+		for(_iterator.s(); !(_step = _iterator.n()).done;) {
+			add(_step.value);
 		}
-	} else {
-		var i = 0;
-		var len = values.length;
-		while(i < len) {
-			add(values[i++]);
-		}
+	} catch(err) {
+		_iterator.e(err);
+	} finally {
+		_iterator.f();
 	}
 	return sum + c;
 }
