@@ -1,5 +1,6 @@
 dist/*
 node_modules/*
+.pnpm-store/*
 package-lock.json
 qunit/bower_components/*
 qunit/impure-universal/*.js
