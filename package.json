@@ -18,7 +18,8 @@
 		"test:corejs": "rollup --config tests/corejs/rollup.config.js",
 		"test:ie8": "rollup --config tests/ie8/rollup.config.ie8.js",
 		"test:lambdatest": "node tests/action-lambdatest.js",
-		"test:saucelabs": "node tests/action-saucelabs.js"
+		"test:saucelabs": "node tests/action-saucelabs.js",
+		"test": "node node_modules/mocha/bin/_mocha tests/node/**/*.test.js"
 	},
 	"publishConfig": {
 		"access": "public",
