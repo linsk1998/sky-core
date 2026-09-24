@@ -59,6 +59,8 @@
 		"@rollup/plugin-commonjs": "^21.0.0",
 		"@rollup/plugin-inject": "^4.0.4",
 		"@rollup/plugin-node-resolve": "^7.1.1",
+		"chai": "1.9.2",
+		"mocha": "1.16.x",
 		"rollup": "^2.45.2",
 		"rollup-plugin-es3ify": "0.0.4",
 		"rollup-plugin-import": "^1.0.2",
