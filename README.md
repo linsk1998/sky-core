@@ -252,4 +252,6 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Object.isExtensible | pure | 无法真正实现 |
 | Object.isSealed | pure | 无法真正实现 |
 | Object.isFrozen | pure | 无法真正实现 |
+| requestAnimationFrame | pure | 无法完美实现 |
+| cancelAnimationFrame | pure | 无法完美实现 |
 | crypto.randomUUID | pure | 含名字空间 |
