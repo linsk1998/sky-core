@@ -1,4 +1,4 @@
-import { dontEnums } from "../../utils-compat/dontEnums";
+import { dontEnums } from "../../../utils-compat/dontEnums";
 
 export function setPrototypeOf$jscript(o, proto) {
 	o.__proto__ = proto;
