@@ -4,5 +4,5 @@ export function requestIdleCallback(callback) {
 			timeRemaining: function() { return 0; },
 			didTimeout: false
 		});
-	}, 0);
+	}, 1);
 }
