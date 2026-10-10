@@ -254,4 +254,9 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Object.isFrozen | pure | 无法真正实现 |
 | requestAnimationFrame | pure | 无法完美实现 |
 | cancelAnimationFrame | pure | 无法完美实现 |
+<<<<<<< HEAD
+=======
+| requestIdleCallback | pure | 无法完美实现 |
+| cancelIdleCallback | pure | 无法完美实现 |
+>>>>>>> trae/agent-1Pnj1C
 | crypto.randomUUID | pure | 含名字空间 |
