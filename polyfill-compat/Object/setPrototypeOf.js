@@ -1,6 +1,6 @@
 import { Object } from "../../native/Object";
 import { proto } from "../../support/proto";
-import { setPrototypeOf } from "../../impl-compat/Object/setPrototypeOf";
+import { setPrototypeOf$jscript } from "../../impl/object/setPrototypeOf$jscript";
 if(!proto) {
-	Object.setPrototypeOf = setPrototypeOf;
+	Object.setPrototypeOf = setPrototypeOf$jscript;
 }
