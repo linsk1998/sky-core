@@ -1,6 +1,6 @@
 import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
 import { getOwnPropertySymbols } from "../../native/Object/getOwnPropertySymbols";
-import { _getOwnPropertyDescriptor } from "./getOwnPropertyDescriptor";
+import { getOwnPropertyDescriptor$ff } from "../../impl/object/accessor/getOwnPropertyDescriptor$ff";
 
 export function getOwnPropertyDescriptors$ff(obj) {
 	var ownKeys = Object.keys(obj);
@@ -8,7 +8,7 @@ export function getOwnPropertyDescriptors$ff(obj) {
 	var descs = {};
 	while(i-- > 0) {
 		var key = ownKeys[i];
-		descs[key] = _getOwnPropertyDescriptor(obj, key);
+		descs[key] = getOwnPropertyDescriptor$ff(obj, key);
 	}
 	return descs;
 }
