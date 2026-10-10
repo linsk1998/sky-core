@@ -1,7 +1,6 @@
 import { Object } from "../../native/Object";
-import { getOwnPropertyDescriptors } from "../../impl-compat/Object/getOwnPropertyDescriptors";
+import { getOwnPropertyDescriptors$es3 } from "../../impl/object/accessor/getOwnPropertyDescriptors$es3";
+
 if(!Object.getOwnPropertyDescriptors) {
-	if(!Object.prototype.__defineSetter__) {
-		Object.getOwnPropertyDescriptors = getOwnPropertyDescriptors;
-	}
+	Object.getOwnPropertyDescriptors = getOwnPropertyDescriptors$es3;
 }
