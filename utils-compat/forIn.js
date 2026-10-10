@@ -1,5 +1,5 @@
 import { dontEnums } from "./dontEnums";
-import { getPrototypeOf } from "../impl-compat/Object/getPrototypeOf";
+import { getPrototypeOf$jscript as getPrototypeOf } from "../impl/object/proto/getPrototypeOf$jscript";
 import { isJsObject } from "./isJsObject";
 import { hasEnumBug } from "../utils/hasEnumBug";
 export function forIn(obj, fn, thisArg) {

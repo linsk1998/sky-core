@@ -1,4 +1,4 @@
-export function getPrototypeOf(obj) {
+export function getPrototypeOf$jscript(obj) {
 	if(obj == null) {
 		throw new TypeError("Cannot convert undefined or null to object");
 	}
@@ -21,5 +21,5 @@ export function getPrototypeOf(obj) {
 		}
 	}
 	return obj.constructor.prototype;
-};
-getPrototypeOf.sham = true;
+}
+getPrototypeOf$jscript.sham = true;

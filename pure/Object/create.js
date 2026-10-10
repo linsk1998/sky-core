@@ -1,6 +1,12 @@
 import { create } from "../../native/Object/create";
 import { proto } from "../../support/proto";
-import { create as modern_create } from "../../impl-modern/Object/create";
-import { create as compat_create } from "../../impl-compat/Object/create";
+import { canProtoNull } from "../../impl/object/proto/canProtoNull";
+import { create$ff } from "../../impl/object/proto/create$ff";
+import { create$o } from "../../impl/object/proto/create$o";
+import { create$jscript } from "../../impl/object/proto/create$jscript";
 
-export default create || (proto ? modern_create : compat_create);
+export default create || (
+	proto ?
+		(canProtoNull ? create$ff : create$o) :
+		create$jscript
+);

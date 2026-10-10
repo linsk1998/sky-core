@@ -1,2 +1,2 @@
-import { getPrototypeOf } from "../../impl-compat/Object/getPrototypeOf";
-export default getPrototypeOf;
+import { getPrototypeOf$jscript } from "../../impl/object/proto/getPrototypeOf$jscript";
+export default getPrototypeOf$jscript;
