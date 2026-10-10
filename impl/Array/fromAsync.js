@@ -1,12 +1,10 @@
-import { Promise } from "../../native/Promise";
 import { Array } from "../../native/Array";
+import { push } from "../../native/Array/prototype/push";
 import { isFunction } from "../../utils/isFunction";
 import { isString } from "../../utils/isString";
 import iterator from "sky-core/pure/Symbol/iterator";
 import asyncIterator from "sky-core/pure/Symbol/asyncIterator";
 import { iterator as stringIterator } from "../String/prototype/@@iterator";
-
-var push = Array.prototype.push;
 
 export function fromAsync(arrayLike) {
 	if(arrayLike == null) {
