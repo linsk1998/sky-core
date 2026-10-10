@@ -1,5 +1,5 @@
 import { toString } from "../native/Object/prototype/toString";
-import { NullProtoObject } from "../impl-compat/Object/NullProtoObject";
+import { isNullBase } from "../impl/object/proto/nullProto$jscript";
 import { Symbol } from "../impl-compat/Symbol";
 
 export function structuredClone(obj) {
@@ -13,7 +13,7 @@ export function structuredClone(obj) {
 		}
 		if(Array.isArray(obj)) {
 			return arrayClone(obj);
-		} else if(obj instanceof NullProtoObject) {
+		} else if(isNullBase(obj)) {
 			return objectClone({}, obj);
 		} else if(!(obj instanceof Object)) {
 			throw new Error("Failed to execute 'structuredClone' on DOM");

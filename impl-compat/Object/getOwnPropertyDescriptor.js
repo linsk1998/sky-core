@@ -1,4 +1,4 @@
-import { NullProtoObject } from "../../impl-compat/Object/NullProtoObject";
+import { isNullBase } from "../../impl/object/proto/nullProto$jscript";
 import { getOwnPropertyDescriptor as native_getOwnPropertyDescriptor } from "../../native/Object/getOwnPropertyDescriptor";
 
 export function getOwnPropertyDescriptor(obj, prop) {
@@ -27,7 +27,7 @@ export function getOwnPropertyDescriptor(obj, prop) {
 };
 getOwnPropertyDescriptor.sham = true;
 export function ie8_getOwnPropertyDescriptor(obj, prop) {
-	if(obj instanceof Object || obj instanceof NullProtoObject) {
+	if(obj instanceof Object || isNullBase(obj)) {
 		return getOwnPropertyDescriptor.apply(Object, arguments);
 	} else {
 		if(obj == null) {

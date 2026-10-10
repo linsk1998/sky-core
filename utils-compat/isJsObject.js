@@ -1,4 +1,4 @@
-import { NullProtoObject } from "../impl-compat/Object/NullProtoObject";
+import { isNullBase } from "../impl/object/proto/nullProto$jscript";
 
 export function isJsObject(o) {
 	if(typeof o !== "object") {
@@ -7,7 +7,7 @@ export function isJsObject(o) {
 	if(o instanceof Object) {
 		return true;
 	}
-	if(o instanceof NullProtoObject) {
+	if(isNullBase(o)) {
 		return true;
 	}
 	return false;

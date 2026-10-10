@@ -1,8 +1,8 @@
 import { isNotNullObject } from "../../utils/isNotNullObject";
-import { NullProtoObject } from "../../impl-compat/Object/NullProtoObject";
+import { isNullBase } from "../../impl/object/proto/nullProto$jscript";
 import { defineProperty as native_defineProperty } from "../../native/Object/defineProperty";
 export function ie8_defineProperty(obj, prop, descriptor) {
-	if(obj instanceof Object || obj instanceof NullProtoObject) {
+	if(obj instanceof Object || isNullBase(obj)) {
 		compat_defineProperty.apply(Object, arguments);
 	} else if(window == obj || obj instanceof Element || obj instanceof HTMLDocument) {
 		delete descriptor.enumerable;
@@ -15,7 +15,7 @@ export function ie8_defineProperty(obj, prop, descriptor) {
 ie8_defineProperty.sham = true;
 export function defineProperty(obj, prop, description) {
 	if(native_defineProperty) {
-		if(obj instanceof Object || obj instanceof NullProtoObject) {
+		if(obj instanceof Object || isNullBase(obj)) {
 			compat_defineProperty.apply(Object, arguments);
 		} else {
 			delete description.enumerable;

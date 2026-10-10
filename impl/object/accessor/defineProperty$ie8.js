@@ -1,9 +1,9 @@
 import { defineProperty } from "../../../native/Object/defineProperty";
-import { NullProtoObject } from "sky-core/utils/NullProtoObject";
+import { isNullBase } from "../proto/nullProto$jscript";
 import { defineProperty$es3 } from "./defineProperty$es3";
 
 export function defineProperty$ie8(obj, prop, descriptor) {
-	if(obj instanceof Object || obj instanceof NullProtoObject) {
+	if(obj instanceof Object || isNullBase(obj)) {
 		defineProperty$es3.apply(Object, arguments);
 	} else if(window == obj || obj instanceof Element || obj instanceof HTMLDocument) {
 		if('value' in descriptor) {

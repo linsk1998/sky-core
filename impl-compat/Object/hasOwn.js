@@ -1,4 +1,4 @@
-import { NullProtoObject } from "../../impl-compat/Object/NullProtoObject";
+import { isNullBase } from "../../impl/object/proto/nullProto$jscript";
 import { hasOwnProperty } from "../../native/Object/prototype/hasOwnProperty";
 
 export function hasOwn(obj, key) {
@@ -11,7 +11,7 @@ export function hasOwn(obj, key) {
 	if(!(key in obj)) {
 		return false;
 	}
-	if(obj instanceof NullProtoObject) {
+	if(isNullBase(obj)) {
 		return hasOwnProperty.call(obj, key);
 	}
 	var value = obj[key];
