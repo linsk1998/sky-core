@@ -51,6 +51,24 @@ fs.readdirSync(nativeDir, { withFileTypes: true }).forEach(function(entry) {
 	require.cache[full] = fakeModule;
 });
 
+// native/ 子目录中的文件可能用 ../../X 引用 native/ 顶层的全局别名模块，
+// 这会解析到项目根目录（如 /workspace/Object）而非 native/Object.js。
+// 用 Module._resolveFilename 钩子把这些路径重定向到 native/ 下的实际文件。
+var origResolveFilename = Module._resolveFilename;
+Module._resolveFilename = function(request, parent, isMain, options) {
+	if(parent && parent.filename && request.indexOf("../../") === 0) {
+		var parentDir = path.dirname(parent.filename);
+		var resolved = path.resolve(parentDir, request);
+		// 如果解析路径在项目根目录（如 /workspace/Object），检查 native/ 下是否有对应文件
+		var rel = path.relative(projectRoot, resolved);
+		var nativeAlt = path.resolve(nativeDir, rel);
+		if(rel.indexOf("..") !== 0 && fs.existsSync(nativeAlt + ".js") && !fs.existsSync(resolved + ".js")) {
+			return nativeAlt + ".js";
+		}
+	}
+	return origResolveFilename.apply(this, arguments);
+};
+
 // 让 mocha 能直接 require ES Module 测试文件。
 // - @babel/plugin-transform-modules-commonjs：把 ESM import/export 转 CJS
 // - babel-plugin-module-resolver：把 "sky-core/..." 别名解析到项目根目录
