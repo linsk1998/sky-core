@@ -244,7 +244,6 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Date | polyfill | 修复原生功能 |
 | parseInt | polyfill | 修复原生功能 |
 | JSON | polyfill | 修复原生功能 |
-| Array.fromAsync | polyfill | 新增功能 |
 | Object.defineProperty | pure | 无法真正实现 |
 | Object.defineProperties | pure | 无法真正实现 |
 | Object.preventExtensions | pure | 无法真正实现 |
@@ -258,3 +257,4 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | requestIdleCallback | pure | 无法完美实现 |
 | cancelIdleCallback | pure | 无法完美实现 |
 | crypto.randomUUID | pure | 含名字空间 |
+| Array.fromAsync | polyfill | 新增功能 |
