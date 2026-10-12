@@ -1,2 +1,2 @@
-import { is } from "../../impl/Object/is";
+import { is } from "../../impl/object/is";
 export default is;
