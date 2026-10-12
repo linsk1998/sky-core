@@ -259,4 +259,8 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Object.setPrototypeOf | pure | 无法真正实现 |
 | Object.is | polyfill | 功能完全 |
 | Object.getOwnPropertyDescriptors | pure | 无法真正实现 |
+| requestAnimationFrame | pure | 无法完美实现 |
+| cancelAnimationFrame | pure | 无法完美实现 |
+| requestIdleCallback | pure | 无法完美实现 |
+| cancelIdleCallback | pure | 无法完美实现 |
 | crypto.randomUUID | pure | 含名字空间 |
