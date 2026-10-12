@@ -244,7 +244,11 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Date | polyfill | 修复原生功能 |
 | parseInt | polyfill | 修复原生功能 |
 | JSON | polyfill | 修复原生功能 |
+| Object.getPrototypeOf | pure | 无法真正实现 |
+| Object.create | pure | 无法真正实现 |
 | Object.defineProperty | pure | 无法真正实现 |
+| Object.getOwnPropertyDescriptor | pure | 无法真正实现 |
+| Object.getOwnPropertyNames | pure | 无法真正实现 |
 | Object.defineProperties | pure | 无法真正实现 |
 | Object.preventExtensions | pure | 无法真正实现 |
 | Object.seal | pure | 无法真正实现 |
@@ -252,4 +256,7 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Object.isExtensible | pure | 无法真正实现 |
 | Object.isSealed | pure | 无法真正实现 |
 | Object.isFrozen | pure | 无法真正实现 |
+| Object.setPrototypeOf | pure | 无法真正实现 |
+| Object.is | polyfill | 功能完全 |
+| Object.getOwnPropertyDescriptors | pure | 无法真正实现 |
 | crypto.randomUUID | pure | 含名字空间 |
