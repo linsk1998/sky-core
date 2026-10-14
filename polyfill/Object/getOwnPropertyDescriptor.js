@@ -1,15 +1,19 @@
 import { Object } from "../../native/Object";
-import { accessor } from "../../support/accessor";
-import { getOwnPropertyDescriptor as compat_getOwnPropertyDescriptor, ie8_getOwnPropertyDescriptor } from "../../impl-compat/Object/getOwnPropertyDescriptor";
-import { getOwnPropertyDescriptor as modern_getOwnPropertyDescriptor } from "../../impl-modern/Object/getOwnPropertyDescriptor";
-if(!accessor) {
-	if(Object.prototype.__defineSetter__) {
-		Object.getOwnPropertyDescriptor = modern_getOwnPropertyDescriptor;
+import { getOwnPropertyDescriptor } from "../../native/Object/getOwnPropertyDescriptor";
+import { defineProperties } from "../../native/Object/defineProperties";
+import { __defineSetter__ } from "../../support/__defineSetter__";
+import { getOwnPropertyDescriptor$ff } from "../../impl/object/accessor/getOwnPropertyDescriptor$ff";
+import { getOwnPropertyDescriptor$ie8 } from "../../impl/object/accessor/getOwnPropertyDescriptor$ie8";
+import { getOwnPropertyDescriptor$es3 } from "../../impl/object/accessor/getOwnPropertyDescriptor$es3";
+
+if(getOwnPropertyDescriptor) {
+	if(!defineProperties) {
+		Object.getOwnPropertyDescriptor = getOwnPropertyDescriptor$ie8;
+	}
+} else {
+	if(__defineSetter__) {
+		Object.getOwnPropertyDescriptor = getOwnPropertyDescriptor$ff;
 	} else {
-		if(Object.getOwnPropertyDescriptor) {
-			Object.getOwnPropertyDescriptor = ie8_getOwnPropertyDescriptor;
-		} else {
-			Object.getOwnPropertyDescriptor = compat_getOwnPropertyDescriptor;
-		}
+		Object.getOwnPropertyDescriptor = getOwnPropertyDescriptor$es3;
 	}
 }

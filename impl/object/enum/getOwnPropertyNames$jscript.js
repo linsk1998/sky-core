@@ -1,6 +1,5 @@
 import { isJsObject } from "sky-core/utils-compat/isJsObject";
 import { dontEnums } from "sky-core/utils-compat/dontEnums";
-import { hasEnumBug } from "sky-core/utils/hasEnumBug";
 import { getPrototypeOf } from "../../Reflect/getPrototypeOf";
 import { isString } from "sky-core/utils/isString";
 import { isArray } from "../../Array/isArray";

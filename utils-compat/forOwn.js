@@ -1,6 +1,6 @@
 import { hasOwnProperty } from "../native/Object/prototype/hasOwnProperty";
 import { hasEnumBug } from "../utils/hasEnumBug";
-import { getPrototypeOf } from "../impl-compat/Object/getPrototypeOf";
+import { getPrototypeOf$jscript as getPrototypeOf } from "../impl/object/proto/getPrototypeOf$jscript";
 import { dontEnums } from "./dontEnums";
 import { isJsObject } from "./isJsObject";
 

@@ -1,3 +1,2 @@
-
-import { getOwnPropertyDescriptors } from "../../impl-compat/Object/getOwnPropertyDescriptors";
-export default getOwnPropertyDescriptors;
+import { getOwnPropertyDescriptors$es3 } from "../../impl/object/accessor/getOwnPropertyDescriptors$es3";
+export default getOwnPropertyDescriptors$es3;

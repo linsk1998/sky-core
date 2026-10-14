@@ -1,5 +1,13 @@
+import { defineProperty } from "../../native/Object/defineProperty";
+import { getOwnPropertySymbols } from "../../native/Object/getOwnPropertySymbols";
+import { __defineSetter__ } from "../../support/__defineSetter__";
+import { getOwnPropertyDescriptors$ff } from "../../impl/object/accessor/getOwnPropertyDescriptors$ff";
+import { getOwnPropertyDescriptors$ie } from "../../impl/object/accessor/getOwnPropertyDescriptors$ie";
+import { getOwnPropertyDescriptors$sb } from "../../impl/object/accessor/getOwnPropertyDescriptors$sb";
+import { getOwnPropertyDescriptors$es3 } from "../../impl/object/accessor/getOwnPropertyDescriptors$es3";
 
-import { getOwnPropertyDescriptors as compat_getOwnPropertyDescriptors } from "../../impl-compat/Object/getOwnPropertyDescriptors";
-import { getOwnPropertyDescriptors as modern_getOwnPropertyDescriptors } from "../../impl-modern/Object/getOwnPropertyDescriptors";
-
-export default Object.getOwnPropertyDescriptors || (Object.prototype.__defineSetter__ ? modern_getOwnPropertyDescriptors : compat_getOwnPropertyDescriptors);
+export default Object.getOwnPropertyDescriptors || (
+	defineProperty ?
+		(getOwnPropertySymbols ? getOwnPropertyDescriptors$sb : getOwnPropertyDescriptors$ie) :
+		(__defineSetter__ ? getOwnPropertyDescriptors$ff : getOwnPropertyDescriptors$es3)
+);

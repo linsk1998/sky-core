@@ -1,14 +1,15 @@
 import { hasEnumBug } from "../../utils/hasEnumBug";
-import { ff_setPrototypeOf, ie_setPrototypeOf } from "../../impl-modern/Object/setPrototypeOf";
-import { setPrototypeOf as compat_setPrototypeOf } from "../../impl-compat/Object/setPrototypeOf";
+import { setPrototypeOf$ff } from "../../impl/object/proto/setPrototypeOf$ff";
+import { setPrototypeOf$ie } from "../../impl/object/proto/setPrototypeOf$ie";
+import { setPrototypeOf$jscript } from "../../impl/object/proto/setPrototypeOf$jscript";
 import { Object } from "../../native/Object";
 import { setPrototypeOf } from "../../native/Object/setPrototypeOf";
 if(!setPrototypeOf) {
 	if(Object.__proto__) {
-		Object.setPrototypeOf = ff_setPrototypeOf;
+		Object.setPrototypeOf = setPrototypeOf$ff;
 	} else if(hasEnumBug) {
-		Object.setPrototypeOf = compat_setPrototypeOf;
+		Object.setPrototypeOf = setPrototypeOf$jscript;
 	} else {
-		Object.setPrototypeOf = ie_setPrototypeOf;
+		Object.setPrototypeOf = setPrototypeOf$ie;
 	}
 }

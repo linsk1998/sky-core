@@ -1,2 +1,2 @@
-import { create } from "../../impl-modern/Object/create";
-export default Object.create || create;
+import { create } from "../../native/Object/create";
+export default create;

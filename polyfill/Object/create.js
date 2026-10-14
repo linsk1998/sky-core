@@ -1,13 +1,19 @@
 import { Object } from "../../native/Object";
 import { create } from "../../native/Object/create";
 import { proto } from "../../support/proto";
-import { create as compat_create } from "../../impl-compat/Object/create";
-import { create as modern_create } from "../../impl-modern/Object/create";
+import { canProtoNull } from "../../impl/object/proto/canProtoNull";
+import { create$ff } from "../../impl/object/proto/create$ff";
+import { create$o } from "../../impl/object/proto/create$o";
+import { create$jscript } from "../../impl/object/proto/create$jscript";
 
 if(!create) {
 	if(proto) {
-		Object.create = modern_create;
+		if(canProtoNull) {
+			Object.create = create$ff;
+		} else {
+			Object.create = create$o;
+		}
 	} else {
-		Object.create = compat_create;
+		Object.create = create$jscript;
 	}
 }

@@ -1,8 +1,3 @@
-import { ff_setPrototypeOf, ie_setPrototypeOf } from "../../impl-modern/Object/setPrototypeOf";
-import { Object } from "../../native/Object";
+import { setPrototypeOf$ie } from "../../impl/object/proto/setPrototypeOf$ie";
 import { setPrototypeOf } from "../../native/Object/setPrototypeOf";
-export default setPrototypeOf ||
-	Object.__proto__ ?
-	ff_setPrototypeOf :
-	ie_setPrototypeOf
-	;
+export default setPrototypeOf || setPrototypeOf$ie;

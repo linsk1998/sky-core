@@ -1,8 +1,11 @@
 import { Object } from "../../native/Object";
 import { defineProperty } from "../../native/Object/defineProperty";
 import { getOwnPropertySymbols } from "../../native/Object/getOwnPropertySymbols";
-import { getOwnPropertyDescriptors } from "../../impl-compat/Object/getOwnPropertyDescriptors";
-import { getOwnPropertyDescriptors$ff, getOwnPropertyDescriptors$ie, getOwnPropertyDescriptors$sb } from "../../impl-modern/Object/getOwnPropertyDescriptors";
+import { __defineSetter__ } from "../../support/__defineSetter__";
+import { getOwnPropertyDescriptors$ff } from "../../impl/object/accessor/getOwnPropertyDescriptors$ff";
+import { getOwnPropertyDescriptors$ie } from "../../impl/object/accessor/getOwnPropertyDescriptors$ie";
+import { getOwnPropertyDescriptors$sb } from "../../impl/object/accessor/getOwnPropertyDescriptors$sb";
+import { getOwnPropertyDescriptors$es3 } from "../../impl/object/accessor/getOwnPropertyDescriptors$es3";
 
 if(!Object.getOwnPropertyDescriptors) {
 	if(defineProperty) {
@@ -11,9 +14,9 @@ if(!Object.getOwnPropertyDescriptors) {
 		} else {
 			Object.getOwnPropertyDescriptors = getOwnPropertyDescriptors$ie;
 		}
-	} else if(Object.prototype.__defineSetter__) {
+	} else if(__defineSetter__) {
 		Object.getOwnPropertyDescriptors = getOwnPropertyDescriptors$ff;
 	} else {
-		Object.getOwnPropertyDescriptors = getOwnPropertyDescriptors;
+		Object.getOwnPropertyDescriptors = getOwnPropertyDescriptors$es3;
 	}
 }

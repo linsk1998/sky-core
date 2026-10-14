@@ -3,7 +3,7 @@ import { isFunction } from "../utils/isFunction";
 import { proxyFunction } from "../impl-modern/Proxy";
 import { set } from "../impl-compat/Reflect/set";
 import { get } from "../impl-compat/Reflect/get";
-import { getPrototypeOf } from "../impl-compat/Object/getPrototypeOf";
+import { getPrototypeOf$jscript as getPrototypeOf } from "../impl/object/proto/getPrototypeOf$jscript";
 
 export function Proxy(target, handler) {
 	if(this instanceof Proxy) {
