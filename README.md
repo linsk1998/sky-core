@@ -263,6 +263,7 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | cancelAnimationFrame | pure | 无法完美实现 |
 | requestIdleCallback | pure | 无法完美实现 |
 | cancelIdleCallback | pure | 无法完美实现 |
+| BroadcastChannel | pure | 无法完美实现 |
 | crypto.randomUUID | pure | 含名字空间 |
 | Array.fromAsync | polyfill | 新增功能 |
 | Error.isError | polyfill | 新增功能 |
