@@ -1,6 +1,6 @@
-import { contains as compat_contains } from "../../impl-compat/document/contains";
-import { contains as modern_contains } from "../../impl-modern/document/contains";
+import { contains$all } from "../../impl/document/contains$all";
+import { contains$cmp } from "../../impl/document/contains$cmp";
 
 export default document.contains ? document : {
-	contains: document.all ? compat_contains : modern_contains
+	contains: document.all ? contains$all : contains$cmp
 };

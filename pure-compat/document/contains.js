@@ -1,6 +1,6 @@
-import { contains } from "../../impl-compat/document/contains";
+import { contains$all } from "../../impl/document/contains$all";
 define(function() {
 	return document.contains ? document : {
-		contains: contains
+		contains: contains$all
 	};
 });

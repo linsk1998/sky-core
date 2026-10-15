@@ -1,5 +1,5 @@
 import { document } from "../../native/document";
-import { contains } from "../../impl-compat/document/contains";
+import { contains$all } from "../../impl/document/contains$all";
 if(!document.contains && 'all' in document) {
-	document.contains = contains;
+	document.contains = contains$all;
 }
