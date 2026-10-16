@@ -1,6 +1,6 @@
 
 import { Map } from "../native/Map";
-import { createMap } from "../impl-compat/Map";
+import { create_Map } from "../impl/Map/create_Map";
 if(!Map) {
-	window.Map = createMap();
+	window.Map = create_Map();
 }

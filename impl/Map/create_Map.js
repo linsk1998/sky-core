@@ -1,7 +1,7 @@
 import isNaN from "sky-core/pure/Number/isNaN";
-import { createIteratorHelper } from "../utils/createIteratorHelper";
+import { createIteratorHelper } from "../../utils/createIteratorHelper";
 
-export function createMap() {
+export function create_Map() {
 	function Map() {
 		var arr = arguments[0];
 		this.size = 0;

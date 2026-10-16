@@ -1,3 +1,3 @@
 
-import { createMap } from "../impl-compat/Map";
-export default createMap();
+import { create_Map } from "../impl/Map/create_Map";
+export default create_Map();

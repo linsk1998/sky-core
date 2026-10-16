@@ -1,12 +1,14 @@
 import { Symbol } from "../native/Symbol";
 import { Map } from "../native/Map";
-import { fixMap, checkMapSupportConstructorIteratorReturn, createAndFixSubMap } from "../impl-modern/Map";
-import { createMap } from "../impl-compat/Map";
+import { checkMapSupportConstructorIteratorReturn } from "../impl/Map/checkMapSupportConstructorIteratorReturn";
+import { fix_Map$v8 } from "../impl/Map/fix_Map$v8";
+import { fix_Map } from "../impl/Map/fix_Map";
+import { create_Map } from "../impl/Map/create_Map";
 
 if(Symbol) {
 	if(Symbol.iterator) {
 		if(!checkMapSupportConstructorIteratorReturn()) {
-			window.Map = createAndFixSubMap();
+			window.Map = fix_Map$v8(Map);
 		}
 	} else {
 		// Safari8 支持entries
@@ -17,8 +19,8 @@ if(Symbol) {
 	}
 } else {
 	if(Map && (Map.prototype.iterator || Map.prototype['@@iterator'])) {
-		window.Map = fixMap();
+		window.Map = fix_Map();
 	} else {
-		window.Map = createMap();
+		window.Map = create_Map();
 	}
 }

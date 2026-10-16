@@ -1,5 +1,5 @@
-import { set, has, remove, clear, forEach, entries, values } from "./Map";
-export { has, remove, clear, forEach, entries, values } from "./Map";
+import { set, has, remove, clear, forEach, entries, values } from "../impl/Map/create_Map";
+export { has, remove, clear, forEach, entries, values } from "../impl/Map/create_Map";
 
 export function createSet() {
 	function Set() {
