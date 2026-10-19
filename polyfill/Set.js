@@ -1,13 +1,15 @@
 import { Symbol } from "../native/Symbol";
 import { Set } from "../native/Set";
-import { fixSet, createAndFixSubSet, checkSetSupportConstructorIteratorReturn } from "../impl-modern/Set";
-import { createSet } from "../impl-compat/Set";
+import { checkSetSupportConstructorIteratorReturn } from "../impl/Set/checkSetSupportConstructorIteratorReturn";
+import { fix_Set$v8 } from "../impl/Set/fix_Set$v8";
+import { fix_Set } from "../impl/Set/fix_Set";
+import { create_Set } from "../impl/Set/create_Set";
 
 
 if(Symbol) {
 	if(Symbol.iterator) {
 		if(!checkSetSupportConstructorIteratorReturn()) {
-			window.Set = createAndFixSubSet();
+			window.Set = fix_Set$v8(Set);
 		}
 	} else {
 		// Safari8 支持values
@@ -18,8 +20,8 @@ if(Symbol) {
 	}
 } else {
 	if(Set && (Set.prototype.iterator || Set.prototype['@@iterator'])) {
-		window.Set = fixSet();
+		window.Set = fix_Set();
 	} else {
-		window.Set = createSet();
+		window.Set = create_Set();
 	}
 }

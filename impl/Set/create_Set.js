@@ -1,7 +1,6 @@
-import { set, has, remove, clear, forEach, entries, values } from "../impl/Map/create_Map";
-export { has, remove, clear, forEach, entries, values } from "../impl/Map/create_Map";
+import { set, has, remove, clear, forEach, entries, values } from "../Map/create_Map";
 
-export function createSet() {
+export function create_Set() {
 	function Set() {
 		var arr = arguments[0];
 		this.size = 0;

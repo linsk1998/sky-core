@@ -1,6 +1,6 @@
 
 import { Set } from "../native/Set";
-import { createSet } from "../impl-compat/Set";
+import { create_Set } from "../impl/Set/create_Set";
 if(!Set) {
-	window.Set = createSet();
+	window.Set = create_Set();
 }
