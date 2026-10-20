@@ -1,9 +1,9 @@
 import { WeakMap } from "../native/WeakMap";
 import { Symbol } from "../native/Symbol";
 import { nonEnumerable } from "../support/nonEnumerable";
-import { WeakMap as impl_WeakMap, KEY_WM } from "../impl/WeakMap";
-import { fixChain } from "../impl-modern/WeakMap";
-import { fixSymbol } from "../impl-es2015/WeakMap";
+import { WeakMap as impl_WeakMap, KEY_WM } from "../impl/WeakMap/WeakMap";
+import { fixChain } from "../impl/WeakMap/fixChain";
+import { fix_WeakMap$symbol } from "../impl/WeakMap/fix_WeakMap$symbol";
 
 if(WeakMap) {
 	var wm = new WeakMap();
@@ -11,7 +11,7 @@ if(WeakMap) {
 		try {
 			wm.set(Symbol(), 1);
 		} catch(e) {
-			window.WeakMap = fixSymbol(WeakMap);
+			window.WeakMap = fix_WeakMap$symbol(WeakMap);
 		}
 	} else {
 		if(wm.set({}, 0) !== wm) {

@@ -1,4 +1,6 @@
 
+import { WeakMap } from "./WeakMap";
+
 function WeakSet() {
 	this.map = new WeakMap();
 	if(arguments.length) {

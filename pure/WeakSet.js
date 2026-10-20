@@ -1,8 +1,8 @@
 import { WeakSet } from "../native/WeakSet";
 import { Symbol } from "../native/Symbol";
-import { WeakSet as impl_WeakSet } from "../impl/WeakSet";
-import { fixChain } from "../impl-modern/WeakSet";
-import { fixSymbol } from "../impl-es2015/WeakSet";
+import { WeakSet as impl_WeakSet } from "../impl/WeakSet/WeakSet";
+import { fixChain } from "../impl/WeakSet/fixChain";
+import { fix_WeakSet$symbol } from "../impl/WeakSet/fix_WeakSet$symbol";
 
 export default (function() {
 	if(WeakSet) {
@@ -11,7 +11,7 @@ export default (function() {
 			try {
 				ws.add(Symbol());
 			} catch(e) {
-				return fixSymbol(WeakSet);
+				return fix_WeakSet$symbol(WeakSet);
 			}
 		} else {
 			if(ws.add({}) !== ws) {

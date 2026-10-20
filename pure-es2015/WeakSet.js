@@ -1,13 +1,13 @@
 import { WeakSet } from "../native/WeakSet";
 import { Symbol } from "../native/Symbol";
-import { fixSymbol } from "../impl-es2015/WeakSet";
+import { fix_WeakSet$symbol } from "../impl/WeakSet/fix_WeakSet$symbol";
 
 export default (function() {
 	var ws = new WeakSet();
 	try {
-		ws.set(Symbol(), 1);
+		ws.add(Symbol());
 		return WeakSet;
 	} catch(e) {
-		return fixSymbol(WeakSet);
+		return fix_WeakSet$symbol(WeakSet);
 	}
 })();

@@ -1,3 +1,3 @@
-import { WeakMap } from "../impl/WeakMap";
+import { WeakMap } from "../impl/WeakMap/WeakMap";
 
 window.WeakMap = WeakMap;

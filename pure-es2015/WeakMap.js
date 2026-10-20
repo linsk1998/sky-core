@@ -1,6 +1,6 @@
 import { WeakMap } from "../native/WeakMap";
 import { Symbol } from "../native/Symbol";
-import { fixSymbol } from "../impl-es2015/WeakMap";
+import { fix_WeakMap$symbol } from "../impl/WeakMap/fix_WeakMap$symbol";
 
 export default (function() {
 	var wm = new WeakMap();
@@ -8,6 +8,6 @@ export default (function() {
 		wm.set(Symbol(), 1);
 		return WeakMap;
 	} catch(e) {
-		return fixSymbol(WeakMap);
+		return fix_WeakMap$symbol(WeakMap);
 	}
 })();

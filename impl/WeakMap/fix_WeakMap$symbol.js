@@ -1,13 +1,13 @@
 import { inherits } from "sky-core/utils/inherits";
 
-export function fixSymbol(BugWeakMap) {
+export function fix_WeakMap$symbol(GWeakMap) {
 	function WeakMap() {
-		var m = new BugWeakMap(arguments[0]);
+		var m = new GWeakMap(arguments[0]);
 		Object.setPrototypeOf(m, Object.getPrototypeOf(this));
 		return m;
 	}
-	inherits(WeakMap, BugWeakMap);
-	var s = BugWeakMap.prototype.set;
+	inherits(WeakMap, GWeakMap);
+	var s = GWeakMap.prototype.set;
 	WeakMap.prototype.set = function set(k, v) {
 		if(typeof k === "symbol") {
 			this[k] = v;
@@ -16,7 +16,7 @@ export function fixSymbol(BugWeakMap) {
 			return s.apply(this, arguments);
 		}
 	};
-	var g = BugWeakMap.prototype.get;
+	var g = GWeakMap.prototype.get;
 	WeakMap.prototype.get = function get(k) {
 		if(typeof k === "symbol") {
 			return this[k];
@@ -24,7 +24,7 @@ export function fixSymbol(BugWeakMap) {
 			return g.apply(this, arguments);
 		}
 	};
-	var h = BugWeakMap.prototype.has;
+	var h = GWeakMap.prototype.has;
 	WeakMap.prototype.has = function has(k) {
 		if(typeof k === "symbol") {
 			return k in this;
@@ -32,7 +32,7 @@ export function fixSymbol(BugWeakMap) {
 			return h.apply(this, arguments);
 		}
 	};
-	var d = BugWeakMap.prototype.delete;
+	var d = GWeakMap.prototype.delete;
 	WeakMap.prototype.delete = function(k, v) {
 		if(typeof k === "symbol") {
 			if(k in this) {

@@ -1,5 +1,5 @@
-import { nonEnumerable } from "../support/nonEnumerable";
-import { isNotNullObject } from "../utils/isNotNullObject";
+import { nonEnumerable } from "../../support/nonEnumerable";
+import { isNotNullObject } from "../../utils/isNotNullObject";
 
 export var KEY_WM = "@@WeakMap";
 var weakSeq = 0;

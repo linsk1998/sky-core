@@ -1,10 +1,10 @@
 import { WeakSet } from "../native/WeakSet";
 import { Symbol } from "../native/Symbol";
-import { fixSymbol } from "../impl-es2015/WeakSet";
+import { fix_WeakSet$symbol } from "../impl/WeakSet/fix_WeakSet$symbol";
 
 var ws = new WeakSet();
 try {
-	ws.set(Symbol(), 1);
+	ws.add(Symbol());
 } catch(e) {
-	window.WeakSet = fixSymbol(WeakSet);
+	window.WeakSet = fix_WeakSet$symbol(WeakSet);
 }

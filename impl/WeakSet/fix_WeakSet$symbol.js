@@ -1,13 +1,13 @@
 import { inherits } from "sky-core/utils/inherits";
 
-export function fixSymbol(BugWeakSet) {
+export function fix_WeakSet$symbol(GWeakSet) {
 	function WeakSet() {
-		var m = new BugWeakSet(arguments[0]);
+		var m = new GWeakSet(arguments[0]);
 		Object.setPrototypeOf(m, Object.getPrototypeOf(this));
 		return m;
 	}
-	inherits(WeakSet, BugWeakSet);
-	var a = BugWeakSet.prototype.add;
+	inherits(WeakSet, GWeakSet);
+	var a = GWeakSet.prototype.add;
 	WeakSet.prototype.add = function add(v) {
 		if(typeof v === "symbol") {
 			this[v] = v;
@@ -16,7 +16,7 @@ export function fixSymbol(BugWeakSet) {
 			return a.apply(this, arguments);
 		}
 	};
-	var h = BugWeakSet.prototype.has;
+	var h = GWeakSet.prototype.has;
 	WeakSet.prototype.has = function has(v) {
 		if(typeof v === "symbol") {
 			return v in this;
@@ -24,7 +24,7 @@ export function fixSymbol(BugWeakSet) {
 			return h.apply(this, arguments);
 		}
 	};
-	var d = BugWeakSet.prototype.delete;
+	var d = GWeakSet.prototype.delete;
 	WeakSet.prototype.delete = function(v) {
 		if(typeof v === "symbol") {
 			if(v in this) {
