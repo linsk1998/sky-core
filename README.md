@@ -240,6 +240,7 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | ----- | ----- | ----- |
 | RegExp | polyfill | 修复原生功能 |
 | Event | pure | DOM相关 |
+| document.contains | polyfill | 修复原生功能 |
 | Error | polyfill | 修复原生功能 |
 | Date | polyfill | 修复原生功能 |
 | parseInt | polyfill | 修复原生功能 |
@@ -259,6 +260,10 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Object.setPrototypeOf | pure | 无法真正实现 |
 | Object.is | polyfill | 功能完全 |
 | Object.getOwnPropertyDescriptors | pure | 无法真正实现 |
+| WeakMap | pure | 无法真正实现 |
+| Map | polyfill | 修复原生功能 |
+| Set | polyfill | 修复原生功能 |
+| WeakSet | pure | 无法真正实现 |
 | requestAnimationFrame | pure | 无法完美实现 |
 | cancelAnimationFrame | pure | 无法完美实现 |
 | requestIdleCallback | pure | 无法完美实现 |
