@@ -1,4 +1,4 @@
-import { from } from "../../impl-compat/Array/from";
+import { from } from "../../impl/Array/from";
 
 if(!Array.from) {
 	Array.from = from;

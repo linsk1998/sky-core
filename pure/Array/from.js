@@ -1,2 +1,1 @@
-import { from } from "../../impl/Array/from";
-export default Array.from || from;
+import { from } from "../../impl/Array/from";export default Array.from || from;
