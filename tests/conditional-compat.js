@@ -283,10 +283,10 @@ module.exports = [
 			/* IE9+ Chrome6+ Firefox4+ Safari5.1+ Opera12.1+ */
 			"Object.preventExtensions": "sky-core/polyfill/Object/preventExtensions",
 			"Object.seal": "sky-core/polyfill/Object/seal",
-			"Object.freeze": "sky-core/polyfill/Object/freeze",
-			"Object.isExtensible": "sky-core/polyfill/Object/isExtensible",
-			"Object.isSealed": "sky-core/polyfill/Object/isSealed",
-			"Object.isFrozen": "sky-core/polyfill/Object/isFrozen",
+			"Object.freeze": "sky-core/pure/Object/freeze",
+			"Object.isExtensible": "sky-core/pure/Object/isExtensible",
+			"Object.isSealed": "sky-core/pure/Object/isSealed",
+			"Object.isFrozen": "sky-core/pure/Object/isFrozen",
 
 			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",

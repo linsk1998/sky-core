@@ -3,9 +3,9 @@ const fs = require("fs");
 const path = require("path");
 
 var tiers = {
-	compat: ["compat", "modern", "es2015"],
-	legacy: ["legacy", "modern", "es2015"],
-	modern: ["modern", "es2015"],
+	compat: ["compat", "modern"],
+	legacy: ["legacy", "modern"],
+	modern: ["modern"],
 	es2015: ["es2015"]
 };
 

@@ -1,4 +1,4 @@
-import { trimStart } from "../impl/String/prototype/trimStart";
+import { trimStart } from "../../impl/String/prototype/trimStart";
 
 export function fix_parseInt(parseInt) {
 	return function(number, radix) {

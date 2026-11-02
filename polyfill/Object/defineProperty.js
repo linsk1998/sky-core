@@ -1,4 +1,4 @@
-import { Object } from "../../native/Object/Object";
+import { Object } from "../../native/Object";
 import { defineProperty } from "../../native/Object/defineProperty";
 import { defineProperties } from "../../native/Object/defineProperties";
 import { __defineSetter__ } from "../../support/__defineSetter__";

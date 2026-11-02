@@ -4,44 +4,20 @@
 
 	var getPrototypeOf$2 = Object$1.getPrototypeOf;
 
-	var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
-
-	var nullProto = {};
-	nullProto.__proto__ = null;
-	if (nullProto.__proto__) {
-	  var i = dontEnums.length;
-	  while (i--) {
-	    nullProto[dontEnums[i]] = undefined;
-	  }
-	} else {
-	  nullProto = null;
-	}
-
-	function getPrototypeOf$ff(object) {
-	  return object.__proto__ || null;
-	}
-	;
-	function getPrototypeOf$o(object) {
-	  var __proto__ = object.__proto__;
-	  return __proto__ === nullProto ? null : __proto__;
-	}
-	;
-	var getPrototypeOf$legacy = nullProto ? getPrototypeOf$o : getPrototypeOf$ff;
 	function getPrototypeOf$ie(object) {
 	  if ('__proto__' in object) {
 	    return object.__proto__;
 	  }
 	  return getPrototypeOf$2(object);
 	}
-	;
 
 	var setPrototypeOf$1 = Object$1.setPrototypeOf;
 
-	var getPrototypeOf$1 = !getPrototypeOf$2 ? Object$1.__proto__ ? getPrototypeOf$legacy : getPrototypeOf$ie : !setPrototypeOf$1 ? getPrototypeOf$ie : getPrototypeOf$2;
+	var getPrototypeOf$1 = getPrototypeOf$2 && setPrototypeOf$1 ? getPrototypeOf$2 : getPrototypeOf$ie;
 
-	var defineProperties$1 = Object$1.defineProperties;
+	var defineProperties = Object$1.defineProperties;
 
-	var nonEnumerable = !!defineProperties$1;
+	var nonEnumerable = !!defineProperties;
 
 	var DESCRIPTORS = !!function () {
 	  return !!Object.defineProperties || !!Object.prototype.__defineSetter__;
@@ -92,42 +68,9 @@
 	}();
 	var WHITESPACES = "\t\n\x0B\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
 
-	var defineProperty = Object$1.defineProperty;
-
-	function definePrototype(target, property, value) {
-	  var prototype = target.prototype;
-	  if (!(property in prototype)) {
-	    if (defineProperty) {
-	      defineProperty(prototype, property, {
-	        configurable: true,
-	        writable: true,
-	        enumerable: false,
-	        value: value
-	      });
-	    } else {
-	      prototype[property] = value;
-	    }
-	  }
-	}
-
-	var slice$2 = Array.prototype.slice;
-
-	function bind(context) {
-	  var self = this,
-	    args = slice$2.call(arguments, 1);
-	  var Bind = function () {
-	    if (this instanceof Bind) {
-	      self.apply(this, args.concat(slice$2.call(arguments)));
-	      return;
-	    }
-	    return self.apply(context, args.concat(slice$2.call(arguments)));
-	  };
-	  return Bind;
-	}
-
-	definePrototype(Function, 'bind', bind);
-
 	var Symbol$8 = window.Symbol;
+
+	var defineProperty = Object$1.defineProperty;
 
 	var iterator$1 = (function () {
 	  if (!Symbol$8) {
@@ -248,7 +191,9 @@
 
 	var Array$1 = window.Array;
 
-	var toString$1 = Object$1.prototype.toString;
+	var prototype = Object$1.prototype;
+
+	var toString$1 = prototype.toString;
 
 	function isArray(obj) {
 	  return toString$1.call(obj) === '[object Array]';
@@ -256,48 +201,6 @@
 
 	if (!Array$1.isArray) {
 	  Array$1.isArray = isArray;
-	}
-
-	function slice$1(start, end) {
-	  if (this instanceof Object) {
-	    if (end === undefined) {
-	      return slice$2.call(this, start);
-	    }
-	    return slice$2.call(this, start, end);
-	  }
-	  var i,
-	    r = [];
-	  var len = this.length;
-	  if (start < 0) start += len;
-	  if (end === undefined) end = len;else if (end < 0) end += len;
-	  if (start < end) {
-	    len = end - start;
-	    r = new Array(len);
-	    i = len;
-	    while (i-- > 0) {
-	      r[i] = this[i + start];
-	    }
-	  }
-	  return r;
-	}
-	if (![1].slice(0, undefined).length) {
-	  Array.prototype.slice = slice$1;
-	}
-
-	var __defineSetter__$1 = !!Object.prototype.__defineSetter__;
-
-	var accessor = !!defineProperties$1 || __defineSetter__$1;
-
-	if (accessor) {
-	  if (!('name' in Function.prototype)) {
-	    Object.defineProperty(Function.prototype, 'name', {
-	      enumerable: false,
-	      configurable: true,
-	      get: function () {
-	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
-	      }
-	    });
-	  }
 	}
 
 	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
@@ -343,6 +246,7 @@
 	;
 
 	// form babel helper
+	// 这是个简化版的createIteratorHelper，没有ArrayLike支持，用于遍历可迭代对象
 	function createIteratorHelper(o) {
 	  var it = o[iterator$1];
 	  if (!it) return null;
@@ -506,7 +410,7 @@
 	  }, _iterable);
 	  return iterable;
 	}
-	function includes$2(target, wanted) {
+	function includes(target, wanted) {
 	  for (var _iterator = _createForOfIteratorHelperLoose(target), _step; !(_step = _iterator()).done;) {
 	    var element = _step.value;
 	    if (wanted === element) return true;
@@ -823,132 +727,6 @@
 	  // assert.same(array.splice().foo, 1, '@@species');
 	});
 
-	var slice = String.prototype['slice'];
-
-	function repeat(count) {
-	  if (this == null) {
-	    throw new TypeError("repeat called on null or undefined");
-	  }
-	  if (count < 0) {
-	    throw new RangeError("RangeError repeat count must be non-negative");
-	  }
-	  if (count === Number.POSITIVE_INFINITY) {
-	    throw new RangeError("RangeError repeat count must be less than infinity");
-	  }
-	  count = Math.floor(count);
-	  if (isNaN(count)) return "";
-	  return new Array(count + 1).join(this);
-	}
-
-	function toInteger(n) {
-	  return isNaN(n = +n) ? 0 : (n > 0 ? Math.floor : Math.ceil)(n);
-	}
-
-	// from core-js
-
-	function pow$1(x, n, acc) {
-	  return n === 0 ? acc : n % 2 === 1 ? pow$1(x, n - 1, acc * x) : pow$1(x * x, n / 2, acc);
-	}
-	function log$1(x) {
-	  var n = 0;
-	  var x2 = x;
-	  while (x2 >= 4096) {
-	    n += 12;
-	    x2 /= 4096;
-	  }
-	  while (x2 >= 2) {
-	    n += 1;
-	    x2 /= 2;
-	  }
-	  return n;
-	}
-	function multiply(data, n, c) {
-	  var index = -1;
-	  var c2 = c;
-	  while (++index < 6) {
-	    c2 += n * data[index];
-	    data[index] = c2 % 1e7;
-	    c2 = Math.floor(c2 / 1e7);
-	  }
-	}
-	function divide(data, n) {
-	  var index = 6;
-	  var c = 0;
-	  while (--index >= 0) {
-	    c += data[index];
-	    data[index] = Math.floor(c / n);
-	    c = c % n * 1e7;
-	  }
-	}
-	function dataToString(data) {
-	  var index = 6;
-	  var s = '';
-	  while (--index >= 0) {
-	    if (s !== '' || index === 0 || data[index] !== 0) {
-	      var t = String(data[index]);
-	      s = s === '' ? t : s + repeat.call('0', 7 - t.length) + t;
-	    }
-	  }
-	  return s;
-	}
-	function toFixed(fractionDigits) {
-	  var number = this;
-	  var fractDigits = toInteger(fractionDigits);
-	  var data = [0, 0, 0, 0, 0, 0];
-	  var sign = '';
-	  var result = '0';
-	  var e, z, j, k;
-	  if (fractDigits < 0 || fractDigits > 20) throw RangeError('Incorrect fraction digits');
-	  // eslint-disable-next-line no-self-compare -- NaN check
-	  if (isNaN(number)) return 'NaN';
-	  if (number <= -1e21 || number >= 1e21) return String(number);
-	  if (number < 0) {
-	    sign = '-';
-	    number = -number;
-	  }
-	  if (number > 1e-21) {
-	    e = log$1(number * pow$1(2, 69, 1)) - 69;
-	    z = e < 0 ? number * pow$1(2, -e, 1) : number / pow$1(2, e, 1);
-	    z *= 0x10000000000000;
-	    e = 52 - e;
-	    if (e > 0) {
-	      multiply(data, 0, z);
-	      j = fractDigits;
-	      while (j >= 7) {
-	        multiply(data, 1e7, 0);
-	        j -= 7;
-	      }
-	      multiply(data, pow$1(10, j, 1), 0);
-	      j = e - 1;
-	      while (j >= 23) {
-	        divide(data, 1 << 23);
-	        j -= 23;
-	      }
-	      divide(data, 1 << j);
-	      multiply(data, 1, 1);
-	      divide(data, 2);
-	      result = dataToString(data);
-	    } else {
-	      multiply(data, 0, z);
-	      multiply(data, 1 << -e, 0);
-	      result = dataToString(data) + repeat.call('0', fractDigits);
-	    }
-	  }
-	  if (fractDigits > 0) {
-	    k = result.length;
-	    result = sign + (k <= fractDigits ? '0.' + repeat.call('0', fractDigits - k) + result : slice.call(result, 0, k - fractDigits) + '.' + slice.call(result, k - fractDigits));
-	  } else {
-	    result = sign + result;
-	  }
-	  return result;
-	}
-
-	// from core-js
-	var n = Number.prototype['toFixed'];
-	if (n.call(0.00008, 3) !== '0.000' || n.call(0.9, 3) !== '1' || n.call(1.255, 3) !== '1.25' || n.call(1000000000000000128.0, 0) !== '1000000000000000128') {
-	  Number.prototype['toFixed'] = toFixed;
-	}
-
 	QUnit.test('Number#toFixed', function (assert) {
 	  var toFixed = Number.prototype.toFixed;
 	  assert.isFunction(toFixed);
@@ -1032,53 +810,6 @@
 	  // assert.throws(() => toFixed.call(null, 1), TypeError, '? thisNumberValue(this value)');
 	  // assert.throws(() => toFixed.call(undefined, 1), TypeError, '? thisNumberValue(this value)');
 	});
-
-	var Date$1 = window.Date;
-
-	function prefixIntrger2(number) {
-	  if (number < 10) {
-	    return '0' + number;
-	  }
-	  return number;
-	}
-	;
-
-	function prefixIntrger3(number) {
-	  if (number < 100) {
-	    return '0' + prefixIntrger2(number);
-	  }
-	  return number;
-	}
-	;
-
-	function toISOString() {
-	  var time = this.getTime();
-	  if (isNaN(time)) {
-	    throw new RangeError("Invalid time value");
-	  }
-	  return this.getUTCFullYear() + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
-	}
-
-	function toJSON(_) {
-	  if (isNaN(this.getTime())) {
-	    return null;
-	  }
-	  return toISOString.call(this);
-	}
-	;
-
-	try {
-	  if (!('toJSON' in Date$1.prototype) || new Date$1(0).toJSON() !== '1970-01-01T00:00:00.000Z' || new Date$1(NaN).toJSON() !== null) {
-	    Date$1.prototype.toJSON = toJSON;
-	  }
-	} catch (e) {
-	  Date$1.prototype.toJSON = toJSON;
-	}
-
-	// safari 5
-	if (new Date$1(-1).toISOString !== '1969-12-31T23:59:59.999Z') {
-	  Date$1.prototype.toISOString = toISOString;
-	}
 
 	QUnit.test('Date#toJSON', function (assert) {
 	  var toJSON = Date.prototype.toJSON;
@@ -1390,6 +1121,8 @@
 	  }
 	});
 
+	var slice$1 = Array.prototype.slice;
+
 	var setTimeout$3 = window.setTimeout;
 
 	function setTimeout$2(cb) {
@@ -1397,7 +1130,7 @@
 	  if (arguments.length <= 2) {
 	    return setTimeout$3(cb, ms);
 	  }
-	  var args = slice$2.call(arguments, 2);
+	  var args = slice$1.call(arguments, 2);
 	  var cba = function () {
 	    cb.apply(this, args);
 	  };
@@ -1413,7 +1146,7 @@
 	  if (arguments.length <= 2) {
 	    return setInterval$2(cb, ms);
 	  }
-	  var args = slice$2.call(arguments, 2);
+	  var args = slice$1.call(arguments, 2);
 	  var cba = function () {
 	    cb.apply(this, args);
 	  };
@@ -1473,42 +1206,6 @@
 	  });
 	});
 
-	var Error$2 = window.Error;
-
-	function Error$1(message) {
-	  this.message = message === undefined ? "" : String(message);
-	  var options = arguments[1];
-	  if (typeof options === "object" && options !== null) {
-	    if ('cause' in options) {
-	      this.cause = options.cause;
-	    }
-	  }
-	}
-	Error$1.prototype = Error$2.prototype;
-	window.Error = Error$1;
-
-	function reduce(callback) {
-	  var i, value;
-	  if (arguments.length >= 2) {
-	    value = arguments[1];
-	    i = 0;
-	  } else if (this.length > 0) {
-	    value = this[0];
-	    i = 1;
-	  } else {
-	    throw new Error("Reduce of empty array with no initial value");
-	  }
-	  while (i < this.length) {
-	    if (i in this) {
-	      value = callback(value, this[i], i, this);
-	    }
-	    i++;
-	  }
-	  return value;
-	}
-
-	definePrototype(Array, 'reduce', reduce);
-
 	QUnit.test('Array#reduce', function (assert) {
 	  var reduce = Array.prototype.reduce;
 	  assert.isFunction(reduce);
@@ -1560,26 +1257,6 @@
 	    }, TypeError);
 	  }
 	});
-
-	function reduceRight(callback) {
-	  var i = this.length,
-	    value;
-	  if (arguments.length >= 2) {
-	    value = arguments[1];
-	  } else if (this.length > 0) {
-	    value = this[--i];
-	  } else {
-	    throw new Error("Reduce of empty array with no initial value");
-	  }
-	  while (i-- > 0) {
-	    if (i in this) {
-	      value = callback(value, this[i], i, this);
-	    }
-	  }
-	  return value;
-	}
-
-	definePrototype(Array, 'reduceRight', reduceRight);
 
 	QUnit.test('Array#reduceRight', function (assert) {
 	  var reduceRight = Array.prototype.reduceRight;
@@ -1633,12 +1310,6 @@
 	  }
 	});
 
-	function trim() {
-	  return this.replace(/^[\s\u3000\xA0]+|[\s\u3000\xA0]+$/g, '');
-	}
-
-	definePrototype(String, 'trim', trim);
-
 	QUnit.test('String#trim', function (assert) {
 	  var trim = String.prototype.trim;
 	  assert.isFunction(trim);
@@ -1683,238 +1354,11 @@
 	  }
 	});
 
-	if (!getPrototypeOf$2) {
-	  if ('__proto__' in Object$1.prototype) {
-	    Object$1.getPrototypeOf = getPrototypeOf$legacy;
-	  }
-	} else if (!setPrototypeOf$1) {
+	if (getPrototypeOf$2 && !setPrototypeOf$1) {
 	  Object$1.getPrototypeOf = getPrototypeOf$ie;
 	}
 
-	var create$2 = Object$1.create;
-
-	var proto = !!setPrototypeOf$1 || '__proto__' in Object.prototype;
-
-	var hasV8DefineBug = !defineProperties$1;
-	if (!hasV8DefineBug) {
-	  defineProperty(defineProperty({}, '_', {
-	    enumerable: false,
-	    configurable: true,
-	    set: function () {
-	      hasV8DefineBug = true;
-	    }
-	  }), '_', {
-	    enumerable: false,
-	    configurable: true,
-	    writable: true,
-	    value: 1
-	  });
-	}
-
-	var hasOwnProperty = Object$1.prototype.hasOwnProperty;
-
-	function hasOwn(obj, key) {
-	  return hasOwnProperty.call(obj, key);
-	}
-	;
-
-	if (!Object$1.hasOwn) {
-	  Object$1.hasOwn = hasOwn;
-	}
-
-	function isNotNullObject(obj) {
-	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
-	}
-	;
-
-	var __defineGetter__ = Object.prototype.__defineGetter__;
-	var __defineSetter__ = Object.prototype.__defineSetter__;
-	function ff_defineProperty(obj, prop, descriptor) {
-	  if (!isNotNullObject(obj)) {
-	    throw new TypeError("Object.defineProperty called on non-object");
-	  }
-	  prop = String(prop);
-	  if ('value' in descriptor) {
-	    var value = descriptor.value;
-	    if (descriptor.writable) {
-	      if (!(prop in obj) || Object.hasOwn(obj, prop)) {
-	        delete obj[prop];
-	        obj[prop] = value;
-	      } else {
-	        __defineGetter__.call(obj, prop, function () {
-	          return value;
-	        });
-	        __defineSetter__.call(obj, prop, function (v) {
-	          value = v;
-	        });
-	      }
-	    } else {
-	      __defineGetter__.call(obj, prop, function () {
-	        return value;
-	      });
-	    }
-	  } else {
-	    if (descriptor.get) __defineGetter__.call(obj, prop, descriptor.get);
-	    if (descriptor.set) __defineSetter__.call(obj, prop, descriptor.set);
-	  }
-	  return obj;
-	}
-	;
-	function v8_defineProperty(obj, prop, descriptor) {
-	  if (descriptor.configurable && descriptor.writable && 'value' in descriptor) {
-	    var value = descriptor.value;
-	    return defineProperty(obj, prop, {
-	      get: function () {
-	        return value;
-	      },
-	      set: function (v) {
-	        value = v;
-	      },
-	      enumerable: false,
-	      configurable: true
-	    });
-	  }
-	  return defineProperty(obj, prop, descriptor);
-	}
-	;
-
-	var $inject_Object_defineProperty = defineProperty && hasV8DefineBug ? v8_defineProperty : defineProperty || ff_defineProperty;
-
-	function keys$4() {
-	  var array = this;
-	  var index = 0;
-	  return {
-	    next: function () {
-	      var value;
-	      var done = array.length <= index;
-	      if (!done) {
-	        value = index;
-	        index++;
-	      }
-	      return {
-	        done: done,
-	        value: value
-	      };
-	    },
-	    '@@iterator': function () {
-	      return this;
-	    },
-	    '@@toStringTag': 'Array Iterator'
-	  };
-	}
-
-	definePrototype(Array, 'keys', keys$4);
-
-	var keys$3 = Object$1.keys;
-
-	function isNotSymbolKey(key) {
-	  return key.substring(0, 2) !== "@@";
-	}
-
-	function ie_keys(obj) {
-	  return keys$3.call(Object, obj).filter(isNotSymbolKey);
-	}
-	function nie_keys(obj) {
-	  if (obj == null) {
-	    throw new TypeError("Cannot convert undefined or null to object");
-	  }
-	  var result = [];
-	  for (var key in obj) {
-	    if (key.substring(0, 2) !== "@@" && Object.hasOwn(obj, key)) {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-	function keys$2(obj) {
-	  if (!keys$3) {
-	    return nie_keys(obj);
-	  } else if (Symbol$8) {
-	    return keys$3(obj);
-	  } else {
-	    return ie_keys(obj);
-	  }
-	}
-
-	if (!Object$1.keys) {
-	  Object$1.keys = nie_keys;
-	} else if (!Symbol$8) {
-	  Object$1.keys = ie_keys;
-	}
-
-	if (defineProperty) {
-	  if (hasV8DefineBug) {
-	    Object.defineProperty = v8_defineProperty;
-	  }
-	} else {
-	  Object.defineProperty = ff_defineProperty;
-	}
-
-	function defineProperties(obj, properties) {
-	  var ownKeys = Object.keys(properties);
-	  var len = ownKeys.length;
-	  for (var i = 0; i < len; i++) {
-	    var key = ownKeys[i];
-	    $inject_Object_defineProperty(obj, key, properties[key]);
-	  }
-	  return obj;
-	}
-	;
-	defineProperties.sham = true;
-
-	var $inject_Object_defineProperties = Object$1.defineProperties || defineProperties;
-
-	if (!defineProperties$1) {
-	  Object$1.defineProperties = defineProperties;
-	}
-
-	function ff_setPrototypeOf(obj, proto) {
-	  obj.__proto__ = proto;
-	  return obj;
-	}
-	function ie_setPrototypeOf(o, proto) {
-	  o.__proto__ = proto;
-	  for (var key in proto) {
-	    if (Object.hasOwn(proto, key)) {
-	      o[key] = proto[key];
-	    }
-	  }
-	  return o;
-	}
-
-	if (!setPrototypeOf$1) {
-	  if (Object$1.__proto__) {
-	    Object$1.setPrototypeOf = ff_setPrototypeOf;
-	  } else {
-	    Object$1.setPrototypeOf = ie_setPrototypeOf;
-	  }
-	}
-
-	var create$1 = nullProto ? function create(proto, properties) {
-	  var o = {};
-	  if (proto === null) {
-	    o.__proto__ = nullProto;
-	  } else {
-	    o.__proto__ = proto;
-	  }
-	  if (properties) {
-	    $inject_Object_defineProperties(o, properties);
-	  }
-	  return o;
-	} : function create(proto, properties) {
-	  var o = {};
-	  Object.setPrototypeOf(o, proto);
-	  if (properties) {
-	    $inject_Object_defineProperties(o, properties);
-	  }
-	  return o;
-	};
-
-	if (!create$2) {
-	  if (proto) {
-	    Object$1.create = create$1;
-	  }
-	}
+	// native Object.create
 
 	QUnit.test('Object.getPrototypeOf', function (assert) {
 	  assert.isFunction(Object.getPrototypeOf);
@@ -1956,28 +1400,16 @@
 
 	var getOwnPropertyNames = Object$1.getOwnPropertyNames;
 
-	var length = 'length';
-	function ff_getOwnPropertyNames(obj) {
-	  var keys = keys$2(obj);
-	  if (keys.indexOf(length) < 0) {
-	    if (Object.hasOwn(obj, length)) {
-	      keys.push(length);
-	    }
-	  }
-	  return keys;
+	function isNotSymbolKey(key) {
+	  return key.substring(0, 2) !== "@@";
 	}
-	function ie_getOwnPropertyNames(obj) {
+
+	function getOwnPropertyNames$fixSymbol(obj) {
 	  return getOwnPropertyNames(obj).filter(isNotSymbolKey);
 	}
 
-	if (getOwnPropertyNames) {
-	  if (!Symbol$8) {
-	    Object$1.getOwnPropertyNames = ie_getOwnPropertyNames;
-	  }
-	} else {
-	  if (Object$1.prototype.__defineSetter__) {
-	    Object$1.getOwnPropertyNames = ff_getOwnPropertyNames;
-	  }
+	if (!Symbol$8) {
+	  Object$1.getOwnPropertyNames = getOwnPropertyNames$fixSymbol;
 	}
 
 	QUnit.test('Object.create', function (assert) {
@@ -2024,6 +1456,16 @@
 	  assert.same(Object.create.sham, DESCRIPTORS ? undefined : true);
 	});
 
+	var keys$2 = Object$1.keys;
+
+	function keys$fixSymbol(obj) {
+	  return keys$2.call(Object, obj).filter(isNotSymbolKey);
+	}
+
+	if (!Symbol$8) {
+	  Object$1.keys = keys$fixSymbol;
+	}
+
 	QUnit.test('Object.keys', function (assert) {
 	  assert.isFunction(Object.keys);
 	  assert.arity(Object.keys, 1);
@@ -2040,7 +1482,7 @@
 	  assert.deepEqual(Object.keys([1, 2, 3]), ['0', '1', '2']);
 	  assert.deepEqual(Object.keys(new F1()), ['w']);
 	  assert.deepEqual(Object.keys(new F2()), ['toString']);
-	  assert.ok(!includes$2(Object.keys(Array.prototype), 'push'));
+	  assert.ok(!includes(Object.keys(Array.prototype), 'push'));
 	  // const primitives = [42, 'foo', false];
 	  // for(const value of primitives) {
 	  //   assert.notThrows(() => Object.keys(value), `accept ${typeof value} 不支持`);
@@ -2052,6 +1494,213 @@
 	    return Object.keys(undefined);
 	  }, TypeError, 'throws on undefined');
 	});
+
+	var __defineSetter__$1 = '__defineSetter__' in Object.prototype;
+
+	var hasV8DefineBug = !defineProperties;
+	if (!hasV8DefineBug) {
+	  defineProperty(defineProperty({}, '_', {
+	    enumerable: false,
+	    configurable: true,
+	    set: function () {
+	      hasV8DefineBug = true;
+	    }
+	  }), '_', {
+	    enumerable: false,
+	    configurable: true,
+	    writable: true,
+	    value: 1
+	  });
+	}
+
+	var hasOwnProperty = prototype.hasOwnProperty;
+
+	function hasOwn(obj, key) {
+	  return hasOwnProperty.call(obj, key);
+	}
+	;
+
+	if (!Object$1.hasOwn) {
+	  Object$1.hasOwn = hasOwn;
+	}
+
+	function isNotNullObject(obj) {
+	  return typeof obj === "object" ? obj !== null : typeof obj === "function";
+	}
+	;
+
+	function anObject(it) {
+	  if (!isNotNullObject(it)) {
+	    throw TypeError(String(it) + ' is not a object');
+	  }
+	  return it;
+	}
+
+	var __defineGetter__ = prototype.__defineGetter__;
+
+	var __defineSetter__ = prototype.__defineSetter__;
+
+	function defineProperty$ff(obj, prop, descriptor) {
+	  anObject(obj);
+	  prop = String(prop);
+	  if ('value' in descriptor) {
+	    var value = descriptor.value;
+	    if (descriptor.writable) {
+	      if (!(prop in obj) || Object.hasOwn(obj, prop)) {
+	        delete obj[prop];
+	        obj[prop] = value;
+	      } else {
+	        __defineGetter__.call(obj, prop, function () {
+	          return value;
+	        });
+	        __defineSetter__.call(obj, prop, function (v) {
+	          value = v;
+	        });
+	      }
+	    } else {
+	      __defineGetter__.call(obj, prop, function () {
+	        return value;
+	      });
+	    }
+	  } else {
+	    if (descriptor.get) __defineGetter__.call(obj, prop, descriptor.get);
+	    if (descriptor.set) __defineSetter__.call(obj, prop, descriptor.set);
+	  }
+	  return obj;
+	}
+	;
+
+	var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
+
+	var GT = '>';
+	var LT = '<';
+	var SCRIPT = 'script';
+	function scriptTag(content) {
+	  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+	}
+	function createViaActiveX(activeXDocument) {
+	  activeXDocument.write(scriptTag(''));
+	  activeXDocument.close();
+	  var temp = activeXDocument.parentWindow.Object;
+	  activeXDocument = null;
+	  return temp;
+	}
+	function createViaIFrame() {
+	  var iframe = document.createElement('iframe');
+	  var JS = 'java' + SCRIPT + ':';
+	  iframe.style.display = 'none';
+	  document.documentElement.appendChild(iframe);
+	  iframe.src = String(JS);
+	  var iframeDocument = iframe.contentWindow.document;
+	  iframeDocument.open();
+	  iframeDocument.write(scriptTag('document.F=Object'));
+	  iframeDocument.close();
+	  return iframeDocument.F;
+	}
+	var isNullBase = function isNullBase() {
+	  return false;
+	};
+	var getNullProto = function getNullProto() {
+	  var activeXDocument;
+	  try {
+	    activeXDocument = document.domain && new ActiveXObject('htmlfile');
+	  } catch (error) {/* ignore */}
+	  var Ctor = activeXDocument ? createViaActiveX(activeXDocument) : createViaIFrame();
+	  var proto = Ctor.prototype;
+	  var i = dontEnums.length;
+	  while (i--) delete proto[dontEnums[i]];
+	  delete proto.constructor;
+	  getNullProto = function () {
+	    return proto;
+	  };
+	  isNullBase = function (obj) {
+	    return obj instanceof Ctor;
+	  };
+	  return proto;
+	};
+
+	function defineProperty$es3(obj, prop, description) {
+	  anObject(obj);
+	  prop = String(prop);
+	  var descriptor = {
+	    configurable: true,
+	    enumerable: true,
+	    writable: true
+	  };
+	  if ('value' in description) {
+	    obj[prop] = description.value;
+	    descriptor.value = description.value;
+	  } else {
+	    descriptor.get = description.get;
+	    descriptor.set = description.set;
+	  }
+	  obj['@@desc:' + prop] = descriptor;
+	  return obj;
+	}
+	;
+	defineProperty$es3.sham = true;
+
+	function defineProperty$ie8(obj, prop, descriptor) {
+	  if (obj instanceof Object || isNullBase(obj)) {
+	    defineProperty$es3.apply(Object, arguments);
+	  } else if (window == obj || obj instanceof Element || obj instanceof HTMLDocument) {
+	    if ('value' in descriptor) {
+	      defineProperty.call(Object, prop, {
+	        configurable: true,
+	        enumerable: true,
+	        writable: true,
+	        value: descriptor.value
+	      });
+	    } else {
+	      defineProperty.call(Object, prop, {
+	        configurable: true,
+	        get: descriptor.get,
+	        set: descriptor.set
+	      });
+	    }
+	  } else {
+	    defineProperty$es3.apply(Object, arguments);
+	  }
+	  return obj;
+	}
+	;
+	defineProperty$ie8.sham = true;
+
+	function defineProperty$v8(obj, prop, descriptor) {
+	  if (descriptor.configurable && descriptor.writable && 'value' in descriptor) {
+	    defineProperty(obj, {
+	      configurable: true,
+	      enumerable: false,
+	      writable: false,
+	      value: descriptor
+	    }, descriptor);
+	    // var value = descriptor.value;
+	    // return defineProperty(obj, prop, {
+	    // 	get: function() { return value; },
+	    // 	set: function(v) { value = v; },
+	    // 	enumerable: false,
+	    // 	configurable: true
+	    // });
+	  }
+	  return defineProperty(obj, prop, descriptor);
+	}
+	;
+
+	var $inject_Object_defineProperty = defineProperty ? !defineProperties ? defineProperty$ie8 : hasV8DefineBug ? defineProperty$v8 : defineProperty : __defineSetter__$1 ? defineProperty$ff : defineProperty$es3;
+
+	if (defineProperty) {
+	  if (!defineProperties) {
+	    Object$1.defineProperty = defineProperty$ie8;
+	  } else if (hasV8DefineBug) {
+	    Object$1.defineProperty = defineProperty$v8;
+	  }
+	} else {
+	  if (__defineSetter__$1) {
+	    Object$1.defineProperty = defineProperty$ff;
+	  } else {
+	    Object$1.defineProperty = defineProperty$es3;
+	  }
+	}
 
 	QUnit.test('Object.defineProperty', function (assert) {
 	  assert.isFunction($inject_Object_defineProperty);
@@ -2077,46 +1726,7 @@
 	  assert.same($inject_Object_defineProperty.sham, DESCRIPTORS ? undefined : true);
 	});
 
-	function anObject(it) {
-	  if (!isNotNullObject(it)) {
-	    throw TypeError(String(it) + ' is not a object');
-	  }
-	  return it;
-	}
-
-	function getOwnPropertyDescriptor(obj, key) {
-	  anObject(obj);
-	  return _getOwnPropertyDescriptor(obj, key);
-	}
-	;
-	function _getOwnPropertyDescriptor(obj, key) {
-	  if (Object.hasOwn(obj, key)) {
-	    var set = obj.__lookupSetter__(key);
-	    var get = obj.__lookupGetter__(key);
-	    if (set || get) {
-	      return {
-	        enumerable: true,
-	        configurable: true,
-	        set: set,
-	        get: get
-	      };
-	    } else {
-	      return {
-	        enumerable: true,
-	        configurable: true,
-	        writable: true,
-	        value: obj[key]
-	      };
-	    }
-	  }
-	}
-	;
-
-	if (!Object$1.getOwnPropertyDescriptor) {
-	  if (Object$1.prototype.__defineSetter__) {
-	    Object$1.getOwnPropertyDescriptor = getOwnPropertyDescriptor;
-	  }
-	}
+	// native Object.getOwnPropertyDescriptor
 
 	QUnit.test('Object.getOwnPropertyDescriptor', function (assert) {
 	  assert.isFunction(Object.getOwnPropertyDescriptor);
@@ -2159,10 +1769,10 @@
 	  F1.prototype.q = F2.prototype.q = 1;
 	  var names = Object.getOwnPropertyNames([1, 2, 3]);
 	  assert.strictEqual(names.length, 4);
-	  assert.ok(includes$2(names, '0'));
-	  assert.ok(includes$2(names, '1'));
-	  assert.ok(includes$2(names, '2'));
-	  assert.ok(includes$2(names, 'length'));
+	  assert.ok(includes(names, '0'));
+	  assert.ok(includes(names, '1'));
+	  assert.ok(includes(names, '2'));
+	  assert.ok(includes(names, 'length'));
 	  assert.deepEqual(Object.getOwnPropertyNames(new F1()), ['w']);
 	  assert.deepEqual(Object.getOwnPropertyNames(new F2()), ['toString']);
 	  // assert.ok(includes(Object.getOwnPropertyNames(Array.prototype), 'toString'));
@@ -2189,6 +1799,23 @@
 	  //   }, 'IE11 bug with iframe and window');
 	  // }
 	});
+
+	function defineProperties$v8(obj, properties) {
+	  var ownKeys = Object.keys(properties);
+	  var len = ownKeys.length;
+	  for (var i = 0; i < len; i++) {
+	    var key = ownKeys[i];
+	    defineProperty$v8(obj, key, properties[key]);
+	  }
+	  return obj;
+	}
+	;
+
+	var $inject_Object_defineProperties = hasV8DefineBug ? defineProperties$v8 : defineProperties;
+
+	if (hasV8DefineBug) {
+	  Object$1.defineProperties = defineProperties$v8;
+	}
 
 	QUnit.test('Object.defineProperties', function (assert) {
 	  assert.isFunction($inject_Object_defineProperties);
@@ -2254,6 +1881,20 @@
 	  assert.ok(isArray([]));
 	});
 
+	function setPrototypeOf$ie(o, proto) {
+	  o.__proto__ = proto;
+	  for (var key in proto) {
+	    if (Object.hasOwn(proto, key)) {
+	      o[key] = proto[key];
+	    }
+	  }
+	  return o;
+	}
+
+	if (!setPrototypeOf$1) {
+	  Object$1.setPrototypeOf = setPrototypeOf$ie;
+	}
+
 	if (PROTO) QUnit.test('Object.setPrototypeOf', function (assert) {
 	  assert.isFunction(Object.setPrototypeOf);
 	  assert.arity(Object.setPrototypeOf, 2);
@@ -2317,7 +1958,7 @@
 	    for (var i = 0; i < ticks.length; i++) {
 	      var args = ticks[i];
 	      var fn = args[0];
-	      args = slice$2.call(args, 1);
+	      args = slice$1.call(args, 1);
 	      try {
 	        fn.apply(this, args);
 	      } catch (e) {
@@ -2537,20 +2178,23 @@
 	  Promise$2 = window.Promise = Promise$3;
 	}
 
-	function promise_finally (onCompleted) {
-	  var fun = isFunction(onCompleted);
-	  return this.then(fun ? function (x) {
-	    return Promise.resolve(onCompleted()).then(function () {
-	      return x;
-	    });
-	  } : onCompleted, fun ? function (e) {
-	    onCompleted();
-	    throw e;
-	  } : onCompleted);
-	}
-	;
+	var Error$1 = window.Error;
 
-	definePrototype(Promise$2, 'finally', promise_finally);
+	function fix_Error$proto(native_Error) {
+	  function Error(message) {
+	    this.message = message === undefined ? "" : String(message);
+	    var options = arguments[1];
+	    if (typeof options === "object" && options !== null) {
+	      if ('cause' in options) {
+	        this.cause = options.cause;
+	      }
+	    }
+	  }
+	  Error.prototype = native_Error.prototype;
+	  return Error;
+	}
+
+	window.Error = fix_Error$proto(Error$1.prototype);
 
 	var Symbol$7 = GLOBAL.Symbol || {};
 	var setPrototypeOf = Object.setPrototypeOf,
@@ -3066,25 +2710,30 @@
 	  assert.same(parseFloat(undefined), NaN);
 	});
 
-	var parseInt$1 = window.parseInt;
+	var parseInt = window.parseInt;
 
 	function trimStart() {
 	  return this.replace(/^[\s\u2006\u3000\xA0]+/g, '');
 	}
 
-	if (parseInt$1("010") === 8) {
-	  window.parseInt = function (number, radix) {
+	function fix_parseInt(parseInt) {
+	  return function (number, radix) {
 	    if (!radix && typeof number === 'string') {
 	      number = trimStart.call(number);
 	      if (number.charCodeAt(0) === 48 && number.charCodeAt(1) !== 120) {
-	        return parseInt$1(number, 10);
+	        return parseInt(number, 10);
 	      }
 	    }
-	    return parseInt$1(number, radix);
+	    return parseInt(number, radix);
 	  };
 	}
+	;
 
-	if (!Number$1.parseInt) Number$1.parseInt = parseInt;
+	if (parseInt("010") === 8) {
+	  window.parseInt = fix_parseInt(parseInt);
+	}
+
+	if (!Number$1.parseInt) Number$1.parseInt = window.parseInt;
 
 	QUnit.test('Number.parseInt', function (assert) {
 	  var parseInt = Number.parseInt;
@@ -3843,33 +3492,6 @@
 	//   assert.strictEqual(WeakSet.prototype[Symbol.toStringTag], 'WeakSet', 'WeakSet::@@toStringTag is `WeakSet`');
 	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
 	// });
-
-	definePrototype(Array, 'values', Array.prototype[iterator$1] || values$2);
-
-	function entries$2() {
-	  var array = this;
-	  var index = 0;
-	  return {
-	    next: function () {
-	      var value;
-	      var done = array.length <= index;
-	      if (!done) {
-	        value = [index, array[index]];
-	        index++;
-	      }
-	      return {
-	        done: done,
-	        value: value
-	      };
-	    },
-	    '@@iterator': function () {
-	      return this;
-	    },
-	    '@@toStringTag': 'Array Iterator'
-	  };
-	}
-
-	definePrototype(Array, 'entries', entries$2);
 
 	var Map$2 = window.Map;
 
@@ -5675,6 +5297,8 @@
 
 	var JSON$1 = window.JSON;
 
+	var slice = String.prototype['slice'];
+
 	var rx_escapable = /[\\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
 	function escapeString(str) {
 	  //from lodash
@@ -5694,6 +5318,7 @@
 	  }) : str;
 	}
 	;
+
 	function stringify(obj) {
 	  switch (obj) {
 	    case undefined:
@@ -5778,6 +5403,48 @@
 	  };
 	} else if (!nonEnumerable) {
 	  JSON$1.stringify = fix_stringify(JSON$1.stringify);
+	}
+
+	var Date$1 = window.Date;
+
+	function prefixIntrger2(number) {
+	  if (number < 10) {
+	    return '0' + number;
+	  }
+	  return number;
+	}
+	;
+
+	function prefixIntrger3(number) {
+	  if (number < 100) {
+	    return '0' + prefixIntrger2(number);
+	  }
+	  return number;
+	}
+	;
+
+	function toISOString() {
+	  var time = this.getTime();
+	  if (isNaN(time)) {
+	    throw new RangeError("Invalid time value");
+	  }
+	  return this.getUTCFullYear() + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
+	}
+
+	function toJSON(_) {
+	  if (isNaN(this.getTime())) {
+	    return null;
+	  }
+	  return toISOString.call(this);
+	}
+	;
+
+	try {
+	  if (!('toJSON' in Date$1.prototype) || new Date$1(0).toJSON() !== '1970-01-01T00:00:00.000Z' || new Date$1(NaN).toJSON() !== null) {
+	    Date$1.prototype.toJSON = toJSON;
+	  }
+	} catch (e) {
+	  Date$1.prototype.toJSON = toJSON;
 	}
 
 	var _ref = GLOBAL.Reflect || {},
@@ -6713,46 +6380,6 @@
 	  assert.strictEqual(Math.clz32(Math.pow(2, 32)), 32);
 	});
 
-	function isRegExp(obj) {
-	  return toString$1.call(obj) === '[object RegExp]';
-	}
-	;
-
-	function fix_RegExp(NativeRegExp) {
-	  function RegExp(source) {
-	    if (isRegExp(source)) {
-	      var flags = "";
-	      if (source.global) flags += "g";
-	      if (source.ignoreCase) flags += "i";
-	      if (source.multiline) flags += "m";
-	      return new NativeRegExp(source.source, flags);
-	    }
-	    return new NativeRegExp(source, arguments[1]);
-	  }
-	  ;
-	  RegExp.__proto__ = NativeRegExp;
-	  RegExp.prototype = NativeRegExp.prototype;
-	  return RegExp;
-	}
-
-	// 低版本浏览器中new RegExp(obj)传入的obj是RegExp对象返回本身
-	var p = /p/;
-	if (new RegExp(p) === p) {
-	  window.RegExp = fix_RegExp(RegExp);
-	}
-
-	function startsWith(search) {
-	  if (search instanceof RegExp) {
-	    throw new TypeError("First argument must not be a regular expression");
-	  }
-	  var pos = arguments[1];
-	  pos = isNaN(pos) ? 0 : pos < 0 ? 0 : +pos;
-	  search = String(search);
-	  return this.substring(pos, pos + search.length) === search;
-	}
-
-	definePrototype(String, 'startsWith', startsWith);
-
 	var Symbol$2 = GLOBAL.Symbol || {};
 	QUnit.test('String#startsWith', function (assert) {
 	  var startsWith = String.prototype.startsWith;
@@ -6787,25 +6414,6 @@
 	    return '[object Object]'.startsWith(object);
 	  });
 	});
-
-	function endsWith(search) {
-	  if (search instanceof RegExp) {
-	    throw new TypeError("First argument must not be a regular expression");
-	  }
-	  var len = this.length;
-	  var pos = arguments[1];
-	  if (pos == null) {
-	    pos = len;
-	  } else if (isNaN(pos)) {
-	    pos = 0;
-	  } else {
-	    pos = pos > len ? len : +pos;
-	  }
-	  search = String(search);
-	  return this.substring(pos - search.length, pos) === search;
-	}
-
-	definePrototype(String, 'endsWith', endsWith);
 
 	var Symbol$1 = GLOBAL.Symbol || {};
 	QUnit.test('String#endsWith', function (assert) {
@@ -6844,8 +6452,6 @@
 	  });
 	});
 
-	definePrototype(String, 'repeat', repeat);
-
 	QUnit.test('String#repeat', function (assert) {
 	  var repeat = String.prototype.repeat;
 	  assert.isFunction(repeat);
@@ -6869,44 +6475,6 @@
 	    }, TypeError);
 	  }
 	});
-
-	/*! http://mths.be/codepointat v0.1.0 by @mathias */
-	function codePointAt(position) {
-	  if (this == null) {
-	    throw TypeError();
-	  }
-	  var string = String(this);
-	  var size = string.length;
-	  // 变成整数
-	  var index = position ? Number(position) : 0;
-	  if (index != index) {
-	    // better `isNaN`
-	    index = 0;
-	  }
-	  // 边界
-	  if (index < 0 || index >= size) {
-	    return undefined;
-	  }
-	  // 第一个编码单元
-	  var first = string.charCodeAt(index);
-	  var second;
-	  if (
-	  // 检查是否开始 surrogate pair
-	  first >= 0xD800 && first <= 0xDBFF &&
-	  // high surrogate
-	  size > index + 1 // 下一个编码单元
-	  ) {
-	    second = string.charCodeAt(index + 1);
-	    if (second >= 0xDC00 && second <= 0xDFFF) {
-	      // low surrogate
-	      // http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
-	      return (first - 0xD800) * 0x400 + second - 0xDC00 + 0x10000;
-	    }
-	  }
-	  return first;
-	}
-
-	definePrototype(String, 'codePointAt', codePointAt);
 
 	QUnit.test('String#codePointAt', function (assert) {
 	  var codePointAt = String.prototype.codePointAt;
@@ -7130,32 +6698,6 @@
 	  }, TypeError);
 	});
 
-	function includes$1(search) {
-	  if (search instanceof RegExp) {
-	    throw new TypeError("First argument must not be a regular expression");
-	  }
-	  var start = arguments[1];
-	  if (typeof start !== 'number') {
-	    start = 0;
-	  }
-	  return this.indexOf(search, start) !== -1;
-	}
-
-	definePrototype(String, 'includes', includes$1);
-
-	function includes(search) {
-	  var i = this.length;
-	  while (i-- > 0) {
-	    var value = this[i];
-	    if (value === search || isNaN$1(value) && isNaN$1(search)) {
-	      return true;
-	    }
-	  }
-	  return false;
-	}
-
-	definePrototype(Array, 'includes', includes);
-
 	QUnit.test('String#includes', function (assert) {
 	  var includes = String.prototype.includes;
 	  assert.isFunction(includes);
@@ -7184,22 +6726,6 @@
 	    return '[object Object]'.includes(object);
 	  });
 	});
-
-	function findIndex(callback) {
-	  var thisArg = arguments[1];
-	  if (this.length > 0) {
-	    for (var i = 0, j; i < this.length; i++) {
-	      j = this[i];
-	      var r = callback.call(thisArg, j, i, this);
-	      if (r) {
-	        return i;
-	      }
-	    }
-	  }
-	  return -1;
-	}
-
-	definePrototype(Array, 'findIndex', findIndex);
 
 	QUnit.test('Array#findIndex', function (assert) {
 	  var findIndex = Array.prototype.findIndex;
@@ -7242,17 +6768,6 @@
 	    }) === -1;
 	  }, 'uses ToLength');
 	});
-
-	function find(callback) {
-	  var thisArg = arguments[1];
-	  var i = findIndex.call(this, callback, thisArg);
-	  if (i >= 0) {
-	    return this[i];
-	  }
-	}
-	;
-
-	definePrototype(Array, 'find', find);
 
 	QUnit.test('Array#find', function (assert) {
 	  var find = Array.prototype.find;
@@ -7328,32 +6843,6 @@
 	  // 	assert.ok(!called, 'Should not call prototype accessors');
 	  // }
 	});
-
-	function fill(target) {
-	  if (this.length <= 0) {
-	    return this;
-	  }
-	  var len = this.length;
-	  var start = arguments[1] || 0;
-	  var end = arguments[2] || len;
-	  if (start < 0) {
-	    start += len;
-	    if (start < 0) {
-	      start = 0;
-	    }
-	  }
-	  if (end < 0) {
-	    end += len;
-	  }
-	  var i = Math.min(end, len);
-	  while (i-- > start) {
-	    this[i] = target;
-	  }
-	  return this;
-	}
-	;
-
-	definePrototype(Array, 'fill', fill);
 
 	QUnit.test('Array#fill', function (assert) {
 	  var fill = Array.prototype.fill;
@@ -7538,46 +7027,6 @@
 	  // 	assert.ok(!called, 'Should not call prototype accessors');
 	  // }
 	});
-
-	function copyWithin(target, start /*, end*/) {
-	  var end = arguments[2];
-	  var len = this.length || 0;
-	  if (target < 0) {
-	    target += len;
-	    if (target < 0) {
-	      target = 0;
-	    }
-	  }
-	  start = start || 0;
-	  if (start < 0) {
-	    start += len;
-	    if (start < 0) {
-	      start = 0;
-	    }
-	  }
-	  if (end === undefined) {
-	    end = len;
-	  }
-	  if (end < 0) {
-	    end += len;
-	    if (end < 0) {
-	      end = 0;
-	    }
-	  } else if (end - start + target > len) {
-	    end = len - target + start;
-	  }
-	  var i;
-	  for (i = start; i < end; i++) {
-	    if (i in this) {
-	      this[i - start + target] = this[i];
-	    } else {
-	      delete this[i];
-	    }
-	  }
-	  return this;
-	}
-
-	definePrototype(Array, 'copyWithin', copyWithin);
 
 	QUnit.test('Array#copyWithin', function (assert) {
 	  var copyWithin = Array.prototype.copyWithin;
@@ -7955,16 +7404,6 @@
 	  // } catch { /* empty */ }
 	});
 
-	function getOwnPropertyDescriptors$ff(obj) {
-	  var ownKeys = Object.keys(obj);
-	  var i = ownKeys.length;
-	  var descs = {};
-	  while (i-- > 0) {
-	    var key = ownKeys[i];
-	    descs[key] = _getOwnPropertyDescriptor(obj, key);
-	  }
-	  return descs;
-	}
 	function getOwnPropertyDescriptors$ie(obj) {
 	  var ownKeys = getOwnPropertyNames(obj);
 	  var i = ownKeys.length;
@@ -7975,6 +7414,7 @@
 	  }
 	  return descs;
 	}
+
 	function getOwnPropertyDescriptors$sb(obj) {
 	  var keys = getOwnPropertyNames(obj);
 	  var symbols = getOwnPropertySymbols$1(obj);
@@ -7994,14 +7434,10 @@
 	}
 
 	if (!Object$1.getOwnPropertyDescriptors) {
-	  if (defineProperty) {
-	    if (getOwnPropertySymbols$1) {
-	      Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors$sb;
-	    } else {
-	      Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors$ie;
-	    }
-	  } else if (Object$1.prototype.__defineSetter__) {
-	    Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors$ff;
+	  if (getOwnPropertySymbols$1) {
+	    Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors$sb;
+	  } else {
+	    Object$1.getOwnPropertyDescriptors = getOwnPropertyDescriptors$ie;
 	  }
 	}
 
@@ -8052,23 +7488,6 @@
 	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);
 	});
 
-	function padStart(targetLength) {
-	  var x = targetLength - this.length;
-	  if (x > 0) {
-	    var padString = arguments[1];
-	    if (padString == null) {
-	      padString = " ";
-	    }
-	    var len = padString.length;
-	    if (len) {
-	      return padString.repeat(Math.ceil(x / len)).substr(0, x) + this;
-	    }
-	  }
-	  return String(this);
-	}
-
-	definePrototype(String, 'padStart', padStart);
-
 	QUnit.test('String#padStart', function (assert) {
 	  var padStart = String.prototype.padStart;
 	  assert.isFunction(padStart);
@@ -8092,23 +7511,6 @@
 	    }, TypeError);
 	  }
 	});
-
-	function padEnd(targetLength) {
-	  var x = targetLength - this.length;
-	  if (x > 0) {
-	    var padString = arguments[1];
-	    if (padString == null) {
-	      padString = " ";
-	    }
-	    var len = padString.length;
-	    if (len) {
-	      return this + padString.repeat(Math.ceil(x / len)).substr(0, x);
-	    }
-	  }
-	  return String(this);
-	}
-
-	definePrototype(String, 'padEnd', padEnd);
 
 	QUnit.test('String#padEnd', function (assert) {
 	  var padEnd = String.prototype.padEnd;
@@ -8187,8 +7589,6 @@
 	  assert.ok(new promise.constructor(empty)["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
 	});
 
-	definePrototype(String, 'trimStart', trimStart);
-
 	// deprecated
 	// QUnit.test('String#trimLeft', assert => {
 	// 	const { trimStart, trimLeft } = String.prototype;
@@ -8239,12 +7639,6 @@
 	    }, TypeError);
 	  }
 	});
-
-	function trimEnd() {
-	  return this.replace(/[\s\u2006\u3000\xA0]+$/g, '');
-	}
-
-	definePrototype(String, 'trimEnd', trimEnd);
 
 	// deprecated
 	// QUnit.test('String#trimRight', assert => {
@@ -8297,23 +7691,6 @@
 	  }
 	});
 
-	function flat() {
-	  var deep = arguments[0];
-	  if (deep == null) deep = 1;
-	  var arr = [];
-	  for (var i = 0; i < this.length; i++) {
-	    var item = this[i];
-	    if (Array.isArray(item) && deep > 0) {
-	      arr = arr.concat(flat.call(item, deep - 1));
-	    } else {
-	      arr.push(item);
-	    }
-	  }
-	  return arr;
-	}
-
-	definePrototype(Array, 'flat', flat);
-
 	QUnit.test('Array#flat', function (assert) {
 	  var flat = Array.prototype.flat;
 	  assert.isFunction(flat);
@@ -8347,12 +7724,6 @@
 	  // 	})).length === 0, 'uses ToLength');
 	  // }
 	});
-
-	function flatMap(fn) {
-	  return flat.call(this.map(fn, arguments[1]), 1);
-	}
-
-	definePrototype(Array, 'flatMap', flatMap);
 
 	QUnit.test('Array#flatMap', function (assert) {
 	  var flatMap = Array.prototype.flatMap;
@@ -8485,40 +7856,6 @@
 	  assert.same(globalThis, Object(globalThis), 'is object');
 	  assert.same(globalThis.Math, Math, 'contains globals');
 	});
-
-	function matchAll(regExp) {
-	  if (this == null) {
-	    throw new TypeError("matchAll called on null or undefined");
-	  }
-	  var string = this;
-	  if (isString(regExp)) {
-	    regExp = new RegExp(regExp, 'g');
-	  } else if (regExp && regExp.global === false) {
-	    throw new TypeError("matchAll called with a non-global RegExp argument");
-	  }
-	  var it = {
-	    next: function () {
-	      var value = regExp.exec(string);
-	      if (value) {
-	        return {
-	          value: value,
-	          done: false
-	        };
-	      } else {
-	        return {
-	          value: undefined,
-	          done: true
-	        };
-	      }
-	    }
-	  };
-	  it[iterator$1] = function () {
-	    return this;
-	  };
-	  return it;
-	}
-
-	definePrototype(String, 'matchAll', matchAll);
 
 	QUnit.test('String#matchAll', function (assert) {
 	  var matchAll = String.prototype.matchAll;
@@ -8673,7 +8010,7 @@
 	    return this.reject(new TypeError('You must pass promises to allSettled.'));
 	  }
 	  return new this(function (resolve, reject) {
-	    var array = slice$2.call(promises);
+	    var array = slice$1.call(promises);
 	    if (array.length == 0) return resolve(array);
 	    var c = 0;
 	    array.forEach(function (one, index, array) {
@@ -8745,78 +8082,6 @@
 	    start();
 	  });
 	});
-
-	var stringEscapes = {
-	  '\\': '\\',
-	  "'": "'",
-	  '\n': 'n',
-	  '\r': 'r',
-	  '\u2028': 'u2028',
-	  '\u2029': 'u2029'
-	};
-	var regexpEscapes = {
-	  '0': 'x30',
-	  '1': 'x31',
-	  '2': 'x32',
-	  '3': 'x33',
-	  '4': 'x34',
-	  '5': 'x35',
-	  '6': 'x36',
-	  '7': 'x37',
-	  '8': 'x38',
-	  '9': 'x39',
-	  'A': 'x41',
-	  'B': 'x42',
-	  'C': 'x43',
-	  'D': 'x44',
-	  'E': 'x45',
-	  'F': 'x46',
-	  'a': 'x61',
-	  'b': 'x62',
-	  'c': 'x63',
-	  'd': 'x64',
-	  'e': 'x65',
-	  'f': 'x66',
-	  'n': 'x6e',
-	  'r': 'x72',
-	  't': 'x74',
-	  'u': 'x75',
-	  'v': 'x76',
-	  'x': 'x78'
-	};
-	var reRegExpChars = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g;
-	function escapeRegExp(str) {
-	  //from lodash
-	  if (str) {
-	    reRegExpChars.lastIndex = 0;
-	    return reRegExpChars.test(str) ? str.replace(reRegExpChars, function (chr, leadingChar, whitespaceChar) {
-	      if (leadingChar) {
-	        chr = regexpEscapes[chr];
-	      } else if (whitespaceChar) {
-	        chr = stringEscapes[chr];
-	      }
-	      return '\\' + chr;
-	    }) : str;
-	  }
-	  return "(?:)";
-	}
-	;
-
-	var replace = String.prototype.replace;
-	function replaceAll(searchValue, replaceValue) {
-	  if (isRegExp(searchValue)) {
-	    if (!searchValue.global) {
-	      throw new TypeError("String.prototype.replaceAll called with a non-global RegExp argument");
-	    } else {
-	      return this.replace(searchValue, replaceValue);
-	    }
-	  }
-	  searchValue = new RegExp(escapeRegExp(String(searchValue)), "g");
-	  return replace.call(this, searchValue, replaceValue);
-	}
-	;
-
-	definePrototype(String, 'replaceAll', replaceAll);
 
 	QUnit.test('String#replaceAll', function (assert) {
 	  var replaceAll = String.prototype.replaceAll;
@@ -8962,39 +8227,6 @@
 	  assert.deepEqual(AggregateError([1, 2, 3]).errors, [1, 2, 3]);
 	});
 
-	function at$1(index) {
-	  // 检查索引是否有效  
-	  var len = this.length;
-	  var relativeIndex = toIntegerOrInfinity(index);
-	  var k = relativeIndex >= 0 ? relativeIndex : len + relativeIndex;
-	  // 确保索引在字符串范围内  
-	  if (k < 0 || k >= len) {
-	    return;
-	  }
-	  return this.charAt(k);
-	}
-	function toIntegerOrInfinity(argument) {
-	  var number = +argument;
-	  return number !== number || number === 0 ? 0 : Math.trunc(number);
-	}
-	;
-
-	definePrototype(String, 'at', at$1);
-
-	function at(n) {
-	  var len = this.length;
-	  if (isNaN(n)) {
-	    return this[0];
-	  }
-	  n = Math.trunc(n);
-	  if (n >= 0) {
-	    return this[n];
-	  }
-	  return this[len + n];
-	}
-
-	definePrototype(Array, 'at', at);
-
 	QUnit.test('Array#at', function (assert) {
 	  var at = Array.prototype.at;
 	  assert.isFunction(at);
@@ -9095,23 +8327,6 @@
 	  // assert.throws(() => hasOwn(undefined, 'foo'), TypeError, 'throws on undefined');
 	});
 
-	function findLastIndex(callback) {
-	  var thisArg = arguments[1];
-	  var i = this.length;
-	  if (i > 0) {
-	    while (i-- > 0) {
-	      var j = this[i];
-	      var r = callback.call(thisArg, j, i, this);
-	      if (r) {
-	        return i;
-	      }
-	    }
-	  }
-	  return -1;
-	}
-
-	definePrototype(Array, 'findLastIndex', findLastIndex);
-
 	QUnit.test('Array#findLastIndex', function (assert) {
 	  var findLastIndex = Array.prototype.findLastIndex;
 	  assert.isFunction(findLastIndex);
@@ -9160,17 +8375,6 @@
 	  }, 'uses ToLength');
 	  // assert.equal(true, 'findLastIndex' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
-
-	function findLast(callback) {
-	  var thisArg = arguments[1];
-	  var i = findLastIndex.call(this, callback, thisArg);
-	  if (i >= 0) {
-	    return this[i];
-	  }
-	}
-	;
-
-	definePrototype(Array, 'findLast', findLast);
 
 	QUnit.test('Array#findLast', function (assert) {
 	  var findLast = Array.prototype.findLast;
@@ -9223,29 +8427,27 @@
 
 	var Event$1 = window.Event;
 
-	var supportEvent = isFunction(Event$1);
-	if (supportEvent) {
-	  try {
-	    new Event$1("");
-	  } catch (e) {
-	    supportEvent = false;
+	function Event$ff(type, init) {
+	  var e = document.createEvent(type || 'Event');
+	  if (!('isTrusted' in e)) {
+	    e.isTrusted = false;
 	  }
+	  if (init) {
+	    e.initEvent(type, init.bubbles, init.cancelable);
+	  } else {
+	    e.initEvent(type, false, false);
+	  }
+	  return e;
 	}
-	if (!supportEvent) {
-	  if (document.createEvent) {
-	    window.Event = function (type, init) {
-	      var e = document.createEvent('Event');
-	      if (!('isTrusted' in e)) {
-	        e.isTrusted = false;
-	      }
-	      if (init) {
-	        e.initEvent(type, init.bubbles, init.cancelable);
-	      } else {
-	        e.initEvent(type, false, false);
-	      }
-	      return e;
-	    };
+
+	if (isFunction(Event$1)) {
+	  try {
+	    new Event$1();
+	  } catch (e) {
+	    window.Event = Event$ff;
 	  }
+	} else {
+	  window.Event = Event$ff;
 	}
 
 	var Blob$2 = window.Blob;
@@ -9358,6 +8560,11 @@
 	    fixFormData();
 	  }
 	}
+
+	function isRegExp(obj) {
+	  return toString$1.call(obj) === '[object RegExp]';
+	}
+	;
 
 	function structuredClone$1(obj) {
 	  var r;
@@ -9918,14 +9125,6 @@
 	  }
 	});
 
-	function toReversed() {
-	  var arr = Array.from(this);
-	  arr.reverse();
-	  return arr;
-	}
-
-	definePrototype(Array, 'toReversed', toReversed);
-
 	QUnit.test('Array#toReversed', function (assert) {
 	  var _array$constructor;
 	  var toReversed = Array.prototype.toReversed;
@@ -9972,14 +9171,6 @@
 
 	  // assert.equal(true, 'toReversed' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
-
-	function toSorted(fn) {
-	  var arr = Array.from(this);
-	  arr.sort.apply(arr, arguments);
-	  return arr;
-	}
-
-	definePrototype(Array, 'toSorted', toSorted);
 
 	QUnit.test('Array#toSorted', function (assert) {
 	  var _array$constructor;
@@ -10120,14 +9311,6 @@
 	  // assert.equal(true, 'toSorted' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
 
-	function toSpliced(a1, a2) {
-	  var arr = Array.from(this);
-	  arr.splice.apply(arr, arguments);
-	  return arr;
-	}
-
-	definePrototype(Array, 'toSpliced', toSpliced);
-
 	QUnit.test('Array#toSpliced', function (assert) {
 	  var _array$constructor;
 	  var toSpliced = Array.prototype.toSpliced;
@@ -10163,23 +9346,6 @@
 
 	  // assert.equal(true, 'toSpliced' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
-
-	function withAt(index, value) {
-	  if (this == null) {
-	    throw new TypeError("Cannot convert undefined or null to object");
-	  }
-	  if (index < 0) {
-	    index += this.length;
-	  }
-	  if (index < 0 || index >= this.length) {
-	    throw new RangeError("Invalid index: " + index);
-	  }
-	  var arr = Array.from(this);
-	  arr[index] = value;
-	  return arr;
-	}
-
-	definePrototype(Array, 'with', withAt);
 
 	QUnit.test('Array#with', function (assert) {
 	  var _array$constructor;
@@ -10217,47 +9383,6 @@
 	  }, _array$constructor);
 	  // assert.true(array.with(1, 2) instanceof Array, 'non-generic');
 	});
-
-	function isSymbol$1(obj) {
-	  if (typeof obj === "symbol") {
-	    return true;
-	  }
-	  return false;
-	}
-	;
-
-	var isSymbol = Symbol$8 ? isSymbol$1 : function (obj) {
-	  return typeof obj === "object" && obj instanceof Symbol$6;
-	};
-
-	function isWellFormed() {
-	  if (this == null) {
-	    throw new TypeError("isWellFormed called on null or undefined");
-	  }
-	  if (isSymbol(this)) {
-	    throw new TypeError("Cannot convert a Symbol value to a string");
-	  }
-	  var str = String(this);
-	  // https://github.com/tc39/proposal-is-usv-string
-	  for (var i = 0; i < str.length; ++i) {
-	    var isSurrogate = (str.charCodeAt(i) & 0xF800) == 0xD800;
-	    if (!isSurrogate) {
-	      continue;
-	    }
-	    var isLeadingSurrogate = str.charCodeAt(i) < 0xDC00;
-	    if (!isLeadingSurrogate) {
-	      return false; // unpaired trailing surrogate
-	    }
-	    var isFollowedByTrailingSurrogate = i + 1 < str.length && (str.charCodeAt(i + 1) & 0xFC00) == 0xDC00;
-	    if (!isFollowedByTrailingSurrogate) {
-	      return false; // unpaired leading surrogate
-	    }
-	    ++i;
-	  }
-	  return true;
-	}
-
-	definePrototype(String, 'isWellFormed', isWellFormed);
 
 	QUnit.test('String#isWellFormed', function (assert) {
 	  var isWellFormed = String.prototype.isWellFormed;
@@ -10302,34 +9427,6 @@
 	    return isWellFormed.call(Symbol$4('isWellFormed test'));
 	  }, 'throws on symbol context');
 	});
-
-	function toWellFormed() {
-	  if (this == null) {
-	    throw new TypeError("toWellFormed called on null or undefined");
-	  }
-	  if (isSymbol(this)) {
-	    throw new TypeError("Cannot convert a Symbol value to a string");
-	  }
-	  var S = String(this);
-	  var len = S.length;
-	  var r = new Array(S.length);
-	  // https://tc39.es/ecma262/#sec-string.prototype.towellformed
-	  for (var i = 0; i < len; i++) {
-	    var charCode = S.charCodeAt(i);
-	    // single UTF-16 code unit
-	    if ((charCode & 0xF800) !== 0xD800) r[i] = S.charAt(i);
-	    // unpaired surrogate
-	    else if (charCode >= 0xDC00 || i + 1 >= len || (S.charCodeAt(i + 1) & 0xFC00) !== 0xDC00) r[i] = "\uFFFD";
-	    // surrogate pair
-	    else {
-	      r[i] = S.charAt(i);
-	      r[++i] = S.charAt(i);
-	    }
-	  }
-	  return r.join('');
-	}
-
-	definePrototype(String, 'toWellFormed', toWellFormed);
 
 	QUnit.test('String#toWellFormed', function (assert) {
 	  var toWellFormed = String.prototype.toWellFormed;

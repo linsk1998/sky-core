@@ -1,5 +1,4 @@
 
-export { overload } from "./utils/overload";
 export var isArray = Array.isArray;
 export { isDate } from "./utils/isDate";
 export { isRegExp } from "./utils/isRegExp";
