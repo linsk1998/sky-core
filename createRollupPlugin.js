@@ -60,6 +60,20 @@ function createRollupPlugin(browser) {
 					return bid;
 				}
 			}
+			// 显式分层目录（如 sky-core/utils-compat/xxx）：
+			// 直接按根目录解析，供 jscript 等仅存在于特定分层的实现使用
+			prefix = "sky-core/";
+			if(id.startsWith(prefix)) {
+				var firstSlash = id.indexOf("/", prefix.length);
+				if(firstSlash > 0) {
+					var dir = id.substring(prefix.length, firstSlash);
+					var rest = id.substring(firstSlash + 1, id.length);
+					bid = path.resolve(__dirname, "./" + dir + "/" + rest + ".js");
+					if(fs.existsSync(bid)) {
+						return bid;
+					}
+				}
+			}
 		}
 	};
 }

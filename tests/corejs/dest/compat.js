@@ -1,4 +1,4 @@
-(function (isJsObject$1, dontEnums$1) {
+(function () {
 
 	var Symbol$3 = window.Symbol;
 
@@ -1647,7 +1647,7 @@
 	  return Error;
 	}
 
-	window.Error = fix_Error$proto(Error$1.prototype);
+	window.Error = fix_Error$proto(Error$1);
 
 	function reduce(callback) {
 	  var i, value;
@@ -1851,6 +1851,19 @@
 
 	var create$1 = Object$1.create;
 
+	function isJsObject(o) {
+	  if (typeof o !== "object") {
+	    return false;
+	  }
+	  if (o instanceof Object) {
+	    return true;
+	  }
+	  if (isNullBase(o)) {
+	    return true;
+	  }
+	  return false;
+	}
+
 	function getPrototypeOf$1(target) {
 	  return Object.getPrototypeOf(Object(target));
 	}
@@ -1861,7 +1874,7 @@
 	  }
 	  var result = [],
 	    key;
-	  var jsObject = isJsObject$1.isJsObject(obj);
+	  var jsObject = isJsObject(obj);
 	  if (!jsObject) {
 	    var proto = getPrototypeOf$1(obj);
 	    if (proto) {
@@ -1891,9 +1904,9 @@
 	      }
 	    }
 	  }
-	  var i = dontEnums$1.dontEnums.length;
+	  var i = dontEnums.length;
 	  while (i-- > 0) {
-	    key = dontEnums$1.dontEnums[i];
+	    key = dontEnums[i];
 	    if (Object.hasOwn(obj, key)) {
 	      result.push(key);
 	    }
@@ -2006,7 +2019,7 @@
 	    result.push("length");
 	    return result;
 	  }
-	  var jsObject = isJsObject$1.isJsObject(obj);
+	  var jsObject = isJsObject(obj);
 	  if (!jsObject) {
 	    var proto = getPrototypeOf$1(obj);
 	    if (proto) {
@@ -2034,9 +2047,9 @@
 	      result.push(key);
 	    }
 	  }
-	  var i = dontEnums$1.dontEnums.length;
+	  var i = dontEnums.length;
 	  while (i-- > 0) {
-	    key = dontEnums$1.dontEnums[i];
+	    key = dontEnums[i];
 	    if (Object.hasOwn(obj, key)) {
 	      result.push(key);
 	    }
@@ -7014,19 +7027,6 @@
 	  toString: null
 	}.propertyIsEnumerable('toString');
 
-	function isJsObject(o) {
-	  if (typeof o !== "object") {
-	    return false;
-	  }
-	  if (o instanceof Object) {
-	    return true;
-	  }
-	  if (isNullBase(o)) {
-	    return true;
-	  }
-	  return false;
-	}
-
 	function forOwn(obj, fn, thisArg) {
 	  var key;
 	  var jsObject = isJsObject(obj);
@@ -8315,7 +8315,6 @@
 	  forIn(superClass, setKey, subClass);
 	  var prototype = Object.create(superClass.prototype);
 	  prototype.constructor = subClass;
-	  prototype.__proto__ = prototype;
 	  subClass.prototype = prototype;
 	  subClass.__proto__ = superClass.prototype;
 	}
@@ -9895,4 +9894,4 @@
 	// /* Chrome126+ Firefox126+ Safari18+ */
 	// import "./web.url-parse";
 
-})(isJsObject$1, dontEnums$1);
+})();

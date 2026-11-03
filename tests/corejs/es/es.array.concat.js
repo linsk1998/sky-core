@@ -11,7 +11,7 @@ QUnit.test('Array#concat', assert => {
   // const nonSpreadableArray = [1, 2];
   // nonSpreadableArray[Symbol.isConcatSpreadable] = false;
   const arrayLike = { 0: 1, 1: 2, length: 2 };
-  // const spreadableArrayLike = { 0: 1, 1: 2, length: 2, [Symbol.isConcatSpreadable]: true };
+  const spreadableArrayLike = { 0: 1, 1: 2, length: 2, [Symbol.isConcatSpreadable]: true };
   assert.deepEqual(array.concat(), [1, 2], '#1');
   assert.deepEqual(sparseArray.concat(), [1, , 2], '#2');
   // assert.deepEqual(nonSpreadableArray.concat(), [[1, 2]], '#3');

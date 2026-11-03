@@ -5,6 +5,6 @@ try {
 	throw new native_Error("", { cause: 1 });
 } catch(e) {
 	if(!('cause' in e)) {
-		window.Error = fix_Error$proto(native_Error.prototype);
+		window.Error = fix_Error$proto(native_Error);
 	}
 }

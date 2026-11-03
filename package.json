@@ -15,11 +15,11 @@
 	"module": "dist/utils.esm.js",
 	"scripts": {
 		"build:utils": "rollup --config build/rollup.config.utils.js",
+		"test": "node tests/run-node.js",
+		"test:local": "node tests/run-local.js",
 		"test:corejs": "rollup --config tests/corejs/rollup.config.js",
-		"test:ie8": "rollup --config tests/ie8/rollup.config.ie8.js",
 		"test:lambdatest": "node tests/action-lambdatest.js",
-		"test:saucelabs": "node tests/action-saucelabs.js",
-		"test": "node node_modules/mocha/bin/_mocha --require tests/node/register.js 'tests/node/{,/**/}*.test.js'"
+		"test:saucelabs": "node tests/action-saucelabs.js"
 	},
 	"publishConfig": {
 		"access": "public",
@@ -55,16 +55,13 @@
 		"@babel/plugin-transform-template-literals": "^7.18.9",
 		"@babel/plugin-transform-typeof-symbol": "^7.18.9",
 		"@babel/preset-env": "^7.16.11",
-		"@babel/register": "^8.0.6",
 		"@babel/runtime": "^7.20.1",
 		"@rollup/plugin-alias": "^3.1.1",
 		"@rollup/plugin-babel": "^5.3.0",
 		"@rollup/plugin-commonjs": "^21.0.0",
 		"@rollup/plugin-inject": "^4.0.4",
 		"@rollup/plugin-node-resolve": "^7.1.1",
-		"babel-plugin-module-resolver": "^5.0.3",
-		"chai": "1.9.2",
-		"mocha": "1.16.x",
+		"qunitjs": "1.9.0",
 		"rollup": "^2.45.2",
 		"rollup-plugin-es3ify": "0.0.4",
 		"rollup-plugin-import": "^1.0.2",

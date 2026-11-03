@@ -2025,7 +2025,6 @@ return class extends Parent { /* empty */ };
 		forIn(superClass, setKey, subClass);
 		var prototype = Object.create(superClass.prototype);
 		prototype.constructor = subClass;
-		prototype.__proto__ = prototype;
 		subClass.prototype = prototype;
 		subClass.__proto__ = superClass.prototype;
 	};

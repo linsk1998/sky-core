@@ -2194,7 +2194,7 @@
 	  return Error;
 	}
 
-	window.Error = fix_Error$proto(Error$1.prototype);
+	window.Error = fix_Error$proto(Error$1);
 
 	var Symbol$7 = GLOBAL.Symbol || {};
 	var setPrototypeOf = Object.setPrototypeOf,
