@@ -4,9 +4,16 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  local-test-runner: link:../../test/local-test-runner
+
 importers:
 
   .:
+    dependencies:
+      local-test-runner:
+        specifier: link:../../test/local-test-runner
+        version: link:../../test/local-test-runner
     devDependencies:
       '@babel/core':
         specifier: ^7.13.14

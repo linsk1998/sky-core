@@ -17,17 +17,15 @@
  *   npm run test:local -- -b chrome146 --timeout 180000       # 调整超时
  *
  * 浏览器范围语法见 tests/lib/local-browsers.js。
- * local-test-runner 未发布 npm，按目录引用：
- *   环境变量 SKY_LOCAL_TEST_RUNNER 可覆盖，默认 E:/Dev/test/local-test-runner。
+ * local-test-runner 以 npm 依赖方式引入（当前通过 pnpm link 本地接入，
+ * 发布前会先把 local-test-runner 发到 npm，换成正式版本号）。
  */
 
 var fs = require("fs");
 var path = require("path");
 var browsersLib = require("./lib/local-browsers");
-var localQUnitPlugin = require("./lib/local-qunit-plugin");
 
 var TEST_PAGE = "tests/corejs/local/index.html";
-var DEFAULT_RUNNER_DIR = "E:/Dev/test/local-test-runner";
 var DEFAULT_PORT = 8931;
 var DEFAULT_HOST = "127.0.0.1";
 var DEFAULT_TIMEOUT = 120000;
@@ -36,7 +34,7 @@ function usage() {
 	console.log([
 		"用法：node tests/run-local.js [测试文件...] [选项]",
 		"",
-		"测试文件：与 npm test 相同（缺省用 tests/default-test-globs.js）",
+		"测试文件：与 npm run test:node 相同（缺省用 tests/default-test-globs.js）",
 		"",
 		"选项：",
 		'  -b, --browsers <specs>  浏览器范围，如 "chrome>=60,firefox,!firefox52"，缺省全部',
@@ -69,17 +67,16 @@ function parseArgs(argv) {
 }
 
 function loadLocalTestRunner() {
-	var dir = process.env.SKY_LOCAL_TEST_RUNNER || DEFAULT_RUNNER_DIR;
-	var entry = path.resolve(dir, "dist/index.js");
-	if(!fs.existsSync(entry)) {
-		console.error("找不到 local-test-runner：" + entry);
-		console.error("请确认本机路径，或设置环境变量 SKY_LOCAL_TEST_RUNNER 指向其目录。");
+	try {
+		return require("local-test-runner");
+	} catch(e) {
+		console.error("找不到 local-test-runner 依赖（当前通过 pnpm link 本地接入，发布后为正式 npm 依赖）。");
+		console.error("请先执行：pnpm link <local-test-runner 目录>");
 		process.exit(1);
 	}
-	return require(entry);
 }
 
-/** 生成测试页（结构同 tests/corejs/3.html） */
+/** 生成测试页（结构同 tests/corejs/3.html）；缓存由服务器响应头统一禁用 */
 function writeTestPage() {
 	var html = [
 		'<!DOCTYPE html>',
@@ -133,7 +130,12 @@ async function collectTasks(runner, options) {
 			}
 		});
 		found.forEach(function(item) {
-			if(specs && !browsersLib.matchSpecs(specs, item.family, item.version)) {
+			// WebKit 家族：构建号 → Safari 版本，方便按 Safari 版本传参
+			if(item.conf.mapVersion) {
+				item.build = item.version;
+				item.version = item.conf.mapVersion[item.build] || item.version;
+			}
+			if(specs && !browsersLib.matchSpecs(specs, item.family, item.conf.names, item.version)) {
 				return;
 			}
 			tasks.push(item);
@@ -147,22 +149,27 @@ async function collectTasks(runner, options) {
 		return parseFloat(a.version) - parseFloat(b.version);
 	});
 	return tasks.map(function(item) {
-		var label = item.conf.label + " " + item.version;
-		return {
+		// 映射过的版本带上构建号显示（如 "16.4(1735)"），便于区分
+		var displayVersion = item.build && item.build !== item.version
+			? item.version + "(" + item.build + ")"
+			: item.version;
+		var task = {
 			command: item.command,
 			flags: item.conf.flags ? item.conf.flags(item.command) : [],
 			url: "http://" + DEFAULT_HOST + ":" + options.port + "/sky-core/" + TEST_PAGE +
-				"?b=" + encodeURIComponent(item.conf.label + "-" + item.version),
+				"?b=" + encodeURIComponent(item.conf.label + "-" + displayVersion),
 			browser: item.conf.label,
-			version: item.version,
+			version: displayVersion,
 			timeout: options.timeout
 		};
+		// preset 的 command 会被上面的绝对路径覆盖，flags 会与 preset 的合并
+		if(item.conf.preset) {
+			task.preset = item.conf.preset;
+		}
+		return task;
 	});
 }
 
-function delay(ms) {
-	return new Promise(function(resolve) { setTimeout(resolve, ms); });
-}
 
 /** serve() 的端口占用错误是异步 error 事件，先同步探测给出友好提示 */
 function checkPortFree(port) {
@@ -177,15 +184,6 @@ function checkPortFree(port) {
 		});
 		probe.listen(port, DEFAULT_HOST);
 	});
-}
-
-function collectFailures(data) {
-	var count = parseInt(data.failures, 10) || 0;
-	var list = [];
-	for(var i = 0; i < count && i < 50; i++) {
-		if(data["fail" + i] != null) { list.push(String(data["fail" + i])); }
-	}
-	return list;
 }
 
 async function main() {
@@ -212,86 +210,39 @@ async function main() {
 	var server;
 	try {
 		await checkPortFree(options.port);
+		// 禁缓存响应头（no-store 等）是 local-test-runner 的默认行为，无需配置
 		server = await runner.serve({
 			port: options.port,
 			host: DEFAULT_HOST,
 			root: process.cwd(),
 			contextPath: "/sky-core/",
-			plugins: [localQUnitPlugin]
+			plugins: [runner.QUnit]
 		});
 	} catch(err) {
 		console.error("服务器启动失败：" + (err && err.message || err));
 		process.exit(1);
 	}
 
-	var results = [];
+	// runQueue：单个浏览器失败/超时不中断队列，结果为 allSettled 格式
+	var results;
 	try {
-		for(var i = 0; i < tasks.length; i++) {
-			var task = tasks[i];
-			try {
-				var data = await runner.run(task);
-				var total = parseInt(data.total, 10) || 0;
-				var passed = parseInt(data.passed, 10) || 0;
-				results.push({
-					task: task,
-					ok: passed === total && total > 0,
-					total: total,
-					passed: passed,
-					runtime: data.runtime,
-					failures: collectFailures(data)
-				});
-			} catch(err) {
-				results.push({
-					task: task,
-					ok: false,
-					error: String(err && err.message || err)
-				});
-			}
-			// 给浏览器进程清理留点时间
-			if(i < tasks.length - 1) { await delay(500); }
-		}
+		results = await runner.runQueue(tasks);
 	} finally {
 		server.close();
 		console.log("服务器已关闭。");
 	}
 
-	var bad = results.filter(function(r) { return !r.ok; });
+	// report：逐浏览器明细（含失败断言）+ 总计；judge：整体裁断
 	console.log("");
-	console.log("========== 汇总 ==========");
-	results.forEach(function(r) {
-		var label = r.task.browser + " " + r.task.version;
-		if(r.ok) {
-			console.log("  [通过] " + label + "（" + r.passed + "/" + r.total + "，" + r.runtime + "ms）");
-		} else if(r.error) {
-			console.log("  [失败] " + label + "：" + r.error);
-		} else {
-			console.log("  [失败] " + label + "（" + r.passed + "/" + r.total + "，" +
-				(r.total - r.passed) + " 条断言未通过）");
-		}
-	});
-	console.log("==========================");
-	console.log(results.length - bad.length + "/" + results.length + " 个浏览器通过。");
+	runner.report(results, tasks);
+	var ok = runner.judge(results);
+	console.log(ok ? "判定：通过" : "判定：未通过");
 
-	if(bad.length) {
-		console.log("");
-		console.log("失败明细：");
-		bad.forEach(function(r) {
-			var label = r.task.browser + " " + r.task.version;
-			if(r.error) {
-				console.log("  [" + label + "] " + r.error);
-				return;
-			}
-			r.failures.forEach(function(line) {
-				console.log("  [" + label + "] " + line);
-			});
-		});
-	}
 	// 强制退出（残留的浏览器子进程句柄会阻止自然退出），
 	// 但先给 stdout 一点刷新时间，避免 Windows 下丢日志
-	var exitCode = bad.length ? 1 : 0;
-	process.exitCode = exitCode;
+	process.exitCode = ok ? 0 : 1;
 	setTimeout(function() {
-		process.exit(exitCode);
+		process.exit(ok ? 0 : 1);
 	}, 200).unref();
 }
 

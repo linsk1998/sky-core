@@ -11,7 +11,7 @@ var defaultGlobs = require("../default-test-globs");
  *   array.slice*        → 通配（按任意目录下的 <token>*.js 匹配）
  *
  * 查找空间是 node + local 两个 profile 的并集，
- * 这样 `npm test -- es.array.slice` 也能直接引用浏览器侧的测试。
+ * 这样 `npm run test:node -- es.array.slice` 也能直接引用浏览器侧的测试。
  */
 function matchBare(relPath, token) {
 	if(/[*?]/.test(token)) {

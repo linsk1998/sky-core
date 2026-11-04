@@ -1,59 +1,46 @@
 "use strict";
 
-var fs = require("fs");
-var os = require("os");
-var path = require("path");
-
 /**
  * 本机浏览器清单（按 D:\App\Browser 下的安装目录扫描）。
- * 启动参数参考 D:\App\Browser\快捷方式 里各浏览器的实际配置。
+ * Chrome / Firefox 的启动参数（临时 profile、防缓存、禁更新等）由
+ * local-test-runner 对应的 preset 提供；其余家族直接以 exe + URL 启动。
  *
- * IE 系列（IETester / VirtIE6 / LisectIE / 忽忽浏览器 / IE11-mshta）启动方式特殊，
- * 暂未接入；需要时在 BROWSER_FAMILIES 里补充 pattern 与 flags 即可。
+ * WebKit 家族（webkit / webkitmini）目录名只含构建号，这里维护构建号 →
+ * Safari 版本的映射表，因此可以直接按 Safari 版本传参：
+ *   -b safari=16.4      → WebKit_1735（Playwright 版）
+ *   -b safari>=15       → 所有 Safari 15+ 的 WebKit 构建（两种都算）
+ *   -b webkit=2182      → 仍可按构建号精确选择
+ * safari 家族（真 Safari.exe）与 webkit 家族共享 "safari" 这个匹配名。
+ *
+ * IE 系列（IETester / VirtIE6 / LisectIE / 忽忽浏览器 / IE11-mshta）只做手动测试，
+ * 不接入自动化；需要时在 BROWSER_FAMILIES 里补充 pattern（及 preset/flags）即可。
  */
 
-function exeDir(command) {
-	return command.replace(/\\[^\\]+$/, "");
-}
-
-var FIREFOX_PREFS = [
-	"user_pref(\"browser.shell.checkDefaultBrowser\", false);",
-	"user_pref(\"browser.startup.homepage_override.mstone\", \"ignore\");",
-	"user_pref(\"browser.sessionstore.resume_from_crash\", false);",
-	"user_pref(\"app.update.enabled\", false);",
-	"user_pref(\"app.update.auto\", false);",
-	"user_pref(\"datareporting.policy.dataSubmissionEnabled\", false);",
-	"user_pref(\"toolkit.telemetry.enabled\", false);",
-	"user_pref(\"network.proxy.type\", 0);",
-	"user_pref(\"dom.max_script_run_time\", 0);",
-	"user_pref(\"dom.max_chrome_script_run_time\", 0);",
-	"user_pref(\"dom.disable_open_during_load\", false);"
-].join("\n");
+/** WebKit 构建号 → Safari 版本（对应关系来自快捷方式的命名） */
+var WEBKIT_VERSION_MAP = {
+	"602": "10.0",
+	"603": "10.1",
+	"605": "11.0",
+	"607": "12.1",
+	"1269": "13.2",
+	"1446": "14.2",
+	"1564": "15.4",
+	"1735": "16.4",
+	"1921": "17.4",
+	"2182": "18.5",
+	"2311": "26.5"
+};
 
 var BROWSER_FAMILIES = {
 	chrome: {
 		label: "Chrome",
 		pattern: "D:/App/Browser/Chrome/*/chrome.exe",
-		flags: function(command) {
-			return [
-				"--user-data-dir=" + exeDir(command) + "\\Data",
-				"--no-default-browser-check",
-				"--no-first-run",
-				"--disable-default-apps",
-				"--disable-popup-blocking"
-			];
-		}
+		preset: "Chrome"
 	},
 	firefox: {
 		label: "Firefox",
 		pattern: "D:/App/Browser/Firefox/*/firefox.exe",
-		flags: function() {
-			var dir = path.join(os.tmpdir(), "sky-test-firefox-" + Date.now() + "-" +
-				Math.floor(Math.random() * 100000));
-			fs.mkdirSync(dir, { recursive: true });
-			fs.writeFileSync(path.join(dir, "user.js"), FIREFOX_PREFS + "\n");
-			return ["-no-remote", "-profile", dir];
-		}
+		preset: "Firefox"
 	},
 	opera: {
 		label: "Opera",
@@ -61,24 +48,29 @@ var BROWSER_FAMILIES = {
 	},
 	safari: {
 		label: "Safari",
-		pattern: "D:/App/Browser/Safari/Safari*/Safari.exe"
+		pattern: "D:/App/Browser/Safari/Safari*/Safari.exe",
+		names: ["safari"]
 	},
 	webkit: {
 		label: "WebKit",
-		pattern: "D:/App/Browser/Safari/WebKit_*/Playwright.exe"
+		pattern: "D:/App/Browser/Safari/WebKit_*/Playwright.exe",
+		names: ["safari", "webkit"],
+		mapVersion: WEBKIT_VERSION_MAP
 	},
 	webkitmini: {
 		label: "WebKitMini",
-		pattern: "D:/App/Browser/Safari/webkit*/MiniBrowser.exe"
+		pattern: "D:/App/Browser/Safari/webkit*/MiniBrowser.exe",
+		names: ["safari", "webkit", "webkitmini"],
+		mapVersion: WEBKIT_VERSION_MAP
 	}
 };
 
 /**
  * 浏览器范围表达式：逗号分隔，每项为
- *   family               整个家族
+ *   family               整个家族（safari 会命中真 Safari 和两个 WebKit 家族）
  *   family>=v / >v / <v / <=v / ==v / =v     家族内按版本过滤（版本必须带运算符）
  *   !family[...]         排除
- * 例如：chrome>=60,firefox,!firefox=52
+ * 例如：chrome>=60,firefox,!firefox=52,safari=16.4
  */
 function parseSpecs(spec) {
 	return spec.split(",").map(function(item) {
@@ -114,15 +106,21 @@ function compare(op, a, b) {
 	}
 }
 
-/** 单个已发现浏览器是否被 specs 选中 */
-function matchSpecs(specs, family, version) {
+/**
+ * 单个已发现浏览器是否被 specs 选中。
+ * @param specs    parseSpecs 结果
+ * @param family   家族键名（chrome/firefox/.../webkitmini）
+ * @param names    该家族响应的匹配名（含 "safari" 的家族会被 safari 规格命中）
+ * @param version  用于比较的版本号（WebKit 家族为映射后的 Safari 版本）
+ */
+function matchSpecs(specs, family, names, version) {
 	var versionNum = parseFloat(version);
 	var matched = false;
 	var familyName = family.toLowerCase();
 	specs.forEach(function(spec) {
 		var hit = false;
 		if(spec.family === "all" || spec.family === familyName ||
-			(familyName.indexOf(spec.family) === 0)) {
+			(names && names.indexOf(spec.family) >= 0)) {
 			hit = true;
 			if(spec.version !== null) {
 				hit = compare(spec.op, versionNum, spec.version);

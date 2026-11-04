@@ -2,7 +2,7 @@
 "use strict";
 
 /**
- * 纯 node 测试（npm test）：
+ * 纯 node 测试（npm run test:node）：
  *
  *   1. 解析参数得到测试文件列表（默认 tests/default-test-globs.js）
  *   2. rollup 编译为内存产物（iife 字符串，不生成任何文件），
@@ -13,10 +13,10 @@
  *      执行产物并跑完 qunit，失败时输出明细并以非 0 码退出
  *
  * 用法：
- *   npm test                                  # 默认范围
- *   npm test -- es.array.slice                # 按名称
- *   npm test -- tests/corejs/es/es.math.*.js  # 按 glob
- *   npm test -- --tier=compat,modern          # 指定构建分层（默认 modern）
+ *   npm run test:node                                  # 默认范围
+ *   npm run test:node -- es.array.slice                # 按名称
+ *   npm run test:node -- tests/corejs/es/es.math.*.js  # 按 glob
+ *   npm run test:node -- --tier=compat,modern          # 指定构建分层（默认 modern）
  *
  * 说明：qunit 运行时用的是 qunitjs@1.9.0（devDependency），
  * 与 html 页面里引用的 node_modules/qunitjs 是同一份，保证断言语义同构。

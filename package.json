@@ -15,7 +15,7 @@
 	"module": "dist/utils.esm.js",
 	"scripts": {
 		"build:utils": "rollup --config build/rollup.config.utils.js",
-		"test": "node tests/run-node.js",
+		"test:node": "node tests/run-node.js",
 		"test:local": "node tests/run-local.js",
 		"test:corejs": "rollup --config tests/corejs/rollup.config.js",
 		"test:lambdatest": "node tests/action-lambdatest.js",
@@ -61,6 +61,7 @@
 		"@rollup/plugin-commonjs": "^21.0.0",
 		"@rollup/plugin-inject": "^4.0.4",
 		"@rollup/plugin-node-resolve": "^7.1.1",
+		"local-test-runner": "link:../../test/local-test-runner",
 		"qunitjs": "1.9.0",
 		"rollup": "^2.45.2",
 		"rollup-plugin-es3ify": "0.0.4",

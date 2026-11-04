@@ -7,7 +7,7 @@
  */
 module.exports = {
 	/**
-	 * npm test（纯 node）默认范围：纯算法类测试。
+	 * npm run test:node（纯 node）默认范围：纯算法类测试。
 	 * 这类测试不依赖浏览器环境，逐个文件维护在这里。
 	 */
 	node: [

@@ -4,7 +4,7 @@
  *
  * - rollup CLI（npm run test:corejs）：createConfigs() 保持原有行为，
  *   从 tests/corejs/index.js 构建到 tests/corejs/dest/。
- * - 编程式调用（npm test / npm run test:local）：
+ * - 编程式调用（npm run test:node / npm run test:local）：
  *   createConfig(tier, { entry, plugins, outputFile, babel })，
  *   entry 可为虚拟入口 id，配合虚拟入口插件使用；
  *   babel:false 时跳过语法降级（node 原生运行新语法）。
