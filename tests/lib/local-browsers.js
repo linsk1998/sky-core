@@ -6,11 +6,11 @@
  * local-test-runner 对应的 preset 提供；其余家族直接以 exe + URL 启动。
  *
  * WebKit 家族（webkit / webkitmini）目录名只含构建号，这里维护构建号 →
- * Safari 版本的映射表，因此可以直接按 Safari 版本传参：
- *   -b safari=16.4      → WebKit_1735（Playwright 版）
- *   -b safari>=15       → 所有 Safari 15+ 的 WebKit 构建（两种都算）
- *   -b webkit=2182      → 仍可按构建号精确选择
- * safari 家族（真 Safari.exe）与 webkit 家族共享 "safari" 这个匹配名。
+ * Safari 版本的映射表。-b 不提供 webkit/webkitmini 匹配名，
+ * 两者只通过 safari 版本来选：
+ *   -b safari=16.4        → WebKit_1735（Playwright 版）
+ *   -b safari>=13.2       → 仅 Playwright 版（Mini 是 10.0~12.1）
+ *   -b safari=12.1        → 仅 MiniBrowser 版
  *
  * IE 系列（IETester / VirtIE6 / LisectIE / 忽忽浏览器 / IE11-mshta）只做手动测试，
  * 不接入自动化；需要时在 BROWSER_FAMILIES 里补充 pattern（及 preset/flags）即可。
@@ -35,16 +35,19 @@ var BROWSER_FAMILIES = {
 	chrome: {
 		label: "Chrome",
 		pattern: "D:/App/Browser/Chrome/*/chrome.exe",
-		preset: "Chrome"
+		preset: "Chrome",
+		names: ["chrome"]
 	},
 	firefox: {
 		label: "Firefox",
 		pattern: "D:/App/Browser/Firefox/*/firefox.exe",
-		preset: "Firefox"
+		preset: "Firefox",
+		names: ["firefox"]
 	},
 	opera: {
 		label: "Opera",
-		pattern: "D:/App/Browser/Opera/*/opera.exe"
+		pattern: "D:/App/Browser/Opera/*/opera.exe",
+		names: ["opera"]
 	},
 	safari: {
 		label: "Safari",
@@ -54,13 +57,13 @@ var BROWSER_FAMILIES = {
 	webkit: {
 		label: "WebKit",
 		pattern: "D:/App/Browser/Safari/WebKit_*/Playwright.exe",
-		names: ["safari", "webkit"],
+		names: ["safari"],
 		mapVersion: WEBKIT_VERSION_MAP
 	},
 	webkitmini: {
 		label: "WebKitMini",
 		pattern: "D:/App/Browser/Safari/webkit*/MiniBrowser.exe",
-		names: ["safari", "webkit", "webkitmini"],
+		names: ["safari"],
 		mapVersion: WEBKIT_VERSION_MAP
 	}
 };
@@ -70,6 +73,7 @@ var BROWSER_FAMILIES = {
  *   family               整个家族（safari 会命中真 Safari 和两个 WebKit 家族）
  *   family>=v / >v / <v / <=v / ==v / =v     家族内按版本过滤（版本必须带运算符）
  *   !family[...]         排除
+ * 匹配名只有 chrome / firefox / opera / safari（webkit/webkitmini 不对外）。
  * 例如：chrome>=60,firefox,!firefox=52,safari=16.4
  */
 function parseSpecs(spec) {
@@ -107,20 +111,19 @@ function compare(op, a, b) {
 }
 
 /**
- * 单个已发现浏览器是否被 specs 选中。
+ * 单个已发现浏览器是否被 specs 选中。完全按家族的 names 匹配，
+ * 家族键名（webkit/webkitmini 等）不参与匹配。
  * @param specs    parseSpecs 结果
- * @param family   家族键名（chrome/firefox/.../webkitmini）
- * @param names    该家族响应的匹配名（含 "safari" 的家族会被 safari 规格命中）
+ * @param family   家族键名（仅用于日志）
+ * @param names    该家族响应的匹配名
  * @param version  用于比较的版本号（WebKit 家族为映射后的 Safari 版本）
  */
 function matchSpecs(specs, family, names, version) {
 	var versionNum = parseFloat(version);
 	var matched = false;
-	var familyName = family.toLowerCase();
 	specs.forEach(function(spec) {
 		var hit = false;
-		if(spec.family === "all" || spec.family === familyName ||
-			(names && names.indexOf(spec.family) >= 0)) {
+		if(spec.family === "all" || (names && names.indexOf(spec.family) >= 0)) {
 			hit = true;
 			if(spec.version !== null) {
 				hit = compare(spec.op, versionNum, spec.version);

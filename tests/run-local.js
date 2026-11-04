@@ -4,9 +4,10 @@
 /**
  * 本机浏览器测试（npm run test:local）：
  *
- *   1. rollup 编译 compat / modern / es2015 三套产物到 tests/corejs/local/，
- *      并生成一个测试页（结构同 3.html：IE 条件注释 + nomodule + module）
- *   2. 用 local-test-runner 启动静态服务器（项目根目录，/sky-core/ 前缀）
+ *   1. rollup 编译 compat / modern / es2015 三套产物（内存字符串，不落盘）
+ *   2. 用 local-test-runner 启动静态服务器（项目根目录，/sky-core/ 前缀），
+ *      通过插件钩子提供虚拟资源：loadHtml 产生测试页（结构同 3.html：
+ *      IE 条件注释 + nomodule + module），configureServer 拦截构建产物 js 请求
  *   3. 逐个浏览器打开测试页，收集 QUnit 结果（含失败明细）
  *   4. 关闭服务器；如有失败，输出明细并以非 0 码退出
  *
@@ -21,7 +22,6 @@
  * 发布前会先把 local-test-runner 发到 npm，换成正式版本号）。
  */
 
-var fs = require("fs");
 var path = require("path");
 var browsersLib = require("./lib/local-browsers");
 
@@ -76,9 +76,9 @@ function loadLocalTestRunner() {
 	}
 }
 
-/** 生成测试页（结构同 tests/corejs/3.html）；缓存由服务器响应头统一禁用 */
-function writeTestPage() {
-	var html = [
+/** 测试页模板（结构同 tests/corejs/3.html），完全由内存提供 */
+function pageHtml() {
+	return [
 		'<!DOCTYPE html>',
 		'<html>',
 		'',
@@ -106,7 +106,37 @@ function writeTestPage() {
 		'',
 		'</html>'
 	].join("\n");
-	fs.writeFileSync(path.join(process.cwd(), TEST_PAGE), html);
+}
+
+/**
+ * 内存资源插件（local-test-runner）：
+ * - loadHtml：产生测试页 HTML（虚拟路径，不落盘；transformHtml 仍会注入结果上报脚本）
+ * - configureServer：拦截三套构建产物的 js 请求，直接返回内存字符串。
+ *   该中间件注册在内置响应头中间件之前，需自行补禁缓存头。
+ */
+function createAssetsPlugin(contextPath, bundles) {
+	var pagePath = "/" + TEST_PAGE;
+	var jsPrefix = contextPath + TEST_PAGE.replace(/[^/]*$/, "");
+	return {
+		loadHtml: function(url) {
+			if(url.split("?")[0] === pagePath) {
+				return pageHtml();
+			}
+			return null;
+		},
+		configureServer: function(ctx) {
+			ctx.middleWares.use(function(req, res, next) {
+				if(req.url.indexOf(jsPrefix) !== 0) { return next(); }
+				var tier = req.url.slice(jsPrefix.length).split("?")[0].replace(/\.js$/, "");
+				if(bundles[tier] == null) { return next(); }
+				res.setHeader("Cache-Control", "no-store");
+				res.setHeader("Pragma", "no-cache");
+				res.setHeader("Expires", "0");
+				res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+				res.end(bundles[tier]);
+			});
+		}
+	};
 }
 
 /** 扫描选中的浏览器，生成任务列表 */
@@ -195,9 +225,9 @@ async function main() {
 	var files = selectTests.resolveTestFiles(options.patterns, undefined, "local");
 	console.log("本机浏览器测试：共 " + files.length + " 个测试文件");
 
-	console.log("rollup 编译 compat / modern / es2015 ...");
-	await buildTests.buildLocalBundles(["compat", "modern", "es2015"], files);
-	writeTestPage();
+	console.log("rollup 编译 compat / modern / es2015（内存产物，不落盘）...");
+	var bundles = await buildTests.buildLocalBundlesInMemory(["compat", "modern", "es2015"], files);
+	var assetsPlugin = createAssetsPlugin("/sky-core/", bundles);
 
 	var tasks = await collectTasks(runner, options);
 	if(!tasks.length) {
@@ -216,7 +246,7 @@ async function main() {
 			host: DEFAULT_HOST,
 			root: process.cwd(),
 			contextPath: "/sky-core/",
-			plugins: [runner.QUnit]
+			plugins: [assetsPlugin, runner.QUnit]
 		});
 	} catch(err) {
 		console.error("服务器启动失败：" + (err && err.message || err));

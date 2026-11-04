@@ -62,9 +62,9 @@ npm run test:local -- -b "chrome=146" -b "firefox=91"    # 多次 -b 会合并
 npm run test:local -- -p 8940 -t 180000                  # 端口（默认 8931）/ 单浏览器超时（默认 120s）
 ```
 
-浏览器范围语法：逗号分隔，`family` / `family>=v` `>` `<` `<=` `=` `==` / `!` 排除；家族名见 `tests/lib/local-browsers.js`（chrome/firefox/opera/safari/webkit/webkitmini，扫描 `D:\App\Browser` 下的安装）。**版本号必须带运算符**（写 `chrome=146`，不要写 `chrome146`）。
+浏览器范围语法：逗号分隔，`family` / `family>=v` `>` `<` `<=` `=` `==` / `!` 排除。匹配名只有 **chrome / firefox / opera / safari**（webkit/webkitmini 不作为匹配名——`safari` 会按版本映射自动命中 MiniBrowser 和 Playwright 两种 WebKit 构建：Mini 是 10.0~12.1，Playwright 是 13.2+，用版本区间区分）。家族定义见 `tests/lib/local-browsers.js`（扫描 `D:\App\Browser` 下的安装）。**版本号必须带运算符**（写 `chrome=146`，不要写 `chrome146`）。
 
-流程：rollup 构建三套产物到 `tests/corejs/local/`（已 gitignore）→ 生成与 3.html 同构的测试页（IE 条件注释 + nomodule + module，浏览器自动选对产物）→ local-test-runner 起服务器（QUnit 插件注入结果上报脚本，含失败断言明细）→ 逐浏览器运行并回收结果 → 关服务器 → 有失败则打印明细并退出码 1。
+流程：rollup 构建三套产物（**内存字符串，全程不落盘**）→ local-test-runner 起服务器，通过插件钩子提供虚拟资源：`loadHtml` 产生测试页（与 3.html 同构：IE 条件注释 + nomodule + module，浏览器自动选对产物），`configureServer` 拦截三套产物 js 请求直接返回内存内容（QUnit 插件注入结果上报脚本，含失败断言明细）→ 逐浏览器运行并回收结果 → 关服务器 → 有失败则打印明细并退出码 1。
 
 缓存控制（防止浏览器跑到旧构建产物）由 local-test-runner 内建：所有响应默认带 `Cache-Control: no-store` / `Pragma: no-cache` / `Expires: 0`（headers 选项可覆盖）；Chrome 家族通过其 **Chrome preset** 启动（临时 user-data-dir + 一次性空 `--disk-cache-dir` 等）——no-store 只能防止新的缓存写入，救不了已经存在的缓存条目，空缓存目录才能根治。
 
@@ -114,7 +114,6 @@ tests/
     conditional-*.js      # 各 tier 的劫持映射（compat/modern/es2015 在用）
     index.js              # 手动测试页（2.html/3.html）的测试清单
     dest/                 # test:corejs 产物，**git 跟踪的构建产物**
-    local/                # test:local 产物，gitignore
   mdn/                    # 从 MDN 示例移植的测试
 
 QUnit 运行时统一来自 `qunitjs@1.9.0`（devDependency）：node 侧 `require("qunitjs")`，
@@ -126,6 +125,7 @@ html 页面用相对路径引用 `node_modules/qunitjs/qunit/qunit.js`（pnpm �
 - **`tests/corejs/dest/*.js` 是 git 跟踪的产物**：改了库源码或 conditional 配置后，跑 `npm run test:corejs` 重建并一起提交。
 - **`npm run test:node` 默认只跑纯算法测试，不会测 compat 的功能**。如果显式用 `--tier=compat` 跑 polyfill 测试（如 `tests/corejs/es/*.js`），在 node/V8 上会有约 63 处断言失败（Symbol/descriptor 类，compat 实现面向 IE 系）——这不是回归信号；compat 的真实判定以老浏览器（test:local / 手动）为准。
 - Firefox 140 曾出现"进程起来但不开 URL"的问题，已由 Firefox preset 中更完整的 user.js prefs 解决（禁书签恢复/更新/遥测等），52/91/140 实测均正常。
+- **MiniBrowser 系（webkit602~607，Safari 10.0~12.1）启动超时未解决**：进程起来但不加载 URL，test:local 里会记为该浏览器的失败并继续；Playwright 版（safari>=13.2）正常。
 - **IE 系浏览器（IETester / VirtIE / Lisect / 忽忽浏览器等）只做手动测试，不接入自动化**——不要往 local-browsers 里加它们。低版本 IE 的手动测试方式：打开带 `<meta http-equiv="X-UA-Compatible" content="IE=X">` 的测试页（test:local 生成的页面已含 `IE=edge`，手动复刻一份改 meta 即可）。
 - **legacy 线路（`conditional-legacy.js` 与各 `*-legacy/` 目录）是开发中未完成的库功能**，目前没有构建入口；不要删除，也不要当成可用功能依赖。
 - mocha/chai 测试体系已删除，**不要重新引入**；新的 node 侧测试一律走 QUnit 体系。

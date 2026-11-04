@@ -61,35 +61,32 @@ async function buildNodeBundle(tier, files) {
 }
 
 /**
- * 本机浏览器测试构建：写盘到 tests/corejs/local/，供静态服务器读取。
- * 与 npm run test:corejs 完全相同的插件链（含 babel）。
+ * 本机浏览器测试构建：只产内存字符串（{ compat, modern, es2015 }），
+ * 不写任何文件；由 local-test-runner 插件的 loadHtml / configureServer
+ * 直接对外服务。插件链（含 babel）与 npm run test:corejs 完全相同。
  */
-async function buildLocalBundles(tiers, files) {
+async function buildLocalBundlesInMemory(tiers, files) {
 	var root = process.cwd();
-	var outDir = path.join(root, "tests", "corejs", "local");
-	fs.mkdirSync(outDir, { recursive: true });
-	var outputs = [];
+	var bundles = {};
 	for(var i = 0; i < tiers.length; i++) {
 		var tier = tiers[i];
 		var entryId = entryIdFor(root, tier);
-		var outFile = path.join(outDir, tier + ".js");
 		var config = createConfigs.createConfig(tier, {
 			entry: entryId,
-			outputFile: outFile,
 			plugins: [virtualEntryPlugin(entryId, createEntryCode(root, files, entryId))]
 		});
 		var bundle = await rollup.rollup(config.inputOptions);
 		try {
-			await bundle.write(config.outputOptions);
+			var generated = await bundle.generate(config.outputOptions);
+			bundles[tier] = generated.output[0].code;
 		} finally {
 			if(bundle.close) { await bundle.close(); }
 		}
-		outputs.push(outFile);
 	}
-	return outputs;
+	return bundles;
 }
 
 exports.virtualEntryPlugin = virtualEntryPlugin;
 exports.createEntryCode = createEntryCode;
 exports.buildNodeBundle = buildNodeBundle;
-exports.buildLocalBundles = buildLocalBundles;
+exports.buildLocalBundlesInMemory = buildLocalBundlesInMemory;
