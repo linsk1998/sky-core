@@ -279,7 +279,7 @@ module.exports = [
 			"polyfill/**/*",
 			"polyfill-*/**/*"
 		]
-	}),,
+	}),
 	inject({
 		modules: {
 			"setTimeout": "sky-core/pure/setTimeout",
