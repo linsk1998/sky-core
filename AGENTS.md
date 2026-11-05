@@ -62,7 +62,7 @@ npm run test:local -- -b "chrome=146" -b "firefox=91"    # 多次 -b 会合并
 npm run test:local -- -p 8940 -t 180000                  # 端口（默认 8931）/ 单浏览器超时（默认 120s）
 ```
 
-浏览器范围语法：逗号分隔，`family` / `family>=v` `>` `<` `<=` `=` `==` / `!` 排除。匹配名只有 **chrome / firefox / opera / safari**（webkit/webkitmini 不作为匹配名——`safari` 会按版本映射自动命中 MiniBrowser 和 Playwright 两种 WebKit 构建：Mini 是 10.0~12.1，Playwright 是 13.2+，用版本区间区分）。家族定义见 `tests/lib/local-browsers.js`（扫描 `D:\App\Browser` 下的安装）。**版本号必须带运算符**（写 `chrome=146`，不要写 `chrome146`）。
+浏览器范围语法：逗号分隔，`family` / `family>=v` `>` `<` `<=` `=` `==` / `!` 排除。匹配名只有 **chrome / firefox / opera / safari / ie**（webkit/webkitmini 不作为匹配名——Safari 的 WebKit 目录直接以版本命名：`MiniBrowser(10.0~12.1)` 与 `Playwright(13.2+)`，`safari` 按版本命中，用版本区间区分两种实现）。`ie` 走 Edge 的 IE 模式（EdgeIEMode preset + EmulateIE 插件按 `?ie=X` 注入 meta），版本即文档模式：`ie=5/7/8/9/10/11`，`ie=8` 及以下跑 compat 产物、`ie=9` 以上跑 modern 产物。家族定义见 `tests/lib/local-browsers.js`（扫描 `D:\App\Browser` 下的安装）。**版本号必须带运算符**（写 `chrome=146`，不要写 `chrome146`）。执行策略：同一家族串行（runQueue），不同家族并行（Promise.allSettled），大矩阵总耗时约等于最慢家族的串行总时长。
 
 流程：rollup 构建三套产物（**内存字符串，全程不落盘**）→ local-test-runner 起服务器，通过插件钩子提供虚拟资源：`loadHtml` 产生测试页（与 3.html 同构：IE 条件注释 + nomodule + module，浏览器自动选对产物），`configureServer` 拦截三套产物 js 请求直接返回内存内容（QUnit 插件注入结果上报脚本，含失败断言明细）→ 逐浏览器运行并回收结果 → 关服务器 → 有失败则打印明细并退出码 1。
 
@@ -126,12 +126,12 @@ html 页面用相对路径引用 `node_modules/qunitjs/qunit/qunit.js`（pnpm �
 - **`npm run test:node` 默认只跑纯算法测试，不会测 compat 的功能**。如果显式用 `--tier=compat` 跑 polyfill 测试（如 `tests/corejs/es/*.js`），在 node/V8 上会有约 63 处断言失败（Symbol/descriptor 类，compat 实现面向 IE 系）——这不是回归信号；compat 的真实判定以老浏览器（test:local / 手动）为准。
 - Firefox 140 曾出现"进程起来但不开 URL"的问题，已由 Firefox preset 中更完整的 user.js prefs 解决（禁书签恢复/更新/遥测等），52/91/140 实测均正常。
 - **MiniBrowser 系（webkit602~607，Safari 10.0~12.1）启动超时未解决**：进程起来但不加载 URL，test:local 里会记为该浏览器的失败并继续；Playwright 版（safari>=13.2）正常。
-- **IE 系浏览器（IETester / VirtIE / Lisect / 忽忽浏览器等）只做手动测试，不接入自动化**——不要往 local-browsers 里加它们。低版本 IE 的手动测试方式：打开带 `<meta http-equiv="X-UA-Compatible" content="IE=X">` 的测试页（test:local 生成的页面已含 `IE=edge`，手动复刻一份改 meta 即可）。
+- IE 用 Edge IE 模式自动测（`-b ie`，文档模式 5/7/8/9/10/11）；**IETester / VirtIE / Lisect / 忽忽浏览器等独立 IE 工具仍是手动测试**，不要往 local-browsers 里加它们。低版本 IE 的手动测试方式：打开带 `<meta http-equiv="X-UA-Compatible" content="IE=X">` 的测试页（test:local 生成的页面已含 `IE=edge`，手动复刻一份改 meta 即可）。
 - **legacy 线路（`conditional-legacy.js` 与各 `*-legacy/` 目录）是开发中未完成的库功能**，目前没有构建入口；不要删除，也不要当成可用功能依赖。
 - mocha/chai 测试体系已删除，**不要重新引入**；新的 node 侧测试一律走 QUnit 体系。
 - 手动开 html 测试页（2.html/3.html 等）前必须先 `pnpm install`——页面的 QUnit 走的是 `node_modules/qunitjs` 相对路径，没装依赖会 404。
 - `tests/` 下新建文件若含块注释，注意注释里不要出现 `**/`（会提前终结注释导致语法错误）。
-- 在某些 shell 包装层里，引号内的 `>` 可能被误解析成重定向——传 `>=` 参数时优先用 `=`/`==` 写法或换 shell。
+- 在某些 shell 包装层（尤其后台执行经 cmd 转发时）里，引号内的 `>` / `<` 会被误解析成重定向，`>=30` 这类参数会直接炸掉命令——优先用逐版本精确写法（`-b chrome=30 -b chrome=31 ...`）或 `=`/`==`，或换 shell。
 
 ## 判定标准
 

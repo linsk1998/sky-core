@@ -125,7 +125,7 @@ function createAssetsPlugin(contextPath, bundles) {
 			return null;
 		},
 		configureServer: function(ctx) {
-			ctx.middleWares.use(function(req, res, next) {
+			ctx.middlewares.use(function(req, res, next) {
 				if(req.url.indexOf(jsPrefix) !== 0) { return next(); }
 				var tier = req.url.slice(jsPrefix.length).split("?")[0].replace(/\.js$/, "");
 				if(bundles[tier] == null) { return next(); }
@@ -149,22 +149,31 @@ async function collectTasks(runner, options) {
 	for(var i = 0; i < families.length; i++) {
 		var family = families[i];
 		var conf = browsersLib.BROWSER_FAMILIES[family];
-		var found = await runner.scan(conf.pattern, {
-			map: function(command, version) {
+		var found;
+		if(conf.versions) {
+			// 固定版本列表的家族（如 IE 的 Edge 文档模式），不需要扫目录
+			found = conf.versions.map(function(version) {
 				return {
-					command: command,
 					version: version,
 					conf: conf,
 					family: family
 				};
-			}
-		});
+			});
+		} else {
+			found = await runner.scan(conf.pattern, {
+				map: function(command, version) {
+					return {
+						command: command,
+						version: version,
+						conf: conf,
+						family: family
+					};
+				}
+			});
+		}
 		found.forEach(function(item) {
-			// WebKit 家族：构建号 → Safari 版本，方便按 Safari 版本传参
-			if(item.conf.mapVersion) {
-				item.build = item.version;
-				item.version = item.conf.mapVersion[item.build] || item.version;
-			}
+			// 目录名带括号的（如 Playwright(16.4)）捕获结果会包含括号，剥掉
+			item.version = String(item.version).replace(/[()]/g, "");
 			if(specs && !browsersLib.matchSpecs(specs, item.family, item.conf.names, item.version)) {
 				return;
 			}
@@ -179,20 +188,20 @@ async function collectTasks(runner, options) {
 		return parseFloat(a.version) - parseFloat(b.version);
 	});
 	return tasks.map(function(item) {
-		// 映射过的版本带上构建号显示（如 "16.4(1735)"），便于区分
-		var displayVersion = item.build && item.build !== item.version
-			? item.version + "(" + item.build + ")"
-			: item.version;
 		var task = {
-			command: item.command,
 			flags: item.conf.flags ? item.conf.flags(item.command) : [],
 			url: "http://" + DEFAULT_HOST + ":" + options.port + "/sky-core/" + TEST_PAGE +
-				"?b=" + encodeURIComponent(item.conf.label + "-" + displayVersion),
+				"?b=" + encodeURIComponent(item.conf.label + "-" + item.version) +
+				(item.conf.emulateIE ? "&ie=" + item.version : ""),
 			browser: item.conf.label,
-			version: displayVersion,
+			version: item.version,
 			timeout: options.timeout
 		};
-		// preset 的 command 会被上面的绝对路径覆盖，flags 会与 preset 的合并
+		// 扫描型家族传绝对路径 exe（覆盖 preset 的 command）；
+		// 固定列表家族（IE）不传 command，完全交给 preset
+		if(item.command) {
+			task.command = item.command;
+		}
 		if(item.conf.preset) {
 			task.preset = item.conf.preset;
 		}
@@ -240,31 +249,52 @@ async function main() {
 	var server;
 	try {
 		await checkPortFree(options.port);
-		// 禁缓存响应头（no-store 等）是 local-test-runner 的默认行为，无需配置
+		// 禁缓存响应头（no-store 等）是 local-test-runner 的默认行为，无需配置；
+		// EmulateIE 只在 URL 带 ?ie= 参数时注入 meta，对其他浏览器无影响
 		server = await runner.serve({
 			port: options.port,
 			host: DEFAULT_HOST,
 			root: process.cwd(),
 			contextPath: "/sky-core/",
-			plugins: [assetsPlugin, runner.QUnit]
+			plugins: [assetsPlugin, runner.QUnit, runner.EmulateIE]
 		});
 	} catch(err) {
 		console.error("服务器启动失败：" + (err && err.message || err));
 		process.exit(1);
 	}
 
-	// runQueue：单个浏览器失败/超时不中断队列，结果为 allSettled 格式
+	// 执行策略：同一家族串行（runQueue），不同家族并行（Promise.allSettled），
+	// 大矩阵时总耗时约等于最慢家族的串行总时长
+	var labels = [];
+	var groups = {};
+	tasks.forEach(function(task) {
+		if(!groups[task.browser]) {
+			groups[task.browser] = [];
+			labels.push(task.browser);
+		}
+		groups[task.browser].push(task);
+	});
 	var results;
 	try {
-		results = await runner.runQueue(tasks);
+		results = await Promise.allSettled(labels.map(function(label) {
+			console.log("并行组 [" + label + "]：" + groups[label].length + " 个浏览器");
+			return runner.runQueue(groups[label]);
+		}));
 	} finally {
 		server.close();
 		console.log("服务器已关闭。");
 	}
 
+	// report/judge 支持嵌套 allSettled 结果的递归扁平化；
+	// 任务按组顺序拼接，与扁平化后的结果一一对应
+	var orderedTasks = [];
+	labels.forEach(function(label) {
+		orderedTasks = orderedTasks.concat(groups[label]);
+	});
+
 	// report：逐浏览器明细（含失败断言）+ 总计；judge：整体裁断
 	console.log("");
-	runner.report(results, tasks);
+	runner.report(results, orderedTasks);
 	var ok = runner.judge(results);
 	console.log(ok ? "判定：通过" : "判定：未通过");
 

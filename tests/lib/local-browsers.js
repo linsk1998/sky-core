@@ -5,31 +5,15 @@
  * Chrome / Firefox 的启动参数（临时 profile、防缓存、禁更新等）由
  * local-test-runner 对应的 preset 提供；其余家族直接以 exe + URL 启动。
  *
- * WebKit 家族（webkit / webkitmini）目录名只含构建号，这里维护构建号 →
- * Safari 版本的映射表。-b 不提供 webkit/webkitmini 匹配名，
- * 两者只通过 safari 版本来选：
- *   -b safari=16.4        → WebKit_1735（Playwright 版）
- *   -b safari>=13.2       → 仅 Playwright 版（Mini 是 10.0~12.1）
- *   -b safari=12.1        → 仅 MiniBrowser 版
+ * WebKit 家族的目录名直接带 Safari 版本：MiniBrowser(10.0~12.1) 与
+ * Playwright(13.2+)，无需维护映射表。-b 不提供 webkit/webkitmini 匹配名，
+ * 两者只通过 safari 版本来选（版本区间天然区分两种实现）。
  *
- * IE 系列（IETester / VirtIE6 / LisectIE / 忽忽浏览器 / IE11-mshta）只做手动测试，
- * 不接入自动化；需要时在 BROWSER_FAMILIES 里补充 pattern（及 preset/flags）即可。
+ * IE 家族用 Edge 的 IE 模式模拟文档模式（ie=5/7/8/9/10/11）：
+ * EdgeIEMode preset 启动 msedge --ie-mode-test，EmulateIE 插件按 ?ie=X 注入
+ * X-UA-Compatible，条件注释按目标模式求值（ie<9 走 compat 产物，ie>=9 走 modern）。
+ * IETester / VirtIE / Lisect / 忽忽浏览器等独立 IE 工具仍是手动测试。
  */
-
-/** WebKit 构建号 → Safari 版本（对应关系来自快捷方式的命名） */
-var WEBKIT_VERSION_MAP = {
-	"602": "10.0",
-	"603": "10.1",
-	"605": "11.0",
-	"607": "12.1",
-	"1269": "13.2",
-	"1446": "14.2",
-	"1564": "15.4",
-	"1735": "16.4",
-	"1921": "17.4",
-	"2182": "18.5",
-	"2311": "26.5"
-};
 
 var BROWSER_FAMILIES = {
 	chrome: {
@@ -56,15 +40,22 @@ var BROWSER_FAMILIES = {
 	},
 	webkit: {
 		label: "WebKit",
-		pattern: "D:/App/Browser/Safari/WebKit_*/Playwright.exe",
-		names: ["safari"],
-		mapVersion: WEBKIT_VERSION_MAP
+		pattern: "D:/App/Browser/Safari/Playwright(*)/Playwright.exe",
+		names: ["safari"]
 	},
 	webkitmini: {
 		label: "WebKitMini",
-		pattern: "D:/App/Browser/Safari/webkit*/MiniBrowser.exe",
-		names: ["safari"],
-		mapVersion: WEBKIT_VERSION_MAP
+		pattern: "D:/App/Browser/Safari/MiniBrowser(*)/MiniBrowser.exe",
+		names: ["safari"]
+	},
+	ie: {
+		label: "IE",
+		names: ["ie"],
+		// Edge IE 模式（EdgeIEMode preset + EmulateIE 插件按 ?ie=X 注入 meta），
+		// 不扫目录：版本就是可模拟的 IE 文档模式
+		versions: ["5", "7", "8", "9", "10", "11"],
+		preset: "EdgeIEMode",
+		emulateIE: true
 	}
 };
 
