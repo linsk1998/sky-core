@@ -92,25 +92,28 @@ link 会把 `link:` 路径写进 package.json 的 devDependencies（临时状态
 | core-js 移植 | `tests/corejs/` | `es.math.sum-precise.js`（core-js 原名） |
 | MDN 示例 | `tests/mdn/` | `Math.sumPrecise.js`（MDN 页面名） |
 
-### 第二步：判断特性类型，决定测试命令
+### 第二步：判断特性类型，注册注入配置，运行测试
 
-**纯算法类**（不依赖浏览器 DOM/引擎特性，如 Math.sumPrecise）——node 快速验证：
+**纯算法类**（不依赖浏览器 DOM/引擎特性）：
 
 ```bash
+# 1. 在 tests/impl-inject.js 里登记注入映射（如 "Math.sumPrecise": "sky-core/impl/Math/sumPrecise"）
+# 2. 跑 node 测试
 npm run test:node es.math.sum          # core-js 移植版
 npm run test:node Math.sumPrecise      # MDN 示例版
+# 3. 通过后加进 tests/default-test-globs.js 的 node 数组（逐文件维护）
 ```
-
-通过后加进 `tests/default-test-globs.js` 的 `node` 数组（逐文件维护）。
 
 **无论是否纯算法，都需要浏览器测试**（polyfill 必须跨浏览器验证）：
 
 ```bash
+# 1. 在 tests/conditional-*.js 里登记注入映射（三套按目标浏览器各自取舍）
+# 2. 跑浏览器测试
 npm run test:local es.math.sum         # core-js 移植版
 npm run test:local Math.sumPrecise     # MDN 示例版
 ```
 
-polyfill 类测试放 `tests/corejs/es/`（被 `local` 数组 glob 自动纳入）；要让劫持生效，在 `tests/conditional-*.js` 的 polluting/pure 映射里登记。
+polyfill 类测试放 `tests/corejs/es/`（被 `local` 数组 glob 自动纳入）。
 
 ### 第三步：选择浏览器范围（AI 自主决策）
 
