@@ -1,5 +1,5 @@
 
-import { WeakMap } from "./WeakMap";
+import { WeakMap } from "../WeakMap/WeakMap";
 
 function WeakSet() {
 	this.map = new WeakMap();

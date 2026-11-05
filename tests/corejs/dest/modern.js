@@ -3287,14 +3287,14 @@
 	  clazz.prototype.constructor = clazz;
 	}
 
-	function fixSymbol$1(BugWeakMap) {
+	function fix_WeakMap$symbol(GWeakMap) {
 	  function WeakMap() {
-	    var m = new BugWeakMap(arguments[0]);
+	    var m = new GWeakMap(arguments[0]);
 	    Object.setPrototypeOf(m, Object.getPrototypeOf(this));
 	    return m;
 	  }
-	  inherits(WeakMap, BugWeakMap);
-	  var s = BugWeakMap.prototype.set;
+	  inherits(WeakMap, GWeakMap);
+	  var s = GWeakMap.prototype.set;
 	  WeakMap.prototype.set = function set(k, v) {
 	    if (typeof k === "symbol") {
 	      this[k] = v;
@@ -3303,7 +3303,7 @@
 	      return s.apply(this, arguments);
 	    }
 	  };
-	  var g = BugWeakMap.prototype.get;
+	  var g = GWeakMap.prototype.get;
 	  WeakMap.prototype.get = function get(k) {
 	    if (typeof k === "symbol") {
 	      return this[k];
@@ -3311,7 +3311,7 @@
 	      return g.apply(this, arguments);
 	    }
 	  };
-	  var h = BugWeakMap.prototype.has;
+	  var h = GWeakMap.prototype.has;
 	  WeakMap.prototype.has = function has(k) {
 	    if (typeof k === "symbol") {
 	      return k in this;
@@ -3319,7 +3319,7 @@
 	      return h.apply(this, arguments);
 	    }
 	  };
-	  var d = BugWeakMap.prototype["delete"];
+	  var d = GWeakMap.prototype["delete"];
 	  WeakMap.prototype["delete"] = function (k, v) {
 	    if (typeof k === "symbol") {
 	      if (k in this) {
@@ -3340,7 +3340,7 @@
 	    try {
 	      wm.set(Symbol$8(), 1);
 	    } catch (e) {
-	      window.WeakMap = fixSymbol$1(WeakMap$2);
+	      window.WeakMap = fix_WeakMap$symbol(WeakMap$2);
 	    }
 	  } else {
 	    if (wm.set({}, 0) !== wm) {
@@ -3591,7 +3591,7 @@
 	var WeakSet$2 = window.WeakSet;
 
 	function WeakSet$1() {
-	  this.map = new WeakMap();
+	  this.map = new WeakMap$1();
 	  if (arguments.length) {
 	    var iterable = arguments[0];
 	    var entries = iterable[iterator$1];
@@ -3633,14 +3633,14 @@
 	  };
 	}
 
-	function fixSymbol(BugWeakSet) {
+	function fix_WeakSet$symbol(GWeakSet) {
 	  function WeakSet() {
-	    var m = new BugWeakSet(arguments[0]);
+	    var m = new GWeakSet(arguments[0]);
 	    Object.setPrototypeOf(m, Object.getPrototypeOf(this));
 	    return m;
 	  }
-	  inherits(WeakSet, BugWeakSet);
-	  var a = BugWeakSet.prototype.add;
+	  inherits(WeakSet, GWeakSet);
+	  var a = GWeakSet.prototype.add;
 	  WeakSet.prototype.add = function add(v) {
 	    if (typeof v === "symbol") {
 	      this[v] = v;
@@ -3649,7 +3649,7 @@
 	      return a.apply(this, arguments);
 	    }
 	  };
-	  var h = BugWeakSet.prototype.has;
+	  var h = GWeakSet.prototype.has;
 	  WeakSet.prototype.has = function has(v) {
 	    if (typeof v === "symbol") {
 	      return v in this;
@@ -3657,7 +3657,7 @@
 	      return h.apply(this, arguments);
 	    }
 	  };
-	  var d = BugWeakSet.prototype["delete"];
+	  var d = GWeakSet.prototype["delete"];
 	  WeakSet.prototype["delete"] = function (v) {
 	    if (typeof v === "symbol") {
 	      if (v in this) {
@@ -3678,7 +3678,7 @@
 	    try {
 	      ws.add(Symbol$8());
 	    } catch (e) {
-	      window.WeakSet = fixSymbol(WeakSet$2);
+	      window.WeakSet = fix_WeakSet$symbol(WeakSet$2);
 	    }
 	  } else {
 	    if (ws.add({}) !== ws) {
@@ -3802,31 +3802,6 @@
 
 	var Map$2 = window.Map;
 
-	function entries$2() {
-	  var array = this;
-	  var index = 0;
-	  return {
-	    next: function () {
-	      var value;
-	      var done = array.length <= index;
-	      if (!done) {
-	        value = [index, array[index]];
-	        index++;
-	      }
-	      return {
-	        done: done,
-	        value: value
-	      };
-	    },
-	    '@@iterator': function () {
-	      return this;
-	    },
-	    '@@toStringTag': 'Array Iterator'
-	  };
-	}
-
-	definePrototype(Array, 'entries', entries$2);
-
 	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
 	var mapConstructorIteratorReturn = false;
 	function checkMapSupportConstructorIteratorReturn() {
@@ -3852,21 +3827,11 @@
 	  };
 	  return mapConstructorIteratorReturn;
 	}
-	function createAndFixSubMap() {
-	  var Map = createSubMap();
-	  var map = new Map();
-	  // V8 ~ Chromium 42- fails only with 5+ elements
-	  var i = 5;
-	  while (i--) map.set(i, 0);
-	  if (!map.has(-0)) {
-	    fixN0$1(Map);
-	  }
-	  return Map;
-	}
-	function createSubMap() {
+
+	function fix_Map$arg(GMap) {
 	  function Map() {
 	    var arr = arguments[0];
-	    var map = new Map$2();
+	    var map = new GMap();
 	    Object.setPrototypeOf(map, Object.getPrototypeOf(this));
 	    if (arr) {
 	      var _iterator = createIteratorHelper(arr),
@@ -3886,12 +3851,97 @@
 	    }
 	    return map;
 	  }
-	  Object.setPrototypeOf(Map, Map$2);
-	  Map.prototype = Object.create(Map$2.prototype);
+	  Object.setPrototypeOf(Map, GMap);
+	  Map.prototype = Object.create(GMap.prototype);
 	  return Map;
 	}
-	function fixMap() {
-	  var Map = createSubMap();
+
+	function fixN0$1(Map) {
+	  var prototype = Map.prototype;
+	  var s = prototype.set;
+	  var d = prototype["delete"];
+	  var g = prototype.get;
+	  var h = prototype.has;
+	  prototype.set = function set(k, v) {
+	    if (k === 0) {
+	      s.call(this, 0, v);
+	    } else {
+	      s.apply(this, arguments);
+	    }
+	    return this;
+	  };
+	  prototype["delete"] = function (k, v) {
+	    if (k === 0) {
+	      return d.call(this, 0, v);
+	    } else {
+	      return d.apply(this, arguments);
+	    }
+	  };
+	  prototype.get = function get(k) {
+	    if (k === 0) {
+	      return g.call(this, 0);
+	    } else {
+	      return g.apply(this, arguments);
+	    }
+	  };
+	  prototype.has = function has(k) {
+	    if (k === 0) {
+	      return h.call(this, 0);
+	    } else {
+	      return h.apply(this, arguments);
+	    }
+	  };
+	}
+
+	function fix_Map$v8(GMap) {
+	  var Map = fix_Map$arg(GMap);
+	  var map = new Map();
+	  // V8 ~ Chromium 42- fails only with 5+ elements
+	  var i = 5;
+	  while (i--) map.set(i, 0);
+	  if (!map.has(-0)) {
+	    fixN0$1(Map);
+	  }
+	  return Map;
+	}
+
+	function entries$2() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = [index, array[index]];
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	definePrototype(Array, 'entries', entries$2);
+
+	function fixChain$1(Map) {
+	  var prototype = Map.prototype;
+	  var s = prototype.set;
+	  var d = prototype["delete"];
+	  prototype.set = function set(k, v) {
+	    s.apply(this, arguments);
+	    return this;
+	  };
+	}
+
+	function fix_Map() {
+	  var Map = fix_Map$arg(Map$2);
 	  var prototype = Map.prototype;
 	  var m = new Map$2();
 	  if (m.size !== 0) {
@@ -3958,51 +4008,6 @@
 	  }
 	  return Map;
 	}
-	function fixChain$1(Map) {
-	  var prototype = Map.prototype;
-	  var s = prototype.set;
-	  var d = prototype["delete"];
-	  prototype.set = function set(k, v) {
-	    s.apply(this, arguments);
-	    return this;
-	  };
-	}
-	function fixN0$1(Map) {
-	  var prototype = Map.prototype;
-	  var s = prototype.set;
-	  var d = prototype["delete"];
-	  var g = prototype.get;
-	  var h = prototype.has;
-	  prototype.set = function set(k, v) {
-	    if (k === 0) {
-	      s.call(this, 0, v);
-	    } else {
-	      s.apply(this, arguments);
-	    }
-	    return this;
-	  };
-	  prototype["delete"] = function (k, v) {
-	    if (k === 0) {
-	      return d.call(this, 0, v);
-	    } else {
-	      return d.apply(this, arguments);
-	    }
-	  };
-	  prototype.get = function get(k) {
-	    if (k === 0) {
-	      return g.call(this, 0);
-	    } else {
-	      return g.apply(this, arguments);
-	    }
-	  };
-	  prototype.has = function has(k) {
-	    if (k === 0) {
-	      return h.call(this, 0);
-	    } else {
-	      return h.apply(this, arguments);
-	    }
-	  };
-	}
 	function getKey$1(item) {
 	  return item[0];
 	}
@@ -4012,7 +4017,7 @@
 
 	var isNaN$1 = Number.isNaN || isNaN$2;
 
-	function createMap() {
+	function create_Map() {
 	  function Map() {
 	    var arr = arguments[0];
 	    this.size = 0;
@@ -4248,7 +4253,7 @@
 	if (Symbol$8) {
 	  if (Symbol$8.iterator) {
 	    if (!checkMapSupportConstructorIteratorReturn()) {
-	      window.Map = createAndFixSubMap();
+	      window.Map = fix_Map$v8(Map$2);
 	    }
 	  } else {
 	    // Safari8 支持entries
@@ -4259,9 +4264,9 @@
 	  }
 	} else {
 	  if (Map$2 && (Map$2.prototype.iterator || Map$2.prototype['@@iterator'])) {
-	    window.Map = fixMap();
+	    window.Map = fix_Map();
 	  } else {
-	    window.Map = createMap();
+	    window.Map = create_Map();
 	  }
 	}
 
@@ -4761,21 +4766,11 @@
 	  };
 	  return setConstructorIteratorReturn;
 	}
-	function createAndFixSubSet() {
-	  var Set = createSubSet();
-	  var set = new Set();
-	  // V8 ~ Chromium 42- fails only with 5+ elements
-	  var i = 5;
-	  while (i--) set.add(i);
-	  if (!set.has(-0)) {
-	    fixN0(Set);
-	  }
-	  return Set;
-	}
-	function createSubSet() {
+
+	function fix_Set$arg(GSet) {
 	  function Set() {
 	    var arr = arguments[0];
-	    var set = new Set$1();
+	    var set = new GSet();
 	    Object.setPrototypeOf(set, Object.getPrototypeOf(this));
 	    if (arr) {
 	      var _iterator = createIteratorHelper(arr),
@@ -4795,12 +4790,64 @@
 	    }
 	    return set;
 	  }
-	  Object.setPrototypeOf(Set, Set$1);
-	  Set.prototype = Object.create(Set$1.prototype);
+	  Object.setPrototypeOf(Set, GSet);
+	  Set.prototype = Object.create(GSet.prototype);
 	  return Set;
 	}
-	function fixSet() {
-	  var Set = createSubSet();
+
+	function fixN0(Set) {
+	  var prototype = Set.prototype;
+	  var a = prototype.add;
+	  var d = prototype["delete"];
+	  var h = prototype.has;
+	  prototype.add = function add(v) {
+	    if (v === 0) {
+	      a.call(this, 0);
+	    } else {
+	      a.apply(this, arguments);
+	    }
+	    return this;
+	  };
+	  prototype["delete"] = function (v) {
+	    if (v === 0) {
+	      return d.call(this, 0, v);
+	    } else {
+	      return d.apply(this, arguments);
+	    }
+	  };
+	  prototype.has = function has(v) {
+	    if (v === 0) {
+	      return h.call(this, 0);
+	    } else {
+	      return h.apply(this, arguments);
+	    }
+	  };
+	}
+
+	function fix_Set$v8(GSet) {
+	  var Set = fix_Set$arg(GSet);
+	  var set = new Set();
+	  // V8 ~ Chromium 42- fails only with 5+ elements
+	  var i = 5;
+	  while (i--) set.add(i);
+	  if (!set.has(-0)) {
+	    fixN0(Set);
+	  }
+	  return Set;
+	}
+
+	function fixChain(Set) {
+	  var prototype = Set.prototype;
+	  var a = prototype.add;
+	  var d = prototype["delete"];
+	  prototype.add = function add(v) {
+	    a.apply(this, arguments);
+	    return this;
+	  };
+	}
+
+	function fix_Set() {
+	  var Set = fix_Set$arg(Set$1);
 	  var s = new Set$1();
 	  if (s.size !== 0) {
 	    // firefox 18-
@@ -4863,48 +4910,11 @@
 	  return Set;
 	}
 	;
-	function fixChain(Set) {
-	  var prototype = Set.prototype;
-	  var a = prototype.add;
-	  var d = prototype["delete"];
-	  prototype.add = function add(v) {
-	    a.apply(this, arguments);
-	    return this;
-	  };
-	}
-	function fixN0(Set) {
-	  var prototype = Set.prototype;
-	  var a = prototype.add;
-	  var d = prototype["delete"];
-	  var h = prototype.has;
-	  prototype.add = function add(v) {
-	    if (v === 0) {
-	      a.call(this, 0);
-	    } else {
-	      a.apply(this, arguments);
-	    }
-	    return this;
-	  };
-	  prototype["delete"] = function (v) {
-	    if (v === 0) {
-	      return d.call(this, 0, v);
-	    } else {
-	      return d.apply(this, arguments);
-	    }
-	  };
-	  prototype.has = function has(v) {
-	    if (v === 0) {
-	      return h.call(this, 0);
-	    } else {
-	      return h.apply(this, arguments);
-	    }
-	  };
-	}
 	function getValueX2(item) {
 	  return [item, item];
 	}
 
-	function createSet() {
+	function create_Set() {
 	  function Set() {
 	    var arr = arguments[0];
 	    this.size = 0;
@@ -4956,7 +4966,7 @@
 	if (Symbol$8) {
 	  if (Symbol$8.iterator) {
 	    if (!checkSetSupportConstructorIteratorReturn()) {
-	      window.Set = createAndFixSubSet();
+	      window.Set = fix_Set$v8(Set$1);
 	    }
 	  } else {
 	    // Safari8 支持values
@@ -4967,9 +4977,9 @@
 	  }
 	} else {
 	  if (Set$1 && (Set$1.prototype.iterator || Set$1.prototype['@@iterator'])) {
-	    window.Set = fixSet();
+	    window.Set = fix_Set();
 	  } else {
-	    window.Set = createSet();
+	    window.Set = create_Set();
 	  }
 	}
 

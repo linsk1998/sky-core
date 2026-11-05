@@ -1,4 +1,4 @@
-import { Array } from "../native/Array";
+import { Array } from "../../native/Array";
 
 
 // 只有原生支持Symbol.iterator的情况下才会调用这个函数

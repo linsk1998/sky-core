@@ -3573,7 +3573,7 @@
 	// });
 
 	function WeakSet$1() {
-	  this.map = new WeakMap();
+	  this.map = new WeakMap$1();
 	  if (arguments.length) {
 	    var iterable = arguments[0];
 	    var entries = iterable[iterator$1];
@@ -3722,7 +3722,7 @@
 
 	var Map$2 = window.Map;
 
-	function createMap() {
+	function create_Map() {
 	  function Map() {
 	    var arr = arguments[0];
 	    this.size = 0;
@@ -3956,7 +3956,7 @@
 	;
 
 	if (!Map$2) {
-	  window.Map = createMap();
+	  window.Map = create_Map();
 	}
 
 	function keys$1() {
@@ -4455,7 +4455,7 @@
 
 	var Set$1 = window.Set;
 
-	function createSet() {
+	function create_Set() {
 	  function Set() {
 	    var arr = arguments[0];
 	    this.size = 0;
@@ -4505,7 +4505,7 @@
 	;
 
 	if (!Set$1) {
-	  window.Set = createSet();
+	  window.Set = create_Set();
 	}
 
 	var _ref$1 = GLOBAL.Reflect || {},

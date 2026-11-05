@@ -99,7 +99,13 @@ function pageHtml() {
 		'\t<script src="../../../node_modules/qunitjs/qunit/qunit.js"></script>',
 		'\t<!--[if lt IE 9]><script src="./compat.js"></script><![endif]-->',
 		'\t<!--[if gte IE 9]><!-->',
-		'\t<script src="./modern.js" nomodule></script>',
+		'\t<script nomodule>',
+		'\tif(document.onmouseenter) {',
+		'\t\tdocument.write(\'<script src="./modern.js"><\\/script>\');',
+		'\t} else {',
+		'\t\tdocument.write(\'<script src="./legacy.js"><\\/script>\');',
+		'\t}',
+		'\t</script>',
 		'\t<script src="./es2015.js" type="module"></script>',
 		'\t<!--><![endif]-->',
 		'</body>',
@@ -234,8 +240,8 @@ async function main() {
 	var files = selectTests.resolveTestFiles(options.patterns, undefined, "local");
 	console.log("本机浏览器测试：共 " + files.length + " 个测试文件");
 
-	console.log("rollup 编译 compat / modern / es2015（内存产物，不落盘）...");
-	var bundles = await buildTests.buildLocalBundlesInMemory(["compat", "modern", "es2015"], files);
+	console.log("rollup 编译 compat / legacy / modern / es2015（内存产物，不落盘）...");
+	var bundles = await buildTests.buildLocalBundlesInMemory(["compat", "legacy", "modern", "es2015"], files);
 	var assetsPlugin = createAssetsPlugin("/sky-core/", bundles);
 
 	var tasks = await collectTasks(runner, options);

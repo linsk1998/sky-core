@@ -2596,14 +2596,14 @@ return class extends Parent { /* empty */ };
 
 	var inherits = proto ? inherits$1 : inherits$2;
 
-	function fixSymbol$1(BugWeakMap) {
+	function fix_WeakMap$symbol(GWeakMap) {
 		function WeakMap() {
-			var m = new BugWeakMap(arguments[0]);
+			var m = new GWeakMap(arguments[0]);
 			Object.setPrototypeOf(m, Object.getPrototypeOf(this));
 			return m;
 		}
-		inherits(WeakMap, BugWeakMap);
-		var s = BugWeakMap.prototype.set;
+		inherits(WeakMap, GWeakMap);
+		var s = GWeakMap.prototype.set;
 		WeakMap.prototype.set = function set(k, v) {
 			if(typeof k === "symbol") {
 				this[k] = v;
@@ -2612,7 +2612,7 @@ return class extends Parent { /* empty */ };
 				return s.apply(this, arguments);
 			}
 		};
-		var g = BugWeakMap.prototype.get;
+		var g = GWeakMap.prototype.get;
 		WeakMap.prototype.get = function get(k) {
 			if(typeof k === "symbol") {
 				return this[k];
@@ -2620,7 +2620,7 @@ return class extends Parent { /* empty */ };
 				return g.apply(this, arguments);
 			}
 		};
-		var h = BugWeakMap.prototype.has;
+		var h = GWeakMap.prototype.has;
 		WeakMap.prototype.has = function has(k) {
 			if(typeof k === "symbol") {
 				return k in this;
@@ -2628,7 +2628,7 @@ return class extends Parent { /* empty */ };
 				return h.apply(this, arguments);
 			}
 		};
-		var d = BugWeakMap.prototype.delete;
+		var d = GWeakMap.prototype.delete;
 		WeakMap.prototype.delete = function(k, v) {
 			if(typeof k === "symbol") {
 				if(k in this) {
@@ -2647,7 +2647,7 @@ return class extends Parent { /* empty */ };
 	try {
 		wm.set(Symbol$6(), 1);
 	} catch(e) {
-		window.WeakMap = fixSymbol$1(WeakMap$1);
+		window.WeakMap = fix_WeakMap$symbol(WeakMap$1);
 	}
 
 	var descs = Object.create(null);
@@ -2856,14 +2856,14 @@ return class extends Parent { /* empty */ };
 
 	var WeakSet$1 = window.WeakSet;
 
-	function fixSymbol(BugWeakSet) {
+	function fix_WeakSet$symbol(GWeakSet) {
 		function WeakSet() {
-			var m = new BugWeakSet(arguments[0]);
+			var m = new GWeakSet(arguments[0]);
 			Object.setPrototypeOf(m, Object.getPrototypeOf(this));
 			return m;
 		}
-		inherits(WeakSet, BugWeakSet);
-		var a = BugWeakSet.prototype.add;
+		inherits(WeakSet, GWeakSet);
+		var a = GWeakSet.prototype.add;
 		WeakSet.prototype.add = function add(v) {
 			if(typeof v === "symbol") {
 				this[v] = v;
@@ -2872,7 +2872,7 @@ return class extends Parent { /* empty */ };
 				return a.apply(this, arguments);
 			}
 		};
-		var h = BugWeakSet.prototype.has;
+		var h = GWeakSet.prototype.has;
 		WeakSet.prototype.has = function has(v) {
 			if(typeof v === "symbol") {
 				return v in this;
@@ -2880,7 +2880,7 @@ return class extends Parent { /* empty */ };
 				return h.apply(this, arguments);
 			}
 		};
-		var d = BugWeakSet.prototype.delete;
+		var d = GWeakSet.prototype.delete;
 		WeakSet.prototype.delete = function(v) {
 			if(typeof v === "symbol") {
 				if(v in this) {
@@ -2897,9 +2897,9 @@ return class extends Parent { /* empty */ };
 
 	var ws = new WeakSet$1();
 	try {
-		ws.set(Symbol$6(), 1);
+		ws.add(Symbol$6());
 	} catch(e) {
-		window.WeakSet = fixSymbol(WeakSet$1);
+		window.WeakSet = fix_WeakSet$symbol(WeakSet$1);
 	}
 
 	const {

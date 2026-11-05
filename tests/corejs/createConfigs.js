@@ -147,12 +147,14 @@ var ES2015_MAIN_PLUGINS = [
 
 var TIER_BABEL = {
 	compat: { main: COMPAT_MAIN_PLUGINS, tail: COMPAT_TAIL_PLUGINS },
+	legacy: { main: COMPAT_MAIN_PLUGINS, tail: COMPAT_TAIL_PLUGINS },
 	modern: { main: MODERN_MAIN_PLUGINS, tail: MODERN_TAIL_PLUGINS },
 	es2015: { main: ES2015_MAIN_PLUGINS }
 };
 
 var DEFAULT_OUTPUT_FILES = {
 	compat: "tests/corejs/dest/compat.js",
+	legacy: "tests/corejs/dest/legacy.js",
 	modern: "tests/corejs/dest/modern.js",
 	es2015: "tests/corejs/dest/es2015.js"
 };
@@ -182,7 +184,7 @@ function createBabelPlugins(tier) {
 }
 
 /**
- * @param {"compat"|"modern"|"es2015"} tier
+ * @param {"compat"|"legacy"|"modern"|"es2015"} tier
  * @param {object} [options]
  * @param {string}  [options.entry="tests/corejs/index.js"]
  * @param {Array}   [options.plugins] 追加到最前面的插件（如虚拟入口）
@@ -222,9 +224,9 @@ function createConfig(tier, options) {
 	};
 }
 
-/** 三套配置（rollup CLI 默认行为） */
+/** 四套配置（rollup CLI 默认行为） */
 function createConfigs(options) {
-	return ["compat", "modern", "es2015"].map(function(tier) {
+	return ["compat", "legacy", "modern", "es2015"].map(function(tier) {
 		return toRollupCliConfig(createConfig(tier, options));
 	});
 }

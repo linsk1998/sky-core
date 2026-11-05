@@ -1,4 +1,4 @@
-import { Object } from "../../native/Object/Object";
+import { Object } from "../../native/Object";
 import { defineProperty } from "../../native/Object/defineProperty";
 import { hasV8DefineBug } from "../../support/hasV8DefineBug";
 import { defineProperty$ff } from "../../impl/object/accessor/defineProperty$ff";

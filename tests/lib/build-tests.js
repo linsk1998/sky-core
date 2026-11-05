@@ -72,7 +72,7 @@ async function buildNodeBundle(files) {
 }
 
 /**
- * 本机浏览器测试构建：只产内存字符串（{ compat, modern, es2015 }），
+ * 本机浏览器测试构建：只产内存字符串（{ compat, legacy, modern, es2015 }），
  * 不写任何文件；由 local-test-runner 插件的 loadHtml / configureServer
  * 直接对外服务。插件链（含 babel）与 npm run test:corejs 完全相同。
  */
