@@ -40,9 +40,9 @@ sky-core 是一个浏览器 polyfill 库（core-js 风格）。源码按"分层"
 npm run test:node                                    # 默认范围（纯算法数组）
 npm run test:node -- es.math.sum                     # 裸名匹配（支持前缀/后缀/通配）
 npm run test:node -- "tests/corejs/es/*.js"          # 相对根目录的 glob（支持 * / ** / ?）
-npm run test:node -- --tier=compat                   # 指定构建分层，默认 modern
-npm run test:node -- --tier=compat,modern,es2015     # 多 tier 时自动逐个开子进程跑
 ```
+
+注入配置来自 `tests/impl-inject.js`（与 `conditional-*.js` 同款机制，但无 tier 分层，直接映射到 `impl/` 算法实现）。新功能在此登记后测试代码即可用裸名引用。
 
 工作原理（不要改变的行为约定）：
 
@@ -78,23 +78,59 @@ link 会把 `link:` 路径写进 package.json 的 devDependencies（临时状态
 
 ## 如何新增测试
 
-测试目录按**来源**划分，不按功能划分：
+### 第一步：找参考
 
-- **从 core-js 移植的** → `tests/corejs/`（polyfill 测试放 `es/`，纯函数测试放 `pure/`）
-- **参考 MDN 示例移植的** → `tests/mdn/`（文件名用 MDN 页面名，如 `Math.sumPrecise.js`）
+从 **core-js** 和 **MDN** 找测试参考：
 
-**纯算法类**（不依赖浏览器，进 `npm run test:node` 默认范围）：
+- core-js 仓库：`tests/tests/es.math.sum-precise.js`（polyfill 测试）、`tests/unit-pure/`（纯函数测试）
+- MDN 文档：[Math.sumPrecise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sumPrecise) 等页面的"Try it"和示例代码
 
-1. 测试写进上述目录（参考 `tests/corejs/pure/es.math.sum-precise.js` 或 `tests/mdn/Math.sumPrecise.js`），QUnit 风格、import 项目模块；
-2. **把文件路径加进 `tests/default-test-globs.js` 的 `node` 数组**（逐文件维护，不用通配）。
+两个来源各移植一份，放不同目录：
 
-**polyfill 类**（需要跨浏览器验证）：
+| 来源 | 目录 | 文件命名 |
+|---|---|---|
+| core-js 移植 | `tests/corejs/` | `es.math.sum-precise.js`（core-js 原名） |
+| MDN 示例 | `tests/mdn/` | `Math.sumPrecise.js`（MDN 页面名） |
 
-1. 从 core-js 移植到 `tests/corejs/es/`（会被 `local` 数组的 glob 自动纳入 test:local）；
-2. 若想出现在 test:corejs 构建的手动测试页里，往 `tests/corejs/index.js` 加一行 import；
-3. 新 polyfill 若要让劫持生效，在 `tests/conditional-*.js` 的 polluting/pure 映射里登记（三套按目标浏览器各自取舍）。
+### 第二步：判断特性类型，决定测试命令
 
-写断言用 `tests/corejs/helpers/qunit-helpers.js` 扩展过的方法（`arity/name/same/arrayEqual/epsilon/looksNative...`），helpers 位于 `tests/corejs/helpers/`，**它们被注入插件排除在外**（不会被劫持）。
+**纯算法类**（不依赖浏览器 DOM/引擎特性，如 Math.sumPrecise）——node 快速验证：
+
+```bash
+npm run test:node es.math.sum          # core-js 移植版
+npm run test:node Math.sumPrecise      # MDN 示例版
+```
+
+通过后加进 `tests/default-test-globs.js` 的 `node` 数组（逐文件维护）。
+
+**无论是否纯算法，都需要浏览器测试**（polyfill 必须跨浏览器验证）：
+
+```bash
+npm run test:local es.math.sum         # core-js 移植版
+npm run test:local Math.sumPrecise     # MDN 示例版
+```
+
+polyfill 类测试放 `tests/corejs/es/`（被 `local` 数组 glob 自动纳入）；要让劫持生效，在 `tests/conditional-*.js` 的 polluting/pure 映射里登记。
+
+### 第三步：选择浏览器范围（AI 自主决策）
+
+**不要每次都跑全量 70 浏览器**。根据改动情况自行决定要测的版本：
+
+| 改动情况 | 建议浏览器范围 |
+|---|---|
+| 新增 polyfill（新特性） | 一两个新旧代表：`-b chrome=146 -b firefox=91 -b ie=11` |
+| 修改了 compat 分层的代码 | 重点老浏览器：`-b ie=8 -b ie=9`（compat 只在 IE≤8 生效） |
+| 修改了 modern 分层的代码 | IE9~Chrome 60 区间：`-b ie=9 -b chrome=30 -b chrome=60` |
+| 修改了 es2015 分层的代码 | 新浏览器：`-b chrome=100 -b firefox=120 -b safari=16.4` |
+| 修改了共享 impl / utils | 按目标浏览器覆盖范围选各档代表 |
+| 只改测试文件 / helpers | 同 tier 任选一个浏览器确认即可 |
+| 发布前全量验证 | `npm run test:local`（全部浏览器，约 1 分钟） |
+
+判断依据：看 `conditional-*.js` 里这个特性登记在哪个 tier 的映射里，以及 `polyfill-*/` 目录下哪个分层有对应实现文件。改动影响哪个 tier 就重点测哪个 tier 对应的浏览器区间。
+
+### 断言写法
+
+用 `tests/corejs/helpers/qunit-helpers.js` 扩展过的方法（`arity/name/same/arrayEqual/epsilon/looksNative...`），helpers 位于 `tests/corejs/helpers/`，**它们被注入插件排除在外**（不会被劫持）。
 
 ## 关键文件地图
 
@@ -105,7 +141,7 @@ tests/
   run-local.js            # test:local 入口
   lib/
     select-tests.js       # 参数 → 文件列表（profile: node|local）
-    glob.js               # 极简 glob（* / ** / ?，支持字面量路径）
+    glob.js               # 文件匹配（tinyglobby 遍历 + picomatch 模式匹配，与 local-test-runner / rollup pluginutils 同款）
     build-tests.js        # rollup API 构建：内存产物 / 写盘 local 产物
     local-browsers.js     # 浏览器家族清单 + 范围表达式解析
   corejs/

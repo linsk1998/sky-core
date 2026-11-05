@@ -2,77 +2,53 @@
 "use strict";
 
 /**
- * 纯 node 测试（npm run test:node）：
+ * 纯 node 测试（npm run test:node）——纯算法，无 tier 分层：
  *
- *   1. 解析参数得到测试文件列表（默认 tests/default-test-globs.js）
+ *   1. 解析参数得到测试文件列表（默认 tests/default-test-globs.js 的 node 数组）
  *   2. rollup 编译为内存产物（iife 字符串，不生成任何文件），
- *      构建链路使用 @rollup/plugin-inject 同款劫持
- *      （rollup-plugin-polyfill-inject，见 tests/conditional-*.js），
- *      把对原生 API 的调用替换为 impl 里的实现
+ *      注入配置来自 tests/impl-inject.js（与 conditional-*.js 同款机制，
+ *      但直接映射到 impl/ 目录的算法实现，不走 tier 回退链）
  *   3. 在当前进程加载 qunitjs@1.9.0（npm 依赖，与浏览器页面引用同一份），
  *      执行产物并跑完 qunit，失败时输出明细并以非 0 码退出
  *
  * 用法：
- *   npm run test:node                                  # 默认范围
- *   npm run test:node -- es.array.slice                # 按名称
- *   npm run test:node -- tests/corejs/es/es.math.*.js  # 按 glob
- *   npm run test:node -- --tier=compat,modern          # 指定构建分层（默认 modern）
+ *   npm run test:node                                  # 默认范围（纯算法数组）
+ *   npm run test:node -- es.math.sum                   # 按名称匹配
+ *   npm run test:node -- tests/corejs/es/*.js          # 按 glob
  *
  * 说明：qunit 运行时用的是 qunitjs@1.9.0（devDependency），
  * 与 html 页面里引用的 node_modules/qunitjs 是同一份，保证断言语义同构。
+ * 浏览器跨端测试请用 npm run test:local（有 tier 分层）。
  */
 
 var path = require("path");
 var vm = require("vm");
-var cp = require("child_process");
 
 function usage() {
 	console.log([
-		"用法：node tests/run-node.js [测试文件...] [选项]",
+		"用法：node tests/run-node.js [测试文件...]",
 		"",
 		"测试文件：",
 		"  （缺省）           使用 tests/default-test-globs.js 中的默认范围",
 		"  es.array.slice     在默认范围内按名称匹配",
 		'  "tests/corejs/es/*.js"  相对项目根目录的 glob（支持 * / ** / ?）',
 		"",
-		"选项：",
-		"  --tier <t>         构建分层，逗号分隔（compat|modern|es2015），默认 modern",
 		"  -h, --help         显示帮助"
 	].join("\n"));
 }
 
 function parseArgs(argv) {
-	var tiers = ["modern"];
 	var patterns = [];
 	for(var i = 0; i < argv.length; i++) {
 		var a = argv[i];
-		if(a === "--tier" || a === "--tiers") {
-			tiers = argv[++i].split(",");
-		} else if(a.indexOf("--tier=") === 0) {
-			tiers = a.slice(a.indexOf("=") + 1).split(",");
-		} else if(a === "-h" || a === "--help") {
+		if(a === "-h" || a === "--help") {
 			usage();
 			process.exit(0);
 		} else {
 			patterns.push(a);
 		}
 	}
-	tiers = tiers.map(function(t) { return t.trim(); }).filter(Boolean);
-	return { tiers: tiers, patterns: patterns };
-}
-
-/** 多 tier 时每个 tier 起独立子进程，避免 polyfill 全局污染互相影响 */
-function runManyTiers(tiers, patterns) {
-	var exitCode = 0;
-	tiers.forEach(function(tier) {
-		var r = cp.spawnSync(
-			process.execPath,
-			[__filename].concat(patterns, ["--tier=" + tier]),
-			{ stdio: "inherit" }
-		);
-		if(r.status) { exitCode = r.status; }
-	});
-	process.exit(exitCode);
+	return patterns;
 }
 
 function fmt(value) {
@@ -99,14 +75,14 @@ function fmt(value) {
 	return text;
 }
 
-async function runOne(tier, patterns) {
+async function run(patterns) {
 	var selectTests = require("./lib/select-tests");
 	var buildTests = require("./lib/build-tests");
 
 	var files = selectTests.resolveTestFiles(patterns, undefined, "node");
-	console.log("node 测试（tier=" + tier + "）：共 " + files.length + " 个测试文件");
+	console.log("node 测试（纯算法）：共 " + files.length + " 个测试文件");
 
-	var code = await buildTests.buildNodeBundle(tier, files);
+	var code = await buildTests.buildNodeBundle(files);
 
 	// native/*.js 与部分 impl 引用 window；
 	// pure/setTimeout 等按浏览器环境书写的 impl 读取 document.documentMode，
@@ -171,7 +147,7 @@ async function runOne(tier, patterns) {
 
 		// 产物是浏览器同款 iife：直接在本进程执行，注册测试
 		QUnit.config.autorun = false;
-		vm.runInThisContext(code, { filename: "sky-test-bundle(" + tier + ").js" });
+		vm.runInThisContext(code, { filename: "sky-test-bundle.js" });
 
 		// 相当于浏览器 load 事件：初始化并开始跑
 		QUnit.load();
@@ -187,12 +163,8 @@ async function runOne(tier, patterns) {
 }
 
 function main() {
-	var args = parseArgs(process.argv.slice(2));
-	if(args.tiers.length > 1) {
-		runManyTiers(args.tiers, args.patterns);
-		return;
-	}
-	runOne(args.tiers[0] || "modern", args.patterns).then(function(exitCode) {
+	var patterns = parseArgs(process.argv.slice(2));
+	run(patterns).then(function(exitCode) {
 		process.exit(exitCode);
 	}, function(err) {
 		console.error(err && err.stack || err);

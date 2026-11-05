@@ -50,7 +50,7 @@ function resolveTestFiles(patterns, root, profile) {
 	var list = [];
 	if(!patterns || !patterns.length) {
 		var initial = profile && defaultGlobs[profile] || defaults;
-		list = globLib.glob(root, initial).sort();
+		list = globLib.globSync(root, initial).sort();
 		if(!list.length) {
 			throw new Error("默认测试范围没有匹配到文件：" + initial.join(", "));
 		}
@@ -60,9 +60,9 @@ function resolveTestFiles(patterns, root, profile) {
 		var norm = String(pattern).replace(/\\/g, "/");
 		var matched;
 		if(norm.indexOf("/") >= 0) {
-			matched = globLib.glob(root, [norm]);
+			matched = globLib.globSync(root, [norm]);
 		} else {
-			matched = globLib.glob(root, defaults).filter(function(rel) {
+			matched = globLib.globSync(root, defaults).filter(function(rel) {
 				return matchBare(rel, norm);
 			});
 		}

@@ -40,17 +40,28 @@ function entryIdFor(root, tier) {
 }
 
 /**
- * 纯 node 测试构建：不落盘，返回产物字符串。
+ * 纯 node 测试构建：不落盘，返回产物字符串。无 tier——注入配置来自
+ * tests/impl-inject.js（直接映射到 impl/ 算法实现）。
  * 跳过 babel —— node 原生支持新语法，产物直接可执行。
  */
-async function buildNodeBundle(tier, files) {
+async function buildNodeBundle(files) {
 	var root = process.cwd();
-	var entryId = entryIdFor(root, tier);
-	var config = createConfigs.createConfig(tier, {
+	var entryId = path.join(root, "tests", "corejs", "local", "entry-node.js");
+	var config = createConfigs.createConfig("modern", {
 		entry: entryId,
 		babel: false,
 		plugins: [virtualEntryPlugin(entryId, createEntryCode(root, files, entryId))]
 	});
+	// 替换 conditional-modern 为 impl-inject（纯算法不需要 tier 劫持）
+	var injectIndex = config.inputOptions.plugins.findIndex(function(p) {
+		return p && p.name === "polyfill-inject";
+	});
+	if(injectIndex >= 0) {
+		config.inputOptions.plugins.splice.apply(
+			config.inputOptions.plugins,
+			[injectIndex, 1].concat(require("../impl-inject"))
+		);
+	}
 	var bundle = await rollup.rollup(config.inputOptions);
 	try {
 		var generated = await bundle.generate(config.outputOptions);

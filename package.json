@@ -62,11 +62,13 @@
 		"@rollup/plugin-inject": "^4.0.4",
 		"@rollup/plugin-node-resolve": "^7.1.1",
 		"local-test-runner": "link:../../test/local-test-runner",
+		"picomatch": "^4.0.7",
 		"qunitjs": "1.9.0",
 		"rollup": "^2.45.2",
 		"rollup-plugin-es3ify": "0.0.4",
 		"rollup-plugin-import": "^1.0.2",
 		"rollup-plugin-polyfill-inject": "^3.2.0",
-		"selenium-webdriver": "^4.29.0"
+		"selenium-webdriver": "^4.29.0",
+		"tinyglobby": "^0.2.17"
 	}
 }
