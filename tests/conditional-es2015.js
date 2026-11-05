@@ -35,17 +35,8 @@ module.exports = [
 			"Map.groupBy": "sky-core/polyfill/Map/groupBy",
 			/* Chrome119+ Firefox121+ Safari17.4+ */
 			"Promise.withResolvers": "sky-core/polyfill/Promise/withResolvers",
-		},
-		exclude: [
-			"tests/corejs/helpers/*",
-			"native/**/*",
-			"polyfill/**/*",
-			"polyfill-*/**/*"
-		]
-	}),
-	//以下是prototype的修改
-	polyfill({
-		modules: {
+		
+			// 以下条目自第二个 polyfill({modules:...}) 死块迁入（modules 选项无效，从未生效）
 			// breaking change
 			'.toFixed': "sky-core/polyfill/Number/prototype/toFixed",
 			".toJSON": [
@@ -146,5 +137,5 @@ module.exports = [
 			"polyfill/**/*",
 			"polyfill-*/**/*"
 		]
-	})
+	}),
 ];

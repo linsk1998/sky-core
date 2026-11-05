@@ -319,7 +319,7 @@
 	  };
 	  return iterable;
 	}
-	function includes(target, wanted) {
+	function includes$2(target, wanted) {
 	  for (const element of target) if (wanted === element) return true;
 	  return false;
 	}
@@ -556,6 +556,21 @@ return class extends Parent { /* empty */ };
 	  });
 	};
 
+	var __defineSetter__ = '__defineSetter__' in Object.prototype;
+
+	var accessor = !!defineProperties || __defineSetter__;
+
+	if(accessor) {
+		if(!('name' in Function.prototype)) {
+			Object.defineProperty(Function.prototype, 'name', {
+				enumerable: false, configurable: true,
+				get: function() {
+					return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
+				}
+			});
+		}
+	}
+
 	QUnit.test('Array#slice', assert => {
 	  const slice = Array.prototype.slice;
 	  const isArray = Array.isArray;
@@ -632,6 +647,141 @@ return class extends Parent { /* empty */ };
 	  // assert.same(array.splice().foo, 1, '@@species');
 	});
 
+	var slice$1 = String.prototype['slice'];
+
+	function repeat(count) {
+		if(this == null) {
+			throw new TypeError("repeat called on null or undefined");
+		}
+		if(count < 0) {
+			throw new RangeError("RangeError repeat count must be non-negative");
+		}
+		if(count === Number.POSITIVE_INFINITY) {
+			throw new RangeError("RangeError repeat count must be less than infinity");
+		}
+		count = Math.floor(count);
+		if(isNaN(count)) return "";
+		return new Array(count + 1).join(this);
+	}
+
+	function toInteger(n) {
+		return isNaN(n = +n) ? 0 : (n > 0 ? Math.floor : Math.ceil)(n);
+	}
+
+	// from core-js
+
+	function pow(x, n, acc) {
+		return n === 0 ? acc : n % 2 === 1 ? pow(x, n - 1, acc * x) : pow(x * x, n / 2, acc);
+	}
+
+	function log(x) {
+		var n = 0;
+		var x2 = x;
+		while(x2 >= 4096) {
+			n += 12;
+			x2 /= 4096;
+		}
+		while(x2 >= 2) {
+			n += 1;
+			x2 /= 2;
+		} return n;
+	}
+
+	function multiply(data, n, c) {
+		var index = -1;
+		var c2 = c;
+		while(++index < 6) {
+			c2 += n * data[index];
+			data[index] = c2 % 1e7;
+			c2 = Math.floor(c2 / 1e7);
+		}
+	}
+
+	function divide(data, n) {
+		var index = 6;
+		var c = 0;
+		while(--index >= 0) {
+			c += data[index];
+			data[index] = Math.floor(c / n);
+			c = (c % n) * 1e7;
+		}
+	}
+
+	function dataToString(data) {
+		var index = 6;
+		var s = '';
+		while(--index >= 0) {
+			if(s !== '' || index === 0 || data[index] !== 0) {
+				var t = String(data[index]);
+				s = s === '' ? t : s + repeat.call('0', 7 - t.length) + t;
+			}
+		} return s;
+	}
+
+	function toFixed(fractionDigits) {
+		var number = this;
+		var fractDigits = toInteger(fractionDigits);
+		var data = [0, 0, 0, 0, 0, 0];
+		var sign = '';
+		var result = '0';
+		var e, z, j, k;
+
+		if(fractDigits < 0 || fractDigits > 20) throw RangeError('Incorrect fraction digits');
+		// eslint-disable-next-line no-self-compare -- NaN check
+		if(isNaN(number)) return 'NaN';
+		if(number <= -1e21 || number >= 1e21) return String(number);
+		if(number < 0) {
+			sign = '-';
+			number = -number;
+		}
+		if(number > 1e-21) {
+			e = log(number * pow(2, 69, 1)) - 69;
+			z = e < 0 ? number * pow(2, -e, 1) : number / pow(2, e, 1);
+			z *= 0x10000000000000;
+			e = 52 - e;
+			if(e > 0) {
+				multiply(data, 0, z);
+				j = fractDigits;
+				while(j >= 7) {
+					multiply(data, 1e7, 0);
+					j -= 7;
+				}
+				multiply(data, pow(10, j, 1), 0);
+				j = e - 1;
+				while(j >= 23) {
+					divide(data, 1 << 23);
+					j -= 23;
+				}
+				divide(data, 1 << j);
+				multiply(data, 1, 1);
+				divide(data, 2);
+				result = dataToString(data);
+			} else {
+				multiply(data, 0, z);
+				multiply(data, 1 << -e, 0);
+				result = dataToString(data) + repeat.call('0', fractDigits);
+			}
+		}
+		if(fractDigits > 0) {
+			k = result.length;
+			result = sign + (k <= fractDigits
+				? '0.' + repeat.call('0', fractDigits - k) + result
+				: slice$1.call(result, 0, k - fractDigits) + '.' + slice$1.call(result, k - fractDigits));
+		} else {
+			result = sign + result;
+		} return result;
+	}
+
+	// from core-js
+	var n = Number.prototype['toFixed'];
+	if(n.call(0.00008, 3) !== '0.000' ||
+		n.call(0.9, 3) !== '1' ||
+		n.call(1.255, 3) !== '1.25' ||
+		n.call(1000000000000000128.0, 0) !== '1000000000000000128'
+	) {
+		Number.prototype['toFixed'] = toFixed;
+	}
+
 	QUnit.test('Number#toFixed', assert => {
 	  const toFixed = Number.prototype.toFixed;
 	  assert.isFunction(toFixed);
@@ -701,6 +851,71 @@ return class extends Parent { /* empty */ };
 	  // assert.throws(() => toFixed.call(null, 1), TypeError, '? thisNumberValue(this value)');
 	  // assert.throws(() => toFixed.call(undefined, 1), TypeError, '? thisNumberValue(this value)');
 	});
+
+	var Date$1 = window.Date;
+
+	function prefixIntrger2(number) {
+		if(number<10){
+			return '0'+number;
+		}
+		return number;
+	};
+
+	function prefixIntrger3(number) {
+		if(number<100){
+			return '0'+prefixIntrger2(number);
+		}
+		return number;
+	};
+
+	function toISOString() {
+		var time = this.getTime();
+		if(isNaN(time)) {
+			throw new RangeError("Invalid time value");
+		}
+		return this.getUTCFullYear() +
+			'-' + prefixIntrger2(this.getUTCMonth() + 1) +
+			'-' + prefixIntrger2(this.getUTCDate()) +
+			'T' + prefixIntrger2(this.getUTCHours()) +
+			':' + prefixIntrger2(this.getUTCMinutes()) +
+			':' + prefixIntrger2(this.getUTCSeconds()) +
+			'.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
+	}
+
+	function toJSON(_) {
+		if(isNaN(this.getTime())) {
+			return null;
+		}
+		return toISOString.call(this);
+	};
+
+	try {
+		if(!('toJSON' in Date$1.prototype) || new Date$1(0).toJSON() !== '1970-01-01T00:00:00.000Z' || new Date$1(NaN).toJSON() !== null) {
+			Date$1.prototype.toJSON = toJSON;
+		}
+	} catch(e) {
+		Date$1.prototype.toJSON = toJSON;
+	}
+
+	var defineProperty = Object$1.defineProperty;
+
+	function definePrototype(target, property, value) {
+		var prototype = target.prototype;
+		if(!(property in prototype)) {
+			if(defineProperty) {
+				defineProperty(prototype, property, {
+					configurable: true,
+					writable: true,
+					enumerable: false,
+					value: value
+				});
+			} else {
+				prototype[property] = value;
+			}
+		}
+	}
+
+	definePrototype(Date, 'toISOString', toISOString);
 
 	QUnit.test('Date#toJSON', assert => {
 	  const toJSON = Date.prototype.toJSON;
@@ -1011,6 +1226,28 @@ return class extends Parent { /* empty */ };
 	  });
 	});
 
+	function reduce(callback) {
+		var i, value;
+		if(arguments.length >= 2) {
+			value = arguments[1];
+			i = 0;
+		} else if(this.length > 0) {
+			value = this[0];
+			i = 1;
+		} else {
+			throw new Error("Reduce of empty array with no initial value");
+		}
+		while(i < this.length) {
+			if(i in this) {
+				value = callback(value, this[i], i, this);
+			}
+			i++;
+		}
+		return value;
+	}
+
+	definePrototype(Array, 'reduce', reduce);
+
 	QUnit.test('Array#reduce', assert => {
 	  const reduce = Array.prototype.reduce;
 	  assert.isFunction(reduce);
@@ -1052,6 +1289,25 @@ return class extends Parent { /* empty */ };
 	    assert.throws(() => reduce.call(undefined, () => {/* empty */}, 1), TypeError);
 	  }
 	});
+
+	function reduceRight(callback) {
+		var i = this.length, value;
+		if(arguments.length >= 2) {
+			value = arguments[1];
+		} else if(this.length > 0) {
+			value = this[--i];
+		} else {
+			throw new Error("Reduce of empty array with no initial value");
+		}
+		while(i-- > 0) {
+			if(i in this) {
+				value = callback(value, this[i], i, this);
+			}
+		}
+		return value;
+	}
+
+	definePrototype(Array, 'reduceRight', reduceRight);
 
 	QUnit.test('Array#reduceRight', assert => {
 	  const reduceRight = Array.prototype.reduceRight;
@@ -1211,6 +1467,30 @@ return class extends Parent { /* empty */ };
 	  assert.same(Object.create.sham, DESCRIPTORS ? undefined : true);
 	});
 
+	function keys$1() {
+		var array = this;
+		var index = 0;
+		return {
+			next: function() {
+				var value;
+				var done = array.length <= index;
+				if(!done) {
+					value = index;
+					index++;
+				}
+				return {
+					done: done, value: value
+				};
+			},
+			'@@iterator': function() {
+				return this;
+			},
+			'@@toStringTag': 'Array Iterator'
+		};
+	}
+
+	definePrototype(Array, 'keys', keys$1);
+
 	QUnit.test('Object.keys', assert => {
 	  assert.isFunction(Object.keys);
 	  assert.arity(Object.keys, 1);
@@ -1227,7 +1507,7 @@ return class extends Parent { /* empty */ };
 	  assert.deepEqual(Object.keys([1, 2, 3]), ['0', '1', '2']);
 	  assert.deepEqual(Object.keys(new F1()), ['w']);
 	  assert.deepEqual(Object.keys(new F2()), ['toString']);
-	  assert.ok(!includes(Object.keys(Array.prototype), 'push'));
+	  assert.ok(!includes$2(Object.keys(Array.prototype), 'push'));
 	  // const primitives = [42, 'foo', false];
 	  // for(const value of primitives) {
 	  //   assert.notThrows(() => Object.keys(value), `accept ${typeof value} 不支持`);
@@ -1291,10 +1571,10 @@ return class extends Parent { /* empty */ };
 	  F1.prototype.q = F2.prototype.q = 1;
 	  const names = Object.getOwnPropertyNames([1, 2, 3]);
 	  assert.strictEqual(names.length, 4);
-	  assert.ok(includes(names, '0'));
-	  assert.ok(includes(names, '1'));
-	  assert.ok(includes(names, '2'));
-	  assert.ok(includes(names, 'length'));
+	  assert.ok(includes$2(names, '0'));
+	  assert.ok(includes$2(names, '1'));
+	  assert.ok(includes$2(names, '2'));
+	  assert.ok(includes$2(names, 'length'));
 	  assert.deepEqual(Object.getOwnPropertyNames(new F1()), ['w']);
 	  assert.deepEqual(Object.getOwnPropertyNames(new F2()), ['toString']);
 	  // assert.ok(includes(Object.getOwnPropertyNames(Array.prototype), 'toString'));
@@ -1343,6 +1623,22 @@ return class extends Parent { /* empty */ };
 	// QUnit.test('Object.defineProperties.sham flag', assert => {
 	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
 	// });
+
+	var slice = Array.prototype.slice;
+
+	function bind(context) {
+		var self = this, args = slice.call(arguments, 1);
+		var Bind = function() {
+			if(this instanceof Bind) {
+				self.apply(this, args.concat(slice.call(arguments)));
+				return;
+			}
+			return self.apply(context, args.concat(slice.call(arguments)));
+		};
+		return Bind;
+	}
+
+	definePrototype(Function, 'bind', bind);
 
 	QUnit.test('Function#bind', assert => {
 	  const bind = Function.prototype.bind;
@@ -1418,6 +1714,266 @@ return class extends Parent { /* empty */ };
 	  assert.ok(!Object.is(0, -0), '0 isnt -0');
 	  assert.ok(!Object.is({}, {}), '{} isnt {}');
 	});
+
+	var Promise$3 = window.Promise;
+
+	var queueMicrotask$2 = window.queueMicrotask;
+
+	var ticks = null;
+	var nextTick = setTimeout;
+	function initQueueMicrotask(fn) {
+		nextTick = fn;
+		return queueMicrotask$1;
+	}
+	function next() {
+		if(ticks && ticks.length) {
+			for(var i = 0; i < ticks.length; i++) {
+				var args = ticks[i];
+				var fn = args[0];
+				args = slice.call(args, 1);
+				try {
+					fn.apply(this, args);
+				} catch(e) {
+					console.error(e);
+				}
+			}
+			ticks = null;
+		}
+	}
+	function queueMicrotask$1() {
+		if(!ticks) {
+			ticks = new Array();
+			nextTick(next);
+		}
+		ticks.push(arguments);
+	};
+
+	if(!queueMicrotask$2) {
+		window.queueMicrotask = initQueueMicrotask(Promise$3 ? Promise$3.prototype.then.bind(Promise$3.resolve(1)) : setTimeout);
+	}
+
+	function isNotNullObject(obj) {
+		return typeof obj === "object" ? obj !== null : typeof obj === "function";
+	};
+
+	function isFunction(obj) {
+		return typeof obj === 'function';
+	};
+
+	var PENDING = 1;
+	var RESOLVED = 2;
+	var REJECTED = 3;
+
+	function Promise$2(executor) {
+		if(!executor) {
+			throw new TypeError("undefined is not a promise");
+		}
+		this._resolveds = [];
+		this._rejecteds = [];
+		this._state = PENDING;//resolved | rejected
+
+		var me = this;
+		function resolve(value) {
+			if(me._state === PENDING) {
+				if(value) {
+					try {
+						var then = value.then;
+						if(isFunction(then)) {
+							queueMicrotask(function() {
+								try {
+									value.then(resolve, reject);
+								} catch(e) {
+									reject(e);
+								}
+							});
+							return;
+						}
+					} catch(e) {
+						reject(e);
+						return;
+					}
+				}
+				me._value = value;
+				me._state = RESOLVED;
+				queueMicrotask(function() {
+					var a = me._resolveds, len = a.length, i;
+					for(i = 0; i < len; i++)
+						a[i].call(me, me._value);
+					me._resolveds = null;
+				});
+			}
+		}
+		function reject(reason) {
+			if(me._state === PENDING) {
+				me._value = reason;
+				me._state = REJECTED;
+				queueMicrotask(function() {
+					var a = me._rejecteds, len = a.length, i;
+					for(i = 0; i < len; i++)
+						a[i].call(me, me._value);
+					me._rejecteds = null;
+				});
+			}
+		}
+		try {
+			executor(resolve, reject);
+		} catch(e) {
+			reject(e);
+		}
+	}
+	function nextPromise(before, after, resolve, reject) {
+		return function(value) {
+			try {
+				var x = before(value);
+				if(x != null && isFunction(x.then)) {
+					x.then(resolve, reject);
+				} else {
+					after(x);
+				}
+			} catch(r) {
+				reject(r);
+			}
+		};
+	}
+	function returnArg1(arg1) {
+		return arg1;
+	}
+	function throwArg1(arg1) {
+		throw arg1;
+	}
+	Promise$2.prototype.then = function then(onResolved, onRejected) {
+		// var Class = speciesConstructor(this, Promise);
+		var me = this;
+		onResolved = onResolved || returnArg1;
+		onRejected = onRejected || throwArg1;
+		return new Promise$2(function(resolve, reject) {
+			switch(me._state) {
+				case RESOLVED:
+					queueMicrotask(nextPromise(onResolved, resolve, resolve, reject), me._value);
+					break;
+				case REJECTED:
+					queueMicrotask(nextPromise(onRejected, resolve, resolve, reject), me._value);
+					break;
+				default:
+					me._resolveds.push(nextPromise(onResolved, resolve, resolve, reject));
+					me._rejecteds.push(nextPromise(onRejected, resolve, resolve, reject));
+			}
+		});
+	};
+	Promise$2.prototype.catch = function(onRejected) {
+		return this.then(undefined, onRejected);
+	};
+
+	function ResolvePromise(value) {
+		this._value = value;
+		this._state = RESOLVED;
+	}
+	ResolvePromise.prototype = Promise$2.prototype;
+
+	function RejectPromise(value) {
+		this._value = value;
+		this._state = REJECTED;
+	}
+	RejectPromise.prototype = Promise$2.prototype;
+
+	Promise$2.resolve = function resolve(value) {
+		if(!this) {
+			throw TypeError("Promise.resolve called on non-object");
+		}
+		if(!isFunction(this)) {
+			throw TypeError(this + " is not a constructor");
+		}
+		if(value != null) {
+			if(value.constructor === this) {
+				return value;
+			}
+			if(isFunction(value.then)) {
+				return new this(function(resolve, reject) {
+					value.then(resolve, reject);
+				});
+			}
+		}
+		if(this === Promise$2) {
+			return new ResolvePromise(value);
+		}
+		return new this(function(resolve) { resolve(value); });
+	};
+	Promise$2.reject = function reject(value) {
+		if(!this) {
+			throw TypeError("Promise.resolve called on non-object");
+		}
+		if(!isFunction(this)) {
+			throw TypeError(this + " is not a constructor");
+		}
+		if(this === Promise$2) {
+			return new RejectPromise(value);
+		}
+		return new this(function(resolve, reject) { reject(value); });
+	};
+
+	Promise$2.all = function(promises) {
+		if(!Array.isArray(promises)) {
+			throw new TypeError('You must pass an array to all.');
+		}
+		if(promises.length == 0) return Promise$2.resolve([]);
+		return new Promise$2(function(resolve, reject) {
+			var result = new Array(promises.length);
+			var c = 0;
+			promises.forEach(function(one, index) {
+				if(isNotNullObject(one) && isFunction(one.then)) {
+					one.then(function(data) {
+						c++;
+						result[index] = data;
+						if(c >= promises.length) {
+							resolve(result);
+						}
+					}, reject);
+				} else {
+					c++;
+					result[index] = one;
+					if(c >= promises.length) {
+						resolve(result);
+					}
+				}
+			});
+		});
+	};
+	Promise$2.race = function(promises) {
+		if(!Array.isArray(promises)) {
+			throw new TypeError('You must pass an array to all.');
+		}
+		if(promises.length == 0) return Promise$2.resolve([]);
+		return new Promise$2(function(resolve, reject) {
+			var i = promises.length;
+			while(i--) {
+				promises[i].then(resolve, reject);
+			}
+		});
+	};
+
+	var Promise$1 = Promise$3;
+	if(!Promise$1) {
+		Promise$1 = window.Promise = Promise$2;
+	}
+
+	function promise_finally(onCompleted) {
+		var fun = isFunction(onCompleted);
+		return this.then(
+			fun ?
+				function(x) {
+					return Promise.resolve(onCompleted()).then(function() { return x; });
+				} :
+				onCompleted,
+			fun ?
+				function(e) {
+					onCompleted();
+					throw e;
+				} :
+				onCompleted
+		);
+	};
+
+	definePrototype(Promise$1, 'finally', promise_finally);
 
 	const Symbol$7 = GLOBAL.Symbol || {};
 	const {
@@ -2456,6 +3012,32 @@ return class extends Parent { /* empty */ };
 	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
 	// });
 
+	definePrototype(Array, 'values', Array.prototype[Symbol.iterator]);
+
+	function entries() {
+		var array = this;
+		var index = 0;
+		return {
+			next: function() {
+				var value;
+				var done = array.length <= index;
+				if(!done) {
+					value = [index, array[index]];
+					index++;
+				}
+				return {
+					done: done, value: value
+				};
+			},
+			'@@iterator': function() {
+				return this;
+			},
+			'@@toStringTag': 'Array Iterator'
+		};
+	}
+
+	definePrototype(Array, 'entries', entries);
+
 	const {
 	  ownKeys: ownKeys$2
 	} = GLOBAL.Reflect || {};
@@ -3491,8 +4073,6 @@ return class extends Parent { /* empty */ };
 	  // }, 'uses ToLength');
 	});
 
-	var defineProperty = Object$1.defineProperty;
-
 	var hasV8DefineBug = !defineProperties;
 
 	if(!hasV8DefineBug) {
@@ -4205,6 +4785,18 @@ return class extends Parent { /* empty */ };
 	  assert.strictEqual(Math.clz32(2 ** 32), 32);
 	});
 
+	function startsWith(search) {
+		if(search instanceof RegExp) {
+			throw new TypeError("First argument must not be a regular expression");
+		}
+		var pos = arguments[1];
+		pos = isNaN(pos) ? 0 : (pos < 0 ? 0 : +pos);
+		search = String(search);
+		return this.substring(pos, pos + search.length) === search;
+	}
+
+	definePrototype(String, 'startsWith', startsWith);
+
 	const Symbol$2 = GLOBAL.Symbol || {};
 	QUnit.test('String#startsWith', assert => {
 	  const startsWith = String.prototype.startsWith;
@@ -4233,6 +4825,25 @@ return class extends Parent { /* empty */ };
 	  const object = {};
 	  assert.notThrows(() => '[object Object]'.startsWith(object));
 	});
+
+	function endsWith(search) {
+		if(search instanceof RegExp) {
+			throw new TypeError("First argument must not be a regular expression");
+		}
+		var len = this.length;
+		var pos = arguments[1];
+		if(pos == null) {
+			pos = len;
+		} else if(isNaN(pos)) {
+			pos = 0;
+		} else {
+			pos = pos > len ? len : +pos;
+		}
+		search = String(search);
+		return this.substring(pos - search.length, pos) === search;
+	}
+
+	definePrototype(String, 'endsWith', endsWith);
 
 	const Symbol$1 = GLOBAL.Symbol || {};
 	QUnit.test('String#endsWith', assert => {
@@ -4280,6 +4891,40 @@ return class extends Parent { /* empty */ };
 	    assert.throws(() => repeat.call(undefined, 1), TypeError);
 	  }
 	});
+
+	/*! http://mths.be/codepointat v0.1.0 by @mathias */
+	function codePointAt(position) {
+		if(this == null) {
+			throw TypeError();
+		}
+		var string = String(this);
+		var size = string.length;
+		// 变成整数
+		var index = position ? Number(position) : 0;
+		if(index != index) { // better `isNaN`
+			index = 0;
+		}
+		// 边界
+		if(index < 0 || index >= size) {
+			return undefined;
+		}
+		// 第一个编码单元
+		var first = string.charCodeAt(index);
+		var second;
+		if( // 检查是否开始 surrogate pair
+			first >= 0xD800 && first <= 0xDBFF && // high surrogate
+			size > index + 1 // 下一个编码单元
+		) {
+			second = string.charCodeAt(index + 1);
+			if(second >= 0xDC00 && second <= 0xDFFF) { // low surrogate
+				// http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+				return (first - 0xD800) * 0x400 + second - 0xDC00 + 0x10000;
+			}
+		}
+		return first;
+	}
+
+	definePrototype(String, 'codePointAt', codePointAt);
 
 	QUnit.test('String#codePointAt', assert => {
 	  const codePointAt = String.prototype.codePointAt;
@@ -4414,6 +5059,40 @@ return class extends Parent { /* empty */ };
 	  }), TypeError);
 	});
 
+	function includes$1(search) {
+		if(search instanceof RegExp) {
+			throw new TypeError("First argument must not be a regular expression");
+		}
+		var start = arguments[1];
+		if(typeof start !== 'number') {
+			start = 0;
+		}
+		return this.indexOf(search, start) !== -1;
+	}
+
+	definePrototype(String, 'includes', includes$1);
+
+	var isNaN$3 = window.isNaN;
+
+	function isNaN$2(value) {
+		return typeof value === "number" && isNaN$3(value);
+	}
+
+	var isNaN$1 = Number.isNaN || isNaN$2;
+
+	function includes(search) {
+		var i = this.length;
+		while(i-- > 0) {
+			var value = this[i];
+			if(value === search || isNaN$1(value) && isNaN$1(search)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	definePrototype(Array, 'includes', includes);
+
 	QUnit.test('String#includes', assert => {
 	  const includes = String.prototype.includes;
 	  assert.isFunction(includes);
@@ -4434,6 +5113,22 @@ return class extends Parent { /* empty */ };
 	  const object = {};
 	  assert.notThrows(() => '[object Object]'.includes(object));
 	});
+
+	function findIndex(callback) {
+		var thisArg = arguments[1];
+		if(this.length > 0) {
+			for(var i = 0, j; i < this.length; i++) {
+				j = this[i];
+				var r = callback.call(thisArg, j, i, this);
+				if(r) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+
+	definePrototype(Array, 'findIndex', findIndex);
 
 	QUnit.test('Array#findIndex', assert => {
 	  const findIndex = Array.prototype.findIndex;
@@ -4466,6 +5161,16 @@ return class extends Parent { /* empty */ };
 	    throw new Error();
 	  }) === -1, 'uses ToLength');
 	});
+
+	function find(callback) {
+		var thisArg = arguments[1];
+		var i = findIndex.call(this, callback, thisArg);
+		if(i >= 0) {
+			return this[i];
+		}
+	};
+
+	definePrototype(Array, 'find', find);
 
 	QUnit.test('Array#find', assert => {
 	  const find = Array.prototype.find;
@@ -4523,6 +5228,31 @@ return class extends Parent { /* empty */ };
 	  // 	assert.ok(!called, 'Should not call prototype accessors');
 	  // }
 	});
+
+	function fill(target) {
+		if(this.length <= 0) {
+			return this;
+		}
+		var len = this.length;
+		var start = arguments[1] || 0;
+		var end = arguments[2] || len;
+		if(start < 0) {
+			start += len;
+			if(start < 0) {
+				start = 0;
+			}
+		}
+		if(end < 0) {
+			end += len;
+		}
+		var i = Math.min(end, len);
+		while(i-- > start) {
+			this[i] = target;
+		}
+		return this;
+	};
+
+	definePrototype(Array, 'fill', fill);
 
 	QUnit.test('Array#fill', assert => {
 	  const fill = Array.prototype.fill;
@@ -4677,6 +5407,48 @@ return class extends Parent { /* empty */ };
 	  // 	assert.ok(!called, 'Should not call prototype accessors');
 	  // }
 	});
+
+	function copyWithin(target, start/*, end*/) {
+		var end = arguments[2];
+		var len = this.length || 0;
+
+		if(target < 0) {
+			target += len;
+			if(target < 0) {
+				target = 0;
+			}
+		}
+
+		start = start || 0;
+		if(start < 0) {
+			start += len;
+			if(start < 0) {
+				start = 0;
+			}
+		}
+		if(end === undefined) {
+			end = len;
+		}
+		if(end < 0) {
+			end += len;
+			if(end < 0) {
+				end = 0;
+			}
+		} else if(end - start + target > len) {
+			end = len - target + start;
+		}
+		var i;
+		for(i = start; i < end; i++) {
+			if(i in this) {
+				this[i - start + target] = this[i];
+			} else {
+				delete this[i];
+			}
+		}
+		return this;
+	}
+
+	definePrototype(Array, 'copyWithin', copyWithin);
 
 	QUnit.test('Array#copyWithin', assert => {
 	  const copyWithin = Array.prototype.copyWithin;
@@ -4994,6 +5766,23 @@ return class extends Parent { /* empty */ };
 	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);
 	});
 
+	function padStart(targetLength) {
+		var x = targetLength - this.length;
+		if(x > 0) {
+			var padString = arguments[1];
+			if(padString == null) {
+				padString = " ";
+			}
+			var len = padString.length;
+			if(len) {
+				return padString.repeat(Math.ceil(x / len)).substr(0, x) + this;
+			}
+		}
+		return String(this);
+	}
+
+	definePrototype(String, 'padStart', padStart);
+
 	QUnit.test('String#padStart', assert => {
 	  const padStart = String.prototype.padStart;
 	  assert.isFunction(padStart);
@@ -5013,6 +5802,23 @@ return class extends Parent { /* empty */ };
 	    assert.throws(() => padStart.call(undefined, 0), TypeError);
 	  }
 	});
+
+	function padEnd(targetLength) {
+		var x = targetLength - this.length;
+		if(x > 0) {
+			var padString = arguments[1];
+			if(padString == null) {
+				padString = " ";
+			}
+			var len = padString.length;
+			if(len) {
+				return this + padString.repeat(Math.ceil(x / len)).substr(0, x);
+			}
+		}
+		return String(this);
+	}
+
+	definePrototype(String, 'padEnd', padEnd);
 
 	QUnit.test('String#padEnd', assert => {
 	  const padEnd = String.prototype.padEnd;
@@ -5087,6 +5893,12 @@ return class extends Parent { /* empty */ };
 	  assert.ok(new promise.constructor(empty).finally(empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
 	});
 
+	function trimStart() {
+		return this.replace(/^[\s\u2006\u3000\xA0]+/g, '');
+	}
+
+	definePrototype(String, 'trimStart', trimStart);
+
 	// deprecated
 	// QUnit.test('String#trimLeft', assert => {
 	// 	const { trimStart, trimLeft } = String.prototype;
@@ -5133,6 +5945,12 @@ return class extends Parent { /* empty */ };
 	    assert.throws(() => trimStart.call(undefined, 0), TypeError);
 	  }
 	});
+
+	function trimEnd() {
+		return this.replace(/[\s\u2006\u3000\xA0]+$/g, '');
+	}
+
+	definePrototype(String, 'trimEnd', trimEnd);
 
 	// deprecated
 	// QUnit.test('String#trimRight', assert => {
@@ -5181,6 +5999,23 @@ return class extends Parent { /* empty */ };
 	  }
 	});
 
+	function flat() {
+		var deep = arguments[0];
+		if(deep == null) deep = 1;
+		var arr = [];
+		for(var i = 0; i < this.length; i++) {
+			var item = this[i];
+			if(Array.isArray(item) && deep > 0) {
+				arr = arr.concat(flat.call(item, deep - 1));
+			} else {
+				arr.push(item);
+			}
+		}
+		return arr;
+	}
+
+	definePrototype(Array, 'flat', flat);
+
 	QUnit.test('Array#flat', assert => {
 	  const flat = Array.prototype.flat;
 	  assert.isFunction(flat);
@@ -5210,6 +6045,12 @@ return class extends Parent { /* empty */ };
 	  // 	})).length === 0, 'uses ToLength');
 	  // }
 	});
+
+	function flatMap(fn) {
+		return flat.call(this.map(fn, arguments[1]), 1);
+	}
+
+	definePrototype(Array, 'flatMap', flatMap);
 
 	QUnit.test('Array#flatMap', assert => {
 	  const flatMap = Array.prototype.flatMap;
@@ -5322,6 +6163,46 @@ return class extends Parent { /* empty */ };
 	  assert.same(globalThis, Object(globalThis), 'is object');
 	  assert.same(globalThis.Math, Math, 'contains globals');
 	});
+
+	var toString = prototype.toString;
+
+	function isString(obj) {
+		return toString.call(obj) === '[object String]';
+	};
+
+	function matchAll(regExp) {
+		if(this == null) {
+			throw new TypeError("matchAll called on null or undefined");
+		}
+		var string = this;
+		if(isString(regExp)) {
+			regExp = new RegExp(regExp, 'g');
+		} else if(regExp && regExp.global === false) {
+			throw new TypeError("matchAll called with a non-global RegExp argument");
+		}
+		var it = {
+			next: function() {
+				var value = regExp.exec(string);
+				if(value) {
+					return {
+						value: value,
+						done: false
+					};
+				} else {
+					return {
+						value: undefined,
+						done: true
+					};
+				}
+			}
+		};
+		it[Symbol.iterator] = function() {
+			return this;
+		};
+		return it;
+	}
+
+	definePrototype(String, 'matchAll', matchAll);
 
 	QUnit.test('String#matchAll', assert => {
 	  const matchAll = String.prototype.matchAll;
@@ -5456,14 +6337,6 @@ return class extends Parent { /* empty */ };
 	  }
 	});
 
-	var Promise$1 = window.Promise;
-
-	var slice = Array.prototype.slice;
-
-	function isFunction(obj) {
-		return typeof obj === 'function';
-	};
-
 	function allSettled(promises) {
 		if(!promises) {
 			return this.reject(new TypeError('You must pass promises to allSettled.'));
@@ -5498,8 +6371,8 @@ return class extends Parent { /* empty */ };
 		});
 	}
 
-	if(!Promise$1.allSettled) {
-		Promise$1.allSettled = allSettled;
+	if(!Promise$3.allSettled) {
+		Promise$3.allSettled = allSettled;
 	}
 
 	QUnit.test('Promise.allSettled', assert => {
@@ -5532,6 +6405,59 @@ return class extends Parent { /* empty */ };
 	    start();
 	  });
 	});
+
+	function isRegExp(obj) {
+		return toString.call(obj) === '[object RegExp]';
+	};
+
+	var stringEscapes = {
+		'\\': '\\',
+		"'": "'",
+		'\n': 'n',
+		'\r': 'r',
+		'\u2028': 'u2028',
+		'\u2029': 'u2029'
+	};
+	var regexpEscapes = {
+		'0': 'x30', '1': 'x31', '2': 'x32', '3': 'x33', '4': 'x34',
+		'5': 'x35', '6': 'x36', '7': 'x37', '8': 'x38', '9': 'x39',
+		'A': 'x41', 'B': 'x42', 'C': 'x43', 'D': 'x44', 'E': 'x45', 'F': 'x46',
+		'a': 'x61', 'b': 'x62', 'c': 'x63', 'd': 'x64', 'e': 'x65', 'f': 'x66',
+		'n': 'x6e', 'r': 'x72', 't': 'x74', 'u': 'x75', 'v': 'x76', 'x': 'x78'
+	};
+	var reRegExpChars = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g;
+
+	function escapeRegExp(str){//from lodash
+		if(str){
+			reRegExpChars.lastIndex = 0;
+			return (reRegExpChars.test(str))
+				? str.replace(reRegExpChars, function(chr, leadingChar, whitespaceChar) {
+				if (leadingChar) {
+					chr = regexpEscapes[chr];
+				} else if (whitespaceChar) {
+					chr = stringEscapes[chr];
+				}
+				return '\\' + chr;
+			})
+				: str;
+		}
+		return "(?:)";
+	};
+
+	var replace = String.prototype.replace;
+	function replaceAll(searchValue, replaceValue) {
+		if(isRegExp(searchValue)) {
+			if(!searchValue.global) {
+				throw new TypeError("String.prototype.replaceAll called with a non-global RegExp argument");
+			} else {
+				return this.replace(searchValue, replaceValue);
+			}
+		}
+		searchValue = new RegExp(escapeRegExp(String(searchValue)), "g");
+		return replace.call(this, searchValue, replaceValue);
+	};
+
+	definePrototype(String, 'replaceAll', replaceAll);
 
 	QUnit.test('String#replaceAll', assert => {
 	  const replaceAll = String.prototype.replaceAll;
@@ -5640,8 +6566,8 @@ return class extends Parent { /* empty */ };
 		});
 	};
 
-	if(!Promise$1.any) {
-		Promise$1.any = any;
+	if(!Promise$3.any) {
+		Promise$3.any = any;
 	}
 
 	QUnit.test('Promise.any', assert => {
@@ -5694,6 +6620,38 @@ return class extends Parent { /* empty */ };
 	  assert.same(AggregateError([1], 'foo').message, 'foo');
 	  assert.deepEqual(AggregateError([1, 2, 3]).errors, [1, 2, 3]);
 	});
+
+	function at$1(index) {
+		// 检查索引是否有效  
+		var len = this.length;
+		var relativeIndex = toIntegerOrInfinity(index);
+		var k = relativeIndex >= 0 ? relativeIndex : len + relativeIndex;
+		// 确保索引在字符串范围内  
+		if(k < 0 || k >= len) {
+			return;
+		}
+		return this.charAt(k);
+	}
+	function toIntegerOrInfinity(argument) {
+		var number = +argument;
+		return number !== number || number === 0 ? 0 : Math.trunc(number);
+	};
+
+	definePrototype(String, 'at', at$1);
+
+	function at(n) {
+		var len = this.length;
+		if(isNaN(n)) {
+			return this[0];
+		}
+		n = Math.trunc(n);
+		if(n >= 0) {
+			return this[n];
+		}
+		return this[len + n];
+	}
+
+	definePrototype(Array, 'at', at);
 
 	QUnit.test('Array#at', assert => {
 	  const at = Array.prototype.at;
@@ -5787,6 +6745,23 @@ return class extends Parent { /* empty */ };
 	  // assert.throws(() => hasOwn(undefined, 'foo'), TypeError, 'throws on undefined');
 	});
 
+	function findLastIndex(callback) {
+		var thisArg = arguments[1];
+		var i = this.length;
+		if(i > 0) {
+			while(i-- > 0) {
+				var j = this[i];
+				var r = callback.call(thisArg, j, i, this);
+				if(r) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+
+	definePrototype(Array, 'findLastIndex', findLastIndex);
+
 	QUnit.test('Array#findLastIndex', assert => {
 	  const findLastIndex = Array.prototype.findLastIndex;
 	  assert.isFunction(findLastIndex);
@@ -5825,6 +6800,16 @@ return class extends Parent { /* empty */ };
 	  }) === -1, 'uses ToLength');
 	  // assert.equal(true, 'findLastIndex' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
+
+	function findLast(callback) {
+		var thisArg = arguments[1];
+		var i = findLastIndex.call(this, callback, thisArg);
+		if(i >= 0) {
+			return this[i];
+		}
+	};
+
+	definePrototype(Array, 'findLast', findLast);
 
 	QUnit.test('Array#findLast', assert => {
 	  const findLast = Array.prototype.findLast;
@@ -5866,8 +6851,6 @@ return class extends Parent { /* empty */ };
 	});
 
 	var structuredClone$2 = window.structuredClone;
-
-	var toString = prototype.toString;
 
 	function structuredClone$1(obj) {
 		if(arguments.length === 0) {
@@ -6406,6 +7389,14 @@ return class extends Parent { /* empty */ };
 	  }
 	});
 
+	function toReversed() {
+		var arr = Array.from(this);
+		arr.reverse();
+		return arr;
+	}
+
+	definePrototype(Array, 'toReversed', toReversed);
+
 	QUnit.test('Array#toReversed', assert => {
 	  const toReversed = Array.prototype.toReversed;
 	  assert.isFunction(toReversed);
@@ -6449,6 +7440,14 @@ return class extends Parent { /* empty */ };
 
 	  // assert.equal(true, 'toReversed' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
+
+	function toSorted(fn) {
+		var arr = Array.from(this);
+		arr.sort.apply(arr, arguments);
+		return arr;
+	}
+
+	definePrototype(Array, 'toSorted', toSorted);
 
 	QUnit.test('Array#toSorted', assert => {
 	  const toSorted = Array.prototype.toSorted;
@@ -6576,6 +7575,14 @@ return class extends Parent { /* empty */ };
 	  // assert.equal(true, 'toSorted' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
 
+	function toSpliced(a1, a2) {
+		var arr = Array.from(this);
+		arr.splice.apply(arr, arguments);
+		return arr;
+	}
+
+	definePrototype(Array, 'toSpliced', toSpliced);
+
 	QUnit.test('Array#toSpliced', assert => {
 	  const toSpliced = Array.prototype.toSpliced;
 	  assert.isFunction(toSpliced);
@@ -6609,6 +7616,23 @@ return class extends Parent { /* empty */ };
 	  // assert.equal(true, 'toSpliced' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
 
+	function withAt(index, value) {
+		if(this == null) {
+			throw new TypeError("Cannot convert undefined or null to object");
+		}
+		if(index < 0) {
+			index += this.length;
+		}
+		if(index < 0 || index >= this.length) {
+			throw new RangeError("Invalid index: " + index);
+		}
+		var arr = Array.from(this);
+		arr[index] = value;
+		return arr;
+	}
+
+	definePrototype(Array, 'with', withAt);
+
 	QUnit.test('Array#with', assert => {
 	  const {
 	    with: withAt
@@ -6640,6 +7664,42 @@ return class extends Parent { /* empty */ };
 	  };
 	  // assert.true(array.with(1, 2) instanceof Array, 'non-generic');
 	});
+
+	function isSymbol(obj) {
+		if(typeof obj === "symbol") {
+			return true;
+		}
+		return false;
+	};
+
+	function isWellFormed() {
+		if(this == null) {
+			throw new TypeError("isWellFormed called on null or undefined");
+		}
+		if(isSymbol(this)) {
+			throw new TypeError("Cannot convert a Symbol value to a string");
+		}
+		var str = String(this);
+		// https://github.com/tc39/proposal-is-usv-string
+		for(var i = 0; i < str.length; ++i) {
+			var isSurrogate = (str.charCodeAt(i) & 0xF800) == 0xD800;
+			if(!isSurrogate) {
+				continue;
+			}
+			var isLeadingSurrogate = str.charCodeAt(i) < 0xDC00;
+			if(!isLeadingSurrogate) {
+				return false; // unpaired trailing surrogate
+			}
+			var isFollowedByTrailingSurrogate = i + 1 < str.length && (str.charCodeAt(i + 1) & 0xFC00) == 0xDC00;
+			if(!isFollowedByTrailingSurrogate) {
+				return false; // unpaired leading surrogate
+			}
+			++i;
+		}
+		return true;
+	}
+
+	definePrototype(String, 'isWellFormed', isWellFormed);
 
 	QUnit.test('String#isWellFormed', assert => {
 	  const isWellFormed = String.prototype.isWellFormed;
@@ -6678,6 +7738,34 @@ return class extends Parent { /* empty */ };
 	  }
 	  assert.throws(() => isWellFormed.call(Symbol$4('isWellFormed test')), 'throws on symbol context');
 	});
+
+	function toWellFormed() {
+		if(this == null) {
+			throw new TypeError("toWellFormed called on null or undefined");
+		}
+		if(isSymbol(this)) {
+			throw new TypeError("Cannot convert a Symbol value to a string");
+		}
+		var S = String(this);
+		var len = S.length;
+		var r = new Array(S.length);
+		// https://tc39.es/ecma262/#sec-string.prototype.towellformed
+		for(var i = 0; i < len; i++) {
+			var charCode = S.charCodeAt(i);
+			// single UTF-16 code unit
+			if((charCode & 0xF800) !== 0xD800) r[i] = S.charAt(i);
+			// unpaired surrogate
+			else if(charCode >= 0xDC00 || i + 1 >= len || (S.charCodeAt(i + 1) & 0xFC00) !== 0xDC00) r[i] = "\uFFFD";
+			// surrogate pair
+			else {
+				r[i] = S.charAt(i);
+				r[++i] = S.charAt(i);
+			}
+		}
+		return r.join('');
+	}
+
+	definePrototype(String, 'toWellFormed', toWellFormed);
 
 	QUnit.test('String#toWellFormed', assert => {
 	  const toWellFormed = String.prototype.toWellFormed;
@@ -6853,8 +7941,8 @@ return class extends Parent { /* empty */ };
 		};
 	}
 
-	if(!Promise$1.withResolvers) {
-		Promise$1.withResolvers = withResolvers;
+	if(!Promise$3.withResolvers) {
+		Promise$3.withResolvers = withResolvers;
 	}
 
 	QUnit.test('Promise.withResolvers', assert => {

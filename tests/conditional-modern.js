@@ -175,17 +175,8 @@ module.exports = [
 			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill
 			// "localStorage": "sky-core/polyfill/localStorage",
 			// "sessionStorage": "sky-core/polyfill/sessionStorage",
-		},
-		exclude: [
-			"tests/corejs/helpers/*",
-			"native/**/*",
-			"polyfill/**/*",
-			"polyfill-*/**/*"
-		]
-	}),
-	//以下是prototype的修改
-	polyfill({
-		modules: {
+		
+			// 以下条目自第二个 polyfill({modules:...}) 死块迁入（modules 选项无效，从未生效）
 			// firefox3
 			".slice": "sky-core/polyfill/Array/prototype/slice",
 			// breaking change
@@ -288,7 +279,7 @@ module.exports = [
 			"polyfill/**/*",
 			"polyfill-*/**/*"
 		]
-	}),
+	}),,
 	inject({
 		modules: {
 			"setTimeout": "sky-core/pure/setTimeout",

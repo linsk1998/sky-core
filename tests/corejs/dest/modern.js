@@ -189,6 +189,39 @@
 	  }
 	}
 
+	function definePrototype(target, property, value) {
+	  var prototype = target.prototype;
+	  if (!(property in prototype)) {
+	    if (defineProperty) {
+	      defineProperty(prototype, property, {
+	        configurable: true,
+	        writable: true,
+	        enumerable: false,
+	        value: value
+	      });
+	    } else {
+	      prototype[property] = value;
+	    }
+	  }
+	}
+
+	var slice$2 = Array.prototype.slice;
+
+	function bind(context) {
+	  var self = this,
+	    args = slice$2.call(arguments, 1);
+	  var Bind = function () {
+	    if (this instanceof Bind) {
+	      self.apply(this, args.concat(slice$2.call(arguments)));
+	      return;
+	    }
+	    return self.apply(context, args.concat(slice$2.call(arguments)));
+	  };
+	  return Bind;
+	}
+
+	definePrototype(Function, 'bind', bind);
+
 	var Array$1 = window.Array;
 
 	var prototype = Object$1.prototype;
@@ -201,6 +234,48 @@
 
 	if (!Array$1.isArray) {
 	  Array$1.isArray = isArray;
+	}
+
+	function slice$1(start, end) {
+	  if (this instanceof Object) {
+	    if (end === undefined) {
+	      return slice$2.call(this, start);
+	    }
+	    return slice$2.call(this, start, end);
+	  }
+	  var i,
+	    r = [];
+	  var len = this.length;
+	  if (start < 0) start += len;
+	  if (end === undefined) end = len;else if (end < 0) end += len;
+	  if (start < end) {
+	    len = end - start;
+	    r = new Array(len);
+	    i = len;
+	    while (i-- > 0) {
+	      r[i] = this[i + start];
+	    }
+	  }
+	  return r;
+	}
+	if (![1].slice(0, undefined).length) {
+	  Array.prototype.slice = slice$1;
+	}
+
+	var __defineSetter__$1 = '__defineSetter__' in Object.prototype;
+
+	var accessor = !!defineProperties || __defineSetter__$1;
+
+	if (accessor) {
+	  if (!('name' in Function.prototype)) {
+	    Object.defineProperty(Function.prototype, 'name', {
+	      enumerable: false,
+	      configurable: true,
+	      get: function () {
+	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
+	      }
+	    });
+	  }
 	}
 
 	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
@@ -410,7 +485,7 @@
 	  }, _iterable);
 	  return iterable;
 	}
-	function includes(target, wanted) {
+	function includes$2(target, wanted) {
 	  for (var _iterator = _createForOfIteratorHelperLoose(target), _step; !(_step = _iterator()).done;) {
 	    var element = _step.value;
 	    if (wanted === element) return true;
@@ -727,6 +802,132 @@
 	  // assert.same(array.splice().foo, 1, '@@species');
 	});
 
+	var slice = String.prototype['slice'];
+
+	function repeat(count) {
+	  if (this == null) {
+	    throw new TypeError("repeat called on null or undefined");
+	  }
+	  if (count < 0) {
+	    throw new RangeError("RangeError repeat count must be non-negative");
+	  }
+	  if (count === Number.POSITIVE_INFINITY) {
+	    throw new RangeError("RangeError repeat count must be less than infinity");
+	  }
+	  count = Math.floor(count);
+	  if (isNaN(count)) return "";
+	  return new Array(count + 1).join(this);
+	}
+
+	function toInteger(n) {
+	  return isNaN(n = +n) ? 0 : (n > 0 ? Math.floor : Math.ceil)(n);
+	}
+
+	// from core-js
+
+	function pow$1(x, n, acc) {
+	  return n === 0 ? acc : n % 2 === 1 ? pow$1(x, n - 1, acc * x) : pow$1(x * x, n / 2, acc);
+	}
+	function log$1(x) {
+	  var n = 0;
+	  var x2 = x;
+	  while (x2 >= 4096) {
+	    n += 12;
+	    x2 /= 4096;
+	  }
+	  while (x2 >= 2) {
+	    n += 1;
+	    x2 /= 2;
+	  }
+	  return n;
+	}
+	function multiply(data, n, c) {
+	  var index = -1;
+	  var c2 = c;
+	  while (++index < 6) {
+	    c2 += n * data[index];
+	    data[index] = c2 % 1e7;
+	    c2 = Math.floor(c2 / 1e7);
+	  }
+	}
+	function divide(data, n) {
+	  var index = 6;
+	  var c = 0;
+	  while (--index >= 0) {
+	    c += data[index];
+	    data[index] = Math.floor(c / n);
+	    c = c % n * 1e7;
+	  }
+	}
+	function dataToString(data) {
+	  var index = 6;
+	  var s = '';
+	  while (--index >= 0) {
+	    if (s !== '' || index === 0 || data[index] !== 0) {
+	      var t = String(data[index]);
+	      s = s === '' ? t : s + repeat.call('0', 7 - t.length) + t;
+	    }
+	  }
+	  return s;
+	}
+	function toFixed(fractionDigits) {
+	  var number = this;
+	  var fractDigits = toInteger(fractionDigits);
+	  var data = [0, 0, 0, 0, 0, 0];
+	  var sign = '';
+	  var result = '0';
+	  var e, z, j, k;
+	  if (fractDigits < 0 || fractDigits > 20) throw RangeError('Incorrect fraction digits');
+	  // eslint-disable-next-line no-self-compare -- NaN check
+	  if (isNaN(number)) return 'NaN';
+	  if (number <= -1e21 || number >= 1e21) return String(number);
+	  if (number < 0) {
+	    sign = '-';
+	    number = -number;
+	  }
+	  if (number > 1e-21) {
+	    e = log$1(number * pow$1(2, 69, 1)) - 69;
+	    z = e < 0 ? number * pow$1(2, -e, 1) : number / pow$1(2, e, 1);
+	    z *= 0x10000000000000;
+	    e = 52 - e;
+	    if (e > 0) {
+	      multiply(data, 0, z);
+	      j = fractDigits;
+	      while (j >= 7) {
+	        multiply(data, 1e7, 0);
+	        j -= 7;
+	      }
+	      multiply(data, pow$1(10, j, 1), 0);
+	      j = e - 1;
+	      while (j >= 23) {
+	        divide(data, 1 << 23);
+	        j -= 23;
+	      }
+	      divide(data, 1 << j);
+	      multiply(data, 1, 1);
+	      divide(data, 2);
+	      result = dataToString(data);
+	    } else {
+	      multiply(data, 0, z);
+	      multiply(data, 1 << -e, 0);
+	      result = dataToString(data) + repeat.call('0', fractDigits);
+	    }
+	  }
+	  if (fractDigits > 0) {
+	    k = result.length;
+	    result = sign + (k <= fractDigits ? '0.' + repeat.call('0', fractDigits - k) + result : slice.call(result, 0, k - fractDigits) + '.' + slice.call(result, k - fractDigits));
+	  } else {
+	    result = sign + result;
+	  }
+	  return result;
+	}
+
+	// from core-js
+	var n = Number.prototype['toFixed'];
+	if (n.call(0.00008, 3) !== '0.000' || n.call(0.9, 3) !== '1' || n.call(1.255, 3) !== '1.25' || n.call(1000000000000000128.0, 0) !== '1000000000000000128') {
+	  Number.prototype['toFixed'] = toFixed;
+	}
+
 	QUnit.test('Number#toFixed', function (assert) {
 	  var toFixed = Number.prototype.toFixed;
 	  assert.isFunction(toFixed);
@@ -810,6 +1011,53 @@
 	  // assert.throws(() => toFixed.call(null, 1), TypeError, '? thisNumberValue(this value)');
 	  // assert.throws(() => toFixed.call(undefined, 1), TypeError, '? thisNumberValue(this value)');
 	});
+
+	var Date$1 = window.Date;
+
+	function prefixIntrger2(number) {
+	  if (number < 10) {
+	    return '0' + number;
+	  }
+	  return number;
+	}
+	;
+
+	function prefixIntrger3(number) {
+	  if (number < 100) {
+	    return '0' + prefixIntrger2(number);
+	  }
+	  return number;
+	}
+	;
+
+	function toISOString() {
+	  var time = this.getTime();
+	  if (isNaN(time)) {
+	    throw new RangeError("Invalid time value");
+	  }
+	  return this.getUTCFullYear() + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
+	}
+
+	function toJSON(_) {
+	  if (isNaN(this.getTime())) {
+	    return null;
+	  }
+	  return toISOString.call(this);
+	}
+	;
+
+	try {
+	  if (!('toJSON' in Date$1.prototype) || new Date$1(0).toJSON() !== '1970-01-01T00:00:00.000Z' || new Date$1(NaN).toJSON() !== null) {
+	    Date$1.prototype.toJSON = toJSON;
+	  }
+	} catch (e) {
+	  Date$1.prototype.toJSON = toJSON;
+	}
+
+	// safari 5
+	if (new Date$1(-1).toISOString !== '1969-12-31T23:59:59.999Z') {
+	  Date$1.prototype.toISOString = toISOString;
+	}
 
 	QUnit.test('Date#toJSON', function (assert) {
 	  var toJSON = Date.prototype.toJSON;
@@ -1121,8 +1369,6 @@
 	  }
 	});
 
-	var slice$1 = Array.prototype.slice;
-
 	var setTimeout$3 = window.setTimeout;
 
 	function setTimeout$2(cb) {
@@ -1130,7 +1376,7 @@
 	  if (arguments.length <= 2) {
 	    return setTimeout$3(cb, ms);
 	  }
-	  var args = slice$1.call(arguments, 2);
+	  var args = slice$2.call(arguments, 2);
 	  var cba = function () {
 	    cb.apply(this, args);
 	  };
@@ -1146,7 +1392,7 @@
 	  if (arguments.length <= 2) {
 	    return setInterval$2(cb, ms);
 	  }
-	  var args = slice$1.call(arguments, 2);
+	  var args = slice$2.call(arguments, 2);
 	  var cba = function () {
 	    cb.apply(this, args);
 	  };
@@ -1206,6 +1452,46 @@
 	  });
 	});
 
+	var Error$1 = window.Error;
+
+	function fix_Error$proto(native_Error) {
+	  function Error(message) {
+	    this.message = message === undefined ? "" : String(message);
+	    var options = arguments[1];
+	    if (typeof options === "object" && options !== null) {
+	      if ('cause' in options) {
+	        this.cause = options.cause;
+	      }
+	    }
+	  }
+	  Error.prototype = native_Error.prototype;
+	  return Error;
+	}
+
+	window.Error = fix_Error$proto(Error$1);
+
+	function reduce(callback) {
+	  var i, value;
+	  if (arguments.length >= 2) {
+	    value = arguments[1];
+	    i = 0;
+	  } else if (this.length > 0) {
+	    value = this[0];
+	    i = 1;
+	  } else {
+	    throw new Error("Reduce of empty array with no initial value");
+	  }
+	  while (i < this.length) {
+	    if (i in this) {
+	      value = callback(value, this[i], i, this);
+	    }
+	    i++;
+	  }
+	  return value;
+	}
+
+	definePrototype(Array, 'reduce', reduce);
+
 	QUnit.test('Array#reduce', function (assert) {
 	  var reduce = Array.prototype.reduce;
 	  assert.isFunction(reduce);
@@ -1258,6 +1544,26 @@
 	  }
 	});
 
+	function reduceRight(callback) {
+	  var i = this.length,
+	    value;
+	  if (arguments.length >= 2) {
+	    value = arguments[1];
+	  } else if (this.length > 0) {
+	    value = this[--i];
+	  } else {
+	    throw new Error("Reduce of empty array with no initial value");
+	  }
+	  while (i-- > 0) {
+	    if (i in this) {
+	      value = callback(value, this[i], i, this);
+	    }
+	  }
+	  return value;
+	}
+
+	definePrototype(Array, 'reduceRight', reduceRight);
+
 	QUnit.test('Array#reduceRight', function (assert) {
 	  var reduceRight = Array.prototype.reduceRight;
 	  assert.isFunction(reduceRight);
@@ -1309,6 +1615,12 @@
 	    }, TypeError);
 	  }
 	});
+
+	function trim() {
+	  return this.replace(/^[\s\u3000\xA0]+|[\s\u3000\xA0]+$/g, '');
+	}
+
+	definePrototype(String, 'trim', trim);
 
 	QUnit.test('String#trim', function (assert) {
 	  var trim = String.prototype.trim;
@@ -1456,10 +1768,10 @@
 	  assert.same(Object.create.sham, DESCRIPTORS ? undefined : true);
 	});
 
-	var keys$2 = Object$1.keys;
+	var keys$3 = Object$1.keys;
 
 	function keys$fixSymbol(obj) {
-	  return keys$2.call(Object, obj).filter(isNotSymbolKey);
+	  return keys$3.call(Object, obj).filter(isNotSymbolKey);
 	}
 
 	if (!Symbol$8) {
@@ -1482,7 +1794,7 @@
 	  assert.deepEqual(Object.keys([1, 2, 3]), ['0', '1', '2']);
 	  assert.deepEqual(Object.keys(new F1()), ['w']);
 	  assert.deepEqual(Object.keys(new F2()), ['toString']);
-	  assert.ok(!includes(Object.keys(Array.prototype), 'push'));
+	  assert.ok(!includes$2(Object.keys(Array.prototype), 'push'));
 	  // const primitives = [42, 'foo', false];
 	  // for(const value of primitives) {
 	  //   assert.notThrows(() => Object.keys(value), `accept ${typeof value} 不支持`);
@@ -1494,8 +1806,6 @@
 	    return Object.keys(undefined);
 	  }, TypeError, 'throws on undefined');
 	});
-
-	var __defineSetter__$1 = '__defineSetter__' in Object.prototype;
 
 	var hasV8DefineBug = !defineProperties;
 	if (!hasV8DefineBug) {
@@ -1769,10 +2079,10 @@
 	  F1.prototype.q = F2.prototype.q = 1;
 	  var names = Object.getOwnPropertyNames([1, 2, 3]);
 	  assert.strictEqual(names.length, 4);
-	  assert.ok(includes(names, '0'));
-	  assert.ok(includes(names, '1'));
-	  assert.ok(includes(names, '2'));
-	  assert.ok(includes(names, 'length'));
+	  assert.ok(includes$2(names, '0'));
+	  assert.ok(includes$2(names, '1'));
+	  assert.ok(includes$2(names, '2'));
+	  assert.ok(includes$2(names, 'length'));
 	  assert.deepEqual(Object.getOwnPropertyNames(new F1()), ['w']);
 	  assert.deepEqual(Object.getOwnPropertyNames(new F2()), ['toString']);
 	  // assert.ok(includes(Object.getOwnPropertyNames(Array.prototype), 'toString'));
@@ -1958,7 +2268,7 @@
 	    for (var i = 0; i < ticks.length; i++) {
 	      var args = ticks[i];
 	      var fn = args[0];
-	      args = slice$1.call(args, 1);
+	      args = slice$2.call(args, 1);
 	      try {
 	        fn.apply(this, args);
 	      } catch (e) {
@@ -2178,23 +2488,20 @@
 	  Promise$2 = window.Promise = Promise$3;
 	}
 
-	var Error$1 = window.Error;
-
-	function fix_Error$proto(native_Error) {
-	  function Error(message) {
-	    this.message = message === undefined ? "" : String(message);
-	    var options = arguments[1];
-	    if (typeof options === "object" && options !== null) {
-	      if ('cause' in options) {
-	        this.cause = options.cause;
-	      }
-	    }
-	  }
-	  Error.prototype = native_Error.prototype;
-	  return Error;
+	function promise_finally (onCompleted) {
+	  var fun = isFunction(onCompleted);
+	  return this.then(fun ? function (x) {
+	    return Promise.resolve(onCompleted()).then(function () {
+	      return x;
+	    });
+	  } : onCompleted, fun ? function (e) {
+	    onCompleted();
+	    throw e;
+	  } : onCompleted);
 	}
+	;
 
-	window.Error = fix_Error$proto(Error$1);
+	definePrototype(Promise$2, 'finally', promise_finally);
 
 	var Symbol$7 = GLOBAL.Symbol || {};
 	var setPrototypeOf = Object.setPrototypeOf,
@@ -3495,6 +3802,31 @@
 
 	var Map$2 = window.Map;
 
+	function entries$2() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = [index, array[index]];
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	definePrototype(Array, 'entries', entries$2);
+
 	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
 	var mapConstructorIteratorReturn = false;
 	function checkMapSupportConstructorIteratorReturn() {
@@ -3710,7 +4042,7 @@
 	  Map.prototype.clear = clear;
 	  Map.prototype.forEach = forEach;
 	  Map.prototype.entries = entries$1;
-	  Map.prototype.keys = keys$1;
+	  Map.prototype.keys = keys$2;
 	  Map.prototype.values = values$1;
 	  Map.prototype['@@iterator'] = entries$1;
 	  return Map;
@@ -3901,7 +4233,7 @@
 	function getKey(item) {
 	  return item.key;
 	}
-	function keys$1() {
+	function keys$2() {
 	  return createIterable(this, getKey);
 	}
 	;
@@ -3932,6 +4264,33 @@
 	    window.Map = createMap();
 	  }
 	}
+
+	function keys$1() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = index;
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	definePrototype(Array, 'keys', keys$1);
+
+	definePrototype(Array, 'values', Array.prototype[iterator$1] || values$2);
 
 	var _ref$2 = GLOBAL.Reflect || {},
 	  ownKeys$2 = _ref$2.ownKeys;
@@ -5297,8 +5656,6 @@
 
 	var JSON$1 = window.JSON;
 
-	var slice = String.prototype['slice'];
-
 	var rx_escapable = /[\\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
 	function escapeString(str) {
 	  //from lodash
@@ -5403,48 +5760,6 @@
 	  };
 	} else if (!nonEnumerable) {
 	  JSON$1.stringify = fix_stringify(JSON$1.stringify);
-	}
-
-	var Date$1 = window.Date;
-
-	function prefixIntrger2(number) {
-	  if (number < 10) {
-	    return '0' + number;
-	  }
-	  return number;
-	}
-	;
-
-	function prefixIntrger3(number) {
-	  if (number < 100) {
-	    return '0' + prefixIntrger2(number);
-	  }
-	  return number;
-	}
-	;
-
-	function toISOString() {
-	  var time = this.getTime();
-	  if (isNaN(time)) {
-	    throw new RangeError("Invalid time value");
-	  }
-	  return this.getUTCFullYear() + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
-	}
-
-	function toJSON(_) {
-	  if (isNaN(this.getTime())) {
-	    return null;
-	  }
-	  return toISOString.call(this);
-	}
-	;
-
-	try {
-	  if (!('toJSON' in Date$1.prototype) || new Date$1(0).toJSON() !== '1970-01-01T00:00:00.000Z' || new Date$1(NaN).toJSON() !== null) {
-	    Date$1.prototype.toJSON = toJSON;
-	  }
-	} catch (e) {
-	  Date$1.prototype.toJSON = toJSON;
 	}
 
 	var _ref = GLOBAL.Reflect || {},
@@ -6380,6 +6695,18 @@
 	  assert.strictEqual(Math.clz32(Math.pow(2, 32)), 32);
 	});
 
+	function startsWith(search) {
+	  if (search instanceof RegExp) {
+	    throw new TypeError("First argument must not be a regular expression");
+	  }
+	  var pos = arguments[1];
+	  pos = isNaN(pos) ? 0 : pos < 0 ? 0 : +pos;
+	  search = String(search);
+	  return this.substring(pos, pos + search.length) === search;
+	}
+
+	definePrototype(String, 'startsWith', startsWith);
+
 	var Symbol$2 = GLOBAL.Symbol || {};
 	QUnit.test('String#startsWith', function (assert) {
 	  var startsWith = String.prototype.startsWith;
@@ -6414,6 +6741,25 @@
 	    return '[object Object]'.startsWith(object);
 	  });
 	});
+
+	function endsWith(search) {
+	  if (search instanceof RegExp) {
+	    throw new TypeError("First argument must not be a regular expression");
+	  }
+	  var len = this.length;
+	  var pos = arguments[1];
+	  if (pos == null) {
+	    pos = len;
+	  } else if (isNaN(pos)) {
+	    pos = 0;
+	  } else {
+	    pos = pos > len ? len : +pos;
+	  }
+	  search = String(search);
+	  return this.substring(pos - search.length, pos) === search;
+	}
+
+	definePrototype(String, 'endsWith', endsWith);
 
 	var Symbol$1 = GLOBAL.Symbol || {};
 	QUnit.test('String#endsWith', function (assert) {
@@ -6452,6 +6798,8 @@
 	  });
 	});
 
+	definePrototype(String, 'repeat', repeat);
+
 	QUnit.test('String#repeat', function (assert) {
 	  var repeat = String.prototype.repeat;
 	  assert.isFunction(repeat);
@@ -6475,6 +6823,44 @@
 	    }, TypeError);
 	  }
 	});
+
+	/*! http://mths.be/codepointat v0.1.0 by @mathias */
+	function codePointAt(position) {
+	  if (this == null) {
+	    throw TypeError();
+	  }
+	  var string = String(this);
+	  var size = string.length;
+	  // 变成整数
+	  var index = position ? Number(position) : 0;
+	  if (index != index) {
+	    // better `isNaN`
+	    index = 0;
+	  }
+	  // 边界
+	  if (index < 0 || index >= size) {
+	    return undefined;
+	  }
+	  // 第一个编码单元
+	  var first = string.charCodeAt(index);
+	  var second;
+	  if (
+	  // 检查是否开始 surrogate pair
+	  first >= 0xD800 && first <= 0xDBFF &&
+	  // high surrogate
+	  size > index + 1 // 下一个编码单元
+	  ) {
+	    second = string.charCodeAt(index + 1);
+	    if (second >= 0xDC00 && second <= 0xDFFF) {
+	      // low surrogate
+	      // http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+	      return (first - 0xD800) * 0x400 + second - 0xDC00 + 0x10000;
+	    }
+	  }
+	  return first;
+	}
+
+	definePrototype(String, 'codePointAt', codePointAt);
 
 	QUnit.test('String#codePointAt', function (assert) {
 	  var codePointAt = String.prototype.codePointAt;
@@ -6698,6 +7084,32 @@
 	  }, TypeError);
 	});
 
+	function includes$1(search) {
+	  if (search instanceof RegExp) {
+	    throw new TypeError("First argument must not be a regular expression");
+	  }
+	  var start = arguments[1];
+	  if (typeof start !== 'number') {
+	    start = 0;
+	  }
+	  return this.indexOf(search, start) !== -1;
+	}
+
+	definePrototype(String, 'includes', includes$1);
+
+	function includes(search) {
+	  var i = this.length;
+	  while (i-- > 0) {
+	    var value = this[i];
+	    if (value === search || isNaN$1(value) && isNaN$1(search)) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+
+	definePrototype(Array, 'includes', includes);
+
 	QUnit.test('String#includes', function (assert) {
 	  var includes = String.prototype.includes;
 	  assert.isFunction(includes);
@@ -6726,6 +7138,22 @@
 	    return '[object Object]'.includes(object);
 	  });
 	});
+
+	function findIndex(callback) {
+	  var thisArg = arguments[1];
+	  if (this.length > 0) {
+	    for (var i = 0, j; i < this.length; i++) {
+	      j = this[i];
+	      var r = callback.call(thisArg, j, i, this);
+	      if (r) {
+	        return i;
+	      }
+	    }
+	  }
+	  return -1;
+	}
+
+	definePrototype(Array, 'findIndex', findIndex);
 
 	QUnit.test('Array#findIndex', function (assert) {
 	  var findIndex = Array.prototype.findIndex;
@@ -6768,6 +7196,17 @@
 	    }) === -1;
 	  }, 'uses ToLength');
 	});
+
+	function find(callback) {
+	  var thisArg = arguments[1];
+	  var i = findIndex.call(this, callback, thisArg);
+	  if (i >= 0) {
+	    return this[i];
+	  }
+	}
+	;
+
+	definePrototype(Array, 'find', find);
 
 	QUnit.test('Array#find', function (assert) {
 	  var find = Array.prototype.find;
@@ -6843,6 +7282,32 @@
 	  // 	assert.ok(!called, 'Should not call prototype accessors');
 	  // }
 	});
+
+	function fill(target) {
+	  if (this.length <= 0) {
+	    return this;
+	  }
+	  var len = this.length;
+	  var start = arguments[1] || 0;
+	  var end = arguments[2] || len;
+	  if (start < 0) {
+	    start += len;
+	    if (start < 0) {
+	      start = 0;
+	    }
+	  }
+	  if (end < 0) {
+	    end += len;
+	  }
+	  var i = Math.min(end, len);
+	  while (i-- > start) {
+	    this[i] = target;
+	  }
+	  return this;
+	}
+	;
+
+	definePrototype(Array, 'fill', fill);
 
 	QUnit.test('Array#fill', function (assert) {
 	  var fill = Array.prototype.fill;
@@ -7027,6 +7492,46 @@
 	  // 	assert.ok(!called, 'Should not call prototype accessors');
 	  // }
 	});
+
+	function copyWithin(target, start /*, end*/) {
+	  var end = arguments[2];
+	  var len = this.length || 0;
+	  if (target < 0) {
+	    target += len;
+	    if (target < 0) {
+	      target = 0;
+	    }
+	  }
+	  start = start || 0;
+	  if (start < 0) {
+	    start += len;
+	    if (start < 0) {
+	      start = 0;
+	    }
+	  }
+	  if (end === undefined) {
+	    end = len;
+	  }
+	  if (end < 0) {
+	    end += len;
+	    if (end < 0) {
+	      end = 0;
+	    }
+	  } else if (end - start + target > len) {
+	    end = len - target + start;
+	  }
+	  var i;
+	  for (i = start; i < end; i++) {
+	    if (i in this) {
+	      this[i - start + target] = this[i];
+	    } else {
+	      delete this[i];
+	    }
+	  }
+	  return this;
+	}
+
+	definePrototype(Array, 'copyWithin', copyWithin);
 
 	QUnit.test('Array#copyWithin', function (assert) {
 	  var copyWithin = Array.prototype.copyWithin;
@@ -7488,6 +7993,23 @@
 	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);
 	});
 
+	function padStart(targetLength) {
+	  var x = targetLength - this.length;
+	  if (x > 0) {
+	    var padString = arguments[1];
+	    if (padString == null) {
+	      padString = " ";
+	    }
+	    var len = padString.length;
+	    if (len) {
+	      return padString.repeat(Math.ceil(x / len)).substr(0, x) + this;
+	    }
+	  }
+	  return String(this);
+	}
+
+	definePrototype(String, 'padStart', padStart);
+
 	QUnit.test('String#padStart', function (assert) {
 	  var padStart = String.prototype.padStart;
 	  assert.isFunction(padStart);
@@ -7511,6 +8033,23 @@
 	    }, TypeError);
 	  }
 	});
+
+	function padEnd(targetLength) {
+	  var x = targetLength - this.length;
+	  if (x > 0) {
+	    var padString = arguments[1];
+	    if (padString == null) {
+	      padString = " ";
+	    }
+	    var len = padString.length;
+	    if (len) {
+	      return this + padString.repeat(Math.ceil(x / len)).substr(0, x);
+	    }
+	  }
+	  return String(this);
+	}
+
+	definePrototype(String, 'padEnd', padEnd);
 
 	QUnit.test('String#padEnd', function (assert) {
 	  var padEnd = String.prototype.padEnd;
@@ -7589,6 +8128,8 @@
 	  assert.ok(new promise.constructor(empty)["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
 	});
 
+	definePrototype(String, 'trimStart', trimStart);
+
 	// deprecated
 	// QUnit.test('String#trimLeft', assert => {
 	// 	const { trimStart, trimLeft } = String.prototype;
@@ -7639,6 +8180,12 @@
 	    }, TypeError);
 	  }
 	});
+
+	function trimEnd() {
+	  return this.replace(/[\s\u2006\u3000\xA0]+$/g, '');
+	}
+
+	definePrototype(String, 'trimEnd', trimEnd);
 
 	// deprecated
 	// QUnit.test('String#trimRight', assert => {
@@ -7691,6 +8238,23 @@
 	  }
 	});
 
+	function flat() {
+	  var deep = arguments[0];
+	  if (deep == null) deep = 1;
+	  var arr = [];
+	  for (var i = 0; i < this.length; i++) {
+	    var item = this[i];
+	    if (Array.isArray(item) && deep > 0) {
+	      arr = arr.concat(flat.call(item, deep - 1));
+	    } else {
+	      arr.push(item);
+	    }
+	  }
+	  return arr;
+	}
+
+	definePrototype(Array, 'flat', flat);
+
 	QUnit.test('Array#flat', function (assert) {
 	  var flat = Array.prototype.flat;
 	  assert.isFunction(flat);
@@ -7724,6 +8288,12 @@
 	  // 	})).length === 0, 'uses ToLength');
 	  // }
 	});
+
+	function flatMap(fn) {
+	  return flat.call(this.map(fn, arguments[1]), 1);
+	}
+
+	definePrototype(Array, 'flatMap', flatMap);
 
 	QUnit.test('Array#flatMap', function (assert) {
 	  var flatMap = Array.prototype.flatMap;
@@ -7856,6 +8426,40 @@
 	  assert.same(globalThis, Object(globalThis), 'is object');
 	  assert.same(globalThis.Math, Math, 'contains globals');
 	});
+
+	function matchAll(regExp) {
+	  if (this == null) {
+	    throw new TypeError("matchAll called on null or undefined");
+	  }
+	  var string = this;
+	  if (isString(regExp)) {
+	    regExp = new RegExp(regExp, 'g');
+	  } else if (regExp && regExp.global === false) {
+	    throw new TypeError("matchAll called with a non-global RegExp argument");
+	  }
+	  var it = {
+	    next: function () {
+	      var value = regExp.exec(string);
+	      if (value) {
+	        return {
+	          value: value,
+	          done: false
+	        };
+	      } else {
+	        return {
+	          value: undefined,
+	          done: true
+	        };
+	      }
+	    }
+	  };
+	  it[iterator$1] = function () {
+	    return this;
+	  };
+	  return it;
+	}
+
+	definePrototype(String, 'matchAll', matchAll);
 
 	QUnit.test('String#matchAll', function (assert) {
 	  var matchAll = String.prototype.matchAll;
@@ -8010,7 +8614,7 @@
 	    return this.reject(new TypeError('You must pass promises to allSettled.'));
 	  }
 	  return new this(function (resolve, reject) {
-	    var array = slice$1.call(promises);
+	    var array = slice$2.call(promises);
 	    if (array.length == 0) return resolve(array);
 	    var c = 0;
 	    array.forEach(function (one, index, array) {
@@ -8082,6 +8686,83 @@
 	    start();
 	  });
 	});
+
+	function isRegExp(obj) {
+	  return toString$1.call(obj) === '[object RegExp]';
+	}
+	;
+
+	var stringEscapes = {
+	  '\\': '\\',
+	  "'": "'",
+	  '\n': 'n',
+	  '\r': 'r',
+	  '\u2028': 'u2028',
+	  '\u2029': 'u2029'
+	};
+	var regexpEscapes = {
+	  '0': 'x30',
+	  '1': 'x31',
+	  '2': 'x32',
+	  '3': 'x33',
+	  '4': 'x34',
+	  '5': 'x35',
+	  '6': 'x36',
+	  '7': 'x37',
+	  '8': 'x38',
+	  '9': 'x39',
+	  'A': 'x41',
+	  'B': 'x42',
+	  'C': 'x43',
+	  'D': 'x44',
+	  'E': 'x45',
+	  'F': 'x46',
+	  'a': 'x61',
+	  'b': 'x62',
+	  'c': 'x63',
+	  'd': 'x64',
+	  'e': 'x65',
+	  'f': 'x66',
+	  'n': 'x6e',
+	  'r': 'x72',
+	  't': 'x74',
+	  'u': 'x75',
+	  'v': 'x76',
+	  'x': 'x78'
+	};
+	var reRegExpChars = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g;
+	function escapeRegExp(str) {
+	  //from lodash
+	  if (str) {
+	    reRegExpChars.lastIndex = 0;
+	    return reRegExpChars.test(str) ? str.replace(reRegExpChars, function (chr, leadingChar, whitespaceChar) {
+	      if (leadingChar) {
+	        chr = regexpEscapes[chr];
+	      } else if (whitespaceChar) {
+	        chr = stringEscapes[chr];
+	      }
+	      return '\\' + chr;
+	    }) : str;
+	  }
+	  return "(?:)";
+	}
+	;
+
+	var replace = String.prototype.replace;
+	function replaceAll(searchValue, replaceValue) {
+	  if (isRegExp(searchValue)) {
+	    if (!searchValue.global) {
+	      throw new TypeError("String.prototype.replaceAll called with a non-global RegExp argument");
+	    } else {
+	      return this.replace(searchValue, replaceValue);
+	    }
+	  }
+	  searchValue = new RegExp(escapeRegExp(String(searchValue)), "g");
+	  return replace.call(this, searchValue, replaceValue);
+	}
+	;
+
+	definePrototype(String, 'replaceAll', replaceAll);
 
 	QUnit.test('String#replaceAll', function (assert) {
 	  var replaceAll = String.prototype.replaceAll;
@@ -8227,6 +8908,39 @@
 	  assert.deepEqual(AggregateError([1, 2, 3]).errors, [1, 2, 3]);
 	});
 
+	function at$1(index) {
+	  // 检查索引是否有效  
+	  var len = this.length;
+	  var relativeIndex = toIntegerOrInfinity(index);
+	  var k = relativeIndex >= 0 ? relativeIndex : len + relativeIndex;
+	  // 确保索引在字符串范围内  
+	  if (k < 0 || k >= len) {
+	    return;
+	  }
+	  return this.charAt(k);
+	}
+	function toIntegerOrInfinity(argument) {
+	  var number = +argument;
+	  return number !== number || number === 0 ? 0 : Math.trunc(number);
+	}
+	;
+
+	definePrototype(String, 'at', at$1);
+
+	function at(n) {
+	  var len = this.length;
+	  if (isNaN(n)) {
+	    return this[0];
+	  }
+	  n = Math.trunc(n);
+	  if (n >= 0) {
+	    return this[n];
+	  }
+	  return this[len + n];
+	}
+
+	definePrototype(Array, 'at', at);
+
 	QUnit.test('Array#at', function (assert) {
 	  var at = Array.prototype.at;
 	  assert.isFunction(at);
@@ -8327,6 +9041,23 @@
 	  // assert.throws(() => hasOwn(undefined, 'foo'), TypeError, 'throws on undefined');
 	});
 
+	function findLastIndex(callback) {
+	  var thisArg = arguments[1];
+	  var i = this.length;
+	  if (i > 0) {
+	    while (i-- > 0) {
+	      var j = this[i];
+	      var r = callback.call(thisArg, j, i, this);
+	      if (r) {
+	        return i;
+	      }
+	    }
+	  }
+	  return -1;
+	}
+
+	definePrototype(Array, 'findLastIndex', findLastIndex);
+
 	QUnit.test('Array#findLastIndex', function (assert) {
 	  var findLastIndex = Array.prototype.findLastIndex;
 	  assert.isFunction(findLastIndex);
@@ -8375,6 +9106,17 @@
 	  }, 'uses ToLength');
 	  // assert.equal(true, 'findLastIndex' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
+
+	function findLast(callback) {
+	  var thisArg = arguments[1];
+	  var i = findLastIndex.call(this, callback, thisArg);
+	  if (i >= 0) {
+	    return this[i];
+	  }
+	}
+	;
+
+	definePrototype(Array, 'findLast', findLast);
 
 	QUnit.test('Array#findLast', function (assert) {
 	  var findLast = Array.prototype.findLast;
@@ -8560,11 +9302,6 @@
 	    fixFormData();
 	  }
 	}
-
-	function isRegExp(obj) {
-	  return toString$1.call(obj) === '[object RegExp]';
-	}
-	;
 
 	function structuredClone$1(obj) {
 	  var r;
@@ -9125,6 +9862,14 @@
 	  }
 	});
 
+	function toReversed() {
+	  var arr = Array.from(this);
+	  arr.reverse();
+	  return arr;
+	}
+
+	definePrototype(Array, 'toReversed', toReversed);
+
 	QUnit.test('Array#toReversed', function (assert) {
 	  var _array$constructor;
 	  var toReversed = Array.prototype.toReversed;
@@ -9171,6 +9916,14 @@
 
 	  // assert.equal(true, 'toReversed' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
+
+	function toSorted(fn) {
+	  var arr = Array.from(this);
+	  arr.sort.apply(arr, arguments);
+	  return arr;
+	}
+
+	definePrototype(Array, 'toSorted', toSorted);
 
 	QUnit.test('Array#toSorted', function (assert) {
 	  var _array$constructor;
@@ -9311,6 +10064,14 @@
 	  // assert.equal(true, 'toSorted' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
 
+	function toSpliced(a1, a2) {
+	  var arr = Array.from(this);
+	  arr.splice.apply(arr, arguments);
+	  return arr;
+	}
+
+	definePrototype(Array, 'toSpliced', toSpliced);
+
 	QUnit.test('Array#toSpliced', function (assert) {
 	  var _array$constructor;
 	  var toSpliced = Array.prototype.toSpliced;
@@ -9346,6 +10107,23 @@
 
 	  // assert.equal(true, 'toSpliced' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
+
+	function withAt(index, value) {
+	  if (this == null) {
+	    throw new TypeError("Cannot convert undefined or null to object");
+	  }
+	  if (index < 0) {
+	    index += this.length;
+	  }
+	  if (index < 0 || index >= this.length) {
+	    throw new RangeError("Invalid index: " + index);
+	  }
+	  var arr = Array.from(this);
+	  arr[index] = value;
+	  return arr;
+	}
+
+	definePrototype(Array, 'with', withAt);
 
 	QUnit.test('Array#with', function (assert) {
 	  var _array$constructor;
@@ -9383,6 +10161,47 @@
 	  }, _array$constructor);
 	  // assert.true(array.with(1, 2) instanceof Array, 'non-generic');
 	});
+
+	function isSymbol$1(obj) {
+	  if (typeof obj === "symbol") {
+	    return true;
+	  }
+	  return false;
+	}
+	;
+
+	var isSymbol = Symbol$8 ? isSymbol$1 : function (obj) {
+	  return typeof obj === "object" && obj instanceof Symbol$6;
+	};
+
+	function isWellFormed() {
+	  if (this == null) {
+	    throw new TypeError("isWellFormed called on null or undefined");
+	  }
+	  if (isSymbol(this)) {
+	    throw new TypeError("Cannot convert a Symbol value to a string");
+	  }
+	  var str = String(this);
+	  // https://github.com/tc39/proposal-is-usv-string
+	  for (var i = 0; i < str.length; ++i) {
+	    var isSurrogate = (str.charCodeAt(i) & 0xF800) == 0xD800;
+	    if (!isSurrogate) {
+	      continue;
+	    }
+	    var isLeadingSurrogate = str.charCodeAt(i) < 0xDC00;
+	    if (!isLeadingSurrogate) {
+	      return false; // unpaired trailing surrogate
+	    }
+	    var isFollowedByTrailingSurrogate = i + 1 < str.length && (str.charCodeAt(i + 1) & 0xFC00) == 0xDC00;
+	    if (!isFollowedByTrailingSurrogate) {
+	      return false; // unpaired leading surrogate
+	    }
+	    ++i;
+	  }
+	  return true;
+	}
+
+	definePrototype(String, 'isWellFormed', isWellFormed);
 
 	QUnit.test('String#isWellFormed', function (assert) {
 	  var isWellFormed = String.prototype.isWellFormed;
@@ -9427,6 +10246,34 @@
 	    return isWellFormed.call(Symbol$4('isWellFormed test'));
 	  }, 'throws on symbol context');
 	});
+
+	function toWellFormed() {
+	  if (this == null) {
+	    throw new TypeError("toWellFormed called on null or undefined");
+	  }
+	  if (isSymbol(this)) {
+	    throw new TypeError("Cannot convert a Symbol value to a string");
+	  }
+	  var S = String(this);
+	  var len = S.length;
+	  var r = new Array(S.length);
+	  // https://tc39.es/ecma262/#sec-string.prototype.towellformed
+	  for (var i = 0; i < len; i++) {
+	    var charCode = S.charCodeAt(i);
+	    // single UTF-16 code unit
+	    if ((charCode & 0xF800) !== 0xD800) r[i] = S.charAt(i);
+	    // unpaired surrogate
+	    else if (charCode >= 0xDC00 || i + 1 >= len || (S.charCodeAt(i + 1) & 0xFC00) !== 0xDC00) r[i] = "\uFFFD";
+	    // surrogate pair
+	    else {
+	      r[i] = S.charAt(i);
+	      r[++i] = S.charAt(i);
+	    }
+	  }
+	  return r.join('');
+	}
+
+	definePrototype(String, 'toWellFormed', toWellFormed);
 
 	QUnit.test('String#toWellFormed', function (assert) {
 	  var toWellFormed = String.prototype.toWellFormed;
