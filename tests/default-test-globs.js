@@ -20,5 +20,6 @@ module.exports = {
 	 */
 	local: [
 		"tests/corejs/es/*.js",
+		"tests/mdn/document/contains.js",
 	],
 };

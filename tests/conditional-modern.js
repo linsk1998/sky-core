@@ -20,6 +20,8 @@ module.exports = [
 			'document.scripts': "sky-core/polyfill/document/scripts",
 			// Edge12+ Safari4+ Chrome4+ Firfox4+ Opera11.5+
 			'document.baseURI': "sky-core/polyfill/document/baseURI",
+			// IE9-11 / Firfox8- 没有 document.contains（Node.contains 需 Firfox9+），经 compareDocumentPosition 实现
+			'document.contains': "sky-core/polyfill/document/contains",
 			// IE9+ Safari4+ Chrome4+ Firfox2+ Opera11.5+
 			"Date.now": "sky-core/polyfill/Date/now",
 			// IE9+ Safari5.1+ Chrome6+ Firfox4+ Opera11.5+

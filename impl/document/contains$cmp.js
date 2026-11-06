@@ -1,3 +1,6 @@
 export function contains$cmp(arg) {
-	return !!(this.compareDocumentPosition(arg) & 16);
+	if(arg == null) {
+		return false;
+	}
+	return this === arg || !!(this.compareDocumentPosition(arg) & 16);
 }

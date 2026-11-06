@@ -145,12 +145,18 @@ var ES2015_MAIN_PLUGINS = [
 	"@babel/plugin-transform-optional-catch-binding"
 ];
 
-var TIER_BABEL = {
-	compat: { main: COMPAT_MAIN_PLUGINS, tail: COMPAT_TAIL_PLUGINS },
-	legacy: { main: COMPAT_MAIN_PLUGINS, tail: COMPAT_TAIL_PLUGINS },
-	modern: { main: MODERN_MAIN_PLUGINS, tail: MODERN_TAIL_PLUGINS },
-	es2015: { main: ES2015_MAIN_PLUGINS }
-};
+	var TIER_BABEL = {
+		compat: { main: COMPAT_MAIN_PLUGINS, tail: COMPAT_TAIL_PLUGINS },
+		legacy: { main: COMPAT_MAIN_PLUGINS, tail: COMPAT_TAIL_PLUGINS },
+		modern: { main: MODERN_MAIN_PLUGINS, tail: MODERN_TAIL_PLUGINS },
+		es2015: { main: ES2015_MAIN_PLUGINS }
+	};
+
+	// 测试源码的 babel 覆盖范围（虚拟入口在 tests/corejs/local/ 下，天然命中）
+	var TEST_SOURCE_INCLUDE = [
+		"tests/corejs/**/*",
+		"tests/mdn/**/*",
+	];
 
 var DEFAULT_OUTPUT_FILES = {
 	compat: "tests/corejs/dest/compat.js",
@@ -167,9 +173,7 @@ function createBabelPlugins(tier) {
 			babelrc: false,
 			compact: false,
 			plugins: conf.main,
-			include: [
-				"tests/corejs/**/*",
-			]
+			include: TEST_SOURCE_INCLUDE.slice()
 		})
 	];
 	if(conf.tail) {

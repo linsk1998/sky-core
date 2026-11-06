@@ -55,6 +55,7 @@ module.exports = [
 				"sky-core/polyfill/Array/prototype/includes",
 			],
 			//DOM
+			'document.contains': "sky-core/polyfill/document/contains",
 			".contains": "sky-core/polyfill/Element/prototype/contains",
 			".children": "sky-core/polyfill/Element/prototype/children",
 			".innerText": "sky-core/polyfill/Element/prototype/innerText",

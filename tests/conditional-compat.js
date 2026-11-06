@@ -54,6 +54,8 @@ module.exports = [
 			'document.head': "sky-core/polyfill/document/head",
 			// Edge12+ Safari4+ Chrome4+ Firfox4+ Opera11.5+
 			'document.baseURI': "sky-core/polyfill/document/baseURI",
+			// IE8- 没有 document.contains，经 document.all 遍历实现
+			'document.contains': "sky-core/polyfill/document/contains",
 
 			// IE9+ Safari4+ Chrome4+ Firfox2+ Opera11.5+
 			"Date.now": "sky-core/polyfill/Date/now",
