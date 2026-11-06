@@ -17,7 +17,7 @@
 		"build:utils": "rollup --config build/rollup.config.utils.js",
 		"test:node": "node tests/run-node.js",
 		"test:local": "node tests/run-local.js",
-		"test:corejs": "rollup --config tests/corejs/rollup.config.js",
+		"build:corejs-test": "rollup --config tests/corejs/rollup.config.js",
 		"test:lambdatest": "node tests/action-lambdatest.js",
 		"test:saucelabs": "node tests/action-saucelabs.js"
 	},

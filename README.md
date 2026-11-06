@@ -20,7 +20,7 @@ sky-core是一个处理浏览器兼容问题的polyfill库和工具库。
 | 代号 | 支持特性 | 浏览器 |
 | ----- | ----- | ----- |
 | compat | IE9以下 | IE 5.5 ~ 8 |
-| legacy | 低版本非IE浏览器 | Firefox 2 ~ 3.6, Chrome 4 ~ 28, Safari 3.1 ~ 7.1, Opera 10 ~ 15 |
+| legacy | 低版本非IE浏览器 | Firefox<10 Chrome<30 Safari<7 Opera<17 |
 | modern | 不支持module | IE 9 ~ 11, Chrome 29 ~ 62, Safari 8 ~ 10.0, Edge 12 ~ 18, Firefox 4 ~ 66, Opera 16 ~ 49 |
 | es2015 | 支持module | Chrome 63+, Safari 10.1+, Firefox 67+, Edge 79+, Opera 50+ |
 | 开发中 | 支持top-level-await | Chrome 89+, Safari 27+, Firefox 90+, Edge 89+, Opera 75+ |

@@ -167,6 +167,12 @@ async function collectTasks(runner, options) {
 			});
 		} else {
 			found = await runner.scan(conf.pattern, {
+				filter: function(command, version) {
+					var v = parseFloat(String(version).replace(/[()]/g, ""));
+					// 过老的浏览器跑不了测试（无法加载页面或引擎缺失），直接跳过
+					if(conf.minVersion && v < conf.minVersion) { return false; }
+					return true;
+				},
 				map: function(command, version) {
 					return {
 						command: command,

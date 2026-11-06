@@ -26,12 +26,15 @@ var BROWSER_FAMILIES = {
 		label: "Firefox",
 		pattern: "D:/App/Browser/Firefox/*/firefox.exe",
 		preset: "Firefox",
-		names: ["firefox"]
+		names: ["firefox"],
+		minVersion: 3
 	},
 	opera: {
 		label: "Opera",
 		pattern: "D:/App/Browser/Opera/*/opera.exe",
-		names: ["opera"]
+		preset: "Opera",
+		names: ["opera"],
+		minVersion: 9
 	},
 	safari: {
 		label: "Safari",
@@ -46,7 +49,8 @@ var BROWSER_FAMILIES = {
 	webkitmini: {
 		label: "WebKitMini",
 		pattern: "D:/App/Browser/Safari/MiniBrowser(*)/MiniBrowser.exe",
-		names: ["safari"]
+		names: ["safari"],
+		minVersion: 11
 	},
 	ie: {
 		label: "IE",

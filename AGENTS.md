@@ -13,28 +13,27 @@ sky-core 是一个浏览器 polyfill 库（core-js 风格）。源码按"分层"
 
 构建用 rollup，通过 `rollup-plugin-polyfill-inject`（配置在 `tests/conditional-*.js`）**把测试代码里对原生 API 的调用劫持为库内实现**，从而测试的是"我们的实现"而不是 node/浏览器自带的。
 
-三个构建分层（tier）：
+四个构建分层（tier）：
 
 | tier | 目标浏览器 | 注入配置 | babel |
 |---|---|---|---|
 | compat | IE6-8 | conditional-compat.js | 降到 ES3 |
-| modern | IE9+ | conditional-modern.js | 降到 ES5 |
+| legacy | 非 IE 低版本（Firefox<10 Chrome<30 Safari<7 Opera<17） | conditional-legacy.js | 降到 ES3 |
+| modern | IE9+ / 不支持 module 的浏览器 | conditional-modern.js | 降到 ES5 |
 | es2015 | 支持 `<script type="module">` 的新浏览器 | conditional-es2015.js | 仅去 ES2019+ |
-
-（conditional-legacy.js 与 legacy tier 属于**开发中未完成**的线路，见"已知问题"。）
 
 ## 测试命令一览
 
 | 命令 | 用途 | 默认范围 |
 |---|---|---|
-| `npm run test:node` | 纯 node 测试，**多人协作/CI 用**，只适合纯算法类测试 | `tests/default-test-globs.js` 的 `node` 数组 |
+| `npm run test:node` | **纯 node 测试，只跑纯算法类测试**（多人协作/CI 用） | `tests/default-test-globs.js` 的 `node` 数组 |
 | `npm run test:local` | 本机浏览器跨端测试（自动开关服务器、收集结果） | 同文件 `local` 数组（`tests/corejs/es/*.js`） |
-| `npm run test:corejs` | 只构建三份产物到 `tests/corejs/dest/`，供**手动**开 2.html/3.html 测试或 lambdatest | `tests/corejs/index.js` 手写清单 |
+| `npm run build:corejs-test` | 构建四份产物到 `tests/corejs/dest/`，供**真人**开 2.html/3.html 测试或 lambdatest | `tests/corejs/index.js` 手写清单 |
 | `npm run test:lambdatest` / `test:saucelabs` | 云端测试（lambdatest 仅在发布前跑，暂未改造） | - |
 
 所有命令都在仓库根目录执行（Windows / pnpm / Node 22 验证通过）。
 
-## npm run test:node（纯 node）
+## npm run test:node（纯算法）
 
 ```bash
 npm run test:node                                    # 默认范围（纯算法数组）
@@ -50,7 +49,7 @@ npm run test:node -- "tests/corejs/es/*.js"          # 相对根目录的 glob�
 2. 加载 `qunitjs@1.9.0`（devDependency，html 页面里引用的也是 `node_modules/qunitjs` 同一份，保证断言语义同构——不要换成 node-qunit，它只接受文件路径且内置 qunit 2.x 会破坏现有 helpers）；
 3. 在本进程执行产物，失败时输出明细并以非 0 码退出。
 
-预期基线：默认范围（Math.sumPrecise 的 core-js 移植 + MDN 示例）80/80；`tests/corejs/es/*.js` 全量 2205/2205（modern 与 es2015 tier）。**跑完不符合这个基线说明你改坏了东西，先自查，不要修改测试预期来"凑绿"。**
+预期基线：默认范围（Math.sumPrecise 的 core-js 移植 + MDN 示例）80/80。**跑完不符合这个基线说明你改坏了东西，先自查，不要修改测试预期来"凑绿"。**
 
 ## npm run test:local（本机浏览器）
 
@@ -62,9 +61,9 @@ npm run test:local -- -b "chrome=146" -b "firefox=91"    # 多次 -b 会合并
 npm run test:local -- -p 8940 -t 180000                  # 端口（默认 8931）/ 单浏览器超时（默认 120s）
 ```
 
-浏览器范围语法：逗号分隔，`family` / `family>=v` `>` `<` `<=` `=` `==` / `!` 排除。匹配名只有 **chrome / firefox / opera / safari / ie**（webkit/webkitmini 不作为匹配名——Safari 的 WebKit 目录直接以版本命名：`MiniBrowser(10.0~12.1)` 与 `Playwright(13.2+)`，`safari` 按版本命中，用版本区间区分两种实现）。`ie` 走 Edge 的 IE 模式（EdgeIEMode preset + EmulateIE 插件按 `?ie=X` 注入 meta），版本即文档模式：`ie=5/7/8/9/10/11`，`ie=8` 及以下跑 compat 产物、`ie=9` 以上跑 modern 产物。家族定义见 `tests/lib/local-browsers.js`（扫描 `D:\App\Browser` 下的安装）。**版本号必须带运算符**（写 `chrome=146`，不要写 `chrome146`）。执行策略：同一家族串行（runQueue），不同家族并行（Promise.allSettled），大矩阵总耗时约等于最慢家族的串行总时长。
+浏览器范围语法：逗号分隔，`family` / `family>=v` `>` `<` `<=` `=` `==` / `!` 排除。匹配名只有 **chrome / firefox / opera / safari / ie**（webkit/webkitmini 不作为匹配名——Safari 的 WebKit 目录直接以版本命名：`MiniBrowser(10.0~12.1)` 与 `Playwright(13.2+)`，`safari` 按版本命中，用版本区间区分两种实现）。`ie` 走 Edge 的 IE 模式（EdgeIEMode preset + EmulateIE 插件按 `?ie=X` 注入 meta），版本即文档模式：`ie=5/7/8/9/10/11`，`ie=8` 及以下跑 compat 产物、`ie=9` 以上跑 modern 产物。家族定义见 `tests/lib/local-browsers.js`（扫描 `D:\App\Browser` 下的安装，各家族有最低版本过滤）。**版本号必须带运算符**（写 `chrome=146`，不要写 `chrome146`）。执行策略：同一家族串行（runQueue），不同家族并行（Promise.allSettled），大矩阵总耗时约等于最慢家族的串行总时长。
 
-流程：rollup 构建三套产物（**内存字符串，全程不落盘**）→ local-test-runner 起服务器，通过插件钩子提供虚拟资源：`loadHtml` 产生测试页（与 3.html 同构：IE 条件注释 + nomodule + module，浏览器自动选对产物），`configureServer` 拦截三套产物 js 请求直接返回内存内容（QUnit 插件注入结果上报脚本，含失败断言明细）→ 逐浏览器运行并回收结果 → 关服务器 → 有失败则打印明细并退出码 1。
+流程：rollup 构建四套产物（compat / legacy / modern / es2015，**内存字符串，全程不落盘**）→ local-test-runner 起服务器，通过插件钩子提供虚拟资源：`loadHtml` 产生测试页（IE 条件注释 + onmouseenter 检测分流 legacy/modern + type=module 分流 es2015），`configureServer` 拦截四套产物 js 请求直接返回内存内容（QUnit 插件注入结果上报脚本，含失败断言明细）→ 逐浏览器运行并回收结果 → 关服务器 → 有失败则打印明细并退出码 1。
 
 缓存控制（防止浏览器跑到旧构建产物）由 local-test-runner 内建：所有响应默认带 `Cache-Control: no-store` / `Pragma: no-cache` / `Expires: 0`（headers 选项可覆盖）；Chrome 家族通过其 **Chrome preset** 启动（临时 user-data-dir + 一次性空 `--disk-cache-dir` 等）——no-store 只能防止新的缓存写入，救不了已经存在的缓存条目，空缓存目录才能根治。
 
@@ -107,7 +106,7 @@ npm run test:node Math.sumPrecise      # MDN 示例版
 **无论是否纯算法，都需要浏览器测试**（polyfill 必须跨浏览器验证）：
 
 ```bash
-# 1. 在 tests/conditional-*.js 里登记注入映射（三套按目标浏览器各自取舍）
+# 1. 在 tests/conditional-*.js 里登记注入映射（四套按目标浏览器各自取舍）
 # 2. 跑浏览器测试
 npm run test:local es.math.sum         # core-js 移植版
 npm run test:local Math.sumPrecise     # MDN 示例版
@@ -123,6 +122,7 @@ polyfill 类测试放 `tests/corejs/es/`（被 `local` 数组 glob 自动纳入�
 |---|---|
 | 新增 polyfill（新特性） | 一两个新旧代表：`-b chrome=146 -b firefox=91 -b ie=11` |
 | 修改了 compat 分层的代码 | 重点老浏览器：`-b ie=8 -b ie=9`（compat 只在 IE≤8 生效） |
+| 修改了 legacy 分层的代码 | 老非 IE：`-b firefox=31 -b chrome=30 -b safari=11.0` |
 | 修改了 modern 分层的代码 | IE9~Chrome 60 区间：`-b ie=9 -b chrome=30 -b chrome=60` |
 | 修改了 es2015 分层的代码 | 新浏览器：`-b chrome=100 -b firefox=120 -b safari=16.4` |
 | 修改了共享 impl / utils | 按目标浏览器覆盖范围选各档代表 |
@@ -140,35 +140,28 @@ polyfill 类测试放 `tests/corejs/es/`（被 `local` 数组 glob 自动纳入�
 ```
 tests/
   default-test-globs.js   # 两个默认范围数组：node（纯算法）/ local（跨浏览器）
+  impl-inject.js          # 纯算法测试的注入映射（无 tier，直接指向 impl/）
   run-node.js             # npm run test:node 入口
   run-local.js            # test:local 入口
   lib/
     select-tests.js       # 参数 → 文件列表（profile: node|local）
-    glob.js               # 文件匹配（tinyglobby 遍历 + picomatch 模式匹配，与 local-test-runner / rollup pluginutils 同款）
-    build-tests.js        # rollup API 构建：内存产物 / 写盘 local 产物
-    local-browsers.js     # 浏览器家族清单 + 范围表达式解析
+    glob.js               # 文件匹配（tinyglobby 遍历 + picomatch 模式匹配）
+    build-tests.js        # rollup API 构建：内存产物
+    local-browsers.js     # 浏览器家族清单 + 范围表达式解析 + 最低版本过滤
   corejs/
-    createConfigs.js      # 三 tier 构建配置工厂（CLI 与脚本共用）
-    rollup.config.js      # test:corejs 用，等于 createConfigs()
-    conditional-*.js      # 各 tier 的劫持映射（compat/modern/es2015 在用）
-    index.js              # 手动测试页（2.html/3.html）的测试清单
-    dest/                 # test:corejs 产物，**git 跟踪的构建产物**
+    createConfigs.js      # 四 tier 构建配置工厂（CLI 与脚本共用）
+    rollup.config.js      # build:corejs-test 用，等于 createConfigs()
+    conditional-*.js      # 各 tier 的劫持映射（compat/legacy/modern/es2015 在用）
+    index.js              # 真人测试页（2.html/3.html）的测试清单
   mdn/                    # 从 MDN 示例移植的测试
 
-QUnit 运行时统一来自 `qunitjs@1.9.0`（devDependency）：node 侧 `require("qunitjs")`，
-html 页面用相对路径引用 `node_modules/qunitjs/qunit/qunit.js`（pnpm 的 junction 链接可被静态服务器正常服务）。
+QUnit 运行时统一来自 `qunitjs@1.9.0`（devDependency）。
 ```
 
-## 注意事项与已知问题
+## 注意事项
 
-- **`tests/corejs/dest/*.js` 是 git 跟踪的产物**：改了库源码或 conditional 配置后，跑 `npm run test:corejs` 重建并一起提交。
-- **`npm run test:node` 默认只跑纯算法测试，不会测 compat 的功能**。如果显式用 `--tier=compat` 跑 polyfill 测试（如 `tests/corejs/es/*.js`），在 node/V8 上会有约 63 处断言失败（Symbol/descriptor 类，compat 实现面向 IE 系）——这不是回归信号；compat 的真实判定以老浏览器（test:local / 手动）为准。
-- Firefox 140 曾出现"进程起来但不开 URL"的问题，已由 Firefox preset 中更完整的 user.js prefs 解决（禁书签恢复/更新/遥测等），52/91/140 实测均正常。
-- **MiniBrowser 系（webkit602~607，Safari 10.0~12.1）启动超时未解决**：进程起来但不加载 URL，test:local 里会记为该浏览器的失败并继续；Playwright 版（safari>=13.2）正常。
-- IE 用 Edge IE 模式自动测（`-b ie`，文档模式 5/7/8/9/10/11）；**IETester / VirtIE / Lisect / 忽忽浏览器等独立 IE 工具仍是手动测试**，不要往 local-browsers 里加它们。低版本 IE 的手动测试方式：打开带 `<meta http-equiv="X-UA-Compatible" content="IE=X">` 的测试页（test:local 生成的页面已含 `IE=edge`，手动复刻一份改 meta 即可）。
-- **legacy 线路（`conditional-legacy.js` 与各 `*-legacy/` 目录）是开发中未完成的库功能**，目前没有构建入口；不要删除，也不要当成可用功能依赖。
-- mocha/chai 测试体系已删除，**不要重新引入**；新的 node 侧测试一律走 QUnit 体系。
-- 手动开 html 测试页（2.html/3.html 等）前必须先 `pnpm install`——页面的 QUnit 走的是 `node_modules/qunitjs` 相对路径，没装依赖会 404。
+- **IETester / VirtIE / Lisect / 忽忽浏览器等独立 IE 工具是真人测试工具**，不要往 local-browsers 里加它们。
+- **legacy 线路（`conditional-legacy.js` 与各 `*-legacy/` 目录）是开发中未完成的库功能。**
 - `tests/` 下新建文件若含块注释，注意注释里不要出现 `**/`（会提前终结注释导致语法错误）。
 - 在某些 shell 包装层（尤其后台执行经 cmd 转发时）里，引号内的 `>` / `<` 会被误解析成重定向，`>=30` 这类参数会直接炸掉命令——优先用逐版本精确写法（`-b chrome=30 -b chrome=31 ...`）或 `=`/`==`，或换 shell。
 
