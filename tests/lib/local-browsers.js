@@ -49,8 +49,7 @@ var BROWSER_FAMILIES = {
 	webkitmini: {
 		label: "WebKitMini",
 		pattern: "D:/App/Browser/Safari/MiniBrowser(*)/MiniBrowser.exe",
-		names: ["safari"],
-		minVersion: 11
+		names: ["safari"]
 	},
 	ie: {
 		label: "IE",
@@ -66,10 +65,13 @@ var BROWSER_FAMILIES = {
 /**
  * 浏览器范围表达式：逗号分隔，每项为
  *   family               整个家族（safari 会命中真 Safari 和两个 WebKit 家族）
- *   family>=v / >v / <v / <=v / ==v / =v     家族内按版本过滤（版本必须带运算符）
+ *   family=V             精确版本
+ *   family=A~B           区间：A <= v < B（整数比较：A <= floor(v) < B）
+ *   family=A~            下界：v >= A
+ *   family=~B            上界：v < B
  *   !family[...]         排除
- * 匹配名只有 chrome / firefox / opera / safari（webkit/webkitmini 不对外）。
- * 例如：chrome>=60,firefox,!firefox=52,safari=16.4
+ * 匹配名只有 chrome / firefox / opera / safari / ie。
+ * 例如：chrome=146,firefox=60~,!firefox=52,safari=9~13,opera=9~12
  */
 function parseSpecs(spec) {
 	return spec.split(",").map(function(item) {
@@ -80,29 +82,53 @@ function parseSpecs(spec) {
 			negate = true;
 			item = item.slice(1);
 		}
-		// 版本必须显式带运算符，避免 "chrome146" 被误拆成 chrome + 146
-		var m = item.match(/^([a-z-]+?)(>=|<=|==|>|<|=)([\d.]+)$/i) ||
-			item.match(/^([a-z-]+)$/i);
-		if(!m) { return null; }
-		return {
-			negate: negate,
-			family: m[1].toLowerCase(),
-			op: m[2] || null,
-			version: m[3] ? parseFloat(m[3]) : null
-		};
+		// 波浪号区间：family=A~B / family=A~ / family=~B
+		var m = item.match(/^([a-z-]+?)(?:=([\d.]+)?~([\d.]+)?)$/i);
+		if(m) {
+			return {
+				negate: negate,
+				family: m[1].toLowerCase(),
+				range: {
+					min: m[2] != null ? parseFloat(m[2]) : null,
+					max: m[3] != null ? parseFloat(m[3]) : null
+				}
+			};
+		}
+		// 精确版本：family=V
+		m = item.match(/^([a-z-]+?)=([\d.]+)$/i);
+		if(m) {
+			return {
+				negate: negate,
+				family: m[1].toLowerCase(),
+				range: {
+					min: parseFloat(m[2]),
+					max: parseFloat(m[2]) + 1
+				}
+			};
+		}
+		// 整个家族：family
+		m = item.match(/^([a-z-]+)$/i);
+		if(m) {
+			return {
+				negate: negate,
+				family: m[1].toLowerCase(),
+				range: null
+			};
+		}
+		return null;
 	}).filter(Boolean);
 }
 
-function compare(op, a, b) {
-	switch(op) {
-		case ">=": return a >= b;
-		case ">": return a > b;
-		case "<=": return a <= b;
-		case "<": return a < b;
-		case "==":
-		case "=": return a === b;
-		default: return true;
-	}
+/**
+ * 版本是否在区间内。区间语义：A~B 表示 A <= 主版本 <= B（即 A <= v < B+1）。
+ * min/max 为 null 表示无下界/无上界。
+ */
+function inRange(v, range) {
+	if(!range) { return true; }
+	var num = Math.floor(parseFloat(v));
+	if(range.min != null && num < range.min) { return false; }
+	if(range.max != null && num > range.max) { return false; }
+	return true;
 }
 
 /**
@@ -111,18 +137,14 @@ function compare(op, a, b) {
  * @param specs    parseSpecs 结果
  * @param family   家族键名（仅用于日志）
  * @param names    该家族响应的匹配名
- * @param version  用于比较的版本号（WebKit 家族为映射后的 Safari 版本）
+ * @param version  用于比较的版本号
  */
 function matchSpecs(specs, family, names, version) {
-	var versionNum = parseFloat(version);
 	var matched = false;
 	specs.forEach(function(spec) {
 		var hit = false;
 		if(spec.family === "all" || (names && names.indexOf(spec.family) >= 0)) {
-			hit = true;
-			if(spec.version !== null) {
-				hit = compare(spec.op, versionNum, spec.version);
-			}
+			hit = inRange(version, spec.range);
 		}
 		if(hit) { matched = !spec.negate; }
 	});

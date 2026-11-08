@@ -11,8 +11,8 @@ module.exports = {
 	 * 这类测试不依赖浏览器环境，逐个文件维护在这里。
 	 */
 	node: [
-		"tests/corejs/pure/es.math.sum-precise.js",
-		"tests/mdn/Math.sumPrecise.js",
+		"tests/corejs/es/es.math.sum-precise.js",
+		"tests/mdn/Math/sumPrecise.js",
 	],
 
 	/**
@@ -20,6 +20,6 @@ module.exports = {
 	 */
 	local: [
 		"tests/corejs/es/*.js",
-		"tests/mdn/document/contains.js",
+		"tests/mdn/**/*.js",
 	],
 };

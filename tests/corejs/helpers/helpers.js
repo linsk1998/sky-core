@@ -14,11 +14,13 @@ export function createIterator(elements, methods) {
 	return iterator;
 }
 
+import iterator from "sky-core/pure/Symbol/iterator";
+
 export function createIterable(elements, methods) {
 	const iterable = {
 		called: false,
 		received: false,
-		[Symbol.iterator]() {
+		[iterator]() {
 			iterable.received = true;
 			let index = 0;
 			const iterator = {
