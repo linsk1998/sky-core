@@ -61,7 +61,7 @@ npm run test:local -- -b "chrome=146" -b "firefox=91"    # 多次 -b 会合并
 npm run test:local -- -p 8940 -t 180000                  # 端口（默认 8931）/ 单浏览器超时（默认 120s）
 ```
 
-浏览器范围语法：逗号分隔，`family` / `family=V`（精确）/ `family=A~B`（区间，主版本 A~B 闭区间）/ `family=A~`（下界）/ `family=~B`（上界）/ `!family` 排除。匹配名只有 **chrome / firefox / opera / safari / ie**（webkit/webkitmini 不作为匹配名——Safari 的 WebKit 目录直接以版本命名：`MiniBrowser(9.1~12.1)` 与 `Playwright(13.2+)`，`safari` 按版本命中，用版本区间区分两种实现）。`ie` 走 Edge 的 IE 模式（EdgeIEMode preset + EmulateIE 插件按 `?ie=X` 注入 meta），版本即文档模式：`ie=5/7/8/9/10/11`，`ie=8` 及以下跑 compat 产物、`ie=9` 以上跑 modern 产物。家族定义见 `tests/lib/local-browsers.js`（扫描 `D:\App\Browser` 下的安装）。执行策略：同一家族串行（runQueue），不同家族并行（Promise.allSettled），大矩阵总耗时约等于最慢家族的串行总时长。
+浏览器范围语法：逗号分隔，`family` / `family=V`（精确）/ `family=A~B`（区间，整数边界按主版本 A~B 闭区间；边界带小数时精确到完整版本号，如 `firefox=3.5~3.6`）/ `family=A~`（下界）/ `family=~B`（上界）/ `!family` 排除。匹配名只有 **chrome / firefox / opera / safari / ie**（webkit/webkitmini 不作为匹配名——Safari 的 WebKit 目录直接以版本命名：`MiniBrowser(9.1~12.1)` 与 `Playwright(13.2+)`，`safari` 按版本命中，用版本区间区分两种实现）。`ie` 走 Edge 的 IE 模式（EdgeIEMode preset + EmulateIE 插件按 `?ie=X` 注入 meta），版本即文档模式：`ie=5/7/8/9/10/11`，`ie=8` 及以下跑 compat 产物、`ie=9` 以上跑 modern 产物。家族定义见 `tests/lib/local-browsers.js`（扫描 `D:\App\Browser` 下的安装）。执行策略：同一家族串行（runQueue），不同家族并行（Promise.allSettled），大矩阵总耗时约等于最慢家族的串行总时长。
 
 流程：rollup 构建四套产物（compat / legacy / modern / es2015，**内存字符串，全程不落盘**）→ local-test-runner 起服务器，通过插件钩子提供虚拟资源：`loadHtml` 产生测试页（IE 条件注释 + onmouseenter 检测分流 legacy/modern + type=module 分流 es2015），`configureServer` 拦截四套产物 js 请求直接返回内存内容（QUnit 插件注入结果上报脚本，含失败断言明细）→ 逐浏览器运行并回收结果 → 关服务器 → 有失败则打印明细并退出码 1。
 

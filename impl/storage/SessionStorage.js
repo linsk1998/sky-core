@@ -1,4 +1,4 @@
-import { EventTarget } from "./EventTarget";
+import { EventTarget } from "../event/EventTarget";
 
 function SessionStorage(element, sessionId) {
 	this._el = element;

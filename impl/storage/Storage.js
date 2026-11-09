@@ -1,4 +1,4 @@
-import { EventTarget } from "./EventTarget";
+import { EventTarget } from "../event/EventTarget";
 import { hasOwn } from "../../impl-modern/Object/hasOwn";
 
 function Storage() {
@@ -17,7 +17,7 @@ proto.setItem = function(key, value) {
 	if(!hasOwn(this._store, key)) {
 		this.length++;
 	}
-	this._store[key] = value;
+	this._store[key] = String(value);
 };
 proto.removeItem = function(key) {
 	if(hasOwn(this._store, key)) {

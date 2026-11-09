@@ -65,10 +65,12 @@ var BROWSER_FAMILIES = {
 /**
  * 浏览器范围表达式：逗号分隔，每项为
  *   family               整个家族（safari 会命中真 Safari 和两个 WebKit 家族）
- *   family=V             精确版本
- *   family=A~B           区间：A <= v < B（整数比较：A <= floor(v) < B）
+ *   family=V             精确版本（按完整版本号比较，3.5 与 3.6 区分开）
+ *   family=A~B           区间：A <= v <= B
+ *                        （整数边界按主版本比较，小数边界按完整版本号比较，
+ *                         这样 9~13 含 13.2，而 3.5~3.6 能精确到 3.5/3.6）
  *   family=A~            下界：v >= A
- *   family=~B            上界：v < B
+ *   family=~B            上界：v <= B
  *   !family[...]         排除
  * 匹配名只有 chrome / firefox / opera / safari / ie。
  * 例如：chrome=146,firefox=60~,!firefox=52,safari=9~13,opera=9~12
@@ -100,10 +102,7 @@ function parseSpecs(spec) {
 			return {
 				negate: negate,
 				family: m[1].toLowerCase(),
-				range: {
-					min: parseFloat(m[2]),
-					max: parseFloat(m[2]) + 1
-				}
+				exact: parseFloat(m[2])
 			};
 		}
 		// 整个家族：family
@@ -119,15 +118,26 @@ function parseSpecs(spec) {
 	}).filter(Boolean);
 }
 
+/** 边界是否带小数（如 3.5 / 5.1） */
+function isDecimal(num) {
+	return num !== Math.floor(num);
+}
+
 /**
- * 版本是否在区间内。区间语义：A~B 表示 A <= 主版本 <= B（即 A <= v < B+1）。
+ * 版本是否在区间内。区间语义：A~B 表示 A <= v <= B。
+ * 整数边界按主版本比较（9~13 含 13.2），小数边界按完整版本号比较（3.5~3.6 排除 3.0）。
  * min/max 为 null 表示无下界/无上界。
  */
 function inRange(v, range) {
 	if(!range) { return true; }
-	var num = Math.floor(parseFloat(v));
-	if(range.min != null && num < range.min) { return false; }
-	if(range.max != null && num > range.max) { return false; }
+	var num = parseFloat(v);
+	var major = Math.floor(num);
+	if(range.min != null) {
+		if(isDecimal(range.min) ? num < range.min : major < range.min) { return false; }
+	}
+	if(range.max != null) {
+		if(isDecimal(range.max) ? num > range.max : major > range.max) { return false; }
+	}
 	return true;
 }
 
@@ -141,10 +151,12 @@ function inRange(v, range) {
  */
 function matchSpecs(specs, family, names, version) {
 	var matched = false;
+	// 目录名可能是 "146.0.7633.0" 这类完整版本，取 parseFloat 得到 146
+	var num = parseFloat(version);
 	specs.forEach(function(spec) {
 		var hit = false;
 		if(spec.family === "all" || (names && names.indexOf(spec.family) >= 0)) {
-			hit = inRange(version, spec.range);
+			hit = spec.exact != null ? num === spec.exact : inRange(version, spec.range);
 		}
 		if(hit) { matched = !spec.negate; }
 	});
