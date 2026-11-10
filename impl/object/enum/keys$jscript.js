@@ -1,5 +1,5 @@
-import { isJsObject } from "sky-core/utils-compat/isJsObject";
-import { dontEnums } from "sky-core/utils-compat/dontEnums";
+import { isJsObject } from "../../../utils-compat/isJsObject";
+import { dontEnums } from "../../../utils-compat/dontEnums";
 import { getPrototypeOf } from "../../Reflect/getPrototypeOf";
 
 export function keys$jscript(obj) {
