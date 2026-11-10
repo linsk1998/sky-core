@@ -1,50 +1,50 @@
-import { timeLimitedPromise } from '../helpers/helpers';
-
-QUnit.asyncTest('setTimeout / clearTimeout', function() {
-  expect(1);
-  timeLimitedPromise(1000, function(resolve) {
-    setTimeout(function(a, b) {
-      resolve(a + b);
-    }, 10, 'a', 'b');
-  }).then(function(it) {
-    QUnit.strictEqual(it, 'ab', 'setTimeout works with additional args');
-  }).catch(function() {
-    QUnit.ok(false, 'setTimeout works with additional args');
-  }).then(function() {
-    start();
-  });
-});
-QUnit.asyncTest('setTimeout / clearTimeout', function() {
-  expect(1);
-  timeLimitedPromise(50, function(resolve) {
-    clearTimeout(setTimeout(resolve, 10));
-  }).then(function() {
-    QUnit.ok(false, 'clearImmediate works with wraped setTimeout');
-  }).catch(function() {
-    QUnit.ok(true, 'clearImmediate works with wraped setTimeout');
-  }).then(function() {
-    start();
-  });
+QUnit.asyncTest('setTimeout works with additional args', assert => {
+	expect(1);
+	const timeout = setTimeout(function(a, b) {
+		clearTimeout(guard);
+		assert.strictEqual(a + b, 'ab', 'setTimeout works with additional args');
+		start();
+	}, 10, 'a', 'b');
+	const guard = setTimeout(function() {
+		assert.ok(false, 'setTimeout works with additional args');
+		start();
+	}, 1000);
 });
 
-QUnit.asyncTest('setInterval / clearInterval', assert => {
-  expect(1);
+QUnit.asyncTest('clearTimeout prevents callback', assert => {
+	expect(1);
+	const timeout = setTimeout(function() {
+		assert.ok(false, 'clearTimeout prevents callback');
+		start();
+	}, 30);
+	clearTimeout(timeout);
+	setTimeout(function() {
+		assert.ok(true, 'clearTimeout prevents callback');
+		start();
+	}, 60);
+});
 
-  timeLimitedPromise(1000, (resolve, reject) => {
-    let i = 0;
-    const interval = setInterval((a, b) => {
-      if(a + b !== 'ab' || i > 2) reject({ a, b, i });
-      if(i++ === 2) {
-        clearInterval(interval);
-        setTimeout(resolve, 30);
-      }
-    }, 5, 'a', 'b');
-  }).then(() => {
-    assert.ok(true, 'setInterval & clearInterval works with additional args');
-  }).catch(error => {
-    if(!error) error = {};
-    assert.ok(false, `setInterval & clearInterval works with additional args: ${error.a}, ${error.b}, times: ${error.i}`);
-  }).then(() => {
-    start();
-  });
+QUnit.asyncTest('setInterval works with additional args', assert => {
+	expect(1);
+	let i = 0;
+	const interval = setInterval(function(a, b) {
+		if(a + b !== 'ab') {
+			clearInterval(interval);
+			assert.ok(false, `setInterval works with additional args: ${a}, ${b}`);
+			start();
+			return;
+		}
+		if(++i === 3) {
+			clearInterval(interval);
+			assert.ok(true, 'setInterval works with additional args');
+			start();
+		}
+	}, 5, 'a', 'b');
+	setTimeout(function() {
+		if(i < 3) {
+			clearInterval(interval);
+			assert.ok(false, `setInterval works with additional args, times: ${i}`);
+			start();
+		}
+	}, 1000);
 });

@@ -132,6 +132,10 @@ module.exports = [
 			".isWellFormed": "sky-core/polyfill/String/prototype/isWellFormed",
 			".toWellFormed": "sky-core/polyfill/String/prototype/toWellFormed",
 		},
+		timer: {
+			"setTimeout": "sky-core/pure/setTimeout",
+			"setInterval": "sky-core/pure/setInterval",
+		},
 		exclude: [
 			"tests/corejs/helpers/*",
 			"native/**/*",
