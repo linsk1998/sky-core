@@ -199,7 +199,9 @@ module.exports = [
 	}),
 	//以下是prototype的修改
 	polyfill({
-		modules: {
+		polluting: {
+			// Opera 9.64 对 NaN Date toString 返回 'NaN' 而非 'Invalid Date'
+			"Date": "sky-core/polyfill/Date/prototype/toString",
 			'.at': [
 				/* Chrome41+ Firefox34+ Safari9.1+*/
 				"sky-core/polyfill/String/prototype/at",
