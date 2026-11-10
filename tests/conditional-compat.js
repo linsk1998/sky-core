@@ -69,8 +69,6 @@ module.exports = [
 
 			/* IE9+ Firefox3.5+ Safari5+ Opera12.1+ */
 			"Object.getPrototypeOf": "sky-core/polyfill/Object/getPrototypeOf",
-			/* IE9+ Firefox4+ Safari5+ Opera12.5+ */
-			"Object.create": "sky-core/polyfill/Object/create",
 			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
 			"Object.keys": "sky-core/polyfill/Object/keys",
 			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
@@ -277,6 +275,8 @@ module.exports = [
 		pure: {
 			// 由于有比较多的库使用XMLHttpRequest来判断浏览器版本，污染全局变量会导致判断错误，因此建议只在需要用的地方注入
 			"XMLHttpRequest": "sky-core/pure/XMLHttpRequest",
+			/* IE9+ Firefox4+ Safari5+ Opera12.5+ */
+			"Object.create": "sky-core/pure/Object/create",
 			/* IE9+ Chrome5+ Firefox4+ Safari5.1+ Opera12.1+ */
 			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
 			/* IE9+ Chrome5+ Firefox4+ Safari5+ Opera12.1+ */

@@ -26,6 +26,7 @@ function clearProto(Ctor) {
 	var i = dontEnums.length;
 	while(i--) delete proto[dontEnums[i]];
 	delete proto.constructor;
+	delete proto.__proto__;
 	return proto;
 }
 

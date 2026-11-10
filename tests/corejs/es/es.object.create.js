@@ -1,4 +1,4 @@
-import { DESCRIPTORS } from '../helpers/constants';
+import { DESCRIPTORS, PROTO } from '../helpers/constants';
 
 QUnit.test('Object.create', assert => {
   function getPropertyNames(object) {
@@ -30,5 +30,5 @@ QUnit.test('Object.create', assert => {
 });
 
 QUnit.test('Object.create.sham flag', assert => {
-  assert.same(Object.create.sham, DESCRIPTORS ? undefined : true);
+  assert.same(Object.create.sham, DESCRIPTORS && PROTO ? undefined : true);
 });

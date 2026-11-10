@@ -13,7 +13,6 @@ export function create$es3(proto, properties) {
 		o = new F();
 		F.prototype = null;
 	}
-	o.__proto__ = proto;
 	if(properties) {
 		Object.defineProperties(o, properties);
 	}

@@ -12,4 +12,3 @@ export function create$o(proto, properties) {
 	}
 	return o;
 }
-create$o.sham = true;

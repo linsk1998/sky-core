@@ -57,8 +57,6 @@ module.exports = [
 
 			/* IE9+ Firefox3.5+ Safari5+ Opera12.1+ */
 			"Object.getPrototypeOf": "sky-core/polyfill/Object/getPrototypeOf",
-			/* IE9+ Firefox4+ Safari5+ Opera12.5+ */
-			"Object.create": "sky-core/polyfill/Object/create",
 			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
 			"Object.keys": "sky-core/polyfill/Object/keys",
 			/* IE9+ Firefox4+ Safari5+ Opera12.1+ */
@@ -302,6 +300,7 @@ module.exports = [
 		modules: {
 			"setTimeout": "sky-core/pure/setTimeout",
 			"setInterval": "sky-core/pure/setInterval",
+			"Object.create": "sky-core/pure/Object/create",
 			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
 			"Symbol.asyncIterator": "sky-core/pure/Symbol/asyncIterator",
