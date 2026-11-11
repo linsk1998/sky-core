@@ -7,7 +7,7 @@ function Date(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
 	var arr;
 	if(isString(arg0)) {
 		if(arr = arg0.match(/^(\d{4})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d+)?(Z|([+-])(\d{2}):(\d{2}))?$/)) {
-			var t = slice(arr, 1, 8);
+			var t = slice.call(arr, 1, 8);
 			t[1] = t[1] - 1; // 月份转0起始
 			t[6] = t[6] ? Math.floor(t[6] * 1000) : 0;
 			var zone = arr[8];
@@ -33,8 +33,5 @@ function Date(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
 	return new native_Date(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 }
 Date.prototype = native_Date.prototype;
-Date.parse = function(str) {
-	return new Date(str).getTime();
-};
 
 export { Date };

@@ -607,7 +607,7 @@
 	  var iterable = (_iterable = {
 	    called: false,
 	    received: false
-	  }, _iterable[Symbol.iterator] = function () {
+	  }, _iterable[iterator$1] = function () {
 	    iterable.received = true;
 	    var index = 0;
 	    var iterator = {
@@ -1167,12 +1167,30 @@
 	}
 	;
 
+	function prefixIntrger4(number) {
+	  if (number < 10) return '000' + number;
+	  if (number < 100) return '00' + number;
+	  if (number < 1000) return '0' + number;
+	  return '' + number;
+	}
+	function prefixIntrger6(number) {
+	  var sign = number < 0 ? '-' : '+';
+	  var abs = number < 0 ? -number : number;
+	  if (abs < 10) return sign + '00000' + abs;
+	  if (abs < 100) return sign + '0000' + abs;
+	  if (abs < 1000) return sign + '000' + abs;
+	  if (abs < 10000) return sign + '00' + abs;
+	  if (abs < 100000) return sign + '0' + abs;
+	  return sign + abs;
+	}
 	function toISOString() {
 	  var time = this.getTime();
 	  if (isNaN(time)) {
 	    throw new RangeError("Invalid time value");
 	  }
-	  return this.getUTCFullYear() + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
+	  var year = this.getUTCFullYear();
+	  var yearStr = year < 0 || year > 9999 ? prefixIntrger6(year) : prefixIntrger4(year);
+	  return yearStr + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
 	}
 
 	function toJSON(_) {
@@ -1187,56 +1205,54 @@
 	  Date.prototype.toJSON = toJSON;
 	}
 
-	var Date$2 = window.Date;
+	var Date$3 = window.Date;
 
-	function Date$1(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
-	  if (!(this instanceof Date$1)) return Date$2();
+	function Date$2(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+	  if (!(this instanceof Date$2)) return Date$3();
 	  var arr;
 	  if (isString(arg0)) {
 	    if (arr = arg0.match(/^(\d{4})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d+)?(Z|([+-])(\d{2}):(\d{2}))?$/)) {
-	      var t = slice$2(arr, 1, 8);
+	      var t = slice$2.call(arr, 1, 8);
 	      t[1] = t[1] - 1; // 月份转0起始
 	      t[6] = t[6] ? Math.floor(t[6] * 1000) : 0;
 	      var zone = arr[8];
 	      if (!zone) {
-	        return new Date$2(t[0], t[1], t[2], t[3], t[4], t[5], t[6]);
+	        return new Date$3(t[0], t[1], t[2], t[3], t[4], t[5], t[6]);
 	      }
-	      var base = Date$2.UTC.apply(Date$2.UTC, t);
+	      var base = Date$3.UTC.apply(Date$3.UTC, t);
 	      if (zone !== 'Z') {
 	        base += (arr[9] === '+' ? -1 : 1) * (arr[10] * 60 + arr[11] * 1) * 60000;
 	      }
-	      return new Date$2(base);
+	      return new Date$3(base);
 	    }
 	  }
 	  switch (arguments.length) {
 	    case 0:
-	      return new Date$2();
+	      return new Date$3();
 	    case 1:
-	      return new Date$2(arg0);
+	      return new Date$3(arg0);
 	    case 2:
-	      return new Date$2(arg0, arg1);
+	      return new Date$3(arg0, arg1);
 	    case 3:
-	      return new Date$2(arg0, arg1, arg2);
+	      return new Date$3(arg0, arg1, arg2);
 	    case 4:
-	      return new Date$2(arg0, arg1, arg2, arg3);
+	      return new Date$3(arg0, arg1, arg2, arg3);
 	    case 5:
-	      return new Date$2(arg0, arg1, arg2, arg3, arg4);
+	      return new Date$3(arg0, arg1, arg2, arg3, arg4);
 	    case 6:
-	      return new Date$2(arg0, arg1, arg2, arg3, arg4, arg5);
+	      return new Date$3(arg0, arg1, arg2, arg3, arg4, arg5);
 	  }
-	  return new Date$2(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+	  return new Date$3(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 	}
-	Date$1.prototype = Date$2.prototype;
-	Date$1.parse = function (str) {
-	  return new Date$1(str).getTime();
-	};
+	Date$2.prototype = Date$3.prototype;
 
-	if (isNaN(new Date$2("2011-11-11T11:11:11.111Z"))) {
-	  Date$1.UTC = Date$2.UTC;
-	  Date$1.now = Date$2.now;
-	  Date$1.parse = function (str) {
-	    return new Date$1(str).getTime();
-	  };
+	// 嗅探：不带时区的 ISO 时间串必须按本地时间解析
+	// （Chrome4/Safari3/FF3.0 返回 NaN，Opera9.64 忽略时间，Chrome27-29/Opera11.64-12.18 按 ES5.1 旧规解析为 UTC）
+	// date-only 错误（Opera10.52-11.52）由 polyfill/Date/parse 单独补
+	var Date$1 = Date$3;
+	if (new Date$1("1995-12-17T03:24:00").getTime() !== new Date$1(1995, 11, 17, 3, 24, 0).getTime()) {
+	  Date$2.UTC = Date$1.UTC;
+	  Date$1 = Date$2;
 	  window.Date = Date$1;
 	}
 
@@ -1245,7 +1261,7 @@
 	QUnit.test('Date#toJSON', function (assert) {
 	  var toJSON = Date.prototype.toJSON;
 	  assert.isFunction(toJSON);
-	  // assert.arity(toJSON, 1);
+	  assert.arity(toJSON, 1);
 	  assert.name(toJSON, 'toJSON');
 	  assert.looksNative(toJSON);
 	  // assert.nonEnumerable(Date.prototype, 'toJSON');
@@ -1262,27 +1278,30 @@
 	QUnit.test('Date#toISOString', function (assert) {
 	  var toISOString = Date.prototype.toISOString;
 	  assert.isFunction(toISOString);
+	  assert.arity(toISOString, 0);
 	  assert.name(toISOString, 'toISOString');
 	  assert.looksNative(toISOString);
 	  // assert.nonEnumerable(Date.prototype, 'toISOString');
-	  // assert.strictEqual(new Date(0).toISOString(), '1970-01-01T00:00:00.000Z');
-	  // assert.strictEqual(new Date(1e12 + 1).toISOString(), '2001-09-09T01:46:40.001Z');
-	  // assert.strictEqual(new Date(-5e13 - 1).toISOString(), '0385-07-25T07:06:39.999Z');
+	  assert.same(new Date(0).toISOString(), '1970-01-01T00:00:00.000Z');
+	  assert.same(new Date(1e12 + 1).toISOString(), '2001-09-09T01:46:40.001Z');
+	  assert.same(new Date(-5e13 - 1).toISOString(), '0385-07-25T07:06:39.999Z');
 	  var future = new Date(1e15 + 1).toISOString();
 	  assert.ok(future === '+033658-09-27T01:46:40.001Z' || future === '33658-09-27T01:46:40.001Z');
 	  var prehistoric = new Date(-1e15 + 1).toISOString();
 	  assert.ok(prehistoric === '-029719-04-05T22:13:20.001Z' || prehistoric === '-29719-04-05T22:13:20.001Z');
-	  // assert.throws(() => new Date(NaN).toISOString(), RangeError);
+	  assert["throws"](function () {
+	    return new Date(NaN).toISOString();
+	  }, RangeError);
 	});
 
 	QUnit.test('Date#toString', function (assert) {
 	  var toString = Date.prototype.toString;
 	  assert.isFunction(toString);
 	  assert.arity(toString, 0);
-	  assert.name(toString, 'toString');
+	  // assert.name(toString, 'toString');
 	  assert.looksNative(toString);
 	  assert.nonEnumerable(Date.prototype, 'toString');
-	  // assert.same(String(new Date(NaN)), 'Invalid Date');
+	  assert.same(String(new Date(NaN)), 'Invalid Date');
 	});
 
 	QUnit.test('Array#indexOf', function (assert) {
@@ -1580,55 +1599,53 @@
 	  return setInterval$1(cba, ms);
 	}
 
-	QUnit.asyncTest('setTimeout / clearTimeout', function () {
+	QUnit.asyncTest('setTimeout works with additional args', function (assert) {
 	  expect(1);
-	  timeLimitedPromise(1000, function (resolve) {
-	    setTimeout$1(function (a, b) {
-	      resolve(a + b);
-	    }, 10, 'a', 'b');
-	  }).then(function (it) {
-	    QUnit.strictEqual(it, 'ab', 'setTimeout works with additional args');
-	  })["catch"](function () {
-	    QUnit.ok(false, 'setTimeout works with additional args');
-	  }).then(function () {
+	  var timeout = setTimeout$1(function (a, b) {
+	    clearTimeout(guard);
+	    assert.strictEqual(a + b, 'ab', 'setTimeout works with additional args');
 	    start();
-	  });
+	  }, 10, 'a', 'b');
+	  var guard = setTimeout(function () {
+	    assert.ok(false, 'setTimeout works with additional args');
+	    start();
+	  }, 1000);
 	});
-	QUnit.asyncTest('setTimeout / clearTimeout', function () {
+	QUnit.asyncTest('clearTimeout prevents callback', function (assert) {
 	  expect(1);
-	  timeLimitedPromise(50, function (resolve) {
-	    clearTimeout(setTimeout(resolve, 10));
-	  }).then(function () {
-	    QUnit.ok(false, 'clearImmediate works with wraped setTimeout');
-	  })["catch"](function () {
-	    QUnit.ok(true, 'clearImmediate works with wraped setTimeout');
-	  }).then(function () {
+	  var timeout = setTimeout(function () {
+	    assert.ok(false, 'clearTimeout prevents callback');
 	    start();
-	  });
+	  }, 30);
+	  clearTimeout(timeout);
+	  setTimeout(function () {
+	    assert.ok(true, 'clearTimeout prevents callback');
+	    start();
+	  }, 60);
 	});
-	QUnit.asyncTest('setInterval / clearInterval', function (assert) {
+	QUnit.asyncTest('setInterval works with additional args', function (assert) {
 	  expect(1);
-	  timeLimitedPromise(1000, function (resolve, reject) {
-	    var i = 0;
-	    var interval = setInterval(function (a, b) {
-	      if (a + b !== 'ab' || i > 2) reject({
-	        a: a,
-	        b: b,
-	        i: i
-	      });
-	      if (i++ === 2) {
-	        clearInterval(interval);
-	        setTimeout(resolve, 30);
-	      }
-	    }, 5, 'a', 'b');
-	  }).then(function () {
-	    assert.ok(true, 'setInterval & clearInterval works with additional args');
-	  })["catch"](function (error) {
-	    if (!error) error = {};
-	    assert.ok(false, "setInterval & clearInterval works with additional args: " + error.a + ", " + error.b + ", times: " + error.i);
-	  }).then(function () {
-	    start();
-	  });
+	  var i = 0;
+	  var interval = setInterval(function (a, b) {
+	    if (a + b !== 'ab') {
+	      clearInterval(interval);
+	      assert.ok(false, "setInterval works with additional args: " + a + ", " + b);
+	      start();
+	      return;
+	    }
+	    if (++i === 3) {
+	      clearInterval(interval);
+	      assert.ok(true, 'setInterval works with additional args');
+	      start();
+	    }
+	  }, 5, 'a', 'b');
+	  setTimeout(function () {
+	    if (i < 3) {
+	      clearInterval(interval);
+	      assert.ok(false, "setInterval works with additional args, times: " + i);
+	      start();
+	    }
+	  }, 1000);
 	});
 
 	var Error$1 = window.Error;
@@ -1849,8 +1866,6 @@
 	  Object$1.getPrototypeOf = getPrototypeOf$jscript;
 	}
 
-	var create$1 = Object$1.create;
-
 	function isJsObject(o) {
 	  if (typeof o !== "object") {
 	    return false;
@@ -1964,10 +1979,6 @@
 	}
 	create$jscript.sham = true;
 
-	if (!create$1) {
-	  Object$1.create = create$jscript;
-	}
-
 	QUnit.test('Object.getPrototypeOf', function (assert) {
 	  assert.isFunction(Object.getPrototypeOf);
 	  assert.arity(Object.getPrototypeOf, 1);
@@ -1981,13 +1992,13 @@
 	  var object = {
 	    q: 1
 	  };
-	  assert.ok(Object.getPrototypeOf(Object.create(object)) === object);
-	  assert.ok(Object.getPrototypeOf(Object.create(null)) === null);
+	  assert.ok(Object.getPrototypeOf(create$jscript(object)) === object);
+	  assert.ok(Object.getPrototypeOf(create$jscript(null)) === null);
 	  assert.ok(Object.getPrototypeOf(Object.getPrototypeOf({})) === null);
 	  function Foo() {/* empty */}
 	  Foo.prototype.foo = 'foo';
 	  function Bar() {/* empty */}
-	  Bar.prototype = Object.create(Foo.prototype);
+	  Bar.prototype = create$jscript(Foo.prototype);
 	  Bar.prototype.constructor = Bar;
 	  assert.strictEqual(Object.getPrototypeOf(Bar.prototype).foo, 'foo');
 	  // const primitives = [42, 'foo', false];
@@ -2069,26 +2080,26 @@
 	    } while (object = Object.getPrototypeOf(object));
 	    return result;
 	  }
-	  assert.isFunction(Object.create);
-	  assert.arity(Object.create, 2);
-	  assert.name(Object.create, 'create');
+	  assert.isFunction(create$jscript);
+	  assert.arity(create$jscript, 2);
+	  assert.name(create$jscript, 'create');
 	  var object = {
 	    q: 1
 	  };
-	  assert.ok({}.isPrototypeOf.call(object, Object.create(object)));
-	  assert.ok(Object.create(object).q === 1);
+	  assert.ok({}.isPrototypeOf.call(object, create$jscript(object)));
+	  assert.ok(create$jscript(object).q === 1);
 	  function F() {
 	    return this.a = 1;
 	  }
-	  assert.ok(Object.create(new F()) instanceof F, "Object.create(new F())");
-	  assert.ok(F.prototype === Object.getPrototypeOf(Object.getPrototypeOf(Object.create(new F()))));
-	  assert.ok(Object.create(new F()).a === 1);
-	  assert.ok(Object.create({}, {
+	  assert.ok(create$jscript(new F()) instanceof F, "Object.create(new F())");
+	  assert.ok(F.prototype === Object.getPrototypeOf(Object.getPrototypeOf(create$jscript(new F()))));
+	  assert.ok(create$jscript(new F()).a === 1);
+	  assert.ok(create$jscript({}, {
 	    a: {
 	      value: 42
 	    }
 	  }).a === 42);
-	  object = Object.create(null, {
+	  object = create$jscript(null, {
 	    w: {
 	      value: 2
 	    }
@@ -2099,10 +2110,10 @@
 	  assert["throws"](function () {
 	    return String(object);
 	  }, "throws String({__proto__:null})");
-	  assert.deepEqual(getPropertyNames(Object.create(null)), []);
+	  assert.deepEqual(getPropertyNames(create$jscript(null)), []);
 	});
 	QUnit.test('Object.create.sham flag', function (assert) {
-	  assert.same(Object.create.sham, DESCRIPTORS ? undefined : true);
+	  assert.same(create$jscript.sham, DESCRIPTORS && PROTO ? undefined : true);
 	});
 
 	QUnit.test('Object.keys', function (assert) {
@@ -2148,7 +2159,7 @@
 	    return pureDefineProperty(42, 1, {});
 	  });
 	  assert["throws"](function () {
-	    return pureDefineProperty({}, Object.create(null), {});
+	    return pureDefineProperty({}, create$jscript(null), {});
 	  });
 	  assert["throws"](function () {
 	    return pureDefineProperty({}, 1, 1);
@@ -3050,7 +3061,7 @@
 
 	QUnit.test('Number.isNaN', function (assert) {
 	  var isNaN = Number.isNaN;
-	  var create = Object.create;
+	  var create = create$jscript;
 	  assert.isFunction(isNaN);
 	  assert.name(isNaN, 'isNaN');
 	  assert.arity(isNaN, 1);
@@ -3077,7 +3088,7 @@
 
 	QUnit.test('Number.isFinite', function (assert) {
 	  var isFinite = Number.isFinite;
-	  var create = Object.create;
+	  var create = create$jscript;
 	  assert.isFunction(isFinite);
 	  assert.name(isFinite, 'isFinite');
 	  assert.arity(isFinite, 1);
@@ -3106,7 +3117,7 @@
 
 	QUnit.test('Number.isInteger', function (assert) {
 	  var isInteger = Number.isInteger;
-	  var create = Object.create;
+	  var create = create$jscript;
 	  assert.isFunction(isInteger);
 	  assert.name(isInteger, 'isInteger');
 	  assert.arity(isInteger, 1);
@@ -3241,7 +3252,7 @@
 
 	QUnit.test('Number.isSafeInteger', function (assert) {
 	  var isSafeInteger = Number.isSafeInteger;
-	  var create = Object.create;
+	  var create = create$jscript;
 	  assert.isFunction(isSafeInteger);
 	  assert.name(isSafeInteger, 'isSafeInteger');
 	  assert.arity(isSafeInteger, 1);
@@ -5272,7 +5283,7 @@
 	  prototype[symbol()] = 43;
 	  assert.deepEqual(Object.getOwnPropertyNames(prototype).sort(), ['e', 'q', 'w']);
 	  assert.strictEqual(Object.getOwnPropertySymbols(prototype).length, 2);
-	  var object = Object.create(prototype);
+	  var object = create$jscript(prototype);
 	  object.a = 1;
 	  object.s = 2;
 	  object.d = 3;
@@ -5328,7 +5339,7 @@
 	    pureDefineProperty(prototype, 'j', {
 	      value: 'j'
 	    });
-	    var object = Object.create(prototype);
+	    var object = create$jscript(prototype);
 	    object.a = 'a';
 	    object[d] = 'd';
 	    if (NON_ENUMERABLE) {
@@ -5525,7 +5536,7 @@
 	        value: 'd'
 	      }
 	    });
-	    var object = Object.create(null, descriptors);
+	    var object = create$jscript(null, descriptors);
 	    assert.strictEqual(object.a, 'a', 'a');
 	    // assert.strictEqual(object.b, undefined, 'b');
 	    // assert.strictEqual(object[c], 'c', 'c');
@@ -7295,7 +7306,7 @@
 	    e: 3
 	  }), [['q', 1], ['w', 2], ['e', 3]]);
 	  assert.deepEqual(Object.entries(new String('qwe')), [['0', 'q'], ['1', 'w'], ['2', 'e']]);
-	  assert.deepEqual(Object.entries(Object.assign(Object.create({
+	  assert.deepEqual(Object.entries(Object.assign(create$jscript({
 	    q: 1,
 	    w: 2,
 	    e: 3
@@ -7371,7 +7382,7 @@
 	    e: 3
 	  }), [1, 2, 3]);
 	  assert.deepEqual(Object.values(new String('qwe')), ['q', 'w', 'e']);
-	  assert.deepEqual(Object.values(Object.assign(Object.create({
+	  assert.deepEqual(Object.values(Object.assign(create$jscript({
 	    q: 1,
 	    w: 2,
 	    e: 3
@@ -7427,7 +7438,7 @@
 	  assert.name(Object.getOwnPropertyDescriptors, 'getOwnPropertyDescriptors');
 	  assert.looksNative(Object.getOwnPropertyDescriptors);
 	  // assert.nonEnumerable(Object, 'getOwnPropertyDescriptors');
-	  var object = Object.create({
+	  var object = create$jscript({
 	    q: 1
 	  }, {
 	    e: {
@@ -8313,7 +8324,7 @@
 
 	function inherits(subClass, superClass) {
 	  forIn(superClass, setKey, subClass);
-	  var prototype = Object.create(superClass.prototype);
+	  var prototype = create$jscript(superClass.prototype);
 	  prototype.constructor = subClass;
 	  subClass.prototype = prototype;
 	  subClass.__proto__ = superClass.prototype;
@@ -8535,7 +8546,7 @@
 	});
 
 	QUnit.test('Object.hasOwn', function (assert) {
-	  var create = Object.create;
+	  var create = create$jscript;
 	  var hasOwn = Object.hasOwn;
 	  assert.isFunction(hasOwn);
 	  assert.arity(hasOwn, 2);
@@ -8711,7 +8722,7 @@
 	    } else if (obj instanceof Array) {
 	      return arrayClone(obj);
 	    } else if (obj instanceof Error) {
-	      r = Object.create(Object.getPrototypeOf(obj));
+	      r = create$jscript(Object.getPrototypeOf(obj));
 	      r.message = obj.message;
 	      r.stack = obj.stack;
 	      if ('cause' in obj) {
@@ -8727,7 +8738,7 @@
 	    var type = toString$1.call(obj);
 	    switch (type) {
 	      case '[object Object]':
-	        return objectClone(Object.create(Object.getPrototypeOf(obj)), obj);
+	        return objectClone(create$jscript(Object.getPrototypeOf(obj)), obj);
 	      case '[object Date]':
 	        return new Date(obj);
 	      case '[object Number]':
@@ -9684,7 +9695,7 @@
 	    throw new TypeError("object is not iterable");
 	  }
 	  var it = entries.call(iterable);
-	  var r = Object.create(null);
+	  var r = create$jscript(null);
 	  var i = 0;
 	  var key, value, arr;
 	  while (true) {

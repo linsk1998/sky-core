@@ -38,9 +38,10 @@ module.exports = [
 			'document.contains': "sky-core/polyfill/document/contains",
 			// IE9+ Safari4+ Chrome4+ Firfox2+ Opera11.5+
 			"Date.now": "sky-core/polyfill/Date/now",
+			// 补 date-only → UTC（Opera 10.52–11.52 原生 parse 错，但构造器正确，不需要整体替换 Date）
+			"Date.parse": "sky-core/polyfill/Date/parse",
 			// IE9+ Safari5.1+ Chrome6+ Firfox4+ Opera11.5+
-			// "Date": "sky-core/polyfill/Date/constructor",
-			// "Date.parse": "sky-core/polyfill/Date/parse",
+			"Date": "sky-core/polyfill/Date/constructor",
 			/* IE9+ Firefox4+ Safari5+ Opera11.5+ */
 			"Array.isArray": "sky-core/polyfill/Array/isArray",
 			// breaking change

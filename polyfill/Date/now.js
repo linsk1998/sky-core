@@ -1,4 +1,4 @@
-import { Date } from "../../native/Date";
+import { Date } from "./constructor";
 import { now } from "../../impl/Date/now";
 
 if(!Date.now) {

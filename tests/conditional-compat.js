@@ -59,6 +59,8 @@ module.exports = [
 
 			// IE9+ Safari4+ Chrome4+ Firfox2+ Opera11.5+
 			"Date.now": "sky-core/polyfill/Date/now",
+			// 补 date-only → UTC（IE8- 原生 parse 完全无法解析 ISO）
+			"Date.parse": "sky-core/polyfill/Date/parse",
 			// IE9+ Safari5.1+ Chrome6+ Firfox4+ Opera11.5+
 			"Date": "sky-core/polyfill/Date/constructor",
 			/* IE9+ Firefox4+ Safari5+ Opera11.5+ */

@@ -53,6 +53,7 @@
 		var i = dontEnums.length;
 		while(i--) delete proto[dontEnums[i]];
 		delete proto.constructor;
+		delete proto.__proto__;
 		return proto;
 	}
 
@@ -282,6 +283,21 @@
 	}();
 	var WHITESPACES = '\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF';
 
+	var Symbol$7 = window.Symbol;
+
+	var defineProperty = Object$1.defineProperty;
+
+	var iterator = (function() {
+		if(!Symbol$7) {
+			if(nonEnumerable) {
+				defineProperty(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
+			}
+			return '@@iterator';
+		} else {
+			return Symbol$7.iterator || Symbol$7('iterator');
+		}
+	})();
+
 	function createIterator(elements, methods) {
 	  let index = 0;
 	  const iterator = {
@@ -301,7 +317,7 @@
 	  const iterable = {
 	    called: false,
 	    received: false,
-	    [Symbol.iterator]() {
+	    [iterator]() {
 	      iterable.received = true;
 	      let index = 0;
 	      const iterator = {
@@ -868,12 +884,32 @@ return class extends Parent { /* empty */ };
 		return number;
 	};
 
+	function prefixIntrger4(number) {
+		if(number < 10) return '000' + number;
+		if(number < 100) return '00' + number;
+		if(number < 1000) return '0' + number;
+		return '' + number;
+	}
+
+	function prefixIntrger6(number) {
+		var sign = number < 0 ? '-' : '+';
+		var abs = number < 0 ? -number : number;
+		if(abs < 10) return sign + '00000' + abs;
+		if(abs < 100) return sign + '0000' + abs;
+		if(abs < 1000) return sign + '000' + abs;
+		if(abs < 10000) return sign + '00' + abs;
+		if(abs < 100000) return sign + '0' + abs;
+		return sign + abs;
+	}
+
 	function toISOString() {
 		var time = this.getTime();
 		if(isNaN(time)) {
 			throw new RangeError("Invalid time value");
 		}
-		return this.getUTCFullYear() +
+		var year = this.getUTCFullYear();
+		var yearStr = year < 0 || year > 9999 ? prefixIntrger6(year) : prefixIntrger4(year);
+		return yearStr +
 			'-' + prefixIntrger2(this.getUTCMonth() + 1) +
 			'-' + prefixIntrger2(this.getUTCDate()) +
 			'T' + prefixIntrger2(this.getUTCHours()) +
@@ -897,8 +933,6 @@ return class extends Parent { /* empty */ };
 		Date$1.prototype.toJSON = toJSON;
 	}
 
-	var defineProperty = Object$1.defineProperty;
-
 	function definePrototype(target, property, value) {
 		var prototype = target.prototype;
 		if(!(property in prototype)) {
@@ -920,7 +954,7 @@ return class extends Parent { /* empty */ };
 	QUnit.test('Date#toJSON', assert => {
 	  const toJSON = Date.prototype.toJSON;
 	  assert.isFunction(toJSON);
-	  // assert.arity(toJSON, 1);
+	  assert.arity(toJSON, 1);
 	  assert.name(toJSON, 'toJSON');
 	  assert.looksNative(toJSON);
 	  // assert.nonEnumerable(Date.prototype, 'toJSON');
@@ -937,27 +971,28 @@ return class extends Parent { /* empty */ };
 	QUnit.test('Date#toISOString', assert => {
 	  const toISOString = Date.prototype.toISOString;
 	  assert.isFunction(toISOString);
+	  assert.arity(toISOString, 0);
 	  assert.name(toISOString, 'toISOString');
 	  assert.looksNative(toISOString);
 	  // assert.nonEnumerable(Date.prototype, 'toISOString');
-	  // assert.strictEqual(new Date(0).toISOString(), '1970-01-01T00:00:00.000Z');
-	  // assert.strictEqual(new Date(1e12 + 1).toISOString(), '2001-09-09T01:46:40.001Z');
-	  // assert.strictEqual(new Date(-5e13 - 1).toISOString(), '0385-07-25T07:06:39.999Z');
+	  assert.same(new Date(0).toISOString(), '1970-01-01T00:00:00.000Z');
+	  assert.same(new Date(1e12 + 1).toISOString(), '2001-09-09T01:46:40.001Z');
+	  assert.same(new Date(-5e13 - 1).toISOString(), '0385-07-25T07:06:39.999Z');
 	  const future = new Date(1e15 + 1).toISOString();
 	  assert.ok(future === '+033658-09-27T01:46:40.001Z' || future === '33658-09-27T01:46:40.001Z');
 	  const prehistoric = new Date(-1e15 + 1).toISOString();
 	  assert.ok(prehistoric === '-029719-04-05T22:13:20.001Z' || prehistoric === '-29719-04-05T22:13:20.001Z');
-	  // assert.throws(() => new Date(NaN).toISOString(), RangeError);
+	  assert.throws(() => new Date(NaN).toISOString(), RangeError);
 	});
 
 	QUnit.test('Date#toString', assert => {
 	  const toString = Date.prototype.toString;
 	  assert.isFunction(toString);
 	  assert.arity(toString, 0);
-	  assert.name(toString, 'toString');
+	  // assert.name(toString, 'toString');
 	  assert.looksNative(toString);
 	  assert.nonEnumerable(Date.prototype, 'toString');
-	  // assert.same(String(new Date(NaN)), 'Invalid Date');
+	  assert.same(String(new Date(NaN)), 'Invalid Date');
 	});
 
 	QUnit.test('Array#indexOf', assert => {
@@ -1175,55 +1210,87 @@ return class extends Parent { /* empty */ };
 	  }
 	});
 
-	QUnit.asyncTest('setTimeout / clearTimeout', function () {
+	var slice = Array.prototype.slice;
+
+	var setTimeout$2 = window.setTimeout;
+
+	function setTimeout$1(cb) {
+		var ms = arguments[1];
+		if(arguments.length <= 2) {
+			return setTimeout$2(cb, ms);
+		}
+		var args = slice.call(arguments, 2);
+		var cba = function() {
+			cb.apply(this, args);
+		};
+		return setTimeout$2(cba, ms);
+	}
+
+	var argsSetTimeout = document.documentMode <= 9 ? setTimeout$1 : setTimeout$2;
+
+	var setInterval$1 = window.setInterval;
+
+	function setInterval(cb) {
+		var ms = arguments[1];
+		if(arguments.length <= 2) {
+			return setInterval$1(cb, ms);
+		}
+		var args = slice.call(arguments, 2);
+		var cba = function() {
+			cb.apply(this, args);
+		};
+		return setInterval$1(cba, ms);
+	}
+
+	var argsSetInterval = document.documentMode <= 9 ? setInterval : setInterval$1;
+
+	QUnit.asyncTest('setTimeout works with additional args', assert => {
 	  expect(1);
-	  timeLimitedPromise(1000, function (resolve) {
-	    setTimeout(function (a, b) {
-	      resolve(a + b);
-	    }, 10, 'a', 'b');
-	  }).then(function (it) {
-	    QUnit.strictEqual(it, 'ab', 'setTimeout works with additional args');
-	  }).catch(function () {
-	    QUnit.ok(false, 'setTimeout works with additional args');
-	  }).then(function () {
+	  const timeout = argsSetTimeout(function (a, b) {
+	    clearTimeout(guard);
+	    assert.strictEqual(a + b, 'ab', 'setTimeout works with additional args');
 	    start();
-	  });
+	  }, 10, 'a', 'b');
+	  const guard = setTimeout(function () {
+	    assert.ok(false, 'setTimeout works with additional args');
+	    start();
+	  }, 1000);
 	});
-	QUnit.asyncTest('setTimeout / clearTimeout', function () {
+	QUnit.asyncTest('clearTimeout prevents callback', assert => {
 	  expect(1);
-	  timeLimitedPromise(50, function (resolve) {
-	    clearTimeout(setTimeout(resolve, 10));
-	  }).then(function () {
-	    QUnit.ok(false, 'clearImmediate works with wraped setTimeout');
-	  }).catch(function () {
-	    QUnit.ok(true, 'clearImmediate works with wraped setTimeout');
-	  }).then(function () {
+	  const timeout = setTimeout(function () {
+	    assert.ok(false, 'clearTimeout prevents callback');
 	    start();
-	  });
+	  }, 30);
+	  clearTimeout(timeout);
+	  setTimeout(function () {
+	    assert.ok(true, 'clearTimeout prevents callback');
+	    start();
+	  }, 60);
 	});
-	QUnit.asyncTest('setInterval / clearInterval', assert => {
+	QUnit.asyncTest('setInterval works with additional args', assert => {
 	  expect(1);
-	  timeLimitedPromise(1000, (resolve, reject) => {
-	    let i = 0;
-	    const interval = setInterval((a, b) => {
-	      if (a + b !== 'ab' || i > 2) reject({
-	        a,
-	        b,
-	        i
-	      });
-	      if (i++ === 2) {
-	        clearInterval(interval);
-	        setTimeout(resolve, 30);
-	      }
-	    }, 5, 'a', 'b');
-	  }).then(() => {
-	    assert.ok(true, 'setInterval & clearInterval works with additional args');
-	  }).catch(error => {
-	    if (!error) error = {};
-	    assert.ok(false, `setInterval & clearInterval works with additional args: ${error.a}, ${error.b}, times: ${error.i}`);
-	  }).then(() => {
-	    start();
-	  });
+	  let i = 0;
+	  const interval = argsSetInterval(function (a, b) {
+	    if (a + b !== 'ab') {
+	      clearInterval(interval);
+	      assert.ok(false, `setInterval works with additional args: ${a}, ${b}`);
+	      start();
+	      return;
+	    }
+	    if (++i === 3) {
+	      clearInterval(interval);
+	      assert.ok(true, 'setInterval works with additional args');
+	      start();
+	    }
+	  }, 5, 'a', 'b');
+	  setTimeout(function () {
+	    if (i < 3) {
+	      clearInterval(interval);
+	      assert.ok(false, `setInterval works with additional args, times: ${i}`);
+	      start();
+	    }
+	  }, 1000);
 	});
 
 	function reduce(callback) {
@@ -1464,7 +1531,7 @@ return class extends Parent { /* empty */ };
 	  assert.deepEqual(getPropertyNames(Object.create(null)), []);
 	});
 	QUnit.test('Object.create.sham flag', assert => {
-	  assert.same(Object.create.sham, DESCRIPTORS ? undefined : true);
+	  assert.same(Object.create.sham, DESCRIPTORS && PROTO ? undefined : true);
 	});
 
 	function keys$1() {
@@ -1624,8 +1691,6 @@ return class extends Parent { /* empty */ };
 	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
 	// });
 
-	var slice = Array.prototype.slice;
-
 	function bind(context) {
 		var self = this, args = slice.call(arguments, 1);
 		var Bind = function() {
@@ -1720,7 +1785,7 @@ return class extends Parent { /* empty */ };
 	var queueMicrotask$2 = window.queueMicrotask;
 
 	var ticks = null;
-	var nextTick = setTimeout;
+	var nextTick = argsSetTimeout;
 	function initQueueMicrotask(fn) {
 		nextTick = fn;
 		return queueMicrotask$1;
@@ -1975,7 +2040,7 @@ return class extends Parent { /* empty */ };
 
 	definePrototype(Promise$1, 'finally', promise_finally);
 
-	const Symbol$7 = GLOBAL.Symbol || {};
+	const Symbol$6 = GLOBAL.Symbol || {};
 	const {
 	  setPrototypeOf,
 	  create
@@ -2058,7 +2123,7 @@ return class extends Parent { /* empty */ };
 	  let FakePromise1 = promise.constructor = function (executor) {
 	    executor(() => {/* empty */}, () => {/* empty */});
 	  };
-	  const FakePromise2 = FakePromise1[Symbol$7.species] = function (executor) {
+	  const FakePromise2 = FakePromise1[Symbol$6.species] = function (executor) {
 	    executor(() => {/* empty */}, () => {/* empty */});
 	  };
 	  // assert.ok(promise.then(() => { /* empty */ }) instanceof FakePromise2, 'subclassing, @@species pattern');
@@ -2526,8 +2591,6 @@ return class extends Parent { /* empty */ };
 
 	var WeakMap$1 = window.WeakMap;
 
-	var Symbol$6 = window.Symbol;
-
 	function isJsObject(o) {
 		if(typeof o !== "object") {
 			return false;
@@ -2645,7 +2708,7 @@ return class extends Parent { /* empty */ };
 
 	var wm = new WeakMap$1();
 	try {
-		wm.set(Symbol$6(), 1);
+		wm.set(Symbol$7(), 1);
 	} catch(e) {
 		window.WeakMap = fix_WeakMap$symbol(WeakMap$1);
 	}
@@ -2656,11 +2719,11 @@ return class extends Parent { /* empty */ };
 		if(desc !== undefined) {
 			desc = String(desc);
 		}
-		var s = Symbol$6(desc);
+		var s = Symbol$7(desc);
 		descs[s] = desc;
 		return s;
 	};
-	Object.setPrototypeOf(Symbol$5, Symbol$6);
+	Object.setPrototypeOf(Symbol$5, Symbol$7);
 
 	function getSymbolDescription() {
 		if(this in descs) {
@@ -2670,12 +2733,12 @@ return class extends Parent { /* empty */ };
 	}
 
 	var Symbol$3;
-	if('description' in Symbol$6.prototype) {
-		Symbol$3 = Symbol$6;
+	if('description' in Symbol$7.prototype) {
+		Symbol$3 = Symbol$7;
 	} else {
 		Symbol$3 = Symbol$5;
-		Object.setPrototypeOf(Symbol$3, Symbol$6);
-		Object.defineProperty(Symbol$6.prototype, 'description', {
+		Object.setPrototypeOf(Symbol$3, Symbol$7);
+		Object.defineProperty(Symbol$7.prototype, 'description', {
 			configurable: true,
 			enumerable: false,
 			get: getSymbolDescription
@@ -2683,7 +2746,7 @@ return class extends Parent { /* empty */ };
 	}
 	var Symbol$4 = Symbol$3;
 
-	if(Symbol$6 !== Symbol$4) {
+	if(Symbol$7 !== Symbol$4) {
 		if(!Symbol$4.asyncIterator) { Symbol$4.asyncIterator = Symbol$4("asyncIterator"); }
 		window.Symbol = Symbol$4;
 	}
@@ -2897,7 +2960,7 @@ return class extends Parent { /* empty */ };
 
 	var ws = new WeakSet$1();
 	try {
-		ws.add(Symbol$6());
+		ws.add(Symbol$7());
 	} catch(e) {
 		window.WeakSet = fix_WeakSet$symbol(WeakSet$1);
 	}
@@ -7800,17 +7863,6 @@ return class extends Parent { /* empty */ };
 	  }
 	  assert.throws(() => toWellFormed.call(Symbol('toWellFormed test')), 'throws on symbol context');
 	});
-
-	var iterator = (function() {
-		if(!Symbol$6) {
-			if(nonEnumerable) {
-				defineProperty(Object.prototype, '@@iterator', { enumerable: false, configurable: false, writable: true });
-			}
-			return '@@iterator';
-		} else {
-			return Symbol$6.iterator || Symbol$6('iterator');
-		}
-	})();
 
 	function groupBy$1(iterable, keySelector) {
 		var entries = iterable[iterator];

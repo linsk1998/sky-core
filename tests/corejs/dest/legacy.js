@@ -240,6 +240,7 @@
 	  var i = dontEnums.length;
 	  while (i--) delete proto[dontEnums[i]];
 	  delete proto.constructor;
+	  delete proto.__proto__;
 	  return proto;
 	}
 	var isNullBase = function () {
@@ -335,6 +336,39 @@
 	  }
 	}();
 	var WHITESPACES = "\t\n\x0B\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
+
+	function definePrototype(target, property, value) {
+	  var prototype = target.prototype;
+	  if (!(property in prototype)) {
+	    if (defineProperty) {
+	      defineProperty(prototype, property, {
+	        configurable: true,
+	        writable: true,
+	        enumerable: false,
+	        value: value
+	      });
+	    } else {
+	      prototype[property] = value;
+	    }
+	  }
+	}
+
+	var slice$2 = Array.prototype.slice;
+
+	function bind(context) {
+	  var self = this,
+	    args = slice$2.call(arguments, 1);
+	  var Bind = function () {
+	    if (this instanceof Bind) {
+	      self.apply(this, args.concat(slice$2.call(arguments)));
+	      return;
+	    }
+	    return self.apply(context, args.concat(slice$2.call(arguments)));
+	  };
+	  return Bind;
+	}
+
+	definePrototype(Function, 'bind', bind);
 
 	var iterator$1 = (function () {
 	  if (!Symbol$4) {
@@ -463,7 +497,19 @@
 	  Array$1.isArray = isArray;
 	}
 
-	var slice$2 = Array.prototype.slice;
+	var accessor = !!defineProperties || __defineSetter__$1;
+
+	if (accessor) {
+	  if (!('name' in Function.prototype)) {
+	    Object.defineProperty(Function.prototype, 'name', {
+	      enumerable: false,
+	      configurable: true,
+	      get: function () {
+	        return Function.prototype.toString.call(this).match(/function\s*([^(]*)\(/)[1];
+	      }
+	    });
+	  }
+	}
 
 	function slice$1(start, end) {
 	  if (this instanceof Object) {
@@ -655,7 +701,7 @@
 	  var iterable = (_iterable = {
 	    called: false,
 	    received: false
-	  }, _iterable[Symbol.iterator] = function () {
+	  }, _iterable[iterator$1] = function () {
 	    iterable.received = true;
 	    var index = 0;
 	    var iterator = {
@@ -672,7 +718,7 @@
 	  }, _iterable);
 	  return iterable;
 	}
-	function includes(target, wanted) {
+	function includes$2(target, wanted) {
 	  for (var _iterator = _createForOfIteratorHelperLoose(target), _step; !(_step = _iterator()).done;) {
 	    var element = _step.value;
 	    if (wanted === element) return true;
@@ -1199,7 +1245,16 @@
 	  // assert.throws(() => toFixed.call(undefined, 1), TypeError, '? thisNumberValue(this value)');
 	});
 
-	var Date$1 = window.Date;
+	var Date$3 = window.Date;
+
+	// legacy 浏览器里 Opera 9.64 对 NaN Date 的 toString 返回 'NaN' 而非 'Invalid Date'
+	if (String(new Date$3(NaN)) !== 'Invalid Date') {
+	  var orig = Date$3.prototype.toString;
+	  Date$3.prototype.toString = function () {
+	    if (isNaN(this.getTime())) return 'Invalid Date';
+	    return orig.call(this);
+	  };
+	}
 
 	function prefixIntrger2(number) {
 	  if (number < 10) {
@@ -1217,12 +1272,50 @@
 	}
 	;
 
+	function prefixIntrger4(number) {
+	  if (number < 10) return '000' + number;
+	  if (number < 100) return '00' + number;
+	  if (number < 1000) return '0' + number;
+	  return '' + number;
+	}
+	function prefixIntrger6(number) {
+	  var sign = number < 0 ? '-' : '+';
+	  var abs = number < 0 ? -number : number;
+	  if (abs < 10) return sign + '00000' + abs;
+	  if (abs < 100) return sign + '0000' + abs;
+	  if (abs < 1000) return sign + '000' + abs;
+	  if (abs < 10000) return sign + '00' + abs;
+	  if (abs < 100000) return sign + '0' + abs;
+	  return sign + abs;
+	}
 	function toISOString() {
 	  var time = this.getTime();
 	  if (isNaN(time)) {
 	    throw new RangeError("Invalid time value");
 	  }
-	  return this.getUTCFullYear() + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
+	  var year = this.getUTCFullYear();
+	  var yearStr = year < 0 || year > 9999 ? prefixIntrger6(year) : prefixIntrger4(year);
+	  return yearStr + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
+	}
+
+	// legacy 浏览器原生有 toISOString 但实现有 bug：
+	//   Firefox 3.0 完全没有该方法
+	//   Chrome 4 缺毫秒部分（'1970-01-01T00:00:00Z'）
+	//   Chrome 5-10 千年少补零（year 385 → '385-07-25...'）
+	//   Safari 4-5.1 千年毫秒溢出（'0385-07-25T07:06:39.-01Z'）
+	//   Firefox 3.5-4 对 NaN 日期不抛 RangeError
+	var bad = false;
+	try {
+	  bad = !Date$3.prototype.toISOString || new Date$3(0).toISOString() !== '1970-01-01T00:00:00.000Z' || new Date$3(-5e13 - 1).toISOString() !== '0385-07-25T07:06:39.999Z';
+	  if (!bad) {
+	    new Date$3(NaN).toISOString();
+	    bad = true;
+	  }
+	} catch (error) {
+	  if (!(error instanceof RangeError)) bad = true;
+	}
+	if (bad) {
+	  Date$3.prototype.toISOString = toISOString;
 	}
 
 	function toJSON(_) {
@@ -1234,17 +1327,66 @@
 	;
 
 	try {
-	  if (!('toJSON' in Date$1.prototype) || new Date$1(0).toJSON() !== '1970-01-01T00:00:00.000Z' || new Date$1(NaN).toJSON() !== null) {
-	    Date$1.prototype.toJSON = toJSON;
+	  if (!('toJSON' in Date$3.prototype) || new Date$3(0).toJSON() !== '1970-01-01T00:00:00.000Z' || new Date$3(NaN).toJSON() !== null) {
+	    Date$3.prototype.toJSON = toJSON;
 	  }
 	} catch (e) {
-	  Date$1.prototype.toJSON = toJSON;
+	  Date$3.prototype.toJSON = toJSON;
+	}
+
+	function Date$2(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+	  if (!(this instanceof Date$2)) return Date$3();
+	  var arr;
+	  if (isString(arg0)) {
+	    if (arr = arg0.match(/^(\d{4})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d+)?(Z|([+-])(\d{2}):(\d{2}))?$/)) {
+	      var t = slice$2.call(arr, 1, 8);
+	      t[1] = t[1] - 1; // 月份转0起始
+	      t[6] = t[6] ? Math.floor(t[6] * 1000) : 0;
+	      var zone = arr[8];
+	      if (!zone) {
+	        return new Date$3(t[0], t[1], t[2], t[3], t[4], t[5], t[6]);
+	      }
+	      var base = Date$3.UTC.apply(Date$3.UTC, t);
+	      if (zone !== 'Z') {
+	        base += (arr[9] === '+' ? -1 : 1) * (arr[10] * 60 + arr[11] * 1) * 60000;
+	      }
+	      return new Date$3(base);
+	    }
+	  }
+	  switch (arguments.length) {
+	    case 0:
+	      return new Date$3();
+	    case 1:
+	      return new Date$3(arg0);
+	    case 2:
+	      return new Date$3(arg0, arg1);
+	    case 3:
+	      return new Date$3(arg0, arg1, arg2);
+	    case 4:
+	      return new Date$3(arg0, arg1, arg2, arg3);
+	    case 5:
+	      return new Date$3(arg0, arg1, arg2, arg3, arg4);
+	    case 6:
+	      return new Date$3(arg0, arg1, arg2, arg3, arg4, arg5);
+	  }
+	  return new Date$3(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+	}
+	Date$2.prototype = Date$3.prototype;
+
+	// 嗅探：不带时区的 ISO 时间串必须按本地时间解析
+	// （Chrome4/Safari3/FF3.0 返回 NaN，Opera9.64 忽略时间，Chrome27-29/Opera11.64-12.18 按 ES5.1 旧规解析为 UTC）
+	// date-only 错误（Opera10.52-11.52）由 polyfill/Date/parse 单独补
+	var Date$1 = Date$3;
+	if (new Date$1("1995-12-17T03:24:00").getTime() !== new Date$1(1995, 11, 17, 3, 24, 0).getTime()) {
+	  Date$2.UTC = Date$1.UTC;
+	  Date$1 = Date$2;
+	  window.Date = Date$1;
 	}
 
 	QUnit.test('Date#toJSON', function (assert) {
 	  var toJSON = Date.prototype.toJSON;
 	  assert.isFunction(toJSON);
-	  // assert.arity(toJSON, 1);
+	  assert.arity(toJSON, 1);
 	  assert.name(toJSON, 'toJSON');
 	  assert.looksNative(toJSON);
 	  // assert.nonEnumerable(Date.prototype, 'toJSON');
@@ -1261,27 +1403,30 @@
 	QUnit.test('Date#toISOString', function (assert) {
 	  var toISOString = Date.prototype.toISOString;
 	  assert.isFunction(toISOString);
+	  assert.arity(toISOString, 0);
 	  assert.name(toISOString, 'toISOString');
 	  assert.looksNative(toISOString);
 	  // assert.nonEnumerable(Date.prototype, 'toISOString');
-	  // assert.strictEqual(new Date(0).toISOString(), '1970-01-01T00:00:00.000Z');
-	  // assert.strictEqual(new Date(1e12 + 1).toISOString(), '2001-09-09T01:46:40.001Z');
-	  // assert.strictEqual(new Date(-5e13 - 1).toISOString(), '0385-07-25T07:06:39.999Z');
+	  assert.same(new Date(0).toISOString(), '1970-01-01T00:00:00.000Z');
+	  assert.same(new Date(1e12 + 1).toISOString(), '2001-09-09T01:46:40.001Z');
+	  assert.same(new Date(-5e13 - 1).toISOString(), '0385-07-25T07:06:39.999Z');
 	  var future = new Date(1e15 + 1).toISOString();
 	  assert.ok(future === '+033658-09-27T01:46:40.001Z' || future === '33658-09-27T01:46:40.001Z');
 	  var prehistoric = new Date(-1e15 + 1).toISOString();
 	  assert.ok(prehistoric === '-029719-04-05T22:13:20.001Z' || prehistoric === '-29719-04-05T22:13:20.001Z');
-	  // assert.throws(() => new Date(NaN).toISOString(), RangeError);
+	  assert["throws"](function () {
+	    return new Date(NaN).toISOString();
+	  }, RangeError);
 	});
 
 	QUnit.test('Date#toString', function (assert) {
 	  var toString = Date.prototype.toString;
 	  assert.isFunction(toString);
 	  assert.arity(toString, 0);
-	  assert.name(toString, 'toString');
+	  // assert.name(toString, 'toString');
 	  assert.looksNative(toString);
 	  assert.nonEnumerable(Date.prototype, 'toString');
-	  // assert.same(String(new Date(NaN)), 'Invalid Date');
+	  assert.same(String(new Date(NaN)), 'Invalid Date');
 	});
 
 	QUnit.test('Array#indexOf', function (assert) {
@@ -1583,56 +1728,94 @@
 
 	var setInterval = document.documentMode <= 9 ? setInterval$1 : setInterval$2;
 
-	QUnit.asyncTest('setTimeout / clearTimeout', function () {
+	QUnit.asyncTest('setTimeout works with additional args', function (assert) {
 	  expect(1);
-	  timeLimitedPromise(1000, function (resolve) {
-	    setTimeout$1(function (a, b) {
-	      resolve(a + b);
-	    }, 10, 'a', 'b');
-	  }).then(function (it) {
-	    QUnit.strictEqual(it, 'ab', 'setTimeout works with additional args');
-	  })["catch"](function () {
-	    QUnit.ok(false, 'setTimeout works with additional args');
-	  }).then(function () {
+	  var timeout = setTimeout$1(function (a, b) {
+	    clearTimeout(guard);
+	    assert.strictEqual(a + b, 'ab', 'setTimeout works with additional args');
 	    start();
-	  });
-	});
-	QUnit.asyncTest('setTimeout / clearTimeout', function () {
-	  expect(1);
-	  timeLimitedPromise(50, function (resolve) {
-	    clearTimeout(setTimeout$1(resolve, 10));
-	  }).then(function () {
-	    QUnit.ok(false, 'clearImmediate works with wraped setTimeout');
-	  })["catch"](function () {
-	    QUnit.ok(true, 'clearImmediate works with wraped setTimeout');
-	  }).then(function () {
+	  }, 10, 'a', 'b');
+	  var guard = setTimeout$1(function () {
+	    assert.ok(false, 'setTimeout works with additional args');
 	    start();
-	  });
+	  }, 1000);
 	});
-	QUnit.asyncTest('setInterval / clearInterval', function (assert) {
+	QUnit.asyncTest('clearTimeout prevents callback', function (assert) {
 	  expect(1);
-	  timeLimitedPromise(1000, function (resolve, reject) {
-	    var i = 0;
-	    var interval = setInterval(function (a, b) {
-	      if (a + b !== 'ab' || i > 2) reject({
-	        a: a,
-	        b: b,
-	        i: i
-	      });
-	      if (i++ === 2) {
-	        clearInterval(interval);
-	        setTimeout$1(resolve, 30);
+	  var timeout = setTimeout$1(function () {
+	    assert.ok(false, 'clearTimeout prevents callback');
+	    start();
+	  }, 30);
+	  clearTimeout(timeout);
+	  setTimeout$1(function () {
+	    assert.ok(true, 'clearTimeout prevents callback');
+	    start();
+	  }, 60);
+	});
+	QUnit.asyncTest('setInterval works with additional args', function (assert) {
+	  expect(1);
+	  var i = 0;
+	  var interval = setInterval(function (a, b) {
+	    if (a + b !== 'ab') {
+	      clearInterval(interval);
+	      assert.ok(false, "setInterval works with additional args: " + a + ", " + b);
+	      start();
+	      return;
+	    }
+	    if (++i === 3) {
+	      clearInterval(interval);
+	      assert.ok(true, 'setInterval works with additional args');
+	      start();
+	    }
+	  }, 5, 'a', 'b');
+	  setTimeout$1(function () {
+	    if (i < 3) {
+	      clearInterval(interval);
+	      assert.ok(false, "setInterval works with additional args, times: " + i);
+	      start();
+	    }
+	  }, 1000);
+	});
+
+	var Error$1 = window.Error;
+
+	function fix_Error$proto(native_Error) {
+	  function Error(message) {
+	    this.message = message === undefined ? "" : String(message);
+	    var options = arguments[1];
+	    if (typeof options === "object" && options !== null) {
+	      if ('cause' in options) {
+	        this.cause = options.cause;
 	      }
-	    }, 5, 'a', 'b');
-	  }).then(function () {
-	    assert.ok(true, 'setInterval & clearInterval works with additional args');
-	  })["catch"](function (error) {
-	    if (!error) error = {};
-	    assert.ok(false, "setInterval & clearInterval works with additional args: " + error.a + ", " + error.b + ", times: " + error.i);
-	  }).then(function () {
-	    start();
-	  });
-	});
+	    }
+	  }
+	  Error.prototype = native_Error.prototype;
+	  return Error;
+	}
+
+	window.Error = fix_Error$proto(Error$1);
+
+	function reduce(callback) {
+	  var i, value;
+	  if (arguments.length >= 2) {
+	    value = arguments[1];
+	    i = 0;
+	  } else if (this.length > 0) {
+	    value = this[0];
+	    i = 1;
+	  } else {
+	    throw new Error("Reduce of empty array with no initial value");
+	  }
+	  while (i < this.length) {
+	    if (i in this) {
+	      value = callback(value, this[i], i, this);
+	    }
+	    i++;
+	  }
+	  return value;
+	}
+
+	definePrototype(Array, 'reduce', reduce);
 
 	QUnit.test('Array#reduce', function (assert) {
 	  var reduce = Array.prototype.reduce;
@@ -1686,6 +1869,26 @@
 	  }
 	});
 
+	function reduceRight(callback) {
+	  var i = this.length,
+	    value;
+	  if (arguments.length >= 2) {
+	    value = arguments[1];
+	  } else if (this.length > 0) {
+	    value = this[--i];
+	  } else {
+	    throw new Error("Reduce of empty array with no initial value");
+	  }
+	  while (i-- > 0) {
+	    if (i in this) {
+	      value = callback(value, this[i], i, this);
+	    }
+	  }
+	  return value;
+	}
+
+	definePrototype(Array, 'reduceRight', reduceRight);
+
 	QUnit.test('Array#reduceRight', function (assert) {
 	  var reduceRight = Array.prototype.reduceRight;
 	  assert.isFunction(reduceRight);
@@ -1738,6 +1941,12 @@
 	  }
 	});
 
+	function trim() {
+	  return this.replace(/^[\s\u3000\xA0]+|[\s\u3000\xA0]+$/g, '');
+	}
+
+	definePrototype(String, 'trim', trim);
+
 	QUnit.test('String#trim', function (assert) {
 	  var trim = String.prototype.trim;
 	  assert.isFunction(trim);
@@ -1782,21 +1991,9 @@
 	  }
 	});
 
-	if (!getPrototypeOf$2) {
-	  if (proto) {
-	    if (canProtoNull) {
-	      Object$1.getPrototypeOf = getPrototypeOf$ff;
-	    } else {
-	      Object$1.getPrototypeOf = getPrototypeOf$o;
-	    }
-	  } else {
-	    Object$1.getPrototypeOf = getPrototypeOf$es3;
-	  }
-	}
-
 	var create$1 = Object$1.create;
 
-	var keys$2 = Object$1.keys;
+	var keys$3 = Object$1.keys;
 
 	function keys$es3(obj) {
 	  if (obj == null) {
@@ -1812,7 +2009,7 @@
 	  return result;
 	}
 
-	if (!keys$2) {
+	if (!keys$3) {
 	  Object.keys = keys$es3;
 	}
 
@@ -1881,7 +2078,6 @@
 	  }
 	  return o;
 	}
-	create$o.sham = true;
 
 	function F() {/* empty */}
 	function create$es3(proto, properties) {
@@ -1895,7 +2091,6 @@
 	    o = new F();
 	    F.prototype = null;
 	  }
-	  o.__proto__ = proto;
 	  if (properties) {
 	    $inject_Object_defineProperties(o, properties);
 	  }
@@ -1903,15 +2098,20 @@
 	}
 	create$es3.sham = true;
 
-	if (!create$1) {
+	var implementation = create$1 || (proto ? canProtoNull ? create$ff : create$o : create$es3);
+	if (!create$1 && (!proto || !accessor)) {
+	  implementation.sham = true;
+	}
+
+	if (!getPrototypeOf$2) {
 	  if (proto) {
 	    if (canProtoNull) {
-	      Object$1.create = create$ff;
+	      Object$1.getPrototypeOf = getPrototypeOf$ff;
 	    } else {
-	      Object$1.create = create$o;
+	      Object$1.getPrototypeOf = getPrototypeOf$o;
 	    }
 	  } else {
-	    Object$1.create = create$es3;
+	    Object$1.getPrototypeOf = getPrototypeOf$es3;
 	  }
 	}
 
@@ -1928,13 +2128,13 @@
 	  var object = {
 	    q: 1
 	  };
-	  assert.ok(Object.getPrototypeOf(Object.create(object)) === object);
-	  assert.ok(Object.getPrototypeOf(Object.create(null)) === null);
+	  assert.ok(Object.getPrototypeOf(implementation(object)) === object);
+	  assert.ok(Object.getPrototypeOf(implementation(null)) === null);
 	  assert.ok(Object.getPrototypeOf(Object.getPrototypeOf({})) === null);
 	  function Foo() {/* empty */}
 	  Foo.prototype.foo = 'foo';
 	  function Bar() {/* empty */}
-	  Bar.prototype = Object.create(Foo.prototype);
+	  Bar.prototype = implementation(Foo.prototype);
 	  Bar.prototype.constructor = Bar;
 	  assert.strictEqual(Object.getPrototypeOf(Bar.prototype).foo, 'foo');
 	  // const primitives = [42, 'foo', false];
@@ -1980,26 +2180,26 @@
 	    } while (object = Object.getPrototypeOf(object));
 	    return result;
 	  }
-	  assert.isFunction(Object.create);
-	  assert.arity(Object.create, 2);
-	  assert.name(Object.create, 'create');
+	  assert.isFunction(implementation);
+	  assert.arity(implementation, 2);
+	  assert.name(implementation, 'create');
 	  var object = {
 	    q: 1
 	  };
-	  assert.ok({}.isPrototypeOf.call(object, Object.create(object)));
-	  assert.ok(Object.create(object).q === 1);
+	  assert.ok({}.isPrototypeOf.call(object, implementation(object)));
+	  assert.ok(implementation(object).q === 1);
 	  function F() {
 	    return this.a = 1;
 	  }
-	  assert.ok(Object.create(new F()) instanceof F, "Object.create(new F())");
-	  assert.ok(F.prototype === Object.getPrototypeOf(Object.getPrototypeOf(Object.create(new F()))));
-	  assert.ok(Object.create(new F()).a === 1);
-	  assert.ok(Object.create({}, {
+	  assert.ok(implementation(new F()) instanceof F, "Object.create(new F())");
+	  assert.ok(F.prototype === Object.getPrototypeOf(Object.getPrototypeOf(implementation(new F()))));
+	  assert.ok(implementation(new F()).a === 1);
+	  assert.ok(implementation({}, {
 	    a: {
 	      value: 42
 	    }
 	  }).a === 42);
-	  object = Object.create(null, {
+	  object = implementation(null, {
 	    w: {
 	      value: 2
 	    }
@@ -2010,11 +2210,36 @@
 	  assert["throws"](function () {
 	    return String(object);
 	  }, "throws String({__proto__:null})");
-	  assert.deepEqual(getPropertyNames(Object.create(null)), []);
+	  assert.deepEqual(getPropertyNames(implementation(null)), []);
 	});
 	QUnit.test('Object.create.sham flag', function (assert) {
-	  assert.same(Object.create.sham, DESCRIPTORS ? undefined : true);
+	  assert.same(implementation.sham, DESCRIPTORS && PROTO ? undefined : true);
 	});
+
+	function keys$2() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = index;
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	definePrototype(Array, 'keys', keys$2);
 
 	QUnit.test('Object.keys', function (assert) {
 	  assert.isFunction(Object.keys);
@@ -2032,7 +2257,7 @@
 	  assert.deepEqual(Object.keys([1, 2, 3]), ['0', '1', '2']);
 	  assert.deepEqual(Object.keys(new F1()), ['w']);
 	  assert.deepEqual(Object.keys(new F2()), ['toString']);
-	  assert.ok(!includes(Object.keys(Array.prototype), 'push'));
+	  assert.ok(!includes$2(Object.keys(Array.prototype), 'push'));
 	  // const primitives = [42, 'foo', false];
 	  // for(const value of primitives) {
 	  //   assert.notThrows(() => Object.keys(value), `accept ${typeof value} 不支持`);
@@ -2059,7 +2284,7 @@
 	    return $inject_Object_defineProperty(42, 1, {});
 	  });
 	  assert["throws"](function () {
-	    return $inject_Object_defineProperty({}, Object.create(null), {});
+	    return $inject_Object_defineProperty({}, implementation(null), {});
 	  });
 	  assert["throws"](function () {
 	    return $inject_Object_defineProperty({}, 1, 1);
@@ -2169,10 +2394,10 @@
 	  F1.prototype.q = F2.prototype.q = 1;
 	  var names = Object.getOwnPropertyNames([1, 2, 3]);
 	  assert.strictEqual(names.length, 4);
-	  assert.ok(includes(names, '0'));
-	  assert.ok(includes(names, '1'));
-	  assert.ok(includes(names, '2'));
-	  assert.ok(includes(names, 'length'));
+	  assert.ok(includes$2(names, '0'));
+	  assert.ok(includes$2(names, '1'));
+	  assert.ok(includes$2(names, '2'));
+	  assert.ok(includes$2(names, 'length'));
 	  assert.deepEqual(Object.getOwnPropertyNames(new F1()), ['w']);
 	  assert.deepEqual(Object.getOwnPropertyNames(new F2()), ['toString']);
 	  // assert.ok(includes(Object.getOwnPropertyNames(Array.prototype), 'toString'));
@@ -2565,23 +2790,20 @@
 	  Promise$2 = window.Promise = Promise$3;
 	}
 
-	var Error$1 = window.Error;
-
-	function fix_Error$proto(native_Error) {
-	  function Error(message) {
-	    this.message = message === undefined ? "" : String(message);
-	    var options = arguments[1];
-	    if (typeof options === "object" && options !== null) {
-	      if ('cause' in options) {
-	        this.cause = options.cause;
-	      }
-	    }
-	  }
-	  Error.prototype = native_Error.prototype;
-	  return Error;
+	function promise_finally (onCompleted) {
+	  var fun = isFunction(onCompleted);
+	  return this.then(fun ? function (x) {
+	    return Promise.resolve(onCompleted()).then(function () {
+	      return x;
+	    });
+	  } : onCompleted, fun ? function (e) {
+	    onCompleted();
+	    throw e;
+	  } : onCompleted);
 	}
+	;
 
-	window.Error = fix_Error$proto(Error$1);
+	definePrototype(Promise$2, 'finally', promise_finally);
 
 	var _Symbol$3 = GLOBAL.Symbol || {};
 	var setPrototypeOf = Object.setPrototypeOf,
@@ -2984,7 +3206,7 @@
 
 	QUnit.test('Number.isNaN', function (assert) {
 	  var isNaN = Number.isNaN;
-	  var create = Object.create;
+	  var create = implementation;
 	  assert.isFunction(isNaN);
 	  assert.name(isNaN, 'isNaN');
 	  assert.arity(isNaN, 1);
@@ -3011,7 +3233,7 @@
 
 	QUnit.test('Number.isFinite', function (assert) {
 	  var isFinite = Number.isFinite;
-	  var create = Object.create;
+	  var create = implementation;
 	  assert.isFunction(isFinite);
 	  assert.name(isFinite, 'isFinite');
 	  assert.arity(isFinite, 1);
@@ -3040,7 +3262,7 @@
 
 	QUnit.test('Number.isInteger', function (assert) {
 	  var isInteger = Number.isInteger;
-	  var create = Object.create;
+	  var create = implementation;
 	  assert.isFunction(isInteger);
 	  assert.name(isInteger, 'isInteger');
 	  assert.arity(isInteger, 1);
@@ -3175,7 +3397,7 @@
 
 	QUnit.test('Number.isSafeInteger', function (assert) {
 	  var isSafeInteger = Number.isSafeInteger;
-	  var create = Object.create;
+	  var create = implementation;
 	  assert.isFunction(isSafeInteger);
 	  assert.name(isSafeInteger, 'isSafeInteger');
 	  assert.arity(isSafeInteger, 1);
@@ -3206,7 +3428,7 @@
 	  assert.strictEqual(Number.MIN_SAFE_INTEGER, -Math.pow(2, 53) + 1, 'Is -2^53 + 1');
 	});
 
-	var descs = Object.create(null);
+	var descs = implementation(null);
 	function Symbol$2() {
 	  var desc = arguments[0];
 	  if (desc !== undefined) {
@@ -3863,6 +4085,33 @@
 	//   assert.strictEqual(String(new WeakSet()), '[object WeakSet]', 'correct stringification');
 	// });
 
+	definePrototype(Array, 'values', Array.prototype[iterator$1] || values$2);
+
+	function entries$2() {
+	  var array = this;
+	  var index = 0;
+	  return {
+	    next: function () {
+	      var value;
+	      var done = array.length <= index;
+	      if (!done) {
+	        value = [index, array[index]];
+	        index++;
+	      }
+	      return {
+	        done: done,
+	        value: value
+	      };
+	    },
+	    '@@iterator': function () {
+	      return this;
+	    },
+	    '@@toStringTag': 'Array Iterator'
+	  };
+	}
+
+	definePrototype(Array, 'entries', entries$2);
+
 	var Map$2 = window.Map;
 
 	// 只有原生支持Symbol.iterator的情况下才会调用这个函数
@@ -3915,7 +4164,7 @@
 	    return map;
 	  }
 	  Object.setPrototypeOf(Map, GMap);
-	  Map.prototype = Object.create(GMap.prototype);
+	  Map.prototype = implementation(GMap.prototype);
 	  return Map;
 	}
 
@@ -4829,7 +5078,7 @@
 	    return set;
 	  }
 	  Object.setPrototypeOf(Set, GSet);
-	  Set.prototype = Object.create(GSet.prototype);
+	  Set.prototype = implementation(GSet.prototype);
 	  return Set;
 	}
 
@@ -5886,7 +6135,7 @@
 	  prototype[_Symbol$2()] = 43;
 	  assert.deepEqual(Object.getOwnPropertyNames(prototype).sort(), ['e', 'q', 'w']);
 	  assert.strictEqual(Object.getOwnPropertySymbols(prototype).length, 2);
-	  var object = Object.create(prototype);
+	  var object = implementation(prototype);
 	  object.a = 1;
 	  object.s = 2;
 	  object.d = 3;
@@ -5942,7 +6191,7 @@
 	    $inject_Object_defineProperty(prototype, 'j', {
 	      value: 'j'
 	    });
-	    var object = Object.create(prototype);
+	    var object = implementation(prototype);
 	    object.a = 'a';
 	    object[d] = 'd';
 	    if (NON_ENUMERABLE) {
@@ -6139,7 +6388,7 @@
 	        value: 'd'
 	      }
 	    });
-	    var object = Object.create(null, descriptors);
+	    var object = implementation(null, descriptors);
 	    assert.strictEqual(object.a, 'a', 'a');
 	    // assert.strictEqual(object.b, undefined, 'b');
 	    // assert.strictEqual(object[c], 'c', 'c');
@@ -6767,6 +7016,41 @@
 	  assert.strictEqual(Math.clz32(Math.pow(2, 32)), 32);
 	});
 
+	function fix_RegExp(NativeRegExp) {
+	  function RegExp(source) {
+	    if (isRegExp(source)) {
+	      var flags = "";
+	      if (source.global) flags += "g";
+	      if (source.ignoreCase) flags += "i";
+	      if (source.multiline) flags += "m";
+	      return new NativeRegExp(source.source, flags);
+	    }
+	    return new NativeRegExp(source, arguments[1]);
+	  }
+	  ;
+	  RegExp.__proto__ = NativeRegExp;
+	  RegExp.prototype = NativeRegExp.prototype;
+	  return RegExp;
+	}
+
+	// 低版本浏览器中new RegExp(obj)传入的obj是RegExp对象返回本身
+	var p = /p/;
+	if (new RegExp(p) === p) {
+	  window.RegExp = fix_RegExp(RegExp);
+	}
+
+	function startsWith(search) {
+	  if (search instanceof RegExp) {
+	    throw new TypeError("First argument must not be a regular expression");
+	  }
+	  var pos = arguments[1];
+	  pos = isNaN(pos) ? 0 : pos < 0 ? 0 : +pos;
+	  search = String(search);
+	  return this.substring(pos, pos + search.length) === search;
+	}
+
+	definePrototype(String, 'startsWith', startsWith);
+
 	var _Symbol$1 = GLOBAL.Symbol || {};
 	QUnit.test('String#startsWith', function (assert) {
 	  var startsWith = String.prototype.startsWith;
@@ -6801,6 +7085,25 @@
 	    return '[object Object]'.startsWith(object);
 	  });
 	});
+
+	function endsWith(search) {
+	  if (search instanceof RegExp) {
+	    throw new TypeError("First argument must not be a regular expression");
+	  }
+	  var len = this.length;
+	  var pos = arguments[1];
+	  if (pos == null) {
+	    pos = len;
+	  } else if (isNaN(pos)) {
+	    pos = 0;
+	  } else {
+	    pos = pos > len ? len : +pos;
+	  }
+	  search = String(search);
+	  return this.substring(pos - search.length, pos) === search;
+	}
+
+	definePrototype(String, 'endsWith', endsWith);
 
 	var _Symbol = GLOBAL.Symbol || {};
 	QUnit.test('String#endsWith', function (assert) {
@@ -6839,6 +7142,8 @@
 	  });
 	});
 
+	definePrototype(String, 'repeat', repeat);
+
 	QUnit.test('String#repeat', function (assert) {
 	  var repeat = String.prototype.repeat;
 	  assert.isFunction(repeat);
@@ -6862,6 +7167,44 @@
 	    }, TypeError);
 	  }
 	});
+
+	/*! http://mths.be/codepointat v0.1.0 by @mathias */
+	function codePointAt(position) {
+	  if (this == null) {
+	    throw TypeError();
+	  }
+	  var string = String(this);
+	  var size = string.length;
+	  // 变成整数
+	  var index = position ? Number(position) : 0;
+	  if (index != index) {
+	    // better `isNaN`
+	    index = 0;
+	  }
+	  // 边界
+	  if (index < 0 || index >= size) {
+	    return undefined;
+	  }
+	  // 第一个编码单元
+	  var first = string.charCodeAt(index);
+	  var second;
+	  if (
+	  // 检查是否开始 surrogate pair
+	  first >= 0xD800 && first <= 0xDBFF &&
+	  // high surrogate
+	  size > index + 1 // 下一个编码单元
+	  ) {
+	    second = string.charCodeAt(index + 1);
+	    if (second >= 0xDC00 && second <= 0xDFFF) {
+	      // low surrogate
+	      // http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+	      return (first - 0xD800) * 0x400 + second - 0xDC00 + 0x10000;
+	    }
+	  }
+	  return first;
+	}
+
+	definePrototype(String, 'codePointAt', codePointAt);
 
 	QUnit.test('String#codePointAt', function (assert) {
 	  var codePointAt = String.prototype.codePointAt;
@@ -7085,6 +7428,32 @@
 	  }, TypeError);
 	});
 
+	function includes$1(search) {
+	  if (search instanceof RegExp) {
+	    throw new TypeError("First argument must not be a regular expression");
+	  }
+	  var start = arguments[1];
+	  if (typeof start !== 'number') {
+	    start = 0;
+	  }
+	  return this.indexOf(search, start) !== -1;
+	}
+
+	definePrototype(String, 'includes', includes$1);
+
+	function includes(search) {
+	  var i = this.length;
+	  while (i-- > 0) {
+	    var value = this[i];
+	    if (value === search || isNaN$1(value) && isNaN$1(search)) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+
+	definePrototype(Array, 'includes', includes);
+
 	QUnit.test('String#includes', function (assert) {
 	  var includes = String.prototype.includes;
 	  assert.isFunction(includes);
@@ -7113,6 +7482,22 @@
 	    return '[object Object]'.includes(object);
 	  });
 	});
+
+	function findIndex(callback) {
+	  var thisArg = arguments[1];
+	  if (this.length > 0) {
+	    for (var i = 0, j; i < this.length; i++) {
+	      j = this[i];
+	      var r = callback.call(thisArg, j, i, this);
+	      if (r) {
+	        return i;
+	      }
+	    }
+	  }
+	  return -1;
+	}
+
+	definePrototype(Array, 'findIndex', findIndex);
 
 	QUnit.test('Array#findIndex', function (assert) {
 	  var findIndex = Array.prototype.findIndex;
@@ -7155,6 +7540,17 @@
 	    }) === -1;
 	  }, 'uses ToLength');
 	});
+
+	function find(callback) {
+	  var thisArg = arguments[1];
+	  var i = findIndex.call(this, callback, thisArg);
+	  if (i >= 0) {
+	    return this[i];
+	  }
+	}
+	;
+
+	definePrototype(Array, 'find', find);
 
 	QUnit.test('Array#find', function (assert) {
 	  var find = Array.prototype.find;
@@ -7233,6 +7629,32 @@
 	  // 	assert.ok(!called, 'Should not call prototype accessors');
 	  // }
 	});
+
+	function fill(target) {
+	  if (this.length <= 0) {
+	    return this;
+	  }
+	  var len = this.length;
+	  var start = arguments[1] || 0;
+	  var end = arguments[2] || len;
+	  if (start < 0) {
+	    start += len;
+	    if (start < 0) {
+	      start = 0;
+	    }
+	  }
+	  if (end < 0) {
+	    end += len;
+	  }
+	  var i = Math.min(end, len);
+	  while (i-- > start) {
+	    this[i] = target;
+	  }
+	  return this;
+	}
+	;
+
+	definePrototype(Array, 'fill', fill);
 
 	QUnit.test('Array#fill', function (assert) {
 	  var fill = Array.prototype.fill;
@@ -7420,6 +7842,46 @@
 	  // 	assert.ok(!called, 'Should not call prototype accessors');
 	  // }
 	});
+
+	function copyWithin(target, start /*, end*/) {
+	  var end = arguments[2];
+	  var len = this.length || 0;
+	  if (target < 0) {
+	    target += len;
+	    if (target < 0) {
+	      target = 0;
+	    }
+	  }
+	  start = start || 0;
+	  if (start < 0) {
+	    start += len;
+	    if (start < 0) {
+	      start = 0;
+	    }
+	  }
+	  if (end === undefined) {
+	    end = len;
+	  }
+	  if (end < 0) {
+	    end += len;
+	    if (end < 0) {
+	      end = 0;
+	    }
+	  } else if (end - start + target > len) {
+	    end = len - target + start;
+	  }
+	  var i;
+	  for (i = start; i < end; i++) {
+	    if (i in this) {
+	      this[i - start + target] = this[i];
+	    } else {
+	      delete this[i];
+	    }
+	  }
+	  return this;
+	}
+
+	definePrototype(Array, 'copyWithin', copyWithin);
 
 	QUnit.test('Array#copyWithin', function (assert) {
 	  var copyWithin = Array.prototype.copyWithin;
@@ -7688,7 +8150,7 @@
 	    e: 3
 	  }), [['q', 1], ['w', 2], ['e', 3]]);
 	  assert.deepEqual(Object.entries(new String('qwe')), [['0', 'q'], ['1', 'w'], ['2', 'e']]);
-	  assert.deepEqual(Object.entries(Object.assign(Object.create({
+	  assert.deepEqual(Object.entries(Object.assign(implementation({
 	    q: 1,
 	    w: 2,
 	    e: 3
@@ -7764,7 +8226,7 @@
 	    e: 3
 	  }), [1, 2, 3]);
 	  assert.deepEqual(Object.values(new String('qwe')), ['q', 'w', 'e']);
-	  assert.deepEqual(Object.values(Object.assign(Object.create({
+	  assert.deepEqual(Object.values(Object.assign(implementation({
 	    q: 1,
 	    w: 2,
 	    e: 3
@@ -7870,7 +8332,7 @@
 	  assert.name(Object.getOwnPropertyDescriptors, 'getOwnPropertyDescriptors');
 	  assert.looksNative(Object.getOwnPropertyDescriptors);
 	  // assert.nonEnumerable(Object, 'getOwnPropertyDescriptors');
-	  var object = Object.create({
+	  var object = implementation({
 	    q: 1
 	  }, {
 	    e: {
@@ -7911,6 +8373,23 @@
 	  assert.same(Object.getOwnPropertyDescriptors.sham, DESCRIPTORS ? undefined : true);
 	});
 
+	function padStart(targetLength) {
+	  var x = targetLength - this.length;
+	  if (x > 0) {
+	    var padString = arguments[1];
+	    if (padString == null) {
+	      padString = " ";
+	    }
+	    var len = padString.length;
+	    if (len) {
+	      return padString.repeat(Math.ceil(x / len)).substr(0, x) + this;
+	    }
+	  }
+	  return String(this);
+	}
+
+	definePrototype(String, 'padStart', padStart);
+
 	QUnit.test('String#padStart', function (assert) {
 	  var padStart = String.prototype.padStart;
 	  assert.isFunction(padStart);
@@ -7934,6 +8413,23 @@
 	    }, TypeError);
 	  }
 	});
+
+	function padEnd(targetLength) {
+	  var x = targetLength - this.length;
+	  if (x > 0) {
+	    var padString = arguments[1];
+	    if (padString == null) {
+	      padString = " ";
+	    }
+	    var len = padString.length;
+	    if (len) {
+	      return this + padString.repeat(Math.ceil(x / len)).substr(0, x);
+	    }
+	  }
+	  return String(this);
+	}
+
+	definePrototype(String, 'padEnd', padEnd);
 
 	QUnit.test('String#padEnd', function (assert) {
 	  var padEnd = String.prototype.padEnd;
@@ -8012,6 +8508,8 @@
 	  assert.ok(new promise.constructor(empty)["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
 	});
 
+	definePrototype(String, 'trimStart', trimStart);
+
 	// deprecated
 	// QUnit.test('String#trimLeft', assert => {
 	// 	const { trimStart, trimLeft } = String.prototype;
@@ -8062,6 +8560,12 @@
 	    }, TypeError);
 	  }
 	});
+
+	function trimEnd() {
+	  return this.replace(/[\s\u2006\u3000\xA0]+$/g, '');
+	}
+
+	definePrototype(String, 'trimEnd', trimEnd);
 
 	// deprecated
 	// QUnit.test('String#trimRight', assert => {
@@ -8114,6 +8618,23 @@
 	  }
 	});
 
+	function flat() {
+	  var deep = arguments[0];
+	  if (deep == null) deep = 1;
+	  var arr = [];
+	  for (var i = 0; i < this.length; i++) {
+	    var item = this[i];
+	    if (Array.isArray(item) && deep > 0) {
+	      arr = arr.concat(flat.call(item, deep - 1));
+	    } else {
+	      arr.push(item);
+	    }
+	  }
+	  return arr;
+	}
+
+	definePrototype(Array, 'flat', flat);
+
 	QUnit.test('Array#flat', function (assert) {
 	  var flat = Array.prototype.flat;
 	  assert.isFunction(flat);
@@ -8147,6 +8668,12 @@
 	  // 	})).length === 0, 'uses ToLength');
 	  // }
 	});
+
+	function flatMap(fn) {
+	  return flat.call(this.map(fn, arguments[1]), 1);
+	}
+
+	definePrototype(Array, 'flatMap', flatMap);
 
 	QUnit.test('Array#flatMap', function (assert) {
 	  var flatMap = Array.prototype.flatMap;
@@ -8282,6 +8809,40 @@
 	  assert.same(globalThis, Object(globalThis), 'is object');
 	  assert.same(globalThis.Math, Math, 'contains globals');
 	});
+
+	function matchAll(regExp) {
+	  if (this == null) {
+	    throw new TypeError("matchAll called on null or undefined");
+	  }
+	  var string = this;
+	  if (isString(regExp)) {
+	    regExp = new RegExp(regExp, 'g');
+	  } else if (regExp && regExp.global === false) {
+	    throw new TypeError("matchAll called with a non-global RegExp argument");
+	  }
+	  var it = {
+	    next: function () {
+	      var value = regExp.exec(string);
+	      if (value) {
+	        return {
+	          value: value,
+	          done: false
+	        };
+	      } else {
+	        return {
+	          value: undefined,
+	          done: true
+	        };
+	      }
+	    }
+	  };
+	  it[iterator$1] = function () {
+	    return this;
+	  };
+	  return it;
+	}
+
+	definePrototype(String, 'matchAll', matchAll);
 
 	QUnit.test('String#matchAll', function (assert) {
 	  var matchAll = String.prototype.matchAll;
@@ -8509,6 +9070,78 @@
 	  });
 	});
 
+	var stringEscapes = {
+	  '\\': '\\',
+	  "'": "'",
+	  '\n': 'n',
+	  '\r': 'r',
+	  '\u2028': 'u2028',
+	  '\u2029': 'u2029'
+	};
+	var regexpEscapes = {
+	  '0': 'x30',
+	  '1': 'x31',
+	  '2': 'x32',
+	  '3': 'x33',
+	  '4': 'x34',
+	  '5': 'x35',
+	  '6': 'x36',
+	  '7': 'x37',
+	  '8': 'x38',
+	  '9': 'x39',
+	  'A': 'x41',
+	  'B': 'x42',
+	  'C': 'x43',
+	  'D': 'x44',
+	  'E': 'x45',
+	  'F': 'x46',
+	  'a': 'x61',
+	  'b': 'x62',
+	  'c': 'x63',
+	  'd': 'x64',
+	  'e': 'x65',
+	  'f': 'x66',
+	  'n': 'x6e',
+	  'r': 'x72',
+	  't': 'x74',
+	  'u': 'x75',
+	  'v': 'x76',
+	  'x': 'x78'
+	};
+	var reRegExpChars = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g;
+	function escapeRegExp(str) {
+	  //from lodash
+	  if (str) {
+	    reRegExpChars.lastIndex = 0;
+	    return reRegExpChars.test(str) ? str.replace(reRegExpChars, function (chr, leadingChar, whitespaceChar) {
+	      if (leadingChar) {
+	        chr = regexpEscapes[chr];
+	      } else if (whitespaceChar) {
+	        chr = stringEscapes[chr];
+	      }
+	      return '\\' + chr;
+	    }) : str;
+	  }
+	  return "(?:)";
+	}
+	;
+
+	var replace = String.prototype.replace;
+	function replaceAll(searchValue, replaceValue) {
+	  if (isRegExp(searchValue)) {
+	    if (!searchValue.global) {
+	      throw new TypeError("String.prototype.replaceAll called with a non-global RegExp argument");
+	    } else {
+	      return this.replace(searchValue, replaceValue);
+	    }
+	  }
+	  searchValue = new RegExp(escapeRegExp(String(searchValue)), "g");
+	  return replace.call(this, searchValue, replaceValue);
+	}
+	;
+
+	definePrototype(String, 'replaceAll', replaceAll);
+
 	QUnit.test('String#replaceAll', function (assert) {
 	  var replaceAll = String.prototype.replaceAll;
 	  assert.isFunction(replaceAll);
@@ -8653,6 +9286,39 @@
 	  assert.deepEqual(AggregateError([1, 2, 3]).errors, [1, 2, 3]);
 	});
 
+	function at$1(index) {
+	  // 检查索引是否有效  
+	  var len = this.length;
+	  var relativeIndex = toIntegerOrInfinity(index);
+	  var k = relativeIndex >= 0 ? relativeIndex : len + relativeIndex;
+	  // 确保索引在字符串范围内  
+	  if (k < 0 || k >= len) {
+	    return;
+	  }
+	  return this.charAt(k);
+	}
+	function toIntegerOrInfinity(argument) {
+	  var number = +argument;
+	  return number !== number || number === 0 ? 0 : Math.trunc(number);
+	}
+	;
+
+	definePrototype(String, 'at', at$1);
+
+	function at(n) {
+	  var len = this.length;
+	  if (isNaN(n)) {
+	    return this[0];
+	  }
+	  n = Math.trunc(n);
+	  if (n >= 0) {
+	    return this[n];
+	  }
+	  return this[len + n];
+	}
+
+	definePrototype(Array, 'at', at);
+
 	QUnit.test('Array#at', function (assert) {
 	  var at = Array.prototype.at;
 	  assert.isFunction(at);
@@ -8727,7 +9393,7 @@
 	});
 
 	QUnit.test('Object.hasOwn', function (assert) {
-	  var create = Object.create;
+	  var create = implementation;
 	  var hasOwn = Object.hasOwn;
 	  assert.isFunction(hasOwn);
 	  assert.arity(hasOwn, 2);
@@ -8752,6 +9418,23 @@
 	  // assert.throws(() => hasOwn(null, 'foo'), TypeError, 'throws on null');
 	  // assert.throws(() => hasOwn(undefined, 'foo'), TypeError, 'throws on undefined');
 	});
+
+	function findLastIndex(callback) {
+	  var thisArg = arguments[1];
+	  var i = this.length;
+	  if (i > 0) {
+	    while (i-- > 0) {
+	      var j = this[i];
+	      var r = callback.call(thisArg, j, i, this);
+	      if (r) {
+	        return i;
+	      }
+	    }
+	  }
+	  return -1;
+	}
+
+	definePrototype(Array, 'findLastIndex', findLastIndex);
 
 	QUnit.test('Array#findLastIndex', function (assert) {
 	  var findLastIndex = Array.prototype.findLastIndex;
@@ -8801,6 +9484,17 @@
 	  }, 'uses ToLength');
 	  // assert.equal(true, 'findLastIndex' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
+
+	function findLast(callback) {
+	  var thisArg = arguments[1];
+	  var i = findLastIndex.call(this, callback, thisArg);
+	  if (i >= 0) {
+	    return this[i];
+	  }
+	}
+	;
+
+	definePrototype(Array, 'findLast', findLast);
 
 	QUnit.test('Array#findLast', function (assert) {
 	  var findLast = Array.prototype.findLast;
@@ -8874,29 +9568,6 @@
 	  }
 	} else {
 	  window.Event = Event$ff;
-	}
-
-	function fix_RegExp(NativeRegExp) {
-	  function RegExp(source) {
-	    if (isRegExp(source)) {
-	      var flags = "";
-	      if (source.global) flags += "g";
-	      if (source.ignoreCase) flags += "i";
-	      if (source.multiline) flags += "m";
-	      return new NativeRegExp(source.source, flags);
-	    }
-	    return new NativeRegExp(source, arguments[1]);
-	  }
-	  ;
-	  RegExp.__proto__ = NativeRegExp;
-	  RegExp.prototype = NativeRegExp.prototype;
-	  return RegExp;
-	}
-
-	// 低版本浏览器中new RegExp(obj)传入的obj是RegExp对象返回本身
-	var p = /p/;
-	if (new RegExp(p) === p) {
-	  window.RegExp = fix_RegExp(RegExp);
 	}
 
 	var Blob$2 = window.Blob;
@@ -9043,7 +9714,7 @@
 	        return arrayClone(obj);
 	      }
 	    } else if (obj instanceof Error) {
-	      r = Object.create(proto);
+	      r = implementation(proto);
 	      r.message = obj.message;
 	      $inject_Object_defineProperty(r, 'stack', {
 	        value: obj.stack,
@@ -9062,7 +9733,7 @@
 	    var type = toString$1.call(obj);
 	    switch (type) {
 	      case '[object Object]':
-	        return objectClone(Object.create(proto), obj);
+	        return objectClone(implementation(proto), obj);
 	      case '[object Date]':
 	        return new Date(obj);
 	      case '[object Number]':
@@ -9572,6 +10243,14 @@
 	  }
 	});
 
+	function toReversed() {
+	  var arr = Array.from(this);
+	  arr.reverse();
+	  return arr;
+	}
+
+	definePrototype(Array, 'toReversed', toReversed);
+
 	QUnit.test('Array#toReversed', function (assert) {
 	  var _array$constructor;
 	  var toReversed = Array.prototype.toReversed;
@@ -9618,6 +10297,14 @@
 
 	  // assert.equal(true, 'toReversed' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
+
+	function toSorted(fn) {
+	  var arr = Array.from(this);
+	  arr.sort.apply(arr, arguments);
+	  return arr;
+	}
+
+	definePrototype(Array, 'toSorted', toSorted);
 
 	QUnit.test('Array#toSorted', function (assert) {
 	  var _array$constructor;
@@ -9758,6 +10445,14 @@
 	  // assert.equal(true, 'toSorted' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
 
+	function toSpliced(a1, a2) {
+	  var arr = Array.from(this);
+	  arr.splice.apply(arr, arguments);
+	  return arr;
+	}
+
+	definePrototype(Array, 'toSpliced', toSpliced);
+
 	QUnit.test('Array#toSpliced', function (assert) {
 	  var _array$constructor;
 	  var toSpliced = Array.prototype.toSpliced;
@@ -9793,6 +10488,23 @@
 
 	  // assert.equal(true, 'toSpliced' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
+
+	function withAt(index, value) {
+	  if (this == null) {
+	    throw new TypeError("Cannot convert undefined or null to object");
+	  }
+	  if (index < 0) {
+	    index += this.length;
+	  }
+	  if (index < 0 || index >= this.length) {
+	    throw new RangeError("Invalid index: " + index);
+	  }
+	  var arr = Array.from(this);
+	  arr[index] = value;
+	  return arr;
+	}
+
+	definePrototype(Array, 'with', withAt);
 
 	QUnit.test('Array#with', function (assert) {
 	  var _array$constructor;
@@ -9830,6 +10542,47 @@
 	  }, _array$constructor);
 	  // assert.true(array.with(1, 2) instanceof Array, 'non-generic');
 	});
+
+	function isSymbol$1(obj) {
+	  if (typeof obj === "symbol") {
+	    return true;
+	  }
+	  return false;
+	}
+	;
+
+	var isSymbol = Symbol$4 ? isSymbol$1 : function (obj) {
+	  return typeof obj === "object" && obj instanceof Symbol$3;
+	};
+
+	function isWellFormed() {
+	  if (this == null) {
+	    throw new TypeError("isWellFormed called on null or undefined");
+	  }
+	  if (isSymbol(this)) {
+	    throw new TypeError("Cannot convert a Symbol value to a string");
+	  }
+	  var str = String(this);
+	  // https://github.com/tc39/proposal-is-usv-string
+	  for (var i = 0; i < str.length; ++i) {
+	    var isSurrogate = (str.charCodeAt(i) & 0xF800) == 0xD800;
+	    if (!isSurrogate) {
+	      continue;
+	    }
+	    var isLeadingSurrogate = str.charCodeAt(i) < 0xDC00;
+	    if (!isLeadingSurrogate) {
+	      return false; // unpaired trailing surrogate
+	    }
+	    var isFollowedByTrailingSurrogate = i + 1 < str.length && (str.charCodeAt(i + 1) & 0xFC00) == 0xDC00;
+	    if (!isFollowedByTrailingSurrogate) {
+	      return false; // unpaired leading surrogate
+	    }
+	    ++i;
+	  }
+	  return true;
+	}
+
+	definePrototype(String, 'isWellFormed', isWellFormed);
 
 	QUnit.test('String#isWellFormed', function (assert) {
 	  var isWellFormed = String.prototype.isWellFormed;
@@ -9874,6 +10627,34 @@
 	    return isWellFormed.call(_Symbol$2('isWellFormed test'));
 	  }, 'throws on symbol context');
 	});
+
+	function toWellFormed() {
+	  if (this == null) {
+	    throw new TypeError("toWellFormed called on null or undefined");
+	  }
+	  if (isSymbol(this)) {
+	    throw new TypeError("Cannot convert a Symbol value to a string");
+	  }
+	  var S = String(this);
+	  var len = S.length;
+	  var r = new Array(S.length);
+	  // https://tc39.es/ecma262/#sec-string.prototype.towellformed
+	  for (var i = 0; i < len; i++) {
+	    var charCode = S.charCodeAt(i);
+	    // single UTF-16 code unit
+	    if ((charCode & 0xF800) !== 0xD800) r[i] = S.charAt(i);
+	    // unpaired surrogate
+	    else if (charCode >= 0xDC00 || i + 1 >= len || (S.charCodeAt(i + 1) & 0xFC00) !== 0xDC00) r[i] = "\uFFFD";
+	    // surrogate pair
+	    else {
+	      r[i] = S.charAt(i);
+	      r[++i] = S.charAt(i);
+	    }
+	  }
+	  return r.join('');
+	}
+
+	definePrototype(String, 'toWellFormed', toWellFormed);
 
 	QUnit.test('String#toWellFormed', function (assert) {
 	  var toWellFormed = String.prototype.toWellFormed;
@@ -9921,7 +10702,7 @@
 	    throw new TypeError("object is not iterable");
 	  }
 	  var it = entries.call(iterable);
-	  var r = Object.create(null);
+	  var r = implementation(null);
 	  var i = 0;
 	  var key, value, arr;
 	  while (true) {

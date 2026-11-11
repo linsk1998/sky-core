@@ -39,7 +39,7 @@ export default {
 				"Array.isArray": "sky-core/polyfill/Array/isArray",
 				"Array.of": "sky-core/polyfill/Array/of",
 				//"Date": "sky-core/polyfill/Date/now",
-				"Date": "sky-core/polyfill/Date/parse",
+				"Date.parse": "sky-core/polyfill/Date/parse",
 				"Date": "sky-core/polyfill/Date/constructor",
 				"Object.assign": "sky-core/polyfill/Object/assign",
 				"Object.create": "sky-core/polyfill/Object/create",

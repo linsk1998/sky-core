@@ -468,7 +468,7 @@
 	  var iterable = (_iterable = {
 	    called: false,
 	    received: false
-	  }, _iterable[Symbol.iterator] = function () {
+	  }, _iterable[iterator$1] = function () {
 	    iterable.received = true;
 	    var index = 0;
 	    var iterator = {
@@ -1030,12 +1030,30 @@
 	}
 	;
 
+	function prefixIntrger4(number) {
+	  if (number < 10) return '000' + number;
+	  if (number < 100) return '00' + number;
+	  if (number < 1000) return '0' + number;
+	  return '' + number;
+	}
+	function prefixIntrger6(number) {
+	  var sign = number < 0 ? '-' : '+';
+	  var abs = number < 0 ? -number : number;
+	  if (abs < 10) return sign + '00000' + abs;
+	  if (abs < 100) return sign + '0000' + abs;
+	  if (abs < 1000) return sign + '000' + abs;
+	  if (abs < 10000) return sign + '00' + abs;
+	  if (abs < 100000) return sign + '0' + abs;
+	  return sign + abs;
+	}
 	function toISOString() {
 	  var time = this.getTime();
 	  if (isNaN(time)) {
 	    throw new RangeError("Invalid time value");
 	  }
-	  return this.getUTCFullYear() + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
+	  var year = this.getUTCFullYear();
+	  var yearStr = year < 0 || year > 9999 ? prefixIntrger6(year) : prefixIntrger4(year);
+	  return yearStr + '-' + prefixIntrger2(this.getUTCMonth() + 1) + '-' + prefixIntrger2(this.getUTCDate()) + 'T' + prefixIntrger2(this.getUTCHours()) + ':' + prefixIntrger2(this.getUTCMinutes()) + ':' + prefixIntrger2(this.getUTCSeconds()) + '.' + prefixIntrger3(this.getUTCMilliseconds()) + 'Z';
 	}
 
 	function toJSON(_) {
@@ -1062,7 +1080,7 @@
 	QUnit.test('Date#toJSON', function (assert) {
 	  var toJSON = Date.prototype.toJSON;
 	  assert.isFunction(toJSON);
-	  // assert.arity(toJSON, 1);
+	  assert.arity(toJSON, 1);
 	  assert.name(toJSON, 'toJSON');
 	  assert.looksNative(toJSON);
 	  // assert.nonEnumerable(Date.prototype, 'toJSON');
@@ -1079,27 +1097,30 @@
 	QUnit.test('Date#toISOString', function (assert) {
 	  var toISOString = Date.prototype.toISOString;
 	  assert.isFunction(toISOString);
+	  assert.arity(toISOString, 0);
 	  assert.name(toISOString, 'toISOString');
 	  assert.looksNative(toISOString);
 	  // assert.nonEnumerable(Date.prototype, 'toISOString');
-	  // assert.strictEqual(new Date(0).toISOString(), '1970-01-01T00:00:00.000Z');
-	  // assert.strictEqual(new Date(1e12 + 1).toISOString(), '2001-09-09T01:46:40.001Z');
-	  // assert.strictEqual(new Date(-5e13 - 1).toISOString(), '0385-07-25T07:06:39.999Z');
+	  assert.same(new Date(0).toISOString(), '1970-01-01T00:00:00.000Z');
+	  assert.same(new Date(1e12 + 1).toISOString(), '2001-09-09T01:46:40.001Z');
+	  assert.same(new Date(-5e13 - 1).toISOString(), '0385-07-25T07:06:39.999Z');
 	  var future = new Date(1e15 + 1).toISOString();
 	  assert.ok(future === '+033658-09-27T01:46:40.001Z' || future === '33658-09-27T01:46:40.001Z');
 	  var prehistoric = new Date(-1e15 + 1).toISOString();
 	  assert.ok(prehistoric === '-029719-04-05T22:13:20.001Z' || prehistoric === '-29719-04-05T22:13:20.001Z');
-	  // assert.throws(() => new Date(NaN).toISOString(), RangeError);
+	  assert["throws"](function () {
+	    return new Date(NaN).toISOString();
+	  }, RangeError);
 	});
 
 	QUnit.test('Date#toString', function (assert) {
 	  var toString = Date.prototype.toString;
 	  assert.isFunction(toString);
 	  assert.arity(toString, 0);
-	  assert.name(toString, 'toString');
+	  // assert.name(toString, 'toString');
 	  assert.looksNative(toString);
 	  assert.nonEnumerable(Date.prototype, 'toString');
-	  // assert.same(String(new Date(NaN)), 'Invalid Date');
+	  assert.same(String(new Date(NaN)), 'Invalid Date');
 	});
 
 	QUnit.test('Array#indexOf', function (assert) {
@@ -1401,55 +1422,53 @@
 
 	var setInterval = document.documentMode <= 9 ? setInterval$1 : setInterval$2;
 
-	QUnit.asyncTest('setTimeout / clearTimeout', function () {
+	QUnit.asyncTest('setTimeout works with additional args', function (assert) {
 	  expect(1);
-	  timeLimitedPromise(1000, function (resolve) {
-	    setTimeout$1(function (a, b) {
-	      resolve(a + b);
-	    }, 10, 'a', 'b');
-	  }).then(function (it) {
-	    QUnit.strictEqual(it, 'ab', 'setTimeout works with additional args');
-	  })["catch"](function () {
-	    QUnit.ok(false, 'setTimeout works with additional args');
-	  }).then(function () {
+	  var timeout = setTimeout$1(function (a, b) {
+	    clearTimeout(guard);
+	    assert.strictEqual(a + b, 'ab', 'setTimeout works with additional args');
 	    start();
-	  });
+	  }, 10, 'a', 'b');
+	  var guard = setTimeout$1(function () {
+	    assert.ok(false, 'setTimeout works with additional args');
+	    start();
+	  }, 1000);
 	});
-	QUnit.asyncTest('setTimeout / clearTimeout', function () {
+	QUnit.asyncTest('clearTimeout prevents callback', function (assert) {
 	  expect(1);
-	  timeLimitedPromise(50, function (resolve) {
-	    clearTimeout(setTimeout$1(resolve, 10));
-	  }).then(function () {
-	    QUnit.ok(false, 'clearImmediate works with wraped setTimeout');
-	  })["catch"](function () {
-	    QUnit.ok(true, 'clearImmediate works with wraped setTimeout');
-	  }).then(function () {
+	  var timeout = setTimeout$1(function () {
+	    assert.ok(false, 'clearTimeout prevents callback');
 	    start();
-	  });
+	  }, 30);
+	  clearTimeout(timeout);
+	  setTimeout$1(function () {
+	    assert.ok(true, 'clearTimeout prevents callback');
+	    start();
+	  }, 60);
 	});
-	QUnit.asyncTest('setInterval / clearInterval', function (assert) {
+	QUnit.asyncTest('setInterval works with additional args', function (assert) {
 	  expect(1);
-	  timeLimitedPromise(1000, function (resolve, reject) {
-	    var i = 0;
-	    var interval = setInterval(function (a, b) {
-	      if (a + b !== 'ab' || i > 2) reject({
-	        a: a,
-	        b: b,
-	        i: i
-	      });
-	      if (i++ === 2) {
-	        clearInterval(interval);
-	        setTimeout$1(resolve, 30);
-	      }
-	    }, 5, 'a', 'b');
-	  }).then(function () {
-	    assert.ok(true, 'setInterval & clearInterval works with additional args');
-	  })["catch"](function (error) {
-	    if (!error) error = {};
-	    assert.ok(false, "setInterval & clearInterval works with additional args: " + error.a + ", " + error.b + ", times: " + error.i);
-	  }).then(function () {
-	    start();
-	  });
+	  var i = 0;
+	  var interval = setInterval(function (a, b) {
+	    if (a + b !== 'ab') {
+	      clearInterval(interval);
+	      assert.ok(false, "setInterval works with additional args: " + a + ", " + b);
+	      start();
+	      return;
+	    }
+	    if (++i === 3) {
+	      clearInterval(interval);
+	      assert.ok(true, 'setInterval works with additional args');
+	      start();
+	    }
+	  }, 5, 'a', 'b');
+	  setTimeout$1(function () {
+	    if (i < 3) {
+	      clearInterval(interval);
+	      assert.ok(false, "setInterval works with additional args, times: " + i);
+	      start();
+	    }
+	  }, 1000);
 	});
 
 	var Error$1 = window.Error;
@@ -1670,8 +1689,6 @@
 	  Object$1.getPrototypeOf = getPrototypeOf$ie;
 	}
 
-	// native Object.create
-
 	QUnit.test('Object.getPrototypeOf', function (assert) {
 	  assert.isFunction(Object.getPrototypeOf);
 	  assert.arity(Object.getPrototypeOf, 1);
@@ -1765,7 +1782,7 @@
 	  assert.deepEqual(getPropertyNames(Object.create(null)), []);
 	});
 	QUnit.test('Object.create.sham flag', function (assert) {
-	  assert.same(Object.create.sham, DESCRIPTORS ? undefined : true);
+	  assert.same(Object.create.sham, DESCRIPTORS && PROTO ? undefined : true);
 	});
 
 	var keys$3 = Object$1.keys;

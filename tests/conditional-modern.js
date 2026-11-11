@@ -26,7 +26,6 @@ module.exports = [
 			"Date.now": "sky-core/polyfill/Date/now",
 			// IE9+ Safari5.1+ Chrome6+ Firfox4+ Opera11.5+
 			// "Date": "sky-core/polyfill/Date/constructor",
-			// "Date.parse": "sky-core/polyfill/Date/parse",
 			/* IE9+ Firefox4+ Safari5+ Opera11.5+ */
 			"Array.isArray": "sky-core/polyfill/Array/isArray",
 			// breaking change
