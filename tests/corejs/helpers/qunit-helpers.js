@@ -1,10 +1,11 @@
+import iterator from "sky-core/pure/Symbol/iterator";
 import { DESCRIPTORS, GLOBAL } from './constants';
 import { is } from './helpers';
 import { nonEnumerable } from "../../../support/nonEnumerable";
 
 function isIterable(it) {
 	var O = Object(it);
-	return Symbol.iterator in O;
+	return iterator in O;
 }
 
 const { toString, propertyIsEnumerable } = Object.prototype;
