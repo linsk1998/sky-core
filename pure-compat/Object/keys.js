@@ -1,3 +1,3 @@
 
-import { keys } from "../../impl/object/enum/keys$jscript";
-export default keys;
+import { keys$jscript } from "../../impl/object/enum/keys$jscript";
+export default keys$jscript;

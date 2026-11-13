@@ -1,12 +1,12 @@
 import { Object } from "../../native/Object";
-import { proto } from "../../support/proto";
-import { hasOwn as compat_hasOwn } from "../../impl-compat/Object/hasOwn";
-import { hasOwn as modern_hasOwn } from "../../impl-modern/Object/hasOwn";
+import { hasEnumBug } from "../../utils/hasEnumBug";
+import { hasOwn } from "../../impl/object/enum/hasOwn";
+import { hasOwn$jscript } from "../../impl/object/enum/hasOwn$jscript";
 
 if(!Object.hasOwn) {
-	if(proto) {
-		Object.hasOwn = modern_hasOwn;
+	if(hasEnumBug) {
+		Object.hasOwn = hasOwn$jscript;
 	} else {
-		Object.hasOwn = compat_hasOwn;
+		Object.hasOwn = hasOwn;
 	}
-} 
+}

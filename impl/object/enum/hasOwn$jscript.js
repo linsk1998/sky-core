@@ -1,7 +1,7 @@
-import { isNullBase } from "../../impl/object/proto/nullProto$jscript";
-import { hasOwnProperty } from "../../native/Object/prototype/hasOwnProperty";
+import { isNullBase } from "../proto/nullProto$jscript";
+import { hasOwnProperty } from "../../../native/Object/prototype/hasOwnProperty";
 
-export function hasOwn(obj, key) {
+export function hasOwn$jscript(obj, key) {
 	if(obj == null) {
 		throw new TypeError("Cannot convert undefined or null to object");
 	}

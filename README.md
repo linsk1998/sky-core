@@ -261,6 +261,7 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Object.isFrozen | pure | 无法真正实现 |
 | Object.setPrototypeOf | pure | 无法真正实现 |
 | Object.is | polyfill | 功能完全 |
+| Object.hasOwn | polyfill | 功能完全 |
 | Object.getOwnPropertyDescriptors | pure | 无法真正实现 |
 | WeakMap | pure | 无法真正实现 |
 | Map | polyfill | 修复原生功能 |

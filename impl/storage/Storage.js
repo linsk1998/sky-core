@@ -1,5 +1,5 @@
 import { EventTarget } from "../event/EventTarget";
-import { hasOwn } from "../../impl-modern/Object/hasOwn";
+import { hasOwn } from "../object/enum/hasOwn";
 
 function Storage() {
 	this.clear();

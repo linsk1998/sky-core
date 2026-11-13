@@ -1,6 +1,6 @@
 import { Object } from "../../native/Object";
-import { hasOwn } from "../../impl-compat/Object/hasOwn";
+import { hasOwn$jscript } from "../../impl/object/enum/hasOwn$jscript";
 
 if(!Object.hasOwn) {
-	Object.hasOwn = hasOwn;
-} 
+	Object.hasOwn = hasOwn$jscript;
+}
