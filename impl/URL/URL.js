@@ -1,4 +1,6 @@
-import { SearchParams } from "../impl/SearchParams";
+import "sky-core/polyfill/String/prototype/startsWith";
+
+import { SearchParams } from "./SearchParams";
 
 export function URL(relativePath) {
 	if(typeof relativePath !== "string") relativePath = String(relativePath);
@@ -72,9 +74,11 @@ export var URLProperties = {
 			return this.hostname;
 		},
 		set: function(value) {
+			if(/:$/.test(value)) {
+				value = value.replace(/:$/, "");
+			}
 			var pattern = /(.*):(\d+)$/;
 			var arr = value.match(pattern);
-			this.port = "";
 			if(arr) {
 				this.hostname = arr[1];
 				this.port = arr[2];

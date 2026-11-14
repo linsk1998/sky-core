@@ -1,2 +1,2 @@
-import { URLSearchParams } from "../impl/URLSearchParams";
+import { URLSearchParams } from "../impl/URL/URLSearchParams";
 export default URLSearchParams;

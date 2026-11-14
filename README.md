@@ -263,6 +263,7 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Object.is | polyfill | 功能完全 |
 | Object.hasOwn | polyfill | 功能完全 |
 | Object.getOwnPropertyDescriptors | pure | 无法真正实现 |
+| URL | polyfill | 模块化依赖 |
 | WeakMap | pure | 无法真正实现 |
 | Map | polyfill | 修复原生功能 |
 | Set | polyfill | 修复原生功能 |
@@ -273,4 +274,5 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | cancelAnimationFrame | pure | 无法完美实现 |
 | requestIdleCallback | pure | 无法完美实现 |
 | cancelIdleCallback | pure | 无法完美实现 |
+| URLSearchParams | polyfill | 模块化依赖 |
 | crypto.randomUUID | pure | 含名字空间 |

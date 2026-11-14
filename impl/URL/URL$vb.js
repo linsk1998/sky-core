@@ -1,5 +1,5 @@
 
-import { URL as modern_URL, URLProperties } from "../impl-modern/URL";
+import { URL as modern_URL, URLProperties } from "./URL";
 export function initURL() {
 	try {
 		window.execScript("var VBURLProperties;", "JScript");
@@ -49,9 +49,9 @@ export function initURL() {
 			return url;
 		};
 	}
-	return URL;
+	return URL$vb;
 }
-export function URL(relativePath) {
+export function URL$vb(relativePath) {
 	var absolutePath = arguments[1];
 	var url = new modern_URL(relativePath, absolutePath);
 	var o = VBUrlFactory(url);
@@ -69,6 +69,6 @@ export function URL(relativePath) {
 	o.password = url.password;
 	o.searchParams = url.searchParams;
 	o.searchParams.url = o;
-	o.constructor = URL;
+	o.constructor = URL$vb;
 	return o;
 }

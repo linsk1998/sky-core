@@ -1,6 +1,6 @@
 import { URL } from "../native/URL";
-import { URL as modern_URL, URLProperties, getSearchParams } from "../impl-modern/URL";
-import { URL as compat_URL, initURL } from "../impl-compat/URL";
+import { URL as modern_URL, URLProperties, getSearchParams } from "../impl/URL/URL";
+import { URL$vb, initURL } from "../impl/URL/URL$vb";
 import { accessor } from "../support/accessor";
 export default (function() {
 	if(!URL) {
@@ -9,15 +9,19 @@ export default (function() {
 			return modern_URL;
 		} else {
 			initURL();
-			return compat_URL;
+			return URL$vb;
 		}
 	} else {
 		var url;
+		var portQuirk = false;
 		try {
 			url = new URL(location.href);
+			url.port = "";
+			portQuirk = url.port === "0";
 		} catch(e) {
+			url = null;
 		}
-		if(!url || !('href' in url)) {
+		if(!url || !('href' in url) || portQuirk) {
 			modern_URL.createObjectURL = URL.createObjectURL;
 			modern_URL.revokeObjectURL = URL.revokeObjectURL;
 			Object.defineProperties(modern_URL.prototype, URLProperties);

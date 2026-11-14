@@ -1,4 +1,4 @@
 
-import { URL, initURL } from "../impl-compat/URL";
+import { URL$vb, initURL } from "../impl/URL/URL$vb";
 initURL();
-export default URL;
+export default URL$vb;
