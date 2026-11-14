@@ -1,34 +1,24 @@
-import iterator from "sky-core/pure/Symbol/iterator";
+import { createIteratorHelper } from "../../utils/createIteratorHelper";
 
 export function groupBy(iterable, keySelector) {
-	var entries = iterable[iterator];
-	if(!entries) {
-		throw new TypeError("object is not iterable");
-	}
-	var it = entries.call(iterable);
 	var r = Object.create(null);
 	var i = 0;
-	var key, value, arr;
-	while(true) {
-		var next = it.next();
-		if(next.done) break;
-		try {
-			value = next.value;
-			key = keySelector(value, i++);
+	var _iterator = createIteratorHelper(iterable), _step;
+	if(!_iterator) throw new TypeError(typeof iterable + " " + iterable + " is not iterable.");
+	try {
+		for(_iterator.s(); !(_step = _iterator.n()).done;) {
+			var value = _step.value;
+			var key = keySelector(value, i++);
 			if(key in r) {
-				arr = r[key];
+				r[key].push(value);
 			} else {
-				arr = r[key] = [];
+				r[key] = [value];
 			}
-			arr.push(value);
-		} catch(e) {
-			if(it.return) {
-				try {
-					it.return();
-				} catch(e) { }
-			}
-			throw e;
 		}
+	} catch(err) {
+		_iterator.e(err);
+	} finally {
+		_iterator.f();
 	}
 	return r;
 }

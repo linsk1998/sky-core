@@ -1,30 +1,40 @@
 import { isFunction } from "../../utils/isFunction";
+import { createIteratorHelper } from "../../utils/createIteratorHelper";
 
 export function any(promises) {
-	// if(!Array.isArray(promises)) {
-	// 	throw new TypeError('You must pass an array to any.');
-	// }
-	// if(promises.length == 0) return Promise.reject();
 	return new Promise(function(resolve, reject) {
-		var errors = Array.from(promises);
-		if(errors.length === 0) {
-			return reject(new AggregateError(errors));
+		var _iterator = createIteratorHelper(promises), _step;
+		if(!_iterator) {
+			reject(new TypeError(typeof promises + " " + promises + " is not iterable."));
+			return;
 		}
-		var c = 0;
-		errors.forEach(function(one, index, errors) {
-			if(one != null && isFunction(one.then)) {
-				one.then(function(data) {
-					resolve(data);
-				}, function(error) {
-					c++;
-					errors[index] = error;
-					if(c >= errors.length) {
-						reject(new AggregateError(errors));
-					}
-				});
-			} else {
-				resolve(one);
+		var errors = [];
+		var pending = 0;
+		var index = 0;
+		var done = false;
+		try {
+			for(_iterator.s(); !(_step = _iterator.n()).done;) {
+				var one = _step.value;
+				var i = index++;
+				if(one != null && isFunction(one.then)) {
+					pending++;
+					(function(i, one) {
+						one.then(resolve, function(error) {
+							errors[i] = error;
+							if(--pending === 0 && done) reject(new AggregateError(errors));
+						});
+					})(i, one);
+				} else {
+					resolve(one);
+				}
 			}
-		});
+			done = true;
+			if(pending === 0) reject(new AggregateError(errors));
+		} catch(err) {
+			_iterator.e(err);
+			reject(err);
+		} finally {
+			_iterator.f();
+		}
 	});
 };

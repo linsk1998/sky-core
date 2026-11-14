@@ -1,6 +1,7 @@
 import "sky-core/polyfill/Array/prototype/forEach";
 import { isNotNullObject } from "../utils/isNotNullObject";
 import { isFunction } from "../utils/isFunction";
+import { createIteratorHelper } from "../utils/createIteratorHelper";
 
 var PENDING = 1;
 var RESOLVED = 2;
@@ -154,41 +155,63 @@ Promise.reject = function reject(value) {
 };
 
 Promise.all = function(promises) {
-	if(!Array.isArray(promises)) {
-		throw new TypeError('You must pass an array to all.');
-	}
-	if(promises.length == 0) return Promise.resolve([]);
 	return new Promise(function(resolve, reject) {
-		var result = new Array(promises.length);
-		var c = 0;
-		promises.forEach(function(one, index) {
-			if(isNotNullObject(one) && isFunction(one.then)) {
-				one.then(function(data) {
-					c++;
-					result[index] = data;
-					if(c >= promises.length) {
-						resolve(result);
-					}
-				}, reject);
-			} else {
-				c++;
-				result[index] = one;
-				if(c >= promises.length) {
-					resolve(result);
+		var _iterator = createIteratorHelper(promises), _step;
+		if(!_iterator) {
+			reject(new TypeError(typeof promises + " " + promises + " is not iterable."));
+			return;
+		}
+		var result = [];
+		var pending = 0;
+		var index = 0;
+		var done = false;
+		try {
+			for(_iterator.s(); !(_step = _iterator.n()).done;) {
+				var one = _step.value;
+				var i = index++;
+				if(isNotNullObject(one) && isFunction(one.then)) {
+					pending++;
+					(function(i, one) {
+						one.then(function(data) {
+							result[i] = data;
+							if(--pending === 0 && done) resolve(result);
+						}, reject);
+					})(i, one);
+				} else {
+					result[i] = one;
 				}
 			}
-		});
+			done = true;
+			if(pending === 0) resolve(result);
+		} catch(err) {
+			_iterator.e(err);
+			reject(err);
+		} finally {
+			_iterator.f();
+		}
 	});
 };
 Promise.race = function(promises) {
-	if(!Array.isArray(promises)) {
-		throw new TypeError('You must pass an array to all.');
-	}
-	if(promises.length == 0) return Promise.resolve([]);
 	return new Promise(function(resolve, reject) {
-		var i = promises.length;
-		while(i--) {
-			promises[i].then(resolve, reject);
+		var _iterator = createIteratorHelper(promises), _step;
+		if(!_iterator) {
+			reject(new TypeError(typeof promises + " " + promises + " is not iterable."));
+			return;
+		}
+		try {
+			for(_iterator.s(); !(_step = _iterator.n()).done;) {
+				var one = _step.value;
+				if(isNotNullObject(one) && isFunction(one.then)) {
+					one.then(resolve, reject);
+				} else {
+					resolve(one);
+				}
+			}
+		} catch(err) {
+			_iterator.e(err);
+			reject(err);
+		} finally {
+			_iterator.f();
 		}
 	});
 };
