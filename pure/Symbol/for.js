@@ -1,4 +1,4 @@
-import modern_for from "../../impl-modern/Symbol/for";
-import compat_for from "../../impl-compat/Symbol/for";
+import es6_for from "../../impl/Symbol/for$es6";
+import es3_for from "../../impl/Symbol/for$es3";
 import { Symbol } from "../../native/Symbol";
-export default Symbol ? (Symbol.for || modern_for) : compat_for;
+export default Symbol ? (Symbol.for || es6_for) : es3_for;

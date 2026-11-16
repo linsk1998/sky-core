@@ -1,3 +1,4 @@
+
 export function keyFor(symbol) {
 	var s = String(symbol);
 	if(s.indexOf("@@") !== 0) {

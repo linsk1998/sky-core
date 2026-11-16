@@ -1,6 +1,6 @@
 import { toString } from "../native/Object/prototype/toString";
 import { isNullBase } from "../impl/object/proto/nullProto$jscript";
-import { Symbol } from "../impl-compat/Symbol";
+import { Symbol } from "../impl/Symbol/Symbol";
 
 export function structuredClone(obj) {
 	var r;

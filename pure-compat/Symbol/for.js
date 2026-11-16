@@ -1,2 +1,2 @@
-import compat_for from "../../impl-compat/Symbol/for";
-export default compat_for;
+import es3_for from "../../impl/Symbol/for$es3";
+export default es3_for;

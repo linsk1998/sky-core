@@ -265,6 +265,7 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Object.getOwnPropertyDescriptors | pure | 无法真正实现 |
 | URL | polyfill | 模块化依赖 |
 | WeakMap | pure | 无法真正实现 |
+| Symbol | polyfill | 模块化依赖 |
 | Map | polyfill | 修复原生功能 |
 | Set | polyfill | 修复原生功能 |
 | WeakSet | pure | 无法真正实现 |

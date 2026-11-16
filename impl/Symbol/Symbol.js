@@ -1,5 +1,5 @@
-import { nonEnumerable } from "../support/nonEnumerable";
-import { defineProperty } from "../native/Object/defineProperty";
+import { nonEnumerable } from "../../support/nonEnumerable";
+import { defineProperty } from "../../native/Object/defineProperty";
 
 var symbol_sqe = 0;
 export var allSymbols = {};

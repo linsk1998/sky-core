@@ -1,3 +1,3 @@
-import { getOwnPropertySymbols } from "../../impl-compat/Object/getOwnPropertySymbols";
+import { getOwnPropertySymbols } from "../../impl/object/enum/getOwnPropertySymbols";
 
 export default getOwnPropertySymbols;

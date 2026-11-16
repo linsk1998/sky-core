@@ -1,6 +1,6 @@
 import { Symbol } from "../../polyfill/Symbol";
-import { keyFor } from "../../impl-compat/Symbol/keyFor";
+import { keyFor as es3_keyFor } from "../../impl/Symbol/keyFor$es3";
 
 if(!Symbol.keyFor) {
-	Symbol.keyFor = keyFor;
+	Symbol.keyFor = es3_keyFor;
 }

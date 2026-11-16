@@ -1,5 +1,5 @@
 import { Object } from "../../native/Object";
-import { getOwnPropertySymbols } from "../../impl-compat/Object/getOwnPropertySymbols";
+import { getOwnPropertySymbols } from "../../impl/object/enum/getOwnPropertySymbols";
 
 if(!Object.getOwnPropertySymbols) {
 	Object.getOwnPropertySymbols = getOwnPropertySymbols;

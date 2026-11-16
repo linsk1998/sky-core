@@ -1,6 +1,6 @@
 import { Symbol } from "../native/Symbol";
 import { isRegExp } from "../utils/isRegExp";
-import { Symbol as impl_Symbol } from "../impl/Symbol";
+import { Symbol as impl_Symbol } from "../impl/Symbol/Symbol";
 
 export default Symbol ? function(o) {
 	return typeof o;

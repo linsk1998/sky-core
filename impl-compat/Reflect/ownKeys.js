@@ -1,4 +1,4 @@
-import { allSymbols } from "../Symbol";
+import { allSymbols } from "../../impl/Symbol/Symbol";
 
 export function ownKeys(obj) {
 	var r = [];

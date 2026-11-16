@@ -1,6 +1,6 @@
 import { Symbol } from "../../polyfill/Symbol";
-import compat_for from "../../impl-compat/Symbol/for";
+import es3_for from "../../impl/Symbol/for$es3";
 
 if(!('for' in Symbol)) {
-	Symbol['for'] = compat_for;
+	Symbol['for'] = es3_for;
 }

@@ -1,7 +1,7 @@
 import { isNode } from "sky-core/utils/isNode";
 import { toString } from "../native/Object/prototype/toString";
 import { isPlainObject } from "sky-core/utils/isPlainObject";
-import { Symbol } from "../impl/Symbol";
+import { Symbol } from "../impl/Symbol/Symbol";
 import { isWindow } from "sky-core/utils/isWindow";
 import { isRegExp } from "../utils/isRegExp";
 

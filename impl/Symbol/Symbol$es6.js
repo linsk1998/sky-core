@@ -1,4 +1,5 @@
-import { Symbol as native_Symbol } from "../native/Symbol";
+import { Symbol as native_Symbol } from "../../native/Symbol";
+import { setPrototypeOf } from "../../native/Object/setPrototypeOf";
 
 var descs = Object.create(null);
 export function Symbol() {
@@ -10,6 +11,9 @@ export function Symbol() {
 	descs[s] = desc;
 	return s;
 };
+if(setPrototypeOf && native_Symbol) {
+	setPrototypeOf(Symbol, native_Symbol);
+}
 
 export function getSymbolDescription() {
 	var s = this.valueOf();

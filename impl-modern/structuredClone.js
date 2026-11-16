@@ -1,5 +1,5 @@
 import { toString } from "../native/Object/prototype/toString";
-import { Symbol } from "../impl/Symbol";
+import { Symbol } from "../impl/Symbol/Symbol";
 import { isRegExp } from "../utils/isRegExp";
 
 export function structuredClone(obj) {
