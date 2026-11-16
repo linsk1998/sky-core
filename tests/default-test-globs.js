@@ -21,5 +21,6 @@ module.exports = {
 	local: [
 		"tests/corejs/es/*.js",
 		"tests/mdn/**/*.js",
+		"tests/babel/**/*.js",
 	],
 };
