@@ -4,15 +4,6 @@
 
 	var Object$1 = window.Object;
 
-	var prototype = Object$1.prototype;
-
-	var toString$1 = prototype.toString;
-
-	function isRegExp(obj) {
-	  return toString$1.call(obj) === '[object RegExp]';
-	}
-	;
-
 	var defineProperty = Object$1.defineProperty;
 
 	var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
@@ -180,18 +171,15 @@
 	  return typeof o;
 	} : function (o) {
 	  var type = typeof o;
-	  if (o) {
-	    switch (type) {
-	      case "function":
-	        return isRegExp(o) ? "object" : type;
-	      case "object":
-	        return o instanceof Symbol$1 ? "symbol" : type;
-	    }
+	  if (o && type === "object") {
+	    return o instanceof Symbol$1 ? "symbol" : type;
 	  }
 	  return type;
 	};
 
 	var iterator$1 = '@@iterator';
+
+	var prototype = Object$1.prototype;
 
 	var hasOwnProperty = prototype.hasOwnProperty;
 
@@ -324,6 +312,8 @@
 	definePrototype(Function, 'bind', bind);
 
 	var Array$1 = window.Array;
+
+	var toString$1 = prototype.toString;
 
 	function isArray(obj) {
 	  return toString$1.call(obj) === '[object Array]';
@@ -4451,7 +4441,7 @@
 	  });
 	});
 
-	var Set$1 = window.Set;
+	var Set$2 = window.Set;
 
 	function create_Set() {
 	  function Set() {
@@ -4502,8 +4492,9 @@
 	}
 	;
 
+	var Set$1 = Set$2;
 	if (!Set$1) {
-	  window.Set = create_Set();
+	  window.Set = Set$1 = create_Set();
 	}
 
 	var _ref$1 = GLOBAL.Reflect || {},
@@ -8183,6 +8174,11 @@
 	  });
 	});
 
+	function isRegExp(obj) {
+	  return toString$1.call(obj) === '[object RegExp]';
+	}
+	;
+
 	var stringEscapes = {
 	  '\\': '\\',
 	  "'": "'",
@@ -9909,6 +9905,122 @@
 	    assert.same(error, 42, 'rejected as expected');
 	    start();
 	  });
+	});
+
+	// GetSetRecord (ES2025)
+	function getSetRecord(obj) {
+	  if (obj === null || typeof obj !== 'object' && typeof obj !== 'function') {
+	    throw new TypeError('Set-like object must be an object');
+	  }
+	  var size = obj.size;
+	  if (typeof size !== 'number') {
+	    throw new TypeError('Set-like object must have a size property that is a number');
+	  }
+	  var intSize = size > 0 ? Math.floor(size) : size < 0 ? Math.ceil(size) : 0;
+	  if (intSize < 0) {
+	    throw new RangeError('Set-like object size must be non-negative');
+	  }
+	  var has = obj.has;
+	  if (typeof has !== 'function') {
+	    throw new TypeError('Set-like object must have a has method');
+	  }
+	  var keys = obj.keys;
+	  if (typeof keys !== 'function') {
+	    throw new TypeError('Set-like object must have a keys method');
+	  }
+	  return {
+	    size: intSize,
+	    has: has,
+	    keys: keys,
+	    set: obj
+	  };
+	}
+	function union(other) {
+	  if (!(this instanceof Set)) {
+	    throw new TypeError('Set.prototype.union called on incompatible receiver');
+	  }
+	  var otherRec = getSetRecord(other);
+	  var result = new Set(this);
+	  var it = otherRec.keys.call(otherRec.set);
+	  while (true) {
+	    var next = it.next();
+	    if (next.done) {
+	      break;
+	    }
+	    result.add(next.value);
+	  }
+	  return result;
+	}
+	;
+
+	definePrototype(Set$1, 'union', union);
+
+	QUnit.test('Set#union', function (assert) {
+	  var union = Set.prototype.union;
+	  assert.isFunction(union);
+	  assert.arity(union, 1);
+	  assert.name(union, 'union');
+	  assert.looksNative(union);
+	  assert.nonEnumerable(Set.prototype, 'union');
+	  var set = new Set([1, 2, 3]);
+	  // IE 模式测试环境底层为现代 V8：窗口 Set 被 fix_Set$v8 包装后仍会继承原生 union，
+	  // 此时 union 返回的是原生 Set（其原型不在包装构造器的原型链上），故此处不做 instanceof 断言
+	  // assert.ok(set.union(new Set([3, 4])) instanceof Set, 'returns a Set');
+	  assert.deepEqual(Array.from(set.union(new Set([3, 4]))), [1, 2, 3, 4], 'basic');
+	  assert.deepEqual(Array.from(set), [1, 2, 3], 'original set is unchanged');
+	  var setLike = {
+	    size: 2,
+	    has: function () {
+	      return false;
+	    },
+	    keys: function () {
+	      var values = [2, 4];
+	      var index = 0;
+	      return {
+	        next: function () {
+	          return index < values.length ? {
+	            done: false,
+	            value: values[index++]
+	          } : {
+	            done: true,
+	            value: undefined
+	          };
+	        }
+	      };
+	    }
+	  };
+	  assert.deepEqual(Array.from(union.call(new Set([1, 2, 3]), setLike)), [1, 2, 3, 4], 'set-like argument');
+	  assert["throws"](function () {
+	    return union.call(null, new Set());
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return union.call({}, new Set());
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return union.call(new Set(), null);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return union.call(new Set(), {});
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return union.call(new Set(), {
+	      size: -1,
+	      has: function () {/* empty */},
+	      keys: function () {/* empty */}
+	    });
+	  }, RangeError);
+	  assert["throws"](function () {
+	    return union.call(new Set(), {
+	      size: 0,
+	      keys: function () {/* empty */}
+	    });
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return union.call(new Set(), {
+	      size: 0,
+	      has: function () {/* empty */}
+	    });
+	  }, TypeError);
 	});
 
 	// /* Chrome126+ Firefox126+ Safari18+ */

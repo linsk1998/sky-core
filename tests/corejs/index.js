@@ -228,5 +228,8 @@ import "./es/es.object.group-by";
 import "./es/es.map.group-by";
 /* Chrome119+ Firefox121+ Safari17.4+ */
 import "./es/es.promise.with-resolvers";
+/* ES2025 */
+/* Chrome122+ Firefox127+ Safari17+ */
+import "./es/es.set.union";
 // /* Chrome126+ Firefox126+ Safari18+ */
 // import "./web.url-parse";

@@ -256,4 +256,7 @@ import "sky-core/polyfill/Object/groupBy";
 import "sky-core/polyfill/Map/groupBy";
 /* Chrome119+ Firefox121+ Safari17.4+ */
 import "sky-core/polyfill/Promise/withResolvers";
+/* ES2025 */
+/* Chrome122+ Firefox127+ Safari17+ */
+import "sky-core/polyfill/Set/prototype/union";
 

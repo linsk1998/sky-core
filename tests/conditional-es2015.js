@@ -35,6 +35,9 @@ module.exports = [
 			"Map.groupBy": "sky-core/polyfill/Map/groupBy",
 			/* Chrome119+ Firefox121+ Safari17.4+ */
 			"Promise.withResolvers": "sky-core/polyfill/Promise/withResolvers",
+			// ES2025
+			/* Chrome122+ Firefox127+ Safari17+ */
+			".union": "sky-core/polyfill/Set/prototype/union",
 		
 			// 以下条目自第二个 polyfill({modules:...}) 死块迁入（modules 选项无效，从未生效）
 			// breaking change
