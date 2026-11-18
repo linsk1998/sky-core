@@ -44,6 +44,18 @@ export function includes(target, wanted) {
 	return false;
 }
 
+export function createSetLike(elements) {
+	return {
+		size: elements.length,
+		has(it) {
+			return includes(elements, it);
+		},
+		keys() {
+			return createIterator(elements);
+		},
+	};
+}
+
 export function is(a, b) {
 	// eslint-disable-next-line no-self-compare -- NaN check
 	return a === b ? a !== 0 || 1 / a === 1 / b : a != a && b != b;

@@ -1,5 +1,12 @@
+// 移植自 core-js tests/unit-global/es.set.union.js（MIT）
+import { DESCRIPTORS } from '../helpers/constants.js';
+import { createIterable, createIterator, createSetLike } from '../helpers/helpers.js';
+
 QUnit.test('Set#union', assert => {
+  // core-js 原文为 `const { union } = Set.prototype;`，这里改为成员表达式以配合 impl-inject 的裸名注入
   const union = Set.prototype.union;
+  const { from } = Array;
+  const { defineProperty } = Object;
 
   assert.isFunction(union);
   assert.arity(union, 1);
@@ -7,37 +14,65 @@ QUnit.test('Set#union', assert => {
   assert.looksNative(union);
   assert.nonEnumerable(Set.prototype, 'union');
 
-  const set = new Set([1, 2, 3]);
-  // IE 模式测试环境底层为现代 V8：窗口 Set 被 fix_Set$v8 包装后仍会继承原生 union，
-  // 此时 union 返回的是原生 Set（其原型不在包装构造器的原型链上），故此处不做 instanceof 断言
-  // assert.ok(set.union(new Set([3, 4])) instanceof Set, 'returns a Set');
-  assert.deepEqual(Array.from(set.union(new Set([3, 4]))), [1, 2, 3, 4], 'basic');
-  assert.deepEqual(Array.from(set), [1, 2, 3], 'original set is unchanged');
+  const set = new Set([1]);
+  assert.notSame(set.union(new Set()), set);
 
-  const setLike = {
-    size: 2,
-    has() {
-      return false;
-    },
-    keys() {
-      const values = [2, 4];
-      let index = 0;
-      return {
-        next() {
-          return index < values.length
-            ? { done: false, value: values[index++] }
-            : { done: true, value: undefined };
-        },
-      };
-    },
-  };
-  assert.deepEqual(Array.from(union.call(new Set([1, 2, 3]), setLike)), [1, 2, 3, 4], 'set-like argument');
+  assert.deepEqual(from(new Set([1, 2, 3]).union(new Set([4, 5]))), [1, 2, 3, 4, 5]);
+  assert.deepEqual(from(new Set([1, 2, 3]).union(new Set([3, 4]))), [1, 2, 3, 4]);
+  assert.deepEqual(from(new Set([1, 2, 3]).union(createSetLike([4, 5]))), [1, 2, 3, 4, 5]);
+  assert.deepEqual(from(new Set([1, 2, 3]).union(createSetLike([3, 4]))), [1, 2, 3, 4]);
 
-  assert.throws(() => union.call(null, new Set()), TypeError);
-  assert.throws(() => union.call({}, new Set()), TypeError);
-  assert.throws(() => union.call(new Set(), null), TypeError);
-  assert.throws(() => union.call(new Set(), {}), TypeError);
-  assert.throws(() => union.call(new Set(), { size: -1, has() { /* empty */ }, keys() { /* empty */ } }), RangeError);
-  assert.throws(() => union.call(new Set(), { size: 0, keys() { /* empty */ } }), TypeError);
-  assert.throws(() => union.call(new Set(), { size: 0, has() { /* empty */ } }), TypeError);
+  // core-js@4 将移除对数组 / 可迭代参数的支持；本实现按 ES2025 只接受 set-like 参数，故注释保留
+  // assert.deepEqual(from(new Set([1, 2, 3]).union([4, 5])), [1, 2, 3, 4, 5]);
+  // assert.deepEqual(from(new Set([1, 2, 3]).union([3, 4])), [1, 2, 3, 4]);
+  // assert.deepEqual(from(new Set([1, 2, 3]).union(createIterable([3, 4]))), [1, 2, 3, 4]);
+
+  assert.throws(() => new Set([1, 2, 3]).union(), TypeError);
+  assert.throws(() => union.call({}, [1, 2, 3]), TypeError);
+  assert.throws(() => union.call(undefined, [1, 2, 3]), TypeError);
+  assert.throws(() => union.call(null, [1, 2, 3]), TypeError);
+
+  if(DESCRIPTORS) {
+    // Should get iterator record of a set-like object before cloning this
+    // https://bugs.webkit.org/show_bug.cgi?id=289430
+    const baseSet = new Set();
+    const setLike = {
+      size: 0,
+      has() {
+        return true;
+      },
+      keys() {
+        return defineProperty({}, 'next', {
+          get() {
+            baseSet.clear();
+            baseSet.add(4);
+            return function() {
+              return { done: true };
+            };
+          },
+        });
+      },
+    };
+    assert.deepEqual(from(baseSet.union(setLike)), [4]);
+  }
+});
+
+QUnit.test('Set#union rejects non-object iterator results', assert => {
+  for(const primitive of [undefined, null, false, 1, 'foo']) {
+    let nextCalls = 0;
+    let returnCalls = 0;
+    const setLike = createSetLike([]);
+    setLike.keys = () => createIterator([], {
+      next() {
+        return ++nextCalls === 1 ? primitive : { done: true };
+      },
+      return() {
+        returnCalls++;
+        return {};
+      },
+    });
+    assert.throws(() => new Set().union(setLike), TypeError, 'rejects a non-object iterator result');
+    assert.same(nextCalls, 1, 'does not advance after an invalid result');
+    assert.same(returnCalls, 0, 'does not close the iterator');
+  }
 });

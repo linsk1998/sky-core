@@ -271,6 +271,7 @@ module.exports = [
 			// ES2025
 			/* Chrome122+ Firefox127+ Safari17+ */
 			".union": "sky-core/polyfill/Set/prototype/union",
+			".intersection": "sky-core/polyfill/Set/prototype/intersection",
 
 			//URL 这个polyfil支持accessor，但不支持自动转string和JSON，需要用.href获取
 			"URL": "sky-core/polyfill/URL",

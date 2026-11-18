@@ -1,0 +1,79 @@
+// 移植自 core-js tests/unit-pure/es.set.intersection.js（MIT）
+import { createIterable, createIterator, createSetLike } from '../helpers/helpers.js';
+
+QUnit.test('Set#intersection', assert => {
+  // core-js 原文为 `const { intersection } = Set.prototype;`，这里改为成员表达式以配合 impl-inject 的裸名注入
+  const intersection = Set.prototype.intersection;
+  const { from } = Array;
+  assert.isFunction(intersection);
+  assert.arity(intersection, 1);
+  assert.name(intersection, 'intersection');
+  assert.nonEnumerable(Set.prototype, 'intersection');
+  const set = new Set([1]);
+  assert.notSame(set.intersection(new Set()), set);
+  assert.deepEqual(from(new Set([1, 2, 3]).intersection(new Set([4, 5]))), []);
+  assert.deepEqual(from(new Set([1, 2, 3]).intersection(new Set([2, 3, 4]))), [2, 3]);
+  assert.deepEqual(from(new Set([1, 2, 3]).intersection(createSetLike([4, 5]))), []);
+  assert.deepEqual(from(new Set([1, 2, 3]).intersection(createSetLike([2, 3, 4]))), [2, 3]);
+  assert.deepEqual(from(new Set([1, 2, 3]).intersection(new Set([3, 2]))), [3, 2]);
+  assert.deepEqual(from(new Set([1, 2, 3]).intersection(new Set([3, 2, 1]))), [1, 2, 3]);
+  assert.deepEqual(from(new Set([1, 2, 3]).intersection(new Set([3, 2, 1, 0]))), [1, 2, 3]);
+  assert.deepEqual(from(new Set([1, 2, 3]).intersection(createSetLike([3, 2]))), [3, 2]);
+  assert.deepEqual(from(new Set([1, 2, 3]).intersection(createSetLike([3, 2, 1]))), [1, 2, 3]);
+  assert.deepEqual(from(new Set([1, 2, 3]).intersection(createSetLike([3, 2, 1, 0]))), [1, 2, 3]);
+  // core-js@4 将移除对数组 / 可迭代参数的支持；本实现按 ES2025 只接受 set-like 参数，故注释保留
+  // assert.deepEqual(from(new Set([1, 2, 3]).intersection([4, 5])), []);
+  // assert.deepEqual(from(new Set([1, 2, 3]).intersection([2, 3, 4])), [2, 3]);
+  // assert.deepEqual(from(new Set([1, 2, 3]).intersection(createIterable([2, 3, 4]))), [2, 3]);
+  assert.deepEqual(from(new Set([42, 43]).intersection({
+    size: Infinity,
+    has() {
+      return true;
+    },
+    keys() {
+      throw new Error('Unexpected call to |keys| method');
+    },
+  })), [42, 43]);
+  assert.throws(() => new Set().intersection({
+    size: -Infinity,
+    has() {
+      return true;
+    },
+    keys() {
+      throw new Error('Unexpected call to |keys| method');
+    },
+  }));
+  const s1 = new Set([1, 2, 3]);
+  assert.deepEqual(from(s1.intersection({
+    size: 10,
+    has(v) {
+      s1.delete(v + 1);
+      return true;
+    },
+    keys() {
+      throw new Error('Unexpected call to |keys| method');
+    },
+  })), [1, 3], 'Set.prototype.intersection re-checks SetDataHas after has()');
+  assert.throws(() => new Set([1, 2, 3]).intersection(), TypeError);
+  assert.throws(() => new Set([1, 2, 3]).intersection({
+    size: NaN,
+    has() {
+      return true;
+    },
+    keys() {
+      return createIterator([]);
+    },
+  }), TypeError, 'NaN size throws TypeError');
+  assert.throws(() => new Set([1, 2, 3]).intersection({
+    size: 4,
+    has() {
+      throw new TypeError('has error');
+    },
+    keys() {
+      return createIterator([]);
+    },
+  }), TypeError, 'has() error propagates');
+  assert.throws(() => intersection.call({}, [1, 2, 3]), TypeError);
+  assert.throws(() => intersection.call(undefined, [1, 2, 3]), TypeError);
+  assert.throws(() => intersection.call(null, [1, 2, 3]), TypeError);
+});

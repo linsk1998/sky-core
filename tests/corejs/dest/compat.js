@@ -621,6 +621,17 @@
 	  }
 	  return false;
 	}
+	function createSetLike(elements) {
+	  return {
+	    size: elements.length,
+	    has: function (it) {
+	      return includes$2(elements, it);
+	    },
+	    keys: function () {
+	      return createIterator(elements);
+	    }
+	  };
+	}
 	function is$1(a, b) {
 	  // eslint-disable-next-line no-self-compare -- NaN check
 	  return a === b ? a !== 0 || 1 / a === 1 / b : a != a && b != b;
@@ -9912,9 +9923,9 @@
 	  if (obj === null || typeof obj !== 'object' && typeof obj !== 'function') {
 	    throw new TypeError('Set-like object must be an object');
 	  }
-	  var size = obj.size;
-	  if (typeof size !== 'number') {
-	    throw new TypeError('Set-like object must have a size property that is a number');
+	  var size = +obj.size;
+	  if (size !== size) {
+	    throw new TypeError('Set-like object size must not be NaN');
 	  }
 	  var intSize = size > 0 ? Math.floor(size) : size < 0 ? Math.ceil(size) : 0;
 	  if (intSize < 0) {
@@ -9935,15 +9946,46 @@
 	    set: obj
 	  };
 	}
+
+	// GetIteratorFromMethod (ES2025)，会先读取 next 方法
+	function getIteratorRecord(record) {
+	  var iterator = record.keys.call(record.set);
+	  if (iterator === null || typeof iterator !== 'object' && typeof iterator !== 'function') {
+	    throw new TypeError('Set-like object keys method must return an object');
+	  }
+	  return {
+	    iterator: iterator,
+	    next: iterator.next
+	  };
+	}
+
+	// IteratorStepValue (ES2025)，迭代结果的非对象值会抛 TypeError
+	function iteratorStepValue(record) {
+	  var result = record.next.call(record.iterator);
+	  if (result === null || typeof result !== 'object' && typeof result !== 'function') {
+	    throw new TypeError('Iterator result is not an object');
+	  }
+	  if (result.done) {
+	    return {
+	      done: true
+	    };
+	  }
+	  return {
+	    done: false,
+	    value: result.value
+	  };
+	}
+
 	function union(other) {
 	  if (!(this instanceof Set)) {
 	    throw new TypeError('Set.prototype.union called on incompatible receiver');
 	  }
 	  var otherRec = getSetRecord(other);
+	  // 规范要求先取得 other 的迭代器记录（含 next），再复制 this
+	  var keysIter = getIteratorRecord(otherRec);
 	  var result = new Set(this);
-	  var it = otherRec.keys.call(otherRec.set);
 	  while (true) {
-	    var next = it.next();
+	    var next = iteratorStepValue(keysIter);
 	    if (next.done) {
 	      break;
 	    }
@@ -9956,70 +9998,223 @@
 	definePrototype(Set$1, 'union', union);
 
 	QUnit.test('Set#union', function (assert) {
+	  // core-js 原文为 `const { union } = Set.prototype;`，这里改为成员表达式以配合 impl-inject 的裸名注入
 	  var union = Set.prototype.union;
+	  var from = Array.from;
+	  var defineProperty = Object.defineProperty;
 	  assert.isFunction(union);
 	  assert.arity(union, 1);
 	  assert.name(union, 'union');
 	  assert.looksNative(union);
 	  assert.nonEnumerable(Set.prototype, 'union');
-	  var set = new Set([1, 2, 3]);
-	  // IE 模式测试环境底层为现代 V8：窗口 Set 被 fix_Set$v8 包装后仍会继承原生 union，
-	  // 此时 union 返回的是原生 Set（其原型不在包装构造器的原型链上），故此处不做 instanceof 断言
-	  // assert.ok(set.union(new Set([3, 4])) instanceof Set, 'returns a Set');
-	  assert.deepEqual(Array.from(set.union(new Set([3, 4]))), [1, 2, 3, 4], 'basic');
-	  assert.deepEqual(Array.from(set), [1, 2, 3], 'original set is unchanged');
-	  var setLike = {
-	    size: 2,
+	  var set = new Set([1]);
+	  assert.notSame(set.union(new Set()), set);
+	  assert.deepEqual(from(new Set([1, 2, 3]).union(new Set([4, 5]))), [1, 2, 3, 4, 5]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).union(new Set([3, 4]))), [1, 2, 3, 4]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).union(createSetLike([4, 5]))), [1, 2, 3, 4, 5]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).union(createSetLike([3, 4]))), [1, 2, 3, 4]);
+
+	  // core-js@4 将移除对数组 / 可迭代参数的支持；本实现按 ES2025 只接受 set-like 参数，故注释保留
+	  // assert.deepEqual(from(new Set([1, 2, 3]).union([4, 5])), [1, 2, 3, 4, 5]);
+	  // assert.deepEqual(from(new Set([1, 2, 3]).union([3, 4])), [1, 2, 3, 4]);
+	  // assert.deepEqual(from(new Set([1, 2, 3]).union(createIterable([3, 4]))), [1, 2, 3, 4]);
+
+	  assert["throws"](function () {
+	    return new Set([1, 2, 3]).union();
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return union.call({}, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return union.call(undefined, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return union.call(null, [1, 2, 3]);
+	  }, TypeError);
+	  if (DESCRIPTORS) {
+	    // Should get iterator record of a set-like object before cloning this
+	    // https://bugs.webkit.org/show_bug.cgi?id=289430
+	    var baseSet = new Set();
+	    var setLike = {
+	      size: 0,
+	      has: function () {
+	        return true;
+	      },
+	      keys: function () {
+	        return defineProperty({}, 'next', {
+	          get: function () {
+	            baseSet.clear();
+	            baseSet.add(4);
+	            return function () {
+	              return {
+	                done: true
+	              };
+	            };
+	          }
+	        });
+	      }
+	    };
+	    assert.deepEqual(from(baseSet.union(setLike)), [4]);
+	  }
+	});
+	QUnit.test('Set#union rejects non-object iterator results', function (assert) {
+	  var _loop = function (primitive) {
+	    var nextCalls = 0;
+	    var returnCalls = 0;
+	    var setLike = createSetLike([]);
+	    setLike.keys = function () {
+	      return createIterator([], {
+	        next: function () {
+	          return ++nextCalls === 1 ? primitive : {
+	            done: true
+	          };
+	        },
+	        "return": function () {
+	          returnCalls++;
+	          return {};
+	        }
+	      });
+	    };
+	    assert["throws"](function () {
+	      return new Set().union(setLike);
+	    }, TypeError, 'rejects a non-object iterator result');
+	    assert.same(nextCalls, 1, 'does not advance after an invalid result');
+	    assert.same(returnCalls, 0, 'does not close the iterator');
+	  };
+	  for (var _i = 0, _arr = [undefined, null, false, 1, 'foo']; _i < _arr.length; _i++) {
+	    var primitive = _arr[_i];
+	    _loop(primitive);
+	  }
+	});
+
+	function intersection(other) {
+	  if (!(this instanceof Set)) {
+	    throw new TypeError('Set.prototype.intersection called on incompatible receiver');
+	  }
+	  var otherRec = getSetRecord(other);
+	  var result = new Set();
+	  var iterator, next, value;
+	  if (this.size <= otherRec.size) {
+	    // 遍历 this，用 other.has 判断；此时不调用 other.keys
+	    iterator = this.keys();
+	    while (true) {
+	      next = iterator.next();
+	      if (next.done) {
+	        break;
+	      }
+	      value = next.value;
+	      if (otherRec.has.call(otherRec.set, value)) {
+	        result.add(value);
+	      }
+	    }
+	  } else {
+	    // 遍历 other.keys，用 this.has 判断，结果顺序与 other 一致
+	    iterator = getIteratorRecord(otherRec);
+	    while (true) {
+	      next = iteratorStepValue(iterator);
+	      if (next.done) {
+	        break;
+	      }
+	      value = next.value;
+	      if (this.has(value)) {
+	        result.add(value);
+	      }
+	    }
+	  }
+	  return result;
+	}
+	;
+
+	definePrototype(Set$1, 'intersection', intersection);
+
+	QUnit.test('Set#intersection', function (assert) {
+	  // core-js 原文为 `const { intersection } = Set.prototype;`，这里改为成员表达式以配合 impl-inject 的裸名注入
+	  var intersection = Set.prototype.intersection;
+	  var from = Array.from;
+	  assert.isFunction(intersection);
+	  assert.arity(intersection, 1);
+	  assert.name(intersection, 'intersection');
+	  assert.nonEnumerable(Set.prototype, 'intersection');
+	  var set = new Set([1]);
+	  assert.notSame(set.intersection(new Set()), set);
+	  assert.deepEqual(from(new Set([1, 2, 3]).intersection(new Set([4, 5]))), []);
+	  assert.deepEqual(from(new Set([1, 2, 3]).intersection(new Set([2, 3, 4]))), [2, 3]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).intersection(createSetLike([4, 5]))), []);
+	  assert.deepEqual(from(new Set([1, 2, 3]).intersection(createSetLike([2, 3, 4]))), [2, 3]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).intersection(new Set([3, 2]))), [3, 2]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).intersection(new Set([3, 2, 1]))), [1, 2, 3]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).intersection(new Set([3, 2, 1, 0]))), [1, 2, 3]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).intersection(createSetLike([3, 2]))), [3, 2]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).intersection(createSetLike([3, 2, 1]))), [1, 2, 3]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).intersection(createSetLike([3, 2, 1, 0]))), [1, 2, 3]);
+	  // core-js@4 将移除对数组 / 可迭代参数的支持；本实现按 ES2025 只接受 set-like 参数，故注释保留
+	  // assert.deepEqual(from(new Set([1, 2, 3]).intersection([4, 5])), []);
+	  // assert.deepEqual(from(new Set([1, 2, 3]).intersection([2, 3, 4])), [2, 3]);
+	  // assert.deepEqual(from(new Set([1, 2, 3]).intersection(createIterable([2, 3, 4]))), [2, 3]);
+	  assert.deepEqual(from(new Set([42, 43]).intersection({
+	    size: Infinity,
 	    has: function () {
-	      return false;
+	      return true;
 	    },
 	    keys: function () {
-	      var values = [2, 4];
-	      var index = 0;
-	      return {
-	        next: function () {
-	          return index < values.length ? {
-	            done: false,
-	            value: values[index++]
-	          } : {
-	            done: true,
-	            value: undefined
-	          };
-	        }
-	      };
+	      throw new Error('Unexpected call to |keys| method');
 	    }
-	  };
-	  assert.deepEqual(Array.from(union.call(new Set([1, 2, 3]), setLike)), [1, 2, 3, 4], 'set-like argument');
+	  })), [42, 43]);
 	  assert["throws"](function () {
-	    return union.call(null, new Set());
-	  }, TypeError);
-	  assert["throws"](function () {
-	    return union.call({}, new Set());
-	  }, TypeError);
-	  assert["throws"](function () {
-	    return union.call(new Set(), null);
-	  }, TypeError);
-	  assert["throws"](function () {
-	    return union.call(new Set(), {});
-	  }, TypeError);
-	  assert["throws"](function () {
-	    return union.call(new Set(), {
-	      size: -1,
-	      has: function () {/* empty */},
-	      keys: function () {/* empty */}
+	    return new Set().intersection({
+	      size: -Infinity,
+	      has: function () {
+	        return true;
+	      },
+	      keys: function () {
+	        throw new Error('Unexpected call to |keys| method');
+	      }
 	    });
-	  }, RangeError);
+	  });
+	  var s1 = new Set([1, 2, 3]);
+	  assert.deepEqual(from(s1.intersection({
+	    size: 10,
+	    has: function (v) {
+	      s1["delete"](v + 1);
+	      return true;
+	    },
+	    keys: function () {
+	      throw new Error('Unexpected call to |keys| method');
+	    }
+	  })), [1, 3], 'Set.prototype.intersection re-checks SetDataHas after has()');
 	  assert["throws"](function () {
-	    return union.call(new Set(), {
-	      size: 0,
-	      keys: function () {/* empty */}
-	    });
+	    return new Set([1, 2, 3]).intersection();
 	  }, TypeError);
 	  assert["throws"](function () {
-	    return union.call(new Set(), {
-	      size: 0,
-	      has: function () {/* empty */}
+	    return new Set([1, 2, 3]).intersection({
+	      size: NaN,
+	      has: function () {
+	        return true;
+	      },
+	      keys: function () {
+	        return createIterator([]);
+	      }
 	    });
+	  }, TypeError, 'NaN size throws TypeError');
+	  assert["throws"](function () {
+	    return new Set([1, 2, 3]).intersection({
+	      size: 4,
+	      has: function () {
+	        throw new TypeError('has error');
+	      },
+	      keys: function () {
+	        return createIterator([]);
+	      }
+	    });
+	  }, TypeError, 'has() error propagates');
+	  assert["throws"](function () {
+	    return intersection.call({}, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return intersection.call(undefined, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return intersection.call(null, [1, 2, 3]);
 	  }, TypeError);
 	});
 
