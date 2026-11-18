@@ -7,6 +7,7 @@ export function union(other) {
 	}
 	var otherRec = getSetRecord(other);
 	// 规范要求先取得 other 的迭代器记录（含 next），再复制 this
+	// 此顺序用于规避 WebKit bug（keys() 执行期间修改了 this）
 	var keysIter = getIteratorRecord(otherRec);
 	var result = new Set(this);
 	while(true) {

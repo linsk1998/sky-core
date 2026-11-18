@@ -9947,8 +9947,11 @@
 	  };
 	}
 
-	// GetIteratorFromMethod (ES2025)，会先读取 next 方法
+	// GetIteratorFromMethod (ES2025)，仅用于有 keys 的 set-like
 	function getIteratorRecord(record) {
+	  if (!record.keys) {
+	    throw new TypeError('Set-like object must have keys method');
+	  }
 	  var iterator = record.keys.call(record.set);
 	  if (iterator === null || typeof iterator !== 'object' && typeof iterator !== 'function') {
 	    throw new TypeError('Set-like object keys method must return an object');
@@ -9982,6 +9985,7 @@
 	  }
 	  var otherRec = getSetRecord(other);
 	  // 规范要求先取得 other 的迭代器记录（含 next），再复制 this
+	  // 此顺序用于规避 WebKit bug（keys() 执行期间修改了 this）
 	  var keysIter = getIteratorRecord(otherRec);
 	  var result = new Set(this);
 	  while (true) {
@@ -10108,7 +10112,7 @@
 	      }
 	    }
 	  } else {
-	    // 遍历 other.keys，用 this.has 判断，结果顺序与 other 一致
+	    // 遍历 other.keys，用 this.has 判断；结果顺序与 other 一致
 	    iterator = getIteratorRecord(otherRec);
 	    while (true) {
 	      next = iteratorStepValue(iterator);

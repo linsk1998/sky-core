@@ -10985,7 +10985,7 @@
 	  });
 	});
 
-	// GetSetRecord (ES2025)
+	// GetSetRecord (ES2025)，IE11 兼容：keys / forEach 二选一
 	function getSetRecord(obj) {
 	  if (obj === null || typeof obj !== 'object' && typeof obj !== 'function') {
 	    throw new TypeError('Set-like object must be an object');
@@ -11003,19 +11003,24 @@
 	    throw new TypeError('Set-like object must have a has method');
 	  }
 	  var keys = obj.keys;
-	  if (typeof keys !== 'function') {
-	    throw new TypeError('Set-like object must have a keys method');
+	  var forEach = obj.forEach;
+	  if (typeof keys !== 'function' && typeof forEach !== 'function') {
+	    throw new TypeError('Set-like object must have a keys or forEach method');
 	  }
 	  return {
 	    size: intSize,
 	    has: has,
-	    keys: keys,
+	    keys: typeof keys === 'function' ? keys : undefined,
+	    forEach: typeof forEach === 'function' ? forEach : undefined,
 	    set: obj
 	  };
 	}
 
-	// GetIteratorFromMethod (ES2025)，会先读取 next 方法
+	// GetIteratorFromMethod (ES2025)，仅用于有 keys 的 set-like
 	function getIteratorRecord(record) {
+	  if (!record.keys) {
+	    throw new TypeError('Set-like object must have keys method');
+	  }
 	  var iterator = record.keys.call(record.set);
 	  if (iterator === null || typeof iterator !== 'object' && typeof iterator !== 'function') {
 	    throw new TypeError('Set-like object keys method must return an object');
@@ -11043,20 +11048,30 @@
 	  };
 	}
 
+	// IE11 兼容版：set-like 对象允许只有 forEach 没有 keys
 	function union(other) {
 	  if (!(this instanceof Set)) {
 	    throw new TypeError('Set.prototype.union called on incompatible receiver');
 	  }
 	  var otherRec = getSetRecord(other);
-	  // 规范要求先取得 other 的迭代器记录（含 next），再复制 this
-	  var keysIter = getIteratorRecord(otherRec);
-	  var result = new Set(this);
-	  while (true) {
-	    var next = iteratorStepValue(keysIter);
-	    if (next.done) {
-	      break;
+	  var result, iter, next;
+	  if (otherRec.keys) {
+	    // 规范要求先取得 other 的迭代器记录（含 next），再复制 this
+	    // 此顺序用于规避 WebKit bug（keys() 执行期间修改了 this）
+	    iter = getIteratorRecord(otherRec);
+	    result = new Set(this);
+	    while (true) {
+	      next = iteratorStepValue(iter);
+	      if (next.done) {
+	        break;
+	      }
+	      result.add(next.value);
 	    }
-	    result.add(next.value);
+	  } else {
+	    result = new Set(this);
+	    otherRec.forEach.call(otherRec.set, function (value) {
+	      result.add(value);
+	    });
 	  }
 	  return result;
 	}
@@ -11154,16 +11169,17 @@
 	  }
 	});
 
+	// IE11 兼容版：set-like 对象允许只有 forEach 没有 keys
 	function intersection(other) {
 	  if (!(this instanceof Set)) {
 	    throw new TypeError('Set.prototype.intersection called on incompatible receiver');
 	  }
 	  var otherRec = getSetRecord(other);
 	  var result = new Set();
-	  var iterator, next, value;
 	  if (this.size <= otherRec.size) {
-	    // 遍历 this，用 other.has 判断；此时不调用 other.keys
-	    iterator = this.keys();
+	    // 遍历 this，用 other.has 判断；此时不调用 other.keys/forEach
+	    var iterator = this.keys();
+	    var next, value;
 	    while (true) {
 	      next = iterator.next();
 	      if (next.done) {
@@ -11174,19 +11190,25 @@
 	        result.add(value);
 	      }
 	    }
-	  } else {
-	    // 遍历 other.keys，用 this.has 判断，结果顺序与 other 一致
-	    iterator = getIteratorRecord(otherRec);
+	  } else if (otherRec.keys) {
+	    // 遍历 other.keys，用 this.has 判断；结果顺序与 other 一致
+	    var keysIter = getIteratorRecord(otherRec);
 	    while (true) {
-	      next = iteratorStepValue(iterator);
-	      if (next.done) {
+	      var step = iteratorStepValue(keysIter);
+	      if (step.done) {
 	        break;
 	      }
-	      value = next.value;
+	      value = step.value;
 	      if (this.has(value)) {
 	        result.add(value);
 	      }
 	    }
+	  } else {
+	    otherRec.forEach.call(otherRec.set, function (value) {
+	      if (this.has(value)) {
+	        result.add(value);
+	      }
+	    }.bind(this));
 	  }
 	  return result;
 	}

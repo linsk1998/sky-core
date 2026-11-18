@@ -22,7 +22,7 @@ export function intersection(other) {
 			}
 		}
 	} else {
-		// 遍历 other.keys，用 this.has 判断，结果顺序与 other 一致
+		// 遍历 other.keys，用 this.has 判断；结果顺序与 other 一致
 		iterator = getIteratorRecord(otherRec);
 		while(true) {
 			next = iteratorStepValue(iterator);

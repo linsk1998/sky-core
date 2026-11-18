@@ -1,5 +1,8 @@
-// GetIteratorFromMethod (ES2025)，会先读取 next 方法
+// GetIteratorFromMethod (ES2025)，仅用于有 keys 的 set-like
 export function getIteratorRecord(record) {
+	if(!record.keys) {
+		throw new TypeError('Set-like object must have keys method');
+	}
 	var iterator = record.keys.call(record.set);
 	if(iterator === null || (typeof iterator !== 'object' && typeof iterator !== 'function')) {
 		throw new TypeError('Set-like object keys method must return an object');
