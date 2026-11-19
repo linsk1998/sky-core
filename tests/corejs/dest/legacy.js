@@ -11450,6 +11450,161 @@
 	  assert.deepEqual(from(mutatingResult), [2, 3], 'iterates copy, not live set in has() branch');
 	});
 
+	// IE11 兼容版：set-like 对象允许只有 forEach 没有 keys
+	function symmetricDifference(other) {
+	  if (!(this instanceof Set)) {
+	    throw new TypeError('Set.prototype.symmetricDifference called on incompatible receiver');
+	  }
+	  var otherRec = getSetRecord(other);
+	  var self = this;
+	  var result, keysIter, next, value;
+	  if (otherRec.keys) {
+	    // 规范要求先取得 other 的迭代器记录，再复制 this（WebKit bug 289430）
+	    keysIter = getIteratorRecord(otherRec);
+	    result = new Set(this);
+	    while (true) {
+	      next = iteratorStepValue(keysIter);
+	      if (next.done) {
+	        break;
+	      }
+	      value = next.value;
+	      // 以 this 的成员关系为准，保证 other 中重复值只删除不重复添加
+	      if (self.has(value)) {
+	        result["delete"](value);
+	      } else {
+	        result.add(value);
+	      }
+	    }
+	  } else {
+	    result = new Set(this);
+	    otherRec.forEach.call(otherRec.set, function (value) {
+	      if (self.has(value)) {
+	        result["delete"](value);
+	      } else {
+	        result.add(value);
+	      }
+	    });
+	  }
+	  return result;
+	}
+	;
+
+	definePrototype(Set$1, 'symmetricDifference', symmetricDifference);
+
+	QUnit.test('Set#symmetricDifference', function (assert) {
+	  // core-js 原文为 `const { symmetricDifference } = Set.prototype;`，这里改为成员表达式以配合 impl-inject 的裸名注入
+	  var symmetricDifference = Set.prototype.symmetricDifference;
+	  var from = Array.from;
+	  var defineProperty = Object.defineProperty;
+	  assert.isFunction(symmetricDifference);
+	  assert.arity(symmetricDifference, 1);
+	  assert.name(symmetricDifference, 'symmetricDifference');
+	  assert.looksNative(symmetricDifference);
+	  assert.nonEnumerable(Set.prototype, 'symmetricDifference');
+	  var set = new Set([1]);
+	  assert.notSame(set.symmetricDifference(new Set()), set);
+	  assert.deepEqual(from(new Set([1, 2, 3]).symmetricDifference(new Set([4, 5]))), [1, 2, 3, 4, 5]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).symmetricDifference(new Set([3, 4]))), [1, 2, 4]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).symmetricDifference(createSetLike([4, 5]))), [1, 2, 3, 4, 5]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).symmetricDifference(createSetLike([3, 4]))), [1, 2, 4]);
+
+	  // core-js@4 将移除对数组 / 可迭代参数的支持；本实现按 ES2025 只接受 set-like 参数，故注释保留
+	  // assert.deepEqual(from(new Set([1, 2, 3]).symmetricDifference([4, 5])), [1, 2, 3, 4, 5]);
+	  // assert.deepEqual(from(new Set([1, 2, 3]).symmetricDifference([3, 4])), [1, 2, 4]);
+	  // assert.deepEqual(from(new Set([1, 2, 3]).symmetricDifference(createIterable([4, 5]))), [1, 2, 3, 4, 5]);
+	  // assert.deepEqual(from(new Set([1, 2, 3]).symmetricDifference(createIterable([3, 4]))), [1, 2, 4]);
+
+	  assert["throws"](function () {
+	    return new Set([1, 2, 3]).symmetricDifference();
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return symmetricDifference.call({}, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return symmetricDifference.call(undefined, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return symmetricDifference.call(null, [1, 2, 3]);
+	  }, TypeError);
+
+	  // Duplicate keys in other's iterator: value present in O should be removed idempotently
+	  {
+	    var baseSet = new Set([1, 2, 3]);
+	    var setLike = {
+	      size: 2,
+	      has: function () {
+	        return false;
+	      },
+	      keys: function () {
+	        var vals = [2, 2];
+	        var i = 0;
+	        return {
+	          next: function () {
+	            return i < vals.length ? {
+	              done: false,
+	              value: vals[i++]
+	            } : {
+	              done: true
+	            };
+	          }
+	        };
+	      }
+	    };
+	    // 2 is in O → both occurrences remove 2 from result (second is a no-op)
+	    assert.deepEqual(from(baseSet.symmetricDifference(setLike)), [1, 3]);
+	  }
+	  {
+	    // https://github.com/WebKit/WebKit/pull/27264/files#diff-7bdbbad7ceaa222787994f2db702dd45403fa98e14d6270aa65aaf09754dcfe0R8
+	    var _baseSet = new Set(['a', 'b', 'c', 'd', 'e']);
+	    var values = ['f', 'g', 'h', 'i', 'j'];
+	    var _setLike = {
+	      size: values.length,
+	      has: function () {
+	        return true;
+	      },
+	      keys: function () {
+	        var index = 0;
+	        return {
+	          next: function () {
+	            var done = index >= values.length;
+	            if (!_baseSet.has('f')) _baseSet.add('f');
+	            return {
+	              done: done,
+	              value: values[index++]
+	            };
+	          }
+	        };
+	      }
+	    };
+	    assert.deepEqual(from(_baseSet.symmetricDifference(_setLike)), ['a', 'b', 'c', 'd', 'e', 'g', 'h', 'i', 'j']);
+	  }
+	  if (DESCRIPTORS) {
+	    // Should get iterator record of a set-like object before cloning this
+	    // https://bugs.webkit.org/show_bug.cgi?id=289430
+	    var _baseSet2 = new Set();
+	    var _setLike2 = {
+	      size: 0,
+	      has: function () {
+	        return true;
+	      },
+	      keys: function () {
+	        return defineProperty({}, 'next', {
+	          get: function () {
+	            _baseSet2.clear();
+	            _baseSet2.add(4);
+	            return function () {
+	              return {
+	                done: true
+	              };
+	            };
+	          }
+	        });
+	      }
+	    };
+	    assert.deepEqual(from(_baseSet2.symmetricDifference(_setLike2)), [4]);
+	  }
+	});
+
 	// /* Chrome126+ Firefox126+ Safari18+ */
 	// import "./web.url-parse";
 

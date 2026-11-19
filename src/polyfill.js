@@ -261,4 +261,5 @@ import "sky-core/polyfill/Promise/withResolvers";
 import "sky-core/polyfill/Set/prototype/union";
 import "sky-core/polyfill/Set/prototype/intersection";
 import "sky-core/polyfill/Set/prototype/difference";
+import "sky-core/polyfill/Set/prototype/symmetricDifference";
 
