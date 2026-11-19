@@ -57,7 +57,6 @@ var BROWSER_FAMILIES = {
 		// Edge IE 模式（EdgeIEMode preset + EmulateIE 插件按 ?ie=X 注入 meta），
 		// 不扫目录：版本就是可模拟的 IE 文档模式
 		versions: ["5", "7", "8", "9", "10", "11"],
-		preset: "EdgeIEMode",
 		emulateIE: true
 	}
 };
