@@ -10222,6 +10222,144 @@
 	  }, TypeError);
 	});
 
+	function difference(other) {
+	  if (!(this instanceof Set)) {
+	    throw new TypeError('Set.prototype.difference called on incompatible receiver');
+	  }
+	  var otherRec = getSetRecord(other);
+	  // 规范要求先复制 this，后续判断与遍历不再读取 this 的实时数据
+	  var result = new Set(this);
+	  if (result.size !== 0) {
+	    if (this.size <= otherRec.size) {
+	      // this 较小：遍历副本，用 other.has 判断，命中则从结果中删除
+	      result.forEach(function (value) {
+	        if (otherRec.has.call(otherRec.set, value)) {
+	          result["delete"](value);
+	        }
+	      });
+	    } else {
+	      // 遍历 other.keys，从副本中删除
+	      var keysIter = getIteratorRecord(otherRec);
+	      var next;
+	      while (true) {
+	        next = iteratorStepValue(keysIter);
+	        if (next.done) {
+	          break;
+	        }
+	        result["delete"](next.value);
+	      }
+	    }
+	  }
+	  return result;
+	}
+	;
+
+	definePrototype(Set$1, 'difference', difference);
+
+	QUnit.test('Set#difference', function (assert) {
+	  // core-js 原文为 `const { difference } = Set.prototype;`，这里改为成员表达式以配合 impl-inject 的裸名注入
+	  var difference = Set.prototype.difference;
+	  var from = Array.from;
+	  assert.isFunction(difference);
+	  assert.arity(difference, 1);
+	  assert.name(difference, 'difference');
+	  assert.looksNative(difference);
+	  assert.nonEnumerable(Set.prototype, 'difference');
+	  var set = new Set([1]);
+	  assert.notSame(set.difference(new Set()), set);
+	  assert.deepEqual(from(new Set([1, 2, 3]).difference(new Set([4, 5]))), [1, 2, 3]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).difference(new Set([3, 4]))), [1, 2]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).difference(createSetLike([4, 5]))), [1, 2, 3]);
+	  assert.deepEqual(from(new Set([1, 2, 3]).difference(createSetLike([3, 4]))), [1, 2]);
+
+	  // core-js@4 将移除对数组 / 可迭代参数的支持；本实现按 ES2025 只接受 set-like 参数，故注释保留
+	  // assert.deepEqual(from(new Set([1, 2, 3]).difference([4, 5])), [1, 2, 3]);
+	  // assert.deepEqual(from(new Set([1, 2, 3]).difference([3, 4])), [1, 2]);
+	  // assert.deepEqual(from(new Set([1, 2, 3]).difference(createIterable([3, 4])), [1, 2]);
+
+	  assert.same(new Set([42, 43]).difference({
+	    size: Infinity,
+	    has: function () {
+	      return true;
+	    },
+	    keys: function () {
+	      throw new Error('Unexpected call to |keys| method');
+	    }
+	  }).size, 0);
+	  assert["throws"](function () {
+	    return new Set().difference({
+	      size: -Infinity,
+	      has: function () {
+	        return true;
+	      },
+	      keys: function () {
+	        throw new Error('Unexpected call to |keys| method');
+	      }
+	    });
+	  });
+	  assert["throws"](function () {
+	    return new Set([1, 2, 3]).difference();
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return difference.call({}, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return difference.call(undefined, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return difference.call(null, [1, 2, 3]);
+	  }, TypeError);
+
+	  // A WebKit bug occurs when `this` is updated while Set.prototype.difference is being executed
+	  // https://bugs.webkit.org/show_bug.cgi?id=288595
+	  var values = [2];
+	  var setLike = {
+	    size: values.length,
+	    has: function () {
+	      return true;
+	    },
+	    keys: function () {
+	      var index = 0;
+	      return {
+	        next: function () {
+	          var done = index >= values.length;
+	          if (baseSet.has(1)) baseSet.clear();
+	          return {
+	            done: done,
+	            value: values[index++]
+	          };
+	        }
+	      };
+	    }
+	  };
+	  var baseSet = new Set([1, 2, 3, 4]);
+	  var result = baseSet.difference(setLike);
+	  assert.deepEqual(from(result), [1, 3, 4], 'incorrect behavior when this updated while Set#difference is being executed');
+
+	  // Mutation via has() in the size(O) <= otherRec.size branch should not skip elements
+	  var mutatingSet = new Set([1, 2, 3]);
+	  var mutatingResult = mutatingSet.difference({
+	    size: 10,
+	    has: function (v) {
+	      if (v === 1) {
+	        mutatingSet["delete"](2);
+	        return true;
+	      }
+	      return false;
+	    },
+	    keys: function () {
+	      return {
+	        next: function () {
+	          return {
+	            done: true
+	          };
+	        }
+	      };
+	    }
+	  });
+	  assert.deepEqual(from(mutatingResult), [2, 3], 'iterates copy, not live set in has() branch');
+	});
+
 	// /* Chrome126+ Firefox126+ Safari18+ */
 	// import "./web.url-parse";
 

@@ -232,5 +232,6 @@ import "./es/es.promise.with-resolvers";
 /* Chrome122+ Firefox127+ Safari17+ */
 import "./es/es.set.union";
 import "./es/es.set.intersection";
+import "./es/es.set.difference";
 // /* Chrome126+ Firefox126+ Safari18+ */
 // import "./web.url-parse";

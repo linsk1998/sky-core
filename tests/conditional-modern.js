@@ -173,6 +173,7 @@ module.exports = [
 			/* Chrome122+ Firefox127+ Safari17+ */
 			".union": "sky-core/polyfill/Set/prototype/union",
 			".intersection": "sky-core/polyfill/Set/prototype/intersection",
+			".difference": "sky-core/polyfill/Set/prototype/difference",
 
 			// "console": "sky-core/polyfill/console",
 			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill

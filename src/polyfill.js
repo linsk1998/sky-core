@@ -260,4 +260,5 @@ import "sky-core/polyfill/Promise/withResolvers";
 /* Chrome122+ Firefox127+ Safari17+ */
 import "sky-core/polyfill/Set/prototype/union";
 import "sky-core/polyfill/Set/prototype/intersection";
+import "sky-core/polyfill/Set/prototype/difference";
 
