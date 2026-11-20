@@ -277,3 +277,11 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | cancelIdleCallback | pure | 无法完美实现 |
 | URLSearchParams | polyfill | 模块化依赖 |
 | crypto.randomUUID | pure | 含名字空间 |
+| Array.fromAsync | polyfill | 功能完全 |
+| Set.prototype.union | polyfill | 原型链功能 |
+| Set.prototype.intersection | polyfill | 原型链功能 |
+| Set.prototype.difference | polyfill | 原型链功能 |
+| Set.prototype.symmetricDifference | polyfill | 原型链功能 |
+| Set.prototype.isSubsetOf | polyfill | 原型链功能 |
+| Set.prototype.isSupersetOf | polyfill | 原型链功能 |
+| Set.prototype.isDisjointFrom | polyfill | 原型链功能 |
