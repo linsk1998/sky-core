@@ -44,6 +44,7 @@ module.exports = [
 			".isSubsetOf": "sky-core/polyfill/Set/prototype/isSubsetOf",
 			".isSupersetOf": "sky-core/polyfill/Set/prototype/isSupersetOf",
 			".isDisjointFrom": "sky-core/polyfill/Set/prototype/isDisjointFrom",
+			"Array.fromAsync": "sky-core/polyfill/Array/fromAsync",
 		
 			// 以下条目自第二个 polyfill({modules:...}) 死块迁入（modules 选项无效，从未生效）
 			// breaking change

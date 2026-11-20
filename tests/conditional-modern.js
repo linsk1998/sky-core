@@ -178,6 +178,7 @@ module.exports = [
 			".isSubsetOf": "sky-core/polyfill/Set/prototype/isSubsetOf",
 			".isSupersetOf": "sky-core/polyfill/Set/prototype/isSupersetOf",
 			".isDisjointFrom": "sky-core/polyfill/Set/prototype/isDisjointFrom",
+			"Array.fromAsync": "sky-core/polyfill/Array/fromAsync",
 
 			// "console": "sky-core/polyfill/console",
 			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill

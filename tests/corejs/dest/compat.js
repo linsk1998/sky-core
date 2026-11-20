@@ -177,7 +177,7 @@
 	  return type;
 	};
 
-	var iterator$1 = '@@iterator';
+	var iterator$2 = '@@iterator';
 
 	var prototype = Object$1.prototype;
 
@@ -381,7 +381,7 @@
 	}
 	;
 
-	function iterator() {
+	function iterator$1() {
 	  var p = 0;
 	  var string = this;
 	  var size = this.length;
@@ -441,12 +441,12 @@
 	  };
 	}
 
-	if (!Array.prototype[iterator$1]) {
-	  Array.prototype[iterator$1] = values$2;
+	if (!Array.prototype[iterator$2]) {
+	  Array.prototype[iterator$2] = values$2;
 	}
 
 	if (!String.prototype['@@iterator']) {
-	  String.prototype['@@iterator'] = iterator;
+	  String.prototype['@@iterator'] = iterator$1;
 	}
 
 	// enumIteratorHelper: 公共的迭代器遍历 helper 壳
@@ -488,13 +488,13 @@
 	// 从 utils/createIteratorHelper 迁移而来
 	// 遍历可迭代对象：调用 o[Symbol.iterator]() 拿到迭代器再走 enumIteratorHelper
 	function enumIterableHelper(o) {
-	  var it = o[iterator$1];
+	  var it = o[iterator$2];
 	  if (!it) return null;
 	  it = it.call(o);
 	  return enumIteratorHelper(it);
 	}
 
-	var push = Array.prototype.push;
+	var push$1 = Array.prototype.push;
 	function from$1(arrayLike) {
 	  if (arrayLike == null) {
 	    throw new TypeError("Array.from requires an array-like object - not null or undefined");
@@ -513,9 +513,9 @@
 	  }
 	  var arr = new ArrayLike();
 	  arr.length = 0;
-	  var entries = arrayLike[iterator$1];
+	  var entries = arrayLike[iterator$2];
 	  if (!entries && isString(arrayLike)) {
-	    entries = iterator;
+	    entries = iterator$1;
 	  }
 	  var i, item;
 	  if (entries) {
@@ -529,7 +529,7 @@
 	        if (mapFn) {
 	          item = mapFn.call(thisArg, item, i);
 	        }
-	        push.call(arr, item);
+	        push$1.call(arr, item);
 	        i++;
 	      }
 	    } catch (err) {
@@ -543,7 +543,7 @@
 	      if (mapFn) {
 	        item = mapFn.call(thisArg, item, i);
 	      }
-	      push.call(arr, item);
+	      push$1.call(arr, item);
 	    }
 	  }
 	  return arr;
@@ -569,7 +569,7 @@
 	}
 
 	function _createForOfIteratorHelperLoose(r, e) {
-	  var t = "undefined" != typeof Symbol && r[iterator$1] || r["@@iterator"];
+	  var t = "undefined" != typeof Symbol && r[iterator$2] || r["@@iterator"];
 	  if (t) return (t = t.call(r)).next.bind(t);
 	  if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) {
 	    t && (r = t);
@@ -606,7 +606,7 @@
 	  var iterable = (_iterable = {
 	    called: false,
 	    received: false
-	  }, _iterable[iterator$1] = function () {
+	  }, _iterable[iterator$2] = function () {
 	    iterable.received = true;
 	    var index = 0;
 	    var iterator = {
@@ -693,7 +693,7 @@
 
 	function isIterable(it) {
 	  var O = Object(it);
-	  return iterator$1 in O;
+	  return iterator$2 in O;
 	}
 	var _Object$prototype = Object.prototype,
 	  toString = _Object$prototype.toString,
@@ -3314,7 +3314,7 @@
 	  this.symbol = weakSeq++;
 	  if (arguments.length) {
 	    var iterable = arguments[0];
-	    var entries = iterable[iterator$1];
+	    var entries = iterable[iterator$2];
 	    if (entries) {
 	      var it = entries.call(iterable);
 	      while (true) {
@@ -3584,7 +3584,7 @@
 	  this.map = new WeakMap$1();
 	  if (arguments.length) {
 	    var iterable = arguments[0];
-	    var entries = iterable[iterator$1];
+	    var entries = iterable[iterator$2];
 	    if (entries) {
 	      var it = entries.call(iterable);
 	      while (true) {
@@ -3992,7 +3992,7 @@
 
 	definePrototype(Array, 'keys', keys$1);
 
-	definePrototype(Array, 'values', Array.prototype[iterator$1] || values$2);
+	definePrototype(Array, 'values', Array.prototype[iterator$2] || values$2);
 
 	function entries$1() {
 	  var array = this;
@@ -4047,9 +4047,9 @@
 	  var array = [];
 	  done = false;
 	  array['@@iterator'] = undefined;
-	  array[iterator$1] = function () {
+	  array[iterator$2] = function () {
 	    done = true;
-	    return [][iterator$1].call(this);
+	    return [][iterator$2].call(this);
 	  };
 	  new Map(array);
 	  assert.ok(done);
@@ -4432,13 +4432,13 @@
 	  assert.isIterable(Map.prototype);
 	  assert.name(Map.prototype.entries, 'entries');
 	  assert.arity(Map.prototype.entries, 0);
-	  assert.looksNative(Map.prototype[iterator$1]);
-	  assert.strictEqual(Map.prototype[iterator$1], Map.prototype.entries);
+	  assert.looksNative(Map.prototype[iterator$2]);
+	  assert.strictEqual(Map.prototype[iterator$2], Map.prototype.entries);
 	  var map = new Map();
 	  map.set('a', 'q');
 	  map.set('s', 'w');
 	  map.set('d', 'e');
-	  var iterator = map[iterator$1]();
+	  var iterator = map[iterator$2]();
 	  assert.isIterator(iterator);
 	  assert.isIterable(iterator);
 	  // assert.strictEqual(iterator[Symbol.toStringTag], 'Map Iterator');
@@ -4565,9 +4565,9 @@
 	  var array = [];
 	  done = false;
 	  array['@@iterator'] = undefined;
-	  array[iterator$1] = function () {
+	  array[iterator$2] = function () {
 	    done = true;
-	    return [][iterator$1].call(this);
+	    return [][iterator$2].call(this);
 	  };
 	  new Set(array);
 	  assert.ok(done);
@@ -4909,16 +4909,16 @@
 	});
 	QUnit.test('Set#@@iterator', function (assert) {
 	  assert.isIterable(Set.prototype);
-	  assert.name(Set.prototype[iterator$1], 'values');
-	  assert.arity(Set.prototype[iterator$1], 0);
-	  assert.looksNative(Set.prototype[iterator$1]);
-	  assert.strictEqual(Set.prototype[iterator$1], Set.prototype.values);
+	  assert.name(Set.prototype[iterator$2], 'values');
+	  assert.arity(Set.prototype[iterator$2], 0);
+	  assert.looksNative(Set.prototype[iterator$2]);
+	  assert.strictEqual(Set.prototype[iterator$2], Set.prototype.values);
 	  // assert.nonEnumerable(Set.prototype, 'values');
 	  var set = new Set();
 	  set.add('q');
 	  set.add('w');
 	  set.add('e');
-	  var iterator = set[iterator$1]();
+	  var iterator = set[iterator$2]();
 	  assert.isIterator(iterator);
 	  assert.isIterable(iterator);
 	  // assert.strictEqual(iterator[Symbol.toStringTag], 'Set Iterator');
@@ -4943,7 +4943,7 @@
 
 	QUnit.test('String#@@iterator', function (assert) {
 	  assert.isIterable(String.prototype);
-	  var iterator = 'qwe'[iterator$1]();
+	  var iterator = 'qwe'[iterator$2]();
 	  assert.isIterator(iterator);
 	  assert.isIterable(iterator);
 	  assert.deepEqual(iterator.next(), {
@@ -4963,7 +4963,7 @@
 	    done: true
 	  });
 	  assert.strictEqual(Array.from('𠮷𠮷𠮷').length, 3);
-	  iterator = '𠮷𠮷𠮷'[iterator$1]();
+	  iterator = '𠮷𠮷𠮷'[iterator$2]();
 	  assert.deepEqual(iterator.next(), {
 	    value: '𠮷',
 	    done: false
@@ -5085,10 +5085,10 @@
 	});
 	QUnit.test('Array#@@iterator', function (assert) {
 	  assert.isIterable(Array.prototype);
-	  assert.arity(Array.prototype[iterator$1], 0);
+	  assert.arity(Array.prototype[iterator$2], 0);
 	  // assert.name(Array.prototype[Symbol.iterator], 'values');
-	  assert.strictEqual(Array.prototype[iterator$1], Array.prototype.values);
-	  var iterator = ['q', 'w', 'e'][iterator$1]();
+	  assert.strictEqual(Array.prototype[iterator$2], Array.prototype.values);
+	  var iterator = ['q', 'w', 'e'][iterator$2]();
 	  assert.isIterator(iterator);
 	  assert.isIterable(iterator);
 	  assert.deepEqual(iterator.next(), {
@@ -5251,7 +5251,7 @@
 	});
 	QUnit.test('Well-known Symbols', function (assert) {
 	  assert.ok(pureHasInstance, "Symbol.hasInstance available");
-	  assert.ok(iterator$1, "Symbol.iterator available");
+	  assert.ok(iterator$2, "Symbol.iterator available");
 	  assert.ok(pureAsyncIterator, "Symbol.asyncIterator available");
 	});
 	QUnit.test('Global symbol registry', function (assert) {
@@ -6918,9 +6918,9 @@
 	  var array = [1, 2, 3];
 	  done = false;
 	  array['@@iterator'] = undefined;
-	  array[iterator$1] = function () {
+	  array[iterator$2] = function () {
 	    done = true;
-	    return [][iterator$1].call(this);
+	    return [][iterator$2].call(this);
 	  };
 	  assert.arrayEqual(from(array), [1, 2, 3], 'Array with custom iterator, elements');
 	  assert.ok(done, 'call @@iterator in Array with custom iterator');
@@ -7951,7 +7951,7 @@
 	      }
 	    }
 	  };
-	  it[iterator$1] = function () {
+	  it[iterator$2] = function () {
 	    return this;
 	  };
 	  return it;
@@ -9786,7 +9786,7 @@
 	});
 
 	function groupBy(iterable, keySelector) {
-	  var entries = iterable[iterator$1];
+	  var entries = iterable[iterator$2];
 	  if (!entries) {
 	    throw new TypeError("object is not iterable");
 	  }
@@ -10779,6 +10779,393 @@
 	  assert["throws"](function () {
 	    return isDisjointFrom.call(null, [1, 2, 3]);
 	  }, TypeError);
+	});
+
+	var iterator = (function () {
+	  if (!Symbol$2) {
+	    if (nonEnumerable) {
+	      defineProperty(Object.prototype, '@@iterator', {
+	        enumerable: false,
+	        configurable: false,
+	        writable: true
+	      });
+	    }
+	    return '@@iterator';
+	  } else {
+	    return Symbol$2.iterator || Symbol$2('iterator');
+	  }
+	})();
+
+	var asyncIterator = (function () {
+	  if (!Symbol$2) {
+	    if (nonEnumerable) {
+	      defineProperty(Object.prototype, '@@asyncIterator', {
+	        enumerable: false,
+	        configurable: false,
+	        writable: true
+	      });
+	    }
+	    return '@@asyncIterator';
+	  } else {
+	    return Symbol$2.asyncIterator || Symbol$2('asyncIterator');
+	  }
+	})();
+
+	var push = Array.prototype.push;
+
+	// Array.fromAsync（ES2025）
+	// 接受 async iterable / sync iterable / array-like，返回 Promise<Array>
+	// 支持 mapFn（结果会被 await）、子类化
+	function fromAsync(items) {
+	  if (items == null) {
+	    return Promise.reject(new TypeError("Array.fromAsync requires an array-like or iterable object - not null or undefined"));
+	  }
+	  var thisArg = arguments[1];
+	  var mapFn;
+	  var thisArg2;
+	  var C = isFunction(this) ? this : Array;
+
+	  // 只有一个参数时没有 mapFn
+	  if (arguments.length > 1) {
+	    if (!isFunction(thisArg)) {
+	      return Promise.reject(new TypeError(thisArg + " is not a function"));
+	    }
+	    mapFn = thisArg;
+	    thisArg2 = arguments[2];
+	  }
+	  return Promise.resolve().then(function () {
+	    // 优先 async iterator
+	    var asyncItMethod = items[asyncIterator];
+	    if (isFunction(asyncItMethod)) {
+	      var asyncIt = asyncItMethod.call(items);
+	      return fromAsync$iterator(C, asyncIt, true, mapFn, thisArg2);
+	    }
+
+	    // 再试 sync iterator，wrap 成 async
+	    var syncItMethod = items[iterator];
+	    if (!syncItMethod && isString(items)) {
+	      // 字符串本来就有 iterator，但为了和 from 保持一致
+	    }
+	    if (isFunction(syncItMethod)) {
+	      var syncIt = syncItMethod.call(items);
+	      return fromAsync$iterator(C, syncIt, false, mapFn, thisArg2);
+	    }
+
+	    // array-like
+	    var len = +items.length;
+	    if (len === len && len >= 0 && len <= Number.MAX_SAFE_INTEGER) {
+	      return fromAsync$arrayLike(C, items, len, mapFn, thisArg2);
+	    }
+	    throw new TypeError("Array.fromAsync requires an array-like or iterable object");
+	  });
+	}
+
+	// 统一处理 iterator（sync 或 async）
+	function fromAsync$iterator(C, it, isAsync, mapFn, thisArg) {
+	  if (it === null || typeof it !== 'object' && typeof it !== 'function') {
+	    throw new TypeError("Iterator is not an object");
+	  }
+	  // 提前取 next
+	  var next = it.next;
+	  var arr = new C();
+	  // 规范：构造函数不接收参数，长度是 0
+	  arr.length = 0;
+	  var i = 0;
+	  function step() {
+	    var result;
+	    try {
+	      result = next.call(it);
+	    } catch (e) {
+	      return cleanup(e);
+	    }
+	    var done, valuePromise;
+	    if (isAsync) {
+	      valuePromise = Promise.resolve(result).then(function (res) {
+	        if (res === null || typeof res !== 'object' && typeof res !== 'function') {
+	          throw new TypeError("AsyncIterator result is not an object");
+	        }
+	        done = res.done;
+	        return res.value;
+	      });
+	    } else {
+	      if (result === null || typeof result !== 'object' && typeof result !== 'function') {
+	        throw new TypeError("Iterator result is not an object");
+	      }
+	      done = result.done;
+	      valuePromise = Promise.resolve(result.value);
+	    }
+	    return valuePromise.then(function (value) {
+	      if (done) return arr;
+	      var mapped;
+	      if (mapFn) {
+	        mapped = mapFn.call(thisArg, value, i);
+	      } else {
+	        mapped = value;
+	      }
+	      return Promise.resolve(mapped).then(function (resolved) {
+	        push.call(arr, resolved);
+	        i++;
+	        return step();
+	      });
+	    })["catch"](cleanup);
+	  }
+	  function cleanup(err) {
+	    // 调用 return() 关闭迭代器
+	    var ret;
+	    try {
+	      ret = it['return'];
+	    } catch (e) {
+	      throw err;
+	    }
+	    if (ret != null) {
+	      var closeResult;
+	      try {
+	        closeResult = ret.call(it);
+	      } catch (e) {
+	        throw err; // 原错误优先
+	      }
+	      if (isAsync) {
+	        // async iterator 的 return() 也可能返回 Promise
+	        return Promise.resolve(closeResult).then(function () {
+	          throw err;
+	        }, function () {
+	          throw err; // cleanup error 被忽略
+	        });
+	      }
+	      // sync iterator: return() 如果返回 Promise 也要 await
+	      if (closeResult && typeof closeResult.then === 'function') {
+	        return closeResult.then(function () {
+	          throw err;
+	        }, function () {
+	          throw err;
+	        });
+	      }
+	    }
+	    throw err;
+	  }
+	  try {
+	    return step();
+	  } catch (e) {
+	    return Promise.reject(e);
+	  }
+	}
+
+	// 处理 array-like（只有 length）
+	function fromAsync$arrayLike(C, items, len, mapFn, thisArg) {
+	  var arr = new C(len);
+	  function loop(i) {
+	    if (i >= len) return arr;
+	    var valuePromise;
+	    try {
+	      var raw = items[i];
+	      valuePromise = Promise.resolve(raw);
+	    } catch (e) {
+	      return Promise.reject(e);
+	    }
+	    return valuePromise.then(function (value) {
+	      var mapped;
+	      if (mapFn) {
+	        mapped = mapFn.call(thisArg, value, i);
+	      } else {
+	        mapped = value;
+	      }
+	      return Promise.resolve(mapped).then(function (resolved) {
+	        arr[i] = resolved;
+	        return loop(i + 1);
+	      });
+	    });
+	  }
+	  return loop(0);
+	}
+
+	if (!Array.fromAsync) {
+	  Array.fromAsync = fromAsync;
+	}
+
+	QUnit.test('Array.fromAsync basic', function (assert) {
+	  assert.isFunction(Array.fromAsync);
+	  assert.arity(Array.fromAsync, 1);
+	  assert.name(Array.fromAsync, 'fromAsync');
+	});
+	QUnit.asyncTest('iterable basic', function (assert) {
+	  Array.fromAsync([1, 2, 3]).then(function (arr) {
+	    assert.arrayEqual(arr, [1, 2, 3]);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('iterable with mapFn', function (assert) {
+	  Array.fromAsync([1, 2, 3], function (x) {
+	    return x * 2;
+	  }).then(function (arr) {
+	    assert.arrayEqual(arr, [2, 4, 6]);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('iterable with async mapFn', function (assert) {
+	  Array.fromAsync([1, 2, 3], function (x) {
+	    return Promise.resolve(x * 2);
+	  }).then(function (arr) {
+	    assert.arrayEqual(arr, [2, 4, 6]);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('array with promise values', function (assert) {
+	  Array.fromAsync([1, Promise.resolve(2), 3]).then(function (arr) {
+	    assert.arrayEqual(arr, [1, 2, 3]);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('string', function (assert) {
+	  Array.fromAsync('123').then(function (arr) {
+	    assert.arrayEqual(arr, ['1', '2', '3']);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('subclassable', function (assert) {
+	  function C() {}
+	  Array.fromAsync.call(C, [1]).then(function (it) {
+	    assert.ok(it instanceof C);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('non-iterable array-like', function (assert) {
+	  Array.fromAsync({
+	    length: 1,
+	    0: 1
+	  }).then(function (arr) {
+	    assert.arrayEqual(arr, [1]);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('constructor receives length', function (assert) {
+	  var log = [];
+	  function C(length) {
+	    log.push('c', length);
+	  }
+	  Array.fromAsync.call(C, {
+	    length: 2,
+	    0: Promise.resolve(1),
+	    1: 2
+	  }).then(function (result) {
+	    assert.ok(result instanceof C);
+	    assert.equal(log.length, 2);
+	    assert.equal(log[1], 2);
+	    start();
+	  })["catch"](function (err) {
+	    console.error('FAIL constructor:', err);
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('null rejects', function (assert) {
+	  Array.fromAsync(null).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.ok(err instanceof TypeError);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('undefined rejects', function (assert) {
+	  Array.fromAsync(undefined).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.ok(err instanceof TypeError);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('null mapFn rejects', function (assert) {
+	  Array.fromAsync([1], null).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.ok(err instanceof TypeError);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('non-function mapFn rejects', function (assert) {
+	  Array.fromAsync([1], {}).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.ok(err instanceof TypeError);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('mapFn error', function (assert) {
+	  Array.fromAsync(createIterable$1([1]), function () {
+	    throw 42;
+	  }).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.equal(err, 42);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('sync iterable return on early termination', function (assert) {
+	  var closed = false;
+	  var closable = createIterable$1([1, 2, 3], {
+	    "return": function () {
+	      closed = true;
+	      return {
+	        value: undefined,
+	        done: true
+	      };
+	    }
+	  });
+	  Array.fromAsync(closable, function (item) {
+	    if (item === 2) throw 42;
+	    return item;
+	  }).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.equal(err, 42);
+	    assert.ok(closed, 'return() called');
+	    start();
+	  })["catch"](function (err) {
+	    console.error('FAIL cleanup:', err);
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
 	});
 
 	// /* Chrome126+ Firefox126+ Safari18+ */

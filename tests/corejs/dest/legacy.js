@@ -596,7 +596,7 @@
 	  return enumIteratorHelper(it);
 	}
 
-	var push = Array.prototype.push;
+	var push$1 = Array.prototype.push;
 	function from$1(arrayLike) {
 	  if (arrayLike == null) {
 	    throw new TypeError("Array.from requires an array-like object - not null or undefined");
@@ -631,7 +631,7 @@
 	        if (mapFn) {
 	          item = mapFn.call(thisArg, item, i);
 	        }
-	        push.call(arr, item);
+	        push$1.call(arr, item);
 	        i++;
 	      }
 	    } catch (err) {
@@ -645,7 +645,7 @@
 	      if (mapFn) {
 	        item = mapFn.call(thisArg, item, i);
 	      }
-	      push.call(arr, item);
+	      push$1.call(arr, item);
 	    }
 	  }
 	  return arr;
@@ -5974,7 +5974,7 @@
 	  }
 	})();
 
-	var $inject_Symbol_asyncIterator = (function () {
+	var asyncIterator = (function () {
 	  if (!Symbol$4) {
 	    if (nonEnumerable) {
 	      defineProperty(Object.prototype, '@@asyncIterator', {
@@ -6169,7 +6169,7 @@
 	QUnit.test('Well-known Symbols', function (assert) {
 	  assert.ok($inject_Symbol_hasInstance, "Symbol.hasInstance available");
 	  assert.ok(iterator$1, "Symbol.iterator available");
-	  assert.ok($inject_Symbol_asyncIterator, "Symbol.asyncIterator available");
+	  assert.ok(asyncIterator, "Symbol.asyncIterator available");
 	});
 	QUnit.test('Global symbol registry', function (assert) {
 	  assert.isFunction($inject_Symbol_for, 'Symbol.for is function');
@@ -8522,7 +8522,7 @@
 	});
 
 	QUnit.test('Symbol.asyncIterator', function (assert) {
-	  assert.ok(!!$inject_Symbol_asyncIterator, 'Symbol.asyncIterator available');
+	  assert.ok(!!asyncIterator, 'Symbol.asyncIterator available');
 	});
 
 	QUnit.test('Promise#finally', function (assert) {
@@ -11915,6 +11915,363 @@
 	  assert["throws"](function () {
 	    return isDisjointFrom.call(null, [1, 2, 3]);
 	  }, TypeError);
+	});
+
+	var push = Array.prototype.push;
+
+	// Array.fromAsync（ES2025）
+	// 接受 async iterable / sync iterable / array-like，返回 Promise<Array>
+	// 支持 mapFn（结果会被 await）、子类化
+	function fromAsync(items) {
+	  if (items == null) {
+	    return Promise.reject(new TypeError("Array.fromAsync requires an array-like or iterable object - not null or undefined"));
+	  }
+	  var thisArg = arguments[1];
+	  var mapFn;
+	  var thisArg2;
+	  var C = isFunction(this) ? this : Array;
+
+	  // 只有一个参数时没有 mapFn
+	  if (arguments.length > 1) {
+	    if (!isFunction(thisArg)) {
+	      return Promise.reject(new TypeError(thisArg + " is not a function"));
+	    }
+	    mapFn = thisArg;
+	    thisArg2 = arguments[2];
+	  }
+	  return Promise.resolve().then(function () {
+	    // 优先 async iterator
+	    var asyncItMethod = items[asyncIterator];
+	    if (isFunction(asyncItMethod)) {
+	      var asyncIt = asyncItMethod.call(items);
+	      return fromAsync$iterator(C, asyncIt, true, mapFn, thisArg2);
+	    }
+
+	    // 再试 sync iterator，wrap 成 async
+	    var syncItMethod = items[iterator$1];
+	    if (!syncItMethod && isString(items)) {
+	      // 字符串本来就有 iterator，但为了和 from 保持一致
+	    }
+	    if (isFunction(syncItMethod)) {
+	      var syncIt = syncItMethod.call(items);
+	      return fromAsync$iterator(C, syncIt, false, mapFn, thisArg2);
+	    }
+
+	    // array-like
+	    var len = +items.length;
+	    if (len === len && len >= 0 && len <= Number.MAX_SAFE_INTEGER) {
+	      return fromAsync$arrayLike(C, items, len, mapFn, thisArg2);
+	    }
+	    throw new TypeError("Array.fromAsync requires an array-like or iterable object");
+	  });
+	}
+
+	// 统一处理 iterator（sync 或 async）
+	function fromAsync$iterator(C, it, isAsync, mapFn, thisArg) {
+	  if (it === null || typeof it !== 'object' && typeof it !== 'function') {
+	    throw new TypeError("Iterator is not an object");
+	  }
+	  // 提前取 next
+	  var next = it.next;
+	  var arr = new C();
+	  // 规范：构造函数不接收参数，长度是 0
+	  arr.length = 0;
+	  var i = 0;
+	  function step() {
+	    var result;
+	    try {
+	      result = next.call(it);
+	    } catch (e) {
+	      return cleanup(e);
+	    }
+	    var done, valuePromise;
+	    if (isAsync) {
+	      valuePromise = Promise.resolve(result).then(function (res) {
+	        if (res === null || typeof res !== 'object' && typeof res !== 'function') {
+	          throw new TypeError("AsyncIterator result is not an object");
+	        }
+	        done = res.done;
+	        return res.value;
+	      });
+	    } else {
+	      if (result === null || typeof result !== 'object' && typeof result !== 'function') {
+	        throw new TypeError("Iterator result is not an object");
+	      }
+	      done = result.done;
+	      valuePromise = Promise.resolve(result.value);
+	    }
+	    return valuePromise.then(function (value) {
+	      if (done) return arr;
+	      var mapped;
+	      if (mapFn) {
+	        mapped = mapFn.call(thisArg, value, i);
+	      } else {
+	        mapped = value;
+	      }
+	      return Promise.resolve(mapped).then(function (resolved) {
+	        push.call(arr, resolved);
+	        i++;
+	        return step();
+	      });
+	    })["catch"](cleanup);
+	  }
+	  function cleanup(err) {
+	    // 调用 return() 关闭迭代器
+	    var ret;
+	    try {
+	      ret = it['return'];
+	    } catch (e) {
+	      throw err;
+	    }
+	    if (ret != null) {
+	      var closeResult;
+	      try {
+	        closeResult = ret.call(it);
+	      } catch (e) {
+	        throw err; // 原错误优先
+	      }
+	      if (isAsync) {
+	        // async iterator 的 return() 也可能返回 Promise
+	        return Promise.resolve(closeResult).then(function () {
+	          throw err;
+	        }, function () {
+	          throw err; // cleanup error 被忽略
+	        });
+	      }
+	      // sync iterator: return() 如果返回 Promise 也要 await
+	      if (closeResult && typeof closeResult.then === 'function') {
+	        return closeResult.then(function () {
+	          throw err;
+	        }, function () {
+	          throw err;
+	        });
+	      }
+	    }
+	    throw err;
+	  }
+	  try {
+	    return step();
+	  } catch (e) {
+	    return Promise.reject(e);
+	  }
+	}
+
+	// 处理 array-like（只有 length）
+	function fromAsync$arrayLike(C, items, len, mapFn, thisArg) {
+	  var arr = new C(len);
+	  function loop(i) {
+	    if (i >= len) return arr;
+	    var valuePromise;
+	    try {
+	      var raw = items[i];
+	      valuePromise = Promise.resolve(raw);
+	    } catch (e) {
+	      return Promise.reject(e);
+	    }
+	    return valuePromise.then(function (value) {
+	      var mapped;
+	      if (mapFn) {
+	        mapped = mapFn.call(thisArg, value, i);
+	      } else {
+	        mapped = value;
+	      }
+	      return Promise.resolve(mapped).then(function (resolved) {
+	        arr[i] = resolved;
+	        return loop(i + 1);
+	      });
+	    });
+	  }
+	  return loop(0);
+	}
+
+	if (!Array.fromAsync) {
+	  Array.fromAsync = fromAsync;
+	}
+
+	QUnit.test('Array.fromAsync basic', function (assert) {
+	  assert.isFunction(Array.fromAsync);
+	  assert.arity(Array.fromAsync, 1);
+	  assert.name(Array.fromAsync, 'fromAsync');
+	});
+	QUnit.asyncTest('iterable basic', function (assert) {
+	  Array.fromAsync([1, 2, 3]).then(function (arr) {
+	    assert.arrayEqual(arr, [1, 2, 3]);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('iterable with mapFn', function (assert) {
+	  Array.fromAsync([1, 2, 3], function (x) {
+	    return x * 2;
+	  }).then(function (arr) {
+	    assert.arrayEqual(arr, [2, 4, 6]);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('iterable with async mapFn', function (assert) {
+	  Array.fromAsync([1, 2, 3], function (x) {
+	    return Promise.resolve(x * 2);
+	  }).then(function (arr) {
+	    assert.arrayEqual(arr, [2, 4, 6]);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('array with promise values', function (assert) {
+	  Array.fromAsync([1, Promise.resolve(2), 3]).then(function (arr) {
+	    assert.arrayEqual(arr, [1, 2, 3]);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('string', function (assert) {
+	  Array.fromAsync('123').then(function (arr) {
+	    assert.arrayEqual(arr, ['1', '2', '3']);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('subclassable', function (assert) {
+	  function C() {}
+	  Array.fromAsync.call(C, [1]).then(function (it) {
+	    assert.ok(it instanceof C);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('non-iterable array-like', function (assert) {
+	  Array.fromAsync({
+	    length: 1,
+	    0: 1
+	  }).then(function (arr) {
+	    assert.arrayEqual(arr, [1]);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('constructor receives length', function (assert) {
+	  var log = [];
+	  function C(length) {
+	    log.push('c', length);
+	  }
+	  Array.fromAsync.call(C, {
+	    length: 2,
+	    0: Promise.resolve(1),
+	    1: 2
+	  }).then(function (result) {
+	    assert.ok(result instanceof C);
+	    assert.equal(log.length, 2);
+	    assert.equal(log[1], 2);
+	    start();
+	  })["catch"](function (err) {
+	    console.error('FAIL constructor:', err);
+	    assert.ok(false, 'rejected: ' + err);
+	    start();
+	  });
+	});
+	QUnit.asyncTest('null rejects', function (assert) {
+	  Array.fromAsync(null).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.ok(err instanceof TypeError);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('undefined rejects', function (assert) {
+	  Array.fromAsync(undefined).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.ok(err instanceof TypeError);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('null mapFn rejects', function (assert) {
+	  Array.fromAsync([1], null).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.ok(err instanceof TypeError);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('non-function mapFn rejects', function (assert) {
+	  Array.fromAsync([1], {}).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.ok(err instanceof TypeError);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('mapFn error', function (assert) {
+	  Array.fromAsync(createIterable$1([1]), function () {
+	    throw 42;
+	  }).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.equal(err, 42);
+	    start();
+	  })["catch"](function (err) {
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
+	});
+	QUnit.asyncTest('sync iterable return on early termination', function (assert) {
+	  var closed = false;
+	  var closable = createIterable$1([1, 2, 3], {
+	    "return": function () {
+	      closed = true;
+	      return {
+	        value: undefined,
+	        done: true
+	      };
+	    }
+	  });
+	  Array.fromAsync(closable, function (item) {
+	    if (item === 2) throw 42;
+	    return item;
+	  }).then(function () {
+	    assert.ok(false, 'should reject');
+	    start();
+	  }, function (err) {
+	    assert.equal(err, 42);
+	    assert.ok(closed, 'return() called');
+	    start();
+	  })["catch"](function (err) {
+	    console.error('FAIL cleanup:', err);
+	    assert.ok(false, 'unexpected catch');
+	    start();
+	  });
 	});
 
 	// /* Chrome126+ Firefox126+ Safari18+ */

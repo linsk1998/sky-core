@@ -1,0 +1,19 @@
+﻿
+> sky-core@0.24.0 test:local
+> node tests/run-local.js tests/corejs/es/es.array.from-async.js -b chrome=60
+
+本机浏览器测试：共 1 个测试文件
+rollup 编译 compat / legacy / modern / es2015（内存产物，不落盘）...
+待测浏览器 1 个：Chrome 60.0.3112.78
+Server is running at [36mhttp://127.0.0.1:8931/sky-core/[39m
+并行组 [Chrome]：1 个浏览器
+[31m✗[39m [31m[1mChrome v60.0.3112.78:[22m[39m [31m19/22 failed[39m [2m(197ms)[22m
+服务器已关闭。
+
+[31m✗[39m [31m[1mChrome v60.0.3112.78:[22m[39m [31m19/22 failed[39m [2m(197ms)[22m
+[31m    ✗ Array.fromAsync basic :: 'fromAsync' is non-enumerable (expected: true, actual: false)[39m
+[31m    ✗ Array.fromAsync constructor receives length :: constructor receives the initial length (expected: 2, actual: undefined)[39m
+[31m    ✗ Array.fromAsync sync iterable return on early termination :: sync iterable: return() called on early termination (expected: undefined, actual: undefined)[39m
+[2m------------------------------------------------------------[22m
+Total: 1 tasks, 0 passed, 1 failed, 19/22 tests, 197ms
+判定：未通过

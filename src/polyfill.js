@@ -265,4 +265,5 @@ import "sky-core/polyfill/Set/prototype/symmetricDifference";
 import "sky-core/polyfill/Set/prototype/isSubsetOf";
 import "sky-core/polyfill/Set/prototype/isSupersetOf";
 import "sky-core/polyfill/Set/prototype/isDisjointFrom";
+import "sky-core/polyfill/Array/fromAsync";
 
