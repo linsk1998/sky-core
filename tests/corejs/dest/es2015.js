@@ -1841,25 +1841,23 @@ return class extends Parent { /* empty */ };
 		}
 	}
 
-	// form babel helper
-	// 这是个简化版的createIteratorHelper，没有ArrayLike支持，用于遍历可迭代对象
-	function createIteratorHelper(o) {
-		var it = o[iterator$1];
-
-		if(!it) return null;
-
+	// enumIteratorHelper: 公共的迭代器遍历 helper 壳
+	// s/n/e/f 四方法统一实现；enumIterableHelper / enumSetLikeHelper 各自负责拿到迭代器对象再调用本函数
+	function enumIteratorHelper(it) {
+		if(it === null || (typeof it !== 'object' && typeof it !== 'function')) {
+			throw new TypeError('Iterator is not an object');
+		}
+		var next = it.next;
 		var normalCompletion = true,
 			didErr = false,
 			err;
-
-		// "it" is being reassigned multiple times to reduce the variables (bundle size)
-		// thus TypeScript can't infer the correct type of the "it"
 		return {
-			s: function() {
-				it = it.call(o);
-			},
+			s: function() {},
 			n: function() {
-				var step = it.next();
+				var step = next.call(it);
+				if(step === null || (typeof step !== 'object' && typeof step !== 'function')) {
+					throw new TypeError('Iterator result is not an object');
+				}
 				normalCompletion = step.done;
 				return step;
 			},
@@ -1869,14 +1867,25 @@ return class extends Parent { /* empty */ };
 			},
 			f: function() {
 				try {
-					if(!normalCompletion && it.return != null) {
-						it.return();
+					if(!normalCompletion && it['return'] != null) {
+						it['return']();
 					}
 				} finally {
 					if(didErr) throw err;
 				}
 			},
 		};
+	}
+
+	// 从 utils/createIteratorHelper 迁移而来
+	// 遍历可迭代对象：调用 o[Symbol.iterator]() 拿到迭代器再走 enumIteratorHelper
+	function enumIterableHelper(o) {
+		var it = o[iterator$1];
+
+		if(!it) return null;
+
+		it = it.call(o);
+		return enumIteratorHelper(it);
 	}
 
 	var PENDING = 1;
@@ -2032,7 +2041,7 @@ return class extends Parent { /* empty */ };
 
 	Promise$2.all = function(promises) {
 		return new Promise$2(function(resolve, reject) {
-			var _iterator = createIteratorHelper(promises), _step;
+			var _iterator = enumIterableHelper(promises), _step;
 			if(!_iterator) {
 				reject(new TypeError(typeof promises + " " + promises + " is not iterable."));
 				return;
@@ -2069,7 +2078,7 @@ return class extends Parent { /* empty */ };
 	};
 	Promise$2.race = function(promises) {
 		return new Promise$2(function(resolve, reject) {
-			var _iterator = createIteratorHelper(promises), _step;
+			var _iterator = enumIterableHelper(promises), _step;
 			if(!_iterator) {
 				reject(new TypeError(typeof promises + " " + promises + " is not iterable."));
 				return;
@@ -6308,7 +6317,7 @@ return class extends Parent { /* empty */ };
 
 	function fromEntries(obj) {
 		var o = {};
-		var _iterator = createIteratorHelper(obj), _step;
+		var _iterator = enumIterableHelper(obj), _step;
 		if(!_iterator) throw new TypeError(typeof obj + " " + obj + " is not iterable.");
 		try {
 			for(_iterator.s(); !(_step = _iterator.n()).done;) {
@@ -6545,7 +6554,7 @@ return class extends Parent { /* empty */ };
 			return this.reject(new TypeError('You must pass promises to allSettled.'));
 		}
 		return new this(function(resolve, reject) {
-			var _iterator = createIteratorHelper(promises), _step;
+			var _iterator = enumIterableHelper(promises), _step;
 			if(!_iterator) {
 				reject(new TypeError(typeof promises + " " + promises + " is not iterable."));
 				return;
@@ -6752,7 +6761,7 @@ return class extends Parent { /* empty */ };
 
 	function any(promises) {
 		return new Promise(function(resolve, reject) {
-			var _iterator = createIteratorHelper(promises), _step;
+			var _iterator = enumIterableHelper(promises), _step;
 			if(!_iterator) {
 				reject(new TypeError(typeof promises + " " + promises + " is not iterable."));
 				return;
@@ -8026,7 +8035,7 @@ return class extends Parent { /* empty */ };
 	function groupBy$1(iterable, keySelector) {
 		var r = Object.create(null);
 		var i = 0;
-		var _iterator = createIteratorHelper(iterable), _step;
+		var _iterator = enumIterableHelper(iterable), _step;
 		if(!_iterator) throw new TypeError(typeof iterable + " " + iterable + " is not iterable.");
 		try {
 			for(_iterator.s(); !(_step = _iterator.n()).done;) {
@@ -8219,8 +8228,6 @@ return class extends Parent { /* empty */ };
 		}
 	}
 
-	// form utils/createIteratorHelper
-	// 用于遍历 set-like 对象的 keys 迭代器
 	function enumSetLikeHelper(o) {
 		var it = o.keys();
 
@@ -8228,37 +8235,7 @@ return class extends Parent { /* empty */ };
 			throw new TypeError('Set-like object keys method must return an object');
 		}
 
-		// 提前读取 next，等价于规范中先取迭代器记录、再复制 this 的顺序
-		var next = it.next;
-
-		var normalCompletion = true,
-			didErr = false,
-			err;
-
-		return {
-			s: function() {},
-			n: function() {
-				var step = next.call(it);
-				if(step === null || (typeof step !== 'object' && typeof step !== 'function')) {
-					throw new TypeError('Iterator result is not an object');
-				}
-				normalCompletion = step.done;
-				return step;
-			},
-			e: function(e) {
-				didErr = true;
-				err = e;
-			},
-			f: function() {
-				try {
-					if(!normalCompletion && it['return'] != null) {
-						it['return']();
-					}
-				} finally {
-					if(didErr) throw err;
-				}
-			},
-		};
+		return enumIteratorHelper(it);
 	}
 
 	function union(other) {

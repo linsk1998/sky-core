@@ -1,8 +1,8 @@
-import { createIteratorHelper } from "../../utils/createIteratorHelper";
+import { enumIterableHelper } from "../Iterator/enumIterableHelper";
 
 export function fromEntries(obj) {
 	var o = {};
-	var _iterator = createIteratorHelper(obj), _step;
+	var _iterator = enumIterableHelper(obj), _step;
 	if(!_iterator) throw new TypeError(typeof obj + " " + obj + " is not iterable.");
 	try {
 		for(_iterator.s(); !(_step = _iterator.n()).done;) {

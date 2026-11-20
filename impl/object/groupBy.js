@@ -1,9 +1,9 @@
-import { createIteratorHelper } from "../../utils/createIteratorHelper";
+import { enumIterableHelper } from "../Iterator/enumIterableHelper";
 
 export function groupBy(iterable, keySelector) {
 	var r = Object.create(null);
 	var i = 0;
-	var _iterator = createIteratorHelper(iterable), _step;
+	var _iterator = enumIterableHelper(iterable), _step;
 	if(!_iterator) throw new TypeError(typeof iterable + " " + iterable + " is not iterable.");
 	try {
 		for(_iterator.s(); !(_step = _iterator.n()).done;) {

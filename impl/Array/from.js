@@ -1,7 +1,7 @@
 import { isString } from "../../utils/isString";
 import { isFunction } from "../../utils/isFunction";
 import { iterator } from "../../impl/String/prototype/@@iterator";
-import { createIteratorHelper } from "../../utils/createIteratorHelper";
+import { enumIterableHelper } from "../Iterator/enumIterableHelper";
 
 var push = Array.prototype.push;
 
@@ -29,7 +29,7 @@ export function from(arrayLike) {
 	}
 	var i, item;
 	if(entries) {
-		var _iterator = createIteratorHelper(arrayLike), _step;
+		var _iterator = enumIterableHelper(arrayLike), _step;
 		if(!_iterator) throw new TypeError(typeof arrayLike + " " + arrayLike + " is not iterable.");
 		try {
 			i = 0;

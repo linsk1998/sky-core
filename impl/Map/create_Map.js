@@ -1,5 +1,5 @@
 import isNaN from "sky-core/pure/Number/isNaN";
-import { createIteratorHelper } from "../../utils/createIteratorHelper";
+import { enumIterableHelper } from "../Iterator/enumIterableHelper";
 
 export function create_Map() {
 	function Map() {
@@ -8,7 +8,7 @@ export function create_Map() {
 		this.head = null;
 		this.tail = null;
 		if(arr) {
-			var _iterator = createIteratorHelper(arr), _step, item;
+			var _iterator = enumIterableHelper(arr), _step, item;
 			if(!_iterator) throw new TypeError(typeof arr + " " + arr + " is not iterable.");
 			try {
 				for(_iterator.s(); !(_step = _iterator.n()).done;) {

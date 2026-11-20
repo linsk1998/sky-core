@@ -1,4 +1,4 @@
-import { createIteratorHelper } from "../../utils/createIteratorHelper";
+import { enumIterableHelper } from "../Iterator/enumIterableHelper";
 
 export function fix_Set$arg(GSet) {
 	function Set() {
@@ -6,7 +6,7 @@ export function fix_Set$arg(GSet) {
 		var set = new GSet();
 		Object.setPrototypeOf(set, Object.getPrototypeOf(this));
 		if(arr) {
-			var _iterator = createIteratorHelper(arr), _step, item;
+			var _iterator = enumIterableHelper(arr), _step, item;
 			if(!_iterator) throw new TypeError(typeof arr + " " + arr + " is not iterable.");
 			try {
 				for(_iterator.s(); !(_step = _iterator.n()).done;) {

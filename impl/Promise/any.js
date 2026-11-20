@@ -1,9 +1,9 @@
 import { isFunction } from "../../utils/isFunction";
-import { createIteratorHelper } from "../../utils/createIteratorHelper";
+import { enumIterableHelper } from "../Iterator/enumIterableHelper";
 
 export function any(promises) {
 	return new Promise(function(resolve, reject) {
-		var _iterator = createIteratorHelper(promises), _step;
+		var _iterator = enumIterableHelper(promises), _step;
 		if(!_iterator) {
 			reject(new TypeError(typeof promises + " " + promises + " is not iterable."));
 			return;

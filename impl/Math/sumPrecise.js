@@ -1,6 +1,6 @@
 import { abs } from "../../native/Math/abs";
 import { pow } from "../../native/Math/pow";
-import { createIteratorHelper } from "../../utils/createIteratorHelper";
+import { enumIterableHelper } from "../Iterator/enumIterableHelper";
 
 // Math.sumPrecise，基于 Shewchuk 精确浮点求和算法（ES2025）。
 // 移植自 core-js（MIT）与 tc39/proposal-math-sum 参考实现：
@@ -67,7 +67,7 @@ function addToPartials(partials, x) {
 }
 
 export function sumPrecise(items) {
-	var _iterator = createIteratorHelper(items), _step;
+	var _iterator = enumIterableHelper(items), _step;
 	if(!_iterator) {
 		throw new TypeError(typeof items + " " + items + " is not iterable.");
 	}

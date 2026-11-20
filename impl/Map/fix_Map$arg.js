@@ -1,4 +1,4 @@
-import { createIteratorHelper } from "../../utils/createIteratorHelper";
+import { enumIterableHelper } from "../Iterator/enumIterableHelper";
 
 export function fix_Map$arg(GMap) {
 	function Map() {
@@ -6,7 +6,7 @@ export function fix_Map$arg(GMap) {
 		var map = new GMap();
 		Object.setPrototypeOf(map, Object.getPrototypeOf(this));
 		if(arr) {
-			var _iterator = createIteratorHelper(arr), _step, item;
+			var _iterator = enumIterableHelper(arr), _step, item;
 			if(!_iterator) throw new TypeError(typeof arr + " " + arr + " is not iterable.");
 			try {
 				for(_iterator.s(); !(_step = _iterator.n()).done;) {
