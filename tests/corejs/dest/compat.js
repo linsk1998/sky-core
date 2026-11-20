@@ -9918,8 +9918,8 @@
 	  });
 	});
 
-	// GetSetRecord (ES2025)
-	function getSetRecord(obj) {
+	// GetSetRecord (ES2025)，仅校验，直接使用原对象
+	function checkSetLike(obj) {
 	  if (obj === null || typeof obj !== 'object' && typeof obj !== 'function') {
 	    throw new TypeError('Set-like object must be an object');
 	  }
@@ -9927,73 +9927,70 @@
 	  if (size !== size) {
 	    throw new TypeError('Set-like object size must not be NaN');
 	  }
-	  var intSize = size > 0 ? Math.floor(size) : size < 0 ? Math.ceil(size) : 0;
-	  if (intSize < 0) {
+	  if (size < 0) {
 	    throw new RangeError('Set-like object size must be non-negative');
 	  }
-	  var has = obj.has;
-	  if (typeof has !== 'function') {
+	  if (typeof obj.has !== 'function') {
 	    throw new TypeError('Set-like object must have a has method');
 	  }
-	  var keys = obj.keys;
-	  if (typeof keys !== 'function') {
+	  if (typeof obj.keys !== 'function') {
 	    throw new TypeError('Set-like object must have a keys method');
 	  }
-	  return {
-	    size: intSize,
-	    has: has,
-	    keys: keys,
-	    set: obj
-	  };
 	}
 
-	// GetIteratorFromMethod (ES2025)，仅用于有 keys 的 set-like
-	function getIteratorRecord(record) {
-	  if (!record.keys) {
-	    throw new TypeError('Set-like object must have keys method');
-	  }
-	  var iterator = record.keys.call(record.set);
-	  if (iterator === null || typeof iterator !== 'object' && typeof iterator !== 'function') {
+	// form utils/createIteratorHelper
+	// 用于遍历 set-like 对象的 keys 迭代器
+	function enumSetLikeHelper(o) {
+	  var it = o.keys();
+	  if (it === null || typeof it !== 'object' && typeof it !== 'function') {
 	    throw new TypeError('Set-like object keys method must return an object');
 	  }
-	  return {
-	    iterator: iterator,
-	    next: iterator.next
-	  };
-	}
 
-	// IteratorStepValue (ES2025)，迭代结果的非对象值会抛 TypeError
-	function iteratorStepValue(record) {
-	  var result = record.next.call(record.iterator);
-	  if (result === null || typeof result !== 'object' && typeof result !== 'function') {
-	    throw new TypeError('Iterator result is not an object');
-	  }
-	  if (result.done) {
-	    return {
-	      done: true
-	    };
-	  }
+	  // 提前读取 next，等价于规范中先取迭代器记录、再复制 this 的顺序
+	  var next = it.next;
+	  var normalCompletion = true,
+	    didErr = false,
+	    err;
 	  return {
-	    done: false,
-	    value: result.value
+	    s: function () {},
+	    n: function () {
+	      var step = next.call(it);
+	      if (step === null || typeof step !== 'object' && typeof step !== 'function') {
+	        throw new TypeError('Iterator result is not an object');
+	      }
+	      normalCompletion = step.done;
+	      return step;
+	    },
+	    e: function (e) {
+	      didErr = true;
+	      err = e;
+	    },
+	    f: function () {
+	      try {
+	        if (!normalCompletion && it['return'] != null) {
+	          it['return']();
+	        }
+	      } finally {
+	        if (didErr) throw err;
+	      }
+	    }
 	  };
 	}
 
 	function union(other) {
-	  if (!(this instanceof Set)) {
-	    throw new TypeError('Set.prototype.union called on incompatible receiver');
-	  }
-	  var otherRec = getSetRecord(other);
-	  // 规范要求先取得 other 的迭代器记录（含 next），再复制 this
-	  // 此顺序用于规避 WebKit bug（keys() 执行期间修改了 this）
-	  var keysIter = getIteratorRecord(otherRec);
+	  checkSetLike(other);
+	  // 规范要求先取 other 的迭代器，再复制 this
+	  var _iterator = enumSetLikeHelper(other),
+	    _step;
 	  var result = new Set(this);
-	  while (true) {
-	    var next = iteratorStepValue(keysIter);
-	    if (next.done) {
-	      break;
+	  try {
+	    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+	      result.add(_step.value);
 	    }
-	    result.add(next.value);
+	  } catch (err) {
+	    _iterator.e(err);
+	  } finally {
+	    _iterator.f();
 	  }
 	  return result;
 	}
@@ -10092,37 +10089,32 @@
 	});
 
 	function intersection(other) {
-	  if (!(this instanceof Set)) {
-	    throw new TypeError('Set.prototype.intersection called on incompatible receiver');
-	  }
-	  var otherRec = getSetRecord(other);
+	  checkSetLike(other);
+	  var self = this;
 	  var result = new Set();
-	  var iterator, next, value;
-	  if (this.size <= otherRec.size) {
-	    // 遍历 this，用 other.has 判断；此时不调用 other.keys
-	    iterator = this.keys();
-	    while (true) {
-	      next = iterator.next();
-	      if (next.done) {
-	        break;
-	      }
-	      value = next.value;
-	      if (otherRec.has.call(otherRec.set, value)) {
-	        result.add(value);
+	  var _step;
+	  if (this.size <= other.size) {
+	    // 遍历 this，用 other.has 判断；此时不读取 other.keys
+	    var iterator = this.keys();
+	    var next;
+	    while (!(next = iterator.next()).done) {
+	      if (other.has(next.value)) {
+	        result.add(next.value);
 	      }
 	    }
 	  } else {
-	    // 遍历 other.keys，用 this.has 判断；结果顺序与 other 一致
-	    iterator = getIteratorRecord(otherRec);
-	    while (true) {
-	      next = iteratorStepValue(iterator);
-	      if (next.done) {
-	        break;
+	    // 遍历 other 的 keys，用 this.has 判断；结果顺序与 other 一致
+	    var _iterator = enumSetLikeHelper(other);
+	    try {
+	      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+	        if (self.has(_step.value)) {
+	          result.add(_step.value);
+	        }
 	      }
-	      value = next.value;
-	      if (this.has(value)) {
-	        result.add(value);
-	      }
+	    } catch (err) {
+	      _iterator.e(err);
+	    } finally {
+	      _iterator.f();
 	    }
 	  }
 	  return result;
@@ -10223,30 +10215,29 @@
 	});
 
 	function difference(other) {
-	  if (!(this instanceof Set)) {
-	    throw new TypeError('Set.prototype.difference called on incompatible receiver');
-	  }
-	  var otherRec = getSetRecord(other);
+	  checkSetLike(other);
 	  // 规范要求先复制 this，后续判断与遍历不再读取 this 的实时数据
 	  var result = new Set(this);
+	  var _step;
 	  if (result.size !== 0) {
-	    if (this.size <= otherRec.size) {
+	    if (this.size <= other.size) {
 	      // this 较小：遍历副本，用 other.has 判断，命中则从结果中删除
 	      result.forEach(function (value) {
-	        if (otherRec.has.call(otherRec.set, value)) {
+	        if (other.has(value)) {
 	          result["delete"](value);
 	        }
 	      });
 	    } else {
-	      // 遍历 other.keys，从副本中删除
-	      var keysIter = getIteratorRecord(otherRec);
-	      var next;
-	      while (true) {
-	        next = iteratorStepValue(keysIter);
-	        if (next.done) {
-	          break;
+	      // 遍历 other 的 keys，从副本中删除
+	      var _iterator = enumSetLikeHelper(other);
+	      try {
+	        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+	          result["delete"](_step.value);
 	        }
-	        result["delete"](next.value);
+	      } catch (err) {
+	        _iterator.e(err);
+	      } finally {
+	        _iterator.f();
 	      }
 	    }
 	  }
@@ -10361,26 +10352,25 @@
 	});
 
 	function symmetricDifference(other) {
-	  if (!(this instanceof Set)) {
-	    throw new TypeError('Set.prototype.symmetricDifference called on incompatible receiver');
-	  }
-	  var otherRec = getSetRecord(other);
-	  // 规范要求先取得 other 的迭代器记录，再复制 this（WebKit bug 289430）
-	  var keysIter = getIteratorRecord(otherRec);
+	  checkSetLike(other);
+	  // 规范要求先取 other 的迭代器，再复制 this
+	  var _iterator = enumSetLikeHelper(other),
+	    _step;
 	  var result = new Set(this);
-	  var next, value;
-	  while (true) {
-	    next = iteratorStepValue(keysIter);
-	    if (next.done) {
-	      break;
+	  var self = this;
+	  try {
+	    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+	      // 以 this 的成员关系为准，保证 other 中重复值只删除不重复添加
+	      if (self.has(_step.value)) {
+	        result["delete"](_step.value);
+	      } else {
+	        result.add(_step.value);
+	      }
 	    }
-	    value = next.value;
-	    // 以 this 的成员关系为准，保证 other 中重复值只删除不重复添加
-	    if (this.has(value)) {
-	      result["delete"](value);
-	    } else {
-	      result.add(value);
-	    }
+	  } catch (err) {
+	    _iterator.e(err);
+	  } finally {
+	    _iterator.f();
 	  }
 	  return result;
 	}
@@ -10500,6 +10490,196 @@
 	    };
 	    assert.deepEqual(from(_baseSet2.symmetricDifference(_setLike2)), [4]);
 	  }
+	});
+
+	function isSubsetOf(other) {
+	  checkSetLike(other);
+	  if (this.size > other.size) {
+	    return false;
+	  }
+	  // this 是真正的 Set，keys 迭代器无需关闭处理
+	  var iterator = this.keys();
+	  var next;
+	  while (!(next = iterator.next()).done) {
+	    if (!other.has(next.value)) {
+	      return false;
+	    }
+	  }
+	  return true;
+	}
+	;
+
+	definePrototype(Set$1, 'isSubsetOf', isSubsetOf);
+
+	QUnit.test('Set#isSubsetOf', function (assert) {
+	  // core-js 原文为 `const { isSubsetOf } = Set.prototype;`，这里改为成员表达式以配合 impl-inject 的裸名注入
+	  var isSubsetOf = Set.prototype.isSubsetOf;
+	  assert.isFunction(isSubsetOf);
+	  assert.arity(isSubsetOf, 1);
+	  assert.name(isSubsetOf, 'isSubsetOf');
+	  assert.looksNative(isSubsetOf);
+	  assert.nonEnumerable(Set.prototype, 'isSubsetOf');
+	  assert.ok(new Set([1]).isSubsetOf(new Set([1, 2, 3])));
+	  assert.ok(!new Set([1]).isSubsetOf(new Set([2, 3, 4])));
+	  assert.ok(new Set([1, 2, 3]).isSubsetOf(new Set([5, 4, 3, 2, 1])));
+	  assert.ok(!new Set([1, 2, 3]).isSubsetOf(new Set([5, 4, 3, 2])));
+	  assert.ok(new Set([1]).isSubsetOf(createSetLike([1, 2, 3])));
+	  assert.ok(!new Set([1]).isSubsetOf(createSetLike([2, 3, 4])));
+	  assert.ok(new Set([1, 2, 3]).isSubsetOf(createSetLike([5, 4, 3, 2, 1])));
+	  assert.ok(!new Set([1, 2, 3]).isSubsetOf(createSetLike([5, 4, 3, 2])));
+
+	  // core-js@4 将移除对数组 / 可迭代参数的支持；本实现按 ES2025 只接受 set-like 参数，故注释保留
+	  // assert.ok(new Set([1]).isSubsetOf([1, 2, 3]));
+	  // assert.ok(!new Set([1]).isSubsetOf([2, 3, 4]));
+	  // assert.ok(new Set([1, 2, 3]).isSubsetOf([5, 4, 3, 2, 1]));
+	  // assert.ok(!new Set([1, 2, 3]).isSubsetOf([5, 4, 3, 2]));
+	  // assert.ok(new Set([1]).isSubsetOf(createIterable([1, 2, 3])));
+	  // assert.ok(!new Set([1]).isSubsetOf(createIterable([2, 3, 4])));
+
+	  assert.ok(new Set([42, 43]).isSubsetOf({
+	    size: Infinity,
+	    has: function () {
+	      return true;
+	    },
+	    keys: function () {
+	      throw new Error('Unexpected call to |keys| method');
+	    }
+	  }));
+	  assert["throws"](function () {
+	    return new Set().isSubsetOf({
+	      size: -Infinity,
+	      has: function () {
+	        return true;
+	      },
+	      keys: function () {
+	        throw new Error('Unexpected call to |keys| method');
+	      }
+	    });
+	  });
+	  assert["throws"](function () {
+	    return new Set([1, 2, 3]).isSubsetOf();
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return isSubsetOf.call({}, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return isSubsetOf.call(undefined, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return isSubsetOf.call(null, [1, 2, 3]);
+	  }, TypeError);
+	});
+
+	function isSupersetOf(other) {
+	  checkSetLike(other);
+	  if (this.size < other.size) {
+	    return false;
+	  }
+	  var self = this;
+	  var result = true;
+	  var _iterator = enumSetLikeHelper(other),
+	    _step;
+	  try {
+	    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+	      if (!self.has(_step.value)) {
+	        result = false;
+	        break;
+	      }
+	    }
+	  } catch (err) {
+	    _iterator.e(err);
+	  } finally {
+	    // 提前 break 时 normalCompletion 为 false，会关闭迭代器
+	    _iterator.f();
+	  }
+	  return result;
+	}
+	;
+
+	definePrototype(Set$1, 'isSupersetOf', isSupersetOf);
+
+	QUnit.test('Set#isSupersetOf', function (assert) {
+	  // core-js 原文为 `const { isSupersetOf } = Set.prototype;`，这里改为成员表达式以配合 impl-inject 的裸名注入
+	  var isSupersetOf = Set.prototype.isSupersetOf;
+	  assert.isFunction(isSupersetOf);
+	  assert.arity(isSupersetOf, 1);
+	  assert.name(isSupersetOf, 'isSupersetOf');
+	  assert.looksNative(isSupersetOf);
+	  assert.nonEnumerable(Set.prototype, 'isSupersetOf');
+	  assert.ok(new Set([1, 2, 3]).isSupersetOf(new Set([1])));
+	  assert.ok(!new Set([2, 3, 4]).isSupersetOf(new Set([1])));
+	  assert.ok(new Set([5, 4, 3, 2, 1]).isSupersetOf(new Set([1, 2, 3])));
+	  assert.ok(!new Set([5, 4, 3, 2]).isSupersetOf(new Set([1, 2, 3])));
+	  assert.ok(new Set([1, 2, 3]).isSupersetOf(createSetLike([1])));
+	  assert.ok(!new Set([2, 3, 4]).isSupersetOf(createSetLike([1])));
+	  assert.ok(new Set([5, 4, 3, 2, 1]).isSupersetOf(createSetLike([1, 2, 3])));
+	  assert.ok(!new Set([5, 4, 3, 2]).isSupersetOf(createSetLike([1, 2, 3])));
+
+	  // core-js@4 将移除对数组 / 可迭代参数的支持；本实现按 ES2025 只接受 set-like 参数，故注释保留
+	  // assert.ok(new Set([1, 2, 3]).isSupersetOf([1]));
+	  // assert.ok(!new Set([2, 3, 4]).isSupersetOf([1]));
+	  // assert.ok(new Set([5, 4, 3, 2, 1]).isSupersetOf([1, 2, 3]));
+	  // assert.ok(!new Set([5, 4, 3, 2]).isSupersetOf([1, 2, 3]));
+	  // assert.ok(new Set([1, 2, 3]).isSupersetOf(createIterable([1])));
+	  // assert.ok(!new Set([2, 3, 4]).isSupersetOf(createIterable([1])));
+
+	  assert.ok(!new Set([42, 43]).isSupersetOf({
+	    size: Infinity,
+	    has: function () {
+	      return true;
+	    },
+	    keys: function () {
+	      throw new Error('Unexpected call to |keys| method');
+	    }
+	  }));
+	  assert["throws"](function () {
+	    return new Set().isSupersetOf({
+	      size: -Infinity,
+	      has: function () {
+	        return true;
+	      },
+	      keys: function () {
+	        throw new Error('Unexpected call to |keys| method');
+	      }
+	    });
+	  });
+	  var closed = false;
+	  assert.ok(!new Set([1, 2, 3, 4]).isSupersetOf({
+	    size: 3,
+	    has: function () {
+	      return true;
+	    },
+	    keys: function () {
+	      var index = 0;
+	      return {
+	        next: function () {
+	          return {
+	            value: [1, 5, 3][index++],
+	            done: index > 3
+	          };
+	        },
+	        "return": function () {
+	          closed = true;
+	          return {
+	            done: true
+	          };
+	        }
+	      };
+	    }
+	  }));
+	  assert.ok(closed, 'iterator is closed on early exit');
+	  assert["throws"](function () {
+	    return new Set([1, 2, 3]).isSupersetOf();
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return isSupersetOf.call({}, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return isSupersetOf.call(undefined, [1, 2, 3]);
+	  }, TypeError);
+	  assert["throws"](function () {
+	    return isSupersetOf.call(null, [1, 2, 3]);
+	  }, TypeError);
 	});
 
 	// /* Chrome126+ Firefox126+ Safari18+ */

@@ -234,5 +234,7 @@ import "./es/es.set.union";
 import "./es/es.set.intersection";
 import "./es/es.set.difference";
 import "./es/es.set.symmetric-difference";
+import "./es/es.set.is-subset-of";
+import "./es/es.set.is-superset-of";
 // /* Chrome126+ Firefox126+ Safari18+ */
 // import "./web.url-parse";

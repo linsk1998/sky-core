@@ -262,4 +262,6 @@ import "sky-core/polyfill/Set/prototype/union";
 import "sky-core/polyfill/Set/prototype/intersection";
 import "sky-core/polyfill/Set/prototype/difference";
 import "sky-core/polyfill/Set/prototype/symmetricDifference";
+import "sky-core/polyfill/Set/prototype/isSubsetOf";
+import "sky-core/polyfill/Set/prototype/isSupersetOf";
 

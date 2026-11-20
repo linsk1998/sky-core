@@ -175,6 +175,8 @@ module.exports = [
 			".intersection": "sky-core/polyfill/Set/prototype/intersection",
 			".difference": "sky-core/polyfill/Set/prototype/difference",
 			".symmetricDifference": "sky-core/polyfill/Set/prototype/symmetricDifference",
+			".isSubsetOf": "sky-core/polyfill/Set/prototype/isSubsetOf",
+			".isSupersetOf": "sky-core/polyfill/Set/prototype/isSupersetOf",
 
 			// "console": "sky-core/polyfill/console",
 			//这个实现基于IE的userData功能，只在同目录的HTML有效，如果需要html跨目录，要使用flash版的polyfill

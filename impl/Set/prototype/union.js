@@ -1,21 +1,19 @@
-import { getSetRecord } from "../getSetRecord";
-import { getIteratorRecord, iteratorStepValue } from "../getIteratorRecord";
+import { checkSetLike } from "../checkSetLike";
+import { enumSetLikeHelper } from "../enumSetLikeHelper";
 
 export function union(other) {
-	if(!(this instanceof Set)) {
-		throw new TypeError('Set.prototype.union called on incompatible receiver');
-	}
-	var otherRec = getSetRecord(other);
-	// 规范要求先取得 other 的迭代器记录（含 next），再复制 this
-	// 此顺序用于规避 WebKit bug（keys() 执行期间修改了 this）
-	var keysIter = getIteratorRecord(otherRec);
+	checkSetLike(other);
+	// 规范要求先取 other 的迭代器，再复制 this
+	var _iterator = enumSetLikeHelper(other), _step;
 	var result = new Set(this);
-	while(true) {
-		var next = iteratorStepValue(keysIter);
-		if(next.done) {
-			break;
+	try {
+		for(_iterator.s(); !(_step = _iterator.n()).done;) {
+			result.add(_step.value);
 		}
-		result.add(next.value);
+	} catch(err) {
+		_iterator.e(err);
+	} finally {
+		_iterator.f();
 	}
 	return result;
 };
