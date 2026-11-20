@@ -276,6 +276,7 @@ module.exports = [
 			".symmetricDifference": "sky-core/polyfill/Set/prototype/symmetricDifference",
 			".isSubsetOf": "sky-core/polyfill/Set/prototype/isSubsetOf",
 			".isSupersetOf": "sky-core/polyfill/Set/prototype/isSupersetOf",
+			".isDisjointFrom": "sky-core/polyfill/Set/prototype/isDisjointFrom",
 
 			//URL 这个polyfil支持accessor，但不支持自动转string和JSON，需要用.href获取
 			"URL": "sky-core/polyfill/URL",
