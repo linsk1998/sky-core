@@ -267,3 +267,7 @@ import "sky-core/polyfill/Set/prototype/isSupersetOf";
 import "sky-core/polyfill/Set/prototype/isDisjointFrom";
 import "sky-core/polyfill/Array/fromAsync";
 
+/* ES2026 */
+/* Chrome134+ Firefox138+ Safari18.4+ */
+import "sky-core/polyfill/Error/isError";
+

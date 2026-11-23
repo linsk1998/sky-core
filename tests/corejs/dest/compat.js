@@ -1661,6 +1661,7 @@
 	    }
 	  }
 	  Error.prototype = native_Error.prototype;
+	  Object.setPrototypeOf(Error, native_Error);
 	  return Error;
 	}
 
@@ -11166,6 +11167,71 @@
 	    assert.ok(false, 'unexpected catch');
 	    start();
 	  });
+	});
+
+	function isError(obj) {
+	  // [[ErrorData]] 内部槽无法直接探测，Object.prototype.toString 的品牌检查是唯一跨 realm 可用的手段
+	  // DOMException 按规范也带 [[ErrorData]]，但它的 Symbol.toStringTag 会让 tag 变成 "DOMException"
+	  // Error.prototype 自己没有 [[ErrorData]]，而 Firefox 4- 把它的 tag 也报成 "Error"，只能显式排除
+	  var tag = toString$1.call(obj);
+	  return (tag === '[object Error]' || tag === '[object DOMException]') && obj !== Error$1.prototype;
+	}
+
+	// compat / legacy / modern 三层共用这份（createRollupPlugin 的 compat:["compat","modern"]、legacy:["legacy","modern"] 会回落到这里）
+	// 这些层的浏览器都早于原生 Error.isError（Chrome134+ / Firefox138+ / Safari18.4+），不存在原生误判 DOMException 的情况，只补缺失
+	if (!Error$1.isError) {
+	  Error$1.isError = isError;
+	}
+
+	// 移植自 core-js tests/unit-global/es.error.is-error.js（MIT）
+
+	// compat/modern/legacy 分层的 Error cause 修复会把 window.Error 换成普通函数，它 new 出来的实例连 constructor 都对不上全局
+	// 这些分层里的实例没有 [[ErrorData]]，isError 判 false 是正确的，所以这几条只在原生 Error 构造函数下断言
+	var isNativeErrorCtor = new Error('probe').constructor === Error;
+	QUnit.test('Error.isError', function (assert) {
+	  var engineError;
+	  try {
+	    null.foo;
+	  } catch (e) {
+	    engineError = e;
+	  }
+	  assert.isFunction(Error.isError);
+	  assert.arity(Error.isError, 1);
+	  assert.name(Error.isError, 'isError');
+	  assert.looksNative(Error.isError);
+	  // core-js 用 defineProperty 安装不可枚举静态方法，本仓库静态方法一律赋值安装（可枚举），同 Object.hasOwn
+	  // assert.nonEnumerable(Error, 'isError');
+
+	  assert.ok(Error.isError(engineError), 'caught error');
+	  assert.ok(Error.isError(new TypeError('error')), 'TypeError instance');
+	  if (isNativeErrorCtor) {
+	    assert.ok(Error.isError(new Error('error')), 'Error instance');
+	    // 分层里的 AggregateError / SuppressedError 由本库补上时，实例同样没有 [[ErrorData]]
+	    if (typeof AggregateError === 'function') {
+	      assert.ok(Error.isError(new AggregateError([1, 2, 3], 'error')), 'AggregateError instance');
+	    }
+	    if (typeof SuppressedError === 'function') {
+	      assert.ok(Error.isError(new SuppressedError(1, 2, 'error')), 'SuppressedError instance');
+	    }
+	  }
+	  // 规范要求 DOMException 带 [[ErrorData]]；老浏览器要么没有它，要么禁止构造（Chrome30 抛 Illegal constructor）
+	  try {
+	    assert.ok(Error.isError(new DOMException('error')), 'DOMException instance');
+	  } catch (e) {/* 跳过 */}
+	  assert.ok(!Error.isError(), 'no arguments');
+	  assert.ok(!Error.isError(null), 'null');
+	  assert.ok(!Error.isError(undefined), 'undefined');
+	  assert.ok(!Error.isError(17), 'number');
+	  assert.ok(!Error.isError('Error'), 'string');
+	  assert.ok(!Error.isError(true), 'true');
+	  assert.ok(!Error.isError(false), 'false');
+	  assert.ok(!Error.isError({}), 'plain object');
+	  assert.ok(!Error.isError({
+	    message: 'fake',
+	    name: 'FakeError'
+	  }), 'duck-typed object');
+	  assert.ok(!Error.isError(create$jscript(Error.prototype)), 'Object.create(Error.prototype)');
+	  assert.ok(!Error.isError(Error.prototype), 'Error.prototype');
 	});
 
 	// /* Chrome126+ Firefox126+ Safari18+ */

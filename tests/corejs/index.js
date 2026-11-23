@@ -238,5 +238,8 @@ import "./es/es.set.is-subset-of";
 import "./es/es.set.is-superset-of";
 import "./es/es.set.is-disjoint-from";
 import "./es/es.array.from-async";
+/* ES2026 */
+/* Chrome134+ Firefox138+ Safari18.4+ */
+import "./es/es.error.is-error";
 // /* Chrome126+ Firefox126+ Safari18+ */
 // import "./web.url-parse";

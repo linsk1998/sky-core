@@ -278,6 +278,9 @@ module.exports = [
 			".isSupersetOf": "sky-core/polyfill/Set/prototype/isSupersetOf",
 			".isDisjointFrom": "sky-core/polyfill/Set/prototype/isDisjointFrom",
 			"Array.fromAsync": "sky-core/polyfill/Array/fromAsync",
+			// ES2026
+			/* Chrome134+ Firefox138+ Safari18.4+ */
+			"Error.isError": "sky-core/polyfill/Error/isError",
 
 			//URL 这个polyfil支持accessor，但不支持自动转string和JSON，需要用.href获取
 			"URL": "sky-core/polyfill/URL",

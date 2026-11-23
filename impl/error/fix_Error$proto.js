@@ -9,5 +9,6 @@ export function fix_Error$proto(native_Error) {
 		}
 	}
 	Error.prototype = native_Error.prototype;
+	Object.setPrototypeOf(Error, native_Error);
 	return Error;
 }

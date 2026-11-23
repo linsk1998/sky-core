@@ -17,13 +17,13 @@ sky-core是一个处理浏览器兼容问题的polyfill库和工具库。
 
 # 不同条件的兼容性
 
-| 代号 | 支持特性 | 浏览器 |
-| ----- | ----- | ----- |
-| compat | IE9以下 | IE 5.5 ~ 8 |
-| legacy | 低版本非IE浏览器 | Firefox<10 Chrome<30 Safari<7 Opera<17 |
-| modern | 不支持module | IE 9 ~ 11, Chrome 29 ~ 62, Safari 8 ~ 10.0, Edge 12 ~ 18, Firefox 4 ~ 66, Opera 16 ~ 49 |
-| es2015 | 支持module | Chrome 63+, Safari 10.1+, Firefox 67+, Edge 79+, Opera 50+ |
-| 开发中 | 支持top-level-await | Chrome 89+, Safari 27+, Firefox 90+, Edge 89+, Opera 75+ |
+| 代号   | 支持特性            | 浏览器                                                                                  |
+| ------ | ------------------- | --------------------------------------------------------------------------------------- |
+| compat | IE9以下             | IE 5.5 ~ 8                                                                              |
+| legacy | 低版本非IE浏览器    | Firefox<10 Chrome<30 Safari<7 Opera<17                                                  |
+| modern | 不支持module        | IE 9 ~ 11, Chrome 29 ~ 62, Safari 8 ~ 10.0, Edge 12 ~ 18, Firefox 4 ~ 66, Opera 16 ~ 49 |
+| es2015 | 支持module          | Chrome 63+, Safari 10.1+, Firefox 67+, Edge 79+, Opera 50+                              |
+| 开发中 | 支持top-level-await | Chrome 89+, Safari 27+, Firefox 90+, Edge 89+, Opera 75+                                |
 
 # 安装
 
@@ -236,52 +236,53 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 + 无法完美实现原生功能的，推荐使用pure模式，业务上要考虑不支持的场景。
 + 原型链功能，推荐使用污染修复原生添加功能，因为非typescript无法知道对象类型，有可能是自定义类型，恰好有相同方法。
 
-| 特性 | 建议使用方式 | 原因 |
-| ----- | ----- | ----- |
-| RegExp | polyfill | 修复原生功能 |
-| Event | pure | DOM相关 |
-| document.contains | polyfill | 修复原生功能 |
-| localStorage | polyfill | 修复原生功能 |
-| sessionStorage | polyfill | 修复原生功能 |
-| Error | polyfill | 修复原生功能 |
-| Date | polyfill | 修复原生功能 |
-| parseInt | polyfill | 修复原生功能 |
-| JSON | polyfill | 修复原生功能 |
-| Object.getPrototypeOf | pure | 无法真正实现 |
-| Object.create | pure | 无法真正实现 |
-| Object.defineProperty | pure | 无法真正实现 |
-| Object.getOwnPropertyDescriptor | pure | 无法真正实现 |
-| Object.getOwnPropertyNames | pure | 无法真正实现 |
-| Object.defineProperties | pure | 无法真正实现 |
-| Object.preventExtensions | pure | 无法真正实现 |
-| Object.seal | pure | 无法真正实现 |
-| Object.freeze | pure | 无法真正实现 |
-| Object.isExtensible | pure | 无法真正实现 |
-| Object.isSealed | pure | 无法真正实现 |
-| Object.isFrozen | pure | 无法真正实现 |
-| Object.setPrototypeOf | pure | 无法真正实现 |
-| Object.is | polyfill | 功能完全 |
-| Object.hasOwn | polyfill | 功能完全 |
-| Object.getOwnPropertyDescriptors | pure | 无法真正实现 |
-| URL | polyfill | 模块化依赖 |
-| WeakMap | pure | 无法真正实现 |
-| Symbol | polyfill | 模块化依赖 |
-| Map | polyfill | 修复原生功能 |
-| Set | polyfill | 修复原生功能 |
-| WeakSet | pure | 无法真正实现 |
-| setTimeout | 部分pure | 仅在传入额外参数时引入 |
-| setInterval | 部分pure | 仅在传入额外参数时引入 |
-| requestAnimationFrame | pure | 无法完美实现 |
-| cancelAnimationFrame | pure | 无法完美实现 |
-| requestIdleCallback | pure | 无法完美实现 |
-| cancelIdleCallback | pure | 无法完美实现 |
-| URLSearchParams | polyfill | 模块化依赖 |
-| crypto.randomUUID | pure | 含名字空间 |
-| Array.fromAsync | polyfill | 功能完全 |
-| Set.prototype.union | polyfill | 原型链功能 |
-| Set.prototype.intersection | polyfill | 原型链功能 |
-| Set.prototype.difference | polyfill | 原型链功能 |
-| Set.prototype.symmetricDifference | polyfill | 原型链功能 |
-| Set.prototype.isSubsetOf | polyfill | 原型链功能 |
-| Set.prototype.isSupersetOf | polyfill | 原型链功能 |
-| Set.prototype.isDisjointFrom | polyfill | 原型链功能 |
+| 特性                              | 建议使用方式 | 原因                   |
+| --------------------------------- | ------------ | ---------------------- |
+| RegExp                            | polyfill     | 修复原生功能           |
+| Event                             | pure         | DOM相关                |
+| document.contains                 | polyfill     | 修复原生功能           |
+| localStorage                      | polyfill     | 修复原生功能           |
+| sessionStorage                    | polyfill     | 修复原生功能           |
+| Error                             | polyfill     | 修复原生功能           |
+| Date                              | polyfill     | 修复原生功能           |
+| parseInt                          | polyfill     | 修复原生功能           |
+| JSON                              | polyfill     | 修复原生功能           |
+| Object.getPrototypeOf             | pure         | 无法真正实现           |
+| Object.create                     | pure         | 无法真正实现           |
+| Object.defineProperty             | pure         | 无法真正实现           |
+| Object.getOwnPropertyDescriptor   | pure         | 无法真正实现           |
+| Object.getOwnPropertyNames        | pure         | 无法真正实现           |
+| Object.defineProperties           | pure         | 无法真正实现           |
+| Object.preventExtensions          | pure         | 无法真正实现           |
+| Object.seal                       | pure         | 无法真正实现           |
+| Object.freeze                     | pure         | 无法真正实现           |
+| Object.isExtensible               | pure         | 无法真正实现           |
+| Object.isSealed                   | pure         | 无法真正实现           |
+| Object.isFrozen                   | pure         | 无法真正实现           |
+| Object.setPrototypeOf             | pure         | 无法真正实现           |
+| Object.is                         | polyfill     | 功能完全               |
+| Object.hasOwn                     | polyfill     | 功能完全               |
+| Object.getOwnPropertyDescriptors  | pure         | 无法真正实现           |
+| URL                               | polyfill     | 模块化依赖             |
+| WeakMap                           | pure         | 无法真正实现           |
+| Symbol                            | polyfill     | 模块化依赖             |
+| Map                               | polyfill     | 修复原生功能           |
+| Set                               | polyfill     | 修复原生功能           |
+| WeakSet                           | pure         | 无法真正实现           |
+| setTimeout                        | 部分pure     | 仅在传入额外参数时引入 |
+| setInterval                       | 部分pure     | 仅在传入额外参数时引入 |
+| requestAnimationFrame             | pure         | 无法完美实现           |
+| cancelAnimationFrame              | pure         | 无法完美实现           |
+| requestIdleCallback               | pure         | 无法完美实现           |
+| cancelIdleCallback                | pure         | 无法完美实现           |
+| URLSearchParams                   | polyfill     | 模块化依赖             |
+| crypto.randomUUID                 | pure         | 含名字空间             |
+| Array.fromAsync                   | polyfill     | 功能完全               |
+| Set.prototype.union               | polyfill     | 原型链功能             |
+| Set.prototype.intersection        | polyfill     | 原型链功能             |
+| Set.prototype.difference          | polyfill     | 原型链功能             |
+| Set.prototype.symmetricDifference | polyfill     | 原型链功能             |
+| Set.prototype.isSubsetOf          | polyfill     | 原型链功能             |
+| Set.prototype.isSupersetOf        | polyfill     | 原型链功能             |
+| Set.prototype.isDisjointFrom      | polyfill     | 原型链功能             |
+| Error.isError                     | polyfill     | 功能完全               |
