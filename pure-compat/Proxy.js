@@ -1,6 +1,6 @@
 import { isFunction } from "../utils/isFunction";
 import { Proxy } from "../native/Proxy";
-import { Proxy as impl_Proxy } from "../impl-compat/Proxy";
+import { Proxy$vb } from "../impl/Proxy/Proxy$vb";
 
 // 火狐低版本内置了一个Proxy对象，可以通过typeof来区分
-export default isFunction(Proxy) ? Proxy : impl_Proxy;
+export default isFunction(Proxy) ? Proxy : Proxy$vb;

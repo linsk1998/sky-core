@@ -1,8 +1,10 @@
 const polyfill = require("rollup-plugin-polyfill-inject");
+const inject = require("@rollup/plugin-inject");
 
 module.exports = [
 	polyfill({
 		polluting: {
+
 			// ES3
 			".slice": "sky-core/polyfill/Array/prototype/slice",
 			".splice": "sky-core/polyfill/Array/prototype/splice",
@@ -288,6 +290,8 @@ module.exports = [
 
 		},
 		pure: {
+			"Proxy": "sky-core/pure/Proxy",
+			"Proxy.revocable": "sky-core/pure/Proxy/revocable",
 			// 由于有比较多的库使用XMLHttpRequest来判断浏览器版本，污染全局变量会导致判断错误，因此建议只在需要用的地方注入
 			"XMLHttpRequest": "sky-core/pure/XMLHttpRequest",
 			/* IE9+ Firefox4+ Safari5+ Opera12.5+ */
@@ -324,6 +328,20 @@ module.exports = [
 			"native/**/*",
 			"polyfill/**/*",
 			"polyfill-*/**/*"
+		]
+	}),
+	inject({
+		modules: {
+			"Object.setPrototypeOf": "sky-core/pure/Object/setPrototypeOf",
+			"Reflect.construct": "sky-core/pure/Reflect/construct",
+			"Reflect.get": "sky-core/pure/Reflect/get",
+			"Reflect.set": "sky-core/pure/Reflect/set",
+			"Reflect.apply": "sky-core/pure/Reflect/apply",
+		},
+		include: [
+			"impl/**/*",
+			"impl-*/**/*",
+			"tests/sham/**/*"
 		]
 	})
 ];

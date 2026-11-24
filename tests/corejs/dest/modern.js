@@ -228,11 +228,20 @@
 
 	var toString$1 = prototype.toString;
 
+	// @@target 是数组代理的识别标记（见 impl/Proxy/proxyArray$es3）
+	var TARGET_KEY$1 = '@@target';
 	function isArray(obj) {
-	  return toString$1.call(obj) === '[object Array]';
+	  return toString$1.call(obj) === '[object Array]' || !!(obj && obj[TARGET_KEY$1]);
 	}
 
-	if (!Array$1.isArray) {
+	var nativeIsArray = Array$1.isArray;
+	// 数组代理（见 impl/Proxy/proxyArray$es3）以 @@target 为识别标记，
+	// 原生 isArray 不识别，须在原有判定之上补充
+	if (nativeIsArray) {
+	  Array$1.isArray = function isArray(obj) {
+	    return nativeIsArray(obj) || !!(obj && obj['@@target']);
+	  };
+	} else {
 	  Array$1.isArray = isArray;
 	}
 
@@ -1506,6 +1515,8 @@
 	  return o;
 	}
 
+	var $inject_Object_setPrototypeOf = setPrototypeOf$1 || setPrototypeOf$ie;
+
 	if (!setPrototypeOf$1) {
 	  Object$1.setPrototypeOf = setPrototypeOf$ie;
 	}
@@ -1521,7 +1532,7 @@
 	    }
 	  }
 	  Error.prototype = native_Error.prototype;
-	  Object.setPrototypeOf(Error, native_Error);
+	  $inject_Object_setPrototypeOf(Error, native_Error);
 	  return Error;
 	}
 
@@ -1765,6 +1776,67 @@
 	  assert.same(Object.getPrototypeOf.sham, CORRECT_PROTOTYPE_GETTER ? undefined : true);
 	});
 
+	// 数组代理的公共基座：方法挂在 ProxyArray.prototype 上，全部实例共享；
+	// 每个实例只携带 @@target / @@handler / length。
+	// es5 版（defineProperty 实现）与 es3 版共用此原型方法。
+	// instanceof Array 的识别由 helpers-*/instanceof（babel 编译 instanceof
+	// 运算符时注入）处理；Array.isArray 的识别在其 polyfill（impl/Array/isArray）
+	// 里经 @@target 标记维护。
+	var arrayMethods = ['entries', 'every', 'forEach', 'keys', 'values', '@@iterator', 'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some', 'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString', 'valueOf', 'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with', 'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
+	var TARGET_KEY = '@@target';
+	var HANDLER_KEY = '@@handler';
+
+	// 会写入 length 的方法：调用后长度变化经 set 陷阱报告
+	var lengthWriteMethods = {
+	  push: 1,
+	  pop: 1,
+	  shift: 1,
+	  unshift: 1,
+	  splice: 1
+	};
+	function ProxyArray() {/* empty */}
+	var proto = ProxyArray.prototype;
+	(function () {
+	  var i = arrayMethods.length;
+	  while (i--) {
+	    proto[arrayMethods[i]] = proxyArrayMethod(arrayMethods[i]);
+	  }
+	})();
+
+	// 数组操作一律在目标对象上执行（见 es5 版 proxyArrayMethod 的说明）；
+	// es3 版额外同步 length：放弃截持，创建时取自 target，每次方法调用后刷新
+	function proxyArrayMethod(key) {
+	  var writesLength = !!lengthWriteMethods[key];
+	  return function () {
+	    var me = this;
+	    var target = me[TARGET_KEY];
+	    var handler = me[HANDLER_KEY];
+	    var method = handler.get ? handler.get(target, key, me) : target[key];
+	    var len = target.length;
+	    if (!writesLength && handler.get) {
+	      // 读取类方法：触发 length 读陷阱（近似：实际执行仍按真实 length）
+	      handler.get(target, "length", me);
+	    }
+	    var r = method.apply(target, arguments);
+	    if (writesLength && target.length !== len) {
+	      if (handler.set) {
+	        if (handler.set(target, "length", target.length, me) === false) {
+	          throw new TypeError("'set' on proxy: trap returned falsish for property 'length'");
+	        }
+	      }
+	      me.length = target.length;
+	    }
+	    return r;
+	  };
+	}
+
+	function _instanceof(o, Class) {
+	  if (Class === Array && o instanceof ProxyArray) {
+	    return true;
+	  }
+	  return null != Class && typeof Symbol !== "undefined" && Class[Symbol.hasInstance] ? !!Class[Symbol.hasInstance](o) : o instanceof Class;
+	}
+
 	var getOwnPropertyNames = Object$1.getOwnPropertyNames;
 
 	function isNotSymbolKey(key) {
@@ -1798,7 +1870,7 @@
 	  function F() {
 	    return this.a = 1;
 	  }
-	  assert.ok(Object.create(new F()) instanceof F, "Object.create(new F())");
+	  assert.ok(_instanceof(Object.create(new F()), F), "Object.create(new F())");
 	  assert.ok(F.prototype === Object.getPrototypeOf(Object.getPrototypeOf(Object.create(new F()))));
 	  assert.ok(Object.create(new F()).a === 1);
 	  assert.ok(Object.create({}, {
@@ -2235,13 +2307,13 @@
 	});
 
 	if (PROTO) QUnit.test('Object.setPrototypeOf', function (assert) {
-	  assert.isFunction(Object.setPrototypeOf);
-	  assert.arity(Object.setPrototypeOf, 2);
+	  assert.isFunction($inject_Object_setPrototypeOf);
+	  assert.arity($inject_Object_setPrototypeOf, 2);
 	  // assert.name(Object.setPrototypeOf, 'setPrototypeOf');
-	  assert.looksNative(Object.setPrototypeOf);
+	  assert.looksNative($inject_Object_setPrototypeOf);
 	  // assert.nonEnumerable(Object, 'setPrototypeOf');
 	  // assert.ok('apply' in Object.setPrototypeOf({}, Function.prototype), 'Parent properties in target');
-	  assert.strictEqual(Object.setPrototypeOf({
+	  assert.strictEqual($inject_Object_setPrototypeOf({
 	    a: 2
 	  }, {
 	    b: function () {
@@ -2249,7 +2321,7 @@
 	    }
 	  }).b(), 4, 'Child and parent properties in target');
 	  var object = {};
-	  assert.strictEqual(Object.setPrototypeOf(object, {
+	  assert.strictEqual($inject_Object_setPrototypeOf(object, {
 	    a: 1
 	  }), object, 'setPrototypeOf return target');
 	  // assert.ok(!('toString' in Object.setPrototypeOf({}, null)), 'Can set null as prototype');
@@ -2937,12 +3009,12 @@
 	  assert.looksNative(promise$1.then);
 	  // assert.nonEnumerable(promise.constructor.prototype, 'then');
 	  function empty() {/* empty */}
-	  assert.ok(promise$1.then(empty) instanceof Promise, '`.then` returns `Promise` instance #1');
-	  assert.ok(new promise$1.constructor(empty).then(empty) instanceof Promise, '`.then` returns `Promise` instance #2');
-	  assert.ok(promise$1["catch"](empty) instanceof Promise, '`.catch` returns `Promise` instance #1');
-	  assert.ok(new promise$1.constructor(empty)["catch"](empty) instanceof Promise, '`.catch` returns `Promise` instance #2');
-	  assert.ok(promise$1["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #1');
-	  assert.ok(new promise$1.constructor(empty)["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
+	  assert.ok(_instanceof(promise$1.then(empty), Promise), '`.then` returns `Promise` instance #1');
+	  assert.ok(_instanceof(new promise$1.constructor(empty).then(empty), Promise), '`.then` returns `Promise` instance #2');
+	  assert.ok(_instanceof(promise$1["catch"](empty), Promise), '`.catch` returns `Promise` instance #1');
+	  assert.ok(_instanceof(new promise$1.constructor(empty)["catch"](empty), Promise), '`.catch` returns `Promise` instance #2');
+	  assert.ok(_instanceof(promise$1["finally"](empty), Promise), '`.finally` returns `Promise` instance #1');
+	  assert.ok(_instanceof(new promise$1.constructor(empty)["finally"](empty), Promise), '`.finally` returns `Promise` instance #2');
 	});
 
 	var isNaN$3 = window.isNaN;
@@ -3345,7 +3417,7 @@
 	function fix_WeakMap$symbol(GWeakMap) {
 	  function WeakMap() {
 	    var m = new GWeakMap(arguments[0]);
-	    Object.setPrototypeOf(m, Object.getPrototypeOf(this));
+	    $inject_Object_setPrototypeOf(m, Object.getPrototypeOf(this));
 	    return m;
 	  }
 	  inherits(WeakMap, GWeakMap);
@@ -3488,7 +3560,7 @@
 	  assert.ok('get' in WeakMap.prototype, 'get in WeakMap.prototype');
 	  assert.ok('has' in WeakMap.prototype, 'has in WeakMap.prototype');
 	  assert.ok('set' in WeakMap.prototype, 'set in WeakMap.prototype');
-	  assert.ok(new WeakMap() instanceof WeakMap, 'new WeakMap instanceof WeakMap');
+	  assert.ok(_instanceof(new WeakMap(), WeakMap), 'new WeakMap instanceof WeakMap');
 	  var object = {};
 	  // assert.strictEqual(new WeakMap(createIterable([[object, 42]])).get(object), 42, 'Init from iterable');
 	  // let weakmap = new WeakMap();
@@ -3534,8 +3606,8 @@
 	  if (ownKeys$4) assert.arrayEqual(ownKeys$4(object), []);
 	  if (nativeSubclass) {
 	    var Subclass = nativeSubclass(WeakMap);
-	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
-	    assert.ok(new Subclass() instanceof WeakMap, 'correct subclassing with native classes #2');
+	    assert.ok(_instanceof(new Subclass(), Subclass), 'correct subclassing with native classes #1');
+	    assert.ok(_instanceof(new Subclass(), WeakMap), 'correct subclassing with native classes #2');
 	    object = {};
 	    assert.same(new Subclass().set(object, 2).get(object), 2, 'correct subclassing with native classes #3');
 	  }
@@ -3692,7 +3764,7 @@
 	function fix_WeakSet$symbol(GWeakSet) {
 	  function WeakSet() {
 	    var m = new GWeakSet(arguments[0]);
-	    Object.setPrototypeOf(m, Object.getPrototypeOf(this));
+	    $inject_Object_setPrototypeOf(m, Object.getPrototypeOf(this));
 	    return m;
 	  }
 	  inherits(WeakSet, GWeakSet);
@@ -3755,7 +3827,7 @@
 	  assert.ok('add' in WeakSet.prototype, 'add in WeakSet.prototype');
 	  assert.ok('delete' in WeakSet.prototype, 'delete in WeakSet.prototype');
 	  assert.ok('has' in WeakSet.prototype, 'has in WeakSet.prototype');
-	  assert.ok(new WeakSet() instanceof WeakSet, 'new WeakSet instanceof WeakSet');
+	  assert.ok(_instanceof(new WeakSet(), WeakSet), 'new WeakSet instanceof WeakSet');
 	  var object = {};
 	  // assert.ok(new WeakSet(createIterable([object])).has(object), 'Init from iterable');
 	  // const weakset = new WeakSet();
@@ -3796,8 +3868,8 @@
 	  if (ownKeys$3) assert.arrayEqual(ownKeys$3(object), []);
 	  if (nativeSubclass) {
 	    var Subclass = nativeSubclass(WeakSet);
-	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
-	    assert.ok(new Subclass() instanceof WeakSet, 'correct subclassing with native classes #2');
+	    assert.ok(_instanceof(new Subclass(), Subclass), 'correct subclassing with native classes #1');
+	    assert.ok(_instanceof(new Subclass(), WeakSet), 'correct subclassing with native classes #2');
 	    object = {};
 	    assert.ok(new Subclass().add(object).has(object), 'correct subclassing with native classes #3');
 	  }
@@ -3888,7 +3960,7 @@
 	  function Map() {
 	    var arr = arguments[0];
 	    var map = new GMap();
-	    Object.setPrototypeOf(map, Object.getPrototypeOf(this));
+	    $inject_Object_setPrototypeOf(map, Object.getPrototypeOf(this));
 	    if (arr) {
 	      var _iterator = enumIterableHelper(arr),
 	        _step,
@@ -3907,7 +3979,7 @@
 	    }
 	    return map;
 	  }
-	  Object.setPrototypeOf(Map, GMap);
+	  $inject_Object_setPrototypeOf(Map, GMap);
 	  Map.prototype = Object.create(GMap.prototype);
 	  return Map;
 	}
@@ -4365,7 +4437,7 @@
 	  assert.ok('get' in Map.prototype, 'get in Map.prototype');
 	  assert.ok('has' in Map.prototype, 'has in Map.prototype');
 	  assert.ok('set' in Map.prototype, 'set in Map.prototype');
-	  assert.ok(new Map() instanceof Map, 'new Map instanceof Map');
+	  assert.ok(_instanceof(new Map(), Map), 'new Map instanceof Map');
 	  assert.strictEqual(new Map(createIterable$1([[1, 1], [2, 2], [3, 3]])).size, 3, 'Init from iterable');
 	  assert.strictEqual(new Map([[Object.freeze({}), 1], [2, 3]]).size, 2, 'Support frozen objects');
 	  var done = false;
@@ -4399,8 +4471,8 @@
 	  if (ownKeys$2) assert.arrayEqual(ownKeys$2(object), []);
 	  if (nativeSubclass) {
 	    var Subclass = nativeSubclass(Map);
-	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
-	    assert.ok(new Subclass() instanceof Map, 'correct subclassing with native classes #2');
+	    assert.ok(_instanceof(new Subclass(), Subclass), 'correct subclassing with native classes #1');
+	    assert.ok(_instanceof(new Subclass(), Map), 'correct subclassing with native classes #2');
 	    assert.strictEqual(new Subclass().set(1, 2).get(1), 2, 'correct subclassing with native classes #3');
 	  }
 	});
@@ -4826,7 +4898,7 @@
 	  function Set() {
 	    var arr = arguments[0];
 	    var set = new GSet();
-	    Object.setPrototypeOf(set, Object.getPrototypeOf(this));
+	    $inject_Object_setPrototypeOf(set, Object.getPrototypeOf(this));
 	    if (arr) {
 	      var _iterator = enumIterableHelper(arr),
 	        _step,
@@ -4845,7 +4917,7 @@
 	    }
 	    return set;
 	  }
-	  Object.setPrototypeOf(Set, GSet);
+	  $inject_Object_setPrototypeOf(Set, GSet);
 	  Set.prototype = Object.create(GSet.prototype);
 	  return Set;
 	}
@@ -5051,7 +5123,7 @@
 	  assert.ok('delete' in Set.prototype, 'delete in Set.prototype');
 	  assert.ok('forEach' in Set.prototype, 'forEach in Set.prototype');
 	  assert.ok('has' in Set.prototype, 'has in Set.prototype');
-	  assert.ok(new Set() instanceof Set, 'new Set instanceof Set');
+	  assert.ok(_instanceof(new Set(), Set), 'new Set instanceof Set');
 	  var set = new Set();
 	  set.add(1);
 	  set.add(2);
@@ -5106,8 +5178,8 @@
 	  if (ownKeys$1) assert.arrayEqual(ownKeys$1(object), []);
 	  if (nativeSubclass) {
 	    var Subclass = nativeSubclass(Set);
-	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
-	    assert.ok(new Subclass() instanceof Set, 'correct subclassing with native classes #2');
+	    assert.ok(_instanceof(new Subclass(), Subclass), 'correct subclassing with native classes #1');
+	    assert.ok(_instanceof(new Subclass(), Set), 'correct subclassing with native classes #2');
 	    assert.ok(new Subclass().add(2).has(2), 'correct subclassing with native classes #3');
 	  }
 	});
@@ -7335,7 +7407,7 @@
 	  assert.deepEqual(Array.of(1, 2, 3), [1, 2, 3]);
 	  var C = function C() {};
 	  var instance = Array.of.call(C, 1, 2);
-	  assert.ok(instance instanceof C);
+	  assert.ok(_instanceof(instance, C));
 	  assert.strictEqual(instance[0], 1);
 	  assert.strictEqual(instance[1], 2);
 	  assert.strictEqual(instance.length, 2);
@@ -7504,14 +7576,14 @@
 	  assert.ok(done, '.return #throw');
 	  var C = function C() {};
 	  var instance = from.call(C, createIterable$1([1, 2]));
-	  assert.ok(instance instanceof C, 'generic, iterable case, instanceof');
+	  assert.ok(_instanceof(instance, C), 'generic, iterable case, instanceof');
 	  assert.arrayEqual(instance, [1, 2], 'generic, iterable case, elements');
 	  instance = from.call(C, {
 	    0: 1,
 	    1: 2,
 	    length: 2
 	  });
-	  assert.ok(instance instanceof C, 'generic, array-like case, instanceof');
+	  assert.ok(_instanceof(instance, C), 'generic, array-like case, instanceof');
 	  assert.arrayEqual(instance, [1, 2], 'generic, array-like case, elements');
 	  var array = [1, 2, 3];
 	  done = false;
@@ -8152,7 +8224,7 @@
 	  assert.arity(Promise.prototype["finally"], 1);
 	  assert.looksNative(Promise.prototype["finally"]);
 	  assert.nonEnumerable(Promise.prototype, 'finally');
-	  assert.ok(Promise.resolve(42)["finally"](function () {/* empty */}) instanceof Promise, 'returns a promise');
+	  assert.ok(_instanceof(Promise.resolve(42)["finally"](function () {/* empty */}), Promise), 'returns a promise');
 	});
 	QUnit.asyncTest('Promise#finally, resolved', function (assert) {
 	  expect(3);
@@ -8192,8 +8264,8 @@
 	  assert.looksNative(promise["finally"]);
 	  assert.nonEnumerable(promise.constructor.prototype, 'finally');
 	  function empty() {/* empty */}
-	  assert.ok(promise["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #1');
-	  assert.ok(new promise.constructor(empty)["finally"](empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
+	  assert.ok(_instanceof(promise["finally"](empty), Promise), '`.finally` returns `Promise` instance #1');
+	  assert.ok(_instanceof(new promise.constructor(empty)["finally"](empty), Promise), '`.finally` returns `Promise` instance #2');
 	});
 
 	definePrototype(String, 'trimStart', trimStart);
@@ -8472,7 +8544,7 @@
 	  assert.looksNative(Object.fromEntries);
 	  // assert.nonEnumerable(Object, 'fromEntries');
 
-	  assert.ok(Object.fromEntries([]) instanceof Object);
+	  assert.ok(_instanceof(Object.fromEntries([]), Object));
 	  assert.same(Object.fromEntries([['foo', 1]]).foo, 1);
 	  assert.same(Object.fromEntries(createIterable$1([['bar', 2]])).bar, 2);
 	  var Unit = /*#__PURE__*/function () {
@@ -8748,7 +8820,7 @@
 	  assert.arity(Promise.allSettled, 1);
 	  assert.looksNative(Promise.allSettled);
 	  // assert.nonEnumerable(Promise, 'allSettled');
-	  assert.ok(Promise.allSettled([1, 2, 3]) instanceof Promise, 'returns a promise');
+	  assert.ok(_instanceof(Promise.allSettled([1, 2, 3]), Promise), 'returns a promise');
 	});
 	QUnit.asyncTest('Promise.allSettled, resolved', function (assert) {
 	  expect(1);
@@ -8959,7 +9031,7 @@
 	  assert.arity(Promise.any, 1);
 	  assert.looksNative(Promise.any);
 	  // assert.nonEnumerable(Promise, 'any');
-	  assert.ok(Promise.any([1, 2, 3]) instanceof Promise, 'returns a promise');
+	  assert.ok(_instanceof(Promise.any([1, 2, 3]), Promise), 'returns a promise');
 	});
 	QUnit.asyncTest('Promise.any, resolved', function (assert) {
 	  expect(1);
@@ -8971,7 +9043,7 @@
 	QUnit.asyncTest('Promise.any, rejected #1', function (assert) {
 	  expect(2);
 	  Promise.any([Promise.reject(1), Promise.reject(2), Promise.reject(3)])["catch"](function (error) {
-	    assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
+	    assert.ok(_instanceof(error, AggregateError), 'instanceof AggregateError');
 	    assert.deepEqual(error.errors, [1, 2, 3], 'rejected with a correct value');
 	    start();
 	  });
@@ -8986,7 +9058,7 @@
 	QUnit.asyncTest('Promise.any, rejected #3', function (assert) {
 	  expect(2);
 	  Promise.any([])["catch"](function (error) {
-	    assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
+	    assert.ok(_instanceof(error, AggregateError), 'instanceof AggregateError');
 	    assert.deepEqual(error.errors, [], 'rejected with a correct value');
 	    start();
 	  });
@@ -8997,10 +9069,10 @@
 	  assert.arity(AggregateError, 2);
 	  assert.name(AggregateError, 'AggregateError');
 	  assert.looksNative(AggregateError);
-	  assert.ok(new AggregateError([1]) instanceof AggregateError);
-	  assert.ok(new AggregateError([1]) instanceof Error);
-	  assert.ok(AggregateError([1]) instanceof AggregateError);
-	  assert.ok(AggregateError([1]) instanceof Error);
+	  assert.ok(_instanceof(new AggregateError([1]), AggregateError));
+	  assert.ok(_instanceof(new AggregateError([1]), Error));
+	  assert.ok(_instanceof(AggregateError([1]), AggregateError));
+	  assert.ok(_instanceof(AggregateError([1]), Error));
 	  assert.same(AggregateError([1], 'foo').message, 'foo');
 	  assert.deepEqual(AggregateError([1, 2, 3]).errors, [1, 2, 3]);
 	});
@@ -10001,7 +10073,7 @@
 	      foo: 1
 	    };
 	  }, _array$constructor);
-	  assert.equal(true, array.toReversed() instanceof Array, 'non-generic');
+	  assert.equal(true, _instanceof(array.toReversed(), Array), 'non-generic');
 	  if (STRICT) {
 	    assert["throws"](function () {
 	      return toReversed.call(null, function () {/* empty */}, 1);
@@ -10148,7 +10220,7 @@
 	      foo: 1
 	    };
 	  }, _array$constructor);
-	  assert.equal(true, array.toSorted() instanceof Array, 'non-generic');
+	  assert.equal(true, _instanceof(array.toSorted(), Array), 'non-generic');
 	  if (STRICT) {
 	    assert["throws"](function () {
 	      return toSorted.call(null);
@@ -10200,7 +10272,7 @@
 	      foo: 1
 	    };
 	  }, _array$constructor);
-	  assert.equal(true, array.toSpliced() instanceof Array, 'non-generic');
+	  assert.equal(true, _instanceof(array.toSpliced(), Array), 'non-generic');
 
 	  // assert.equal(true, 'toSpliced' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
@@ -10517,9 +10589,9 @@
 	  assert.isFunction(groupBy);
 	  assert.arity(groupBy, 2);
 	  assert.name(groupBy, 'groupBy');
-	  assert.ok(groupBy([], function (it) {
+	  assert.ok(_instanceof(groupBy([], function (it) {
 	    return it;
-	  }) instanceof Map);
+	  }), Map));
 	  assert.deepEqual(from(groupBy([], function (it) {
 	    return it;
 	  })), []);
@@ -10568,7 +10640,7 @@
 	  assert.name(withResolvers, 'withResolvers');
 	  var d1 = Promise.withResolvers();
 	  assert.same(Object.getPrototypeOf(d1), Object.prototype, 'proto is Object.prototype');
-	  assert.ok(d1.promise instanceof Promise === true, 'promise is promise');
+	  assert.ok(_instanceof(d1.promise, Promise) === true, 'promise is promise');
 	  assert.isFunction(d1.resolve, 'resolve is function');
 	  assert.isFunction(d1.reject, 'reject is function');
 
@@ -11766,7 +11838,7 @@
 	QUnit.asyncTest('subclassable', function (assert) {
 	  function C() {}
 	  Array.fromAsync.call(C, [1]).then(function (it) {
-	    assert.ok(it instanceof C);
+	    assert.ok(_instanceof(it, C));
 	    start();
 	  })["catch"](function (err) {
 	    assert.ok(false, 'rejected: ' + err);
@@ -11795,7 +11867,7 @@
 	    0: Promise.resolve(1),
 	    1: 2
 	  }).then(function (result) {
-	    assert.ok(result instanceof C);
+	    assert.ok(_instanceof(result, C));
 	    assert.equal(log.length, 2);
 	    assert.equal(log[1], 2);
 	    start();
@@ -11810,7 +11882,7 @@
 	    assert.ok(false, 'should reject');
 	    start();
 	  }, function (err) {
-	    assert.ok(err instanceof TypeError);
+	    assert.ok(_instanceof(err, TypeError));
 	    start();
 	  })["catch"](function (err) {
 	    assert.ok(false, 'unexpected catch');
@@ -11822,7 +11894,7 @@
 	    assert.ok(false, 'should reject');
 	    start();
 	  }, function (err) {
-	    assert.ok(err instanceof TypeError);
+	    assert.ok(_instanceof(err, TypeError));
 	    start();
 	  })["catch"](function (err) {
 	    assert.ok(false, 'unexpected catch');
@@ -11834,7 +11906,7 @@
 	    assert.ok(false, 'should reject');
 	    start();
 	  }, function (err) {
-	    assert.ok(err instanceof TypeError);
+	    assert.ok(_instanceof(err, TypeError));
 	    start();
 	  })["catch"](function (err) {
 	    assert.ok(false, 'unexpected catch');
@@ -11846,7 +11918,7 @@
 	    assert.ok(false, 'should reject');
 	    start();
 	  }, function (err) {
-	    assert.ok(err instanceof TypeError);
+	    assert.ok(_instanceof(err, TypeError));
 	    start();
 	  })["catch"](function (err) {
 	    assert.ok(false, 'unexpected catch');

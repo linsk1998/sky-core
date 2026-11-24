@@ -54,7 +54,7 @@ var COMPAT_MAIN_PLUGINS = [
 	["@babel/plugin-transform-destructuring", { loose: true, "useBuiltIns": true }],
 	"@babel/plugin-transform-duplicate-keys",
 	["@babel/plugin-transform-for-of", { loose: true }],
-	// "@babel/plugin-transform-instanceof",
+	"@babel/plugin-transform-instanceof",
 	"@babel/plugin-transform-literals",
 	"@babel/plugin-transform-new-target",
 	// "@babel/plugin-transform-object-super",
@@ -112,7 +112,7 @@ var MODERN_MAIN_PLUGINS = [
 	["@babel/plugin-transform-destructuring", { loose: true, "useBuiltIns": true }],
 	"@babel/plugin-transform-duplicate-keys",
 	["@babel/plugin-transform-for-of", { loose: true }],
-	// "@babel/plugin-transform-instanceof",
+	"@babel/plugin-transform-instanceof",
 	"@babel/plugin-transform-literals",
 	"@babel/plugin-transform-new-target",
 	// "@babel/plugin-transform-object-super",
@@ -142,7 +142,8 @@ var ES2015_MAIN_PLUGINS = [
 		version: babelRuntimeVersion
 	}],
 	// ES2019
-	"@babel/plugin-transform-optional-catch-binding"
+	"@babel/plugin-transform-optional-catch-binding",
+	"@babel/plugin-transform-instanceof"
 ];
 
 	var TIER_BABEL = {
@@ -156,6 +157,7 @@ var ES2015_MAIN_PLUGINS = [
 	var TEST_SOURCE_INCLUDE = [
 		"tests/corejs/**/*",
 		"tests/mdn/**/*",
+		"tests/sham/**/*",
 	];
 
 var DEFAULT_OUTPUT_FILES = {

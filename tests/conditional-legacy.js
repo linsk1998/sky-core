@@ -4,6 +4,7 @@ const inject = require("@rollup/plugin-inject");
 module.exports = [
 	polyfill({
 		polluting: {
+
 			// firefox3
 			".slice": "sky-core/polyfill/Array/prototype/slice",
 			// Safari 5
@@ -314,6 +315,17 @@ module.exports = [
 	}),
 	inject({
 		modules: {
+			"Object.setPrototypeOf": "sky-core/pure/Object/setPrototypeOf",
+
+			"Reflect.construct": "sky-core/pure/Reflect/construct",
+			"Reflect.get": "sky-core/pure/Reflect/get",
+			"Reflect.set": "sky-core/pure/Reflect/set",
+			"Reflect.apply": "sky-core/pure/Reflect/apply",
+
+			"Proxy": "sky-core/pure/Proxy",
+			"Proxy.revocable": "sky-core/pure/Proxy/revocable",
+
+
 			"setTimeout": "sky-core/pure/setTimeout",
 			"setInterval": "sky-core/pure/setInterval",
 			"Object.create": "sky-core/pure/Object/create",
@@ -329,6 +341,7 @@ module.exports = [
 		include: [
 			"impl/**/*",
 			"impl-*/**/*",
+			"tests/sham/**/*",
 			"tests/corejs/es/*",
 			"tests/corejs/web/*",
 		]

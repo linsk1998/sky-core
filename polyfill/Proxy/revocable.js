@@ -1,4 +1,4 @@
-import { Proxy } from "../../native/Proxy";
+import { Proxy } from "../Proxy";
 import { revocable } from "../../impl/Proxy/revocable";
 
 if(!Proxy.revocable) {

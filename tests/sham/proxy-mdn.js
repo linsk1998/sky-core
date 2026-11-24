@@ -119,10 +119,15 @@ QUnit.test('Proxy', function(assert) {
 		},
 	);
 
-	let i1 = (view.selected = document.getElementById("item-1"));
+	// 原 MDN 示例取页面元素，此处自建
+	var item1 = document.createElement("div");
+	var item2 = document.createElement("div");
+	document.body.appendChild(item1);
+	document.body.appendChild(item2);
+	let i1 = (view.selected = item1);
 	assert.equal(i1.getAttribute("aria-selected"), "true");
 
-	let i2 = (view.selected = document.getElementById("item-2"));
+	let i2 = (view.selected = item2);
 	assert.equal(i1.getAttribute("aria-selected"), "false");
 	assert.equal(i2.getAttribute("aria-selected"), "true");
 
@@ -145,7 +150,7 @@ QUnit.test('Proxy', function(assert) {
 				// 附加属性
 				if(prop === "latestBrowser") {
 					obj.browsers.push(value);
-					return;
+					return true;
 				}
 
 				// 如果不是数组，则进行转换
@@ -264,7 +269,7 @@ QUnit.test('Proxy#get', function(assert) {
 			if(prop === 'secret') {
 				return `${target.secret.substring(0, 4)} ... shhhh!`;
 			}
-			return Reflect.get(...arguments);
+			return Reflect.get(target, prop, receiver);
 		},
 	};
 
@@ -298,8 +303,10 @@ QUnit.test('Proxy#set', function(assert) {
 		set(obj, prop, value) {
 			if(prop === 'eyeCount' && value % 2 !== 0) {
 				assert.deepEqual(value, 1);
+				return true;
 			} else {
-				return Reflect.set(...arguments);
+				obj[prop] = value;
+				return true;
 			}
 		},
 	};
@@ -319,8 +326,7 @@ QUnit.test('Proxy#set', function(assert) {
 		},
 		{
 			set(target, prop, value, receiver) {
-				target[prop] = value;
-				return true;
+				return Reflect.set(target, prop, value, receiver);
 			},
 		},
 	);

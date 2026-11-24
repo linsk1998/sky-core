@@ -27,7 +27,7 @@
 
 	var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
 
-	var proto = !!setPrototypeOf$1 || ('__proto__' in Object.prototype);
+	var proto$1 = !!setPrototypeOf$1 || ('__proto__' in Object.prototype);
 
 	var o = {};
 	o.__proto__ = null;
@@ -162,7 +162,7 @@
 	var getPrototypeOf$1 = getPrototypeOf$2 ? (
 		setPrototypeOf$1 ? getPrototypeOf$2 : getPrototypeOf$ie
 	) : (
-		proto ?
+		proto$1 ?
 			(canProtoNull ? getPrototypeOf$ff : getPrototypeOf$o) :
 			(hasEnumBug ? getPrototypeOf$jscript : getPrototypeOf$es3)
 	);
@@ -1410,6 +1410,115 @@ return class extends Parent { /* empty */ };
 	  assert.same(Object.getPrototypeOf.sham, CORRECT_PROTOTYPE_GETTER ? undefined : true);
 	});
 
+	var descs = Object.create(null);
+	function Symbol$6() {
+		var desc = arguments[0];
+		if(desc !== undefined) {
+			desc = String(desc);
+		}
+		var s = Symbol$7(desc);
+		descs[s] = desc;
+		return s;
+	};
+	if(setPrototypeOf$1 && Symbol$7) {
+		setPrototypeOf$1(Symbol$6, Symbol$7);
+	}
+
+	function getSymbolDescription() {
+		var s = this.valueOf();
+		if(s in descs) {
+			return descs[s];
+		}
+		return String(this).slice(7, -1);
+	}
+
+	var Symbol$4;
+	if('description' in Symbol$7.prototype) {
+		Symbol$4 = Symbol$7;
+	} else {
+		Symbol$4 = Symbol$6;
+		Object.defineProperty(Symbol$7.prototype, 'description', {
+			configurable: true,
+			enumerable: false,
+			get: getSymbolDescription
+		});
+	}
+	var Symbol$5 = Symbol$4;
+
+	if(Symbol$7 !== Symbol$5) {
+		if(!Symbol$5.asyncIterator) { Symbol$5.asyncIterator = Symbol$5("asyncIterator"); }
+		window.Symbol = Symbol$5;
+	}
+
+	// 数组代理的公共基座：方法挂在 ProxyArray.prototype 上，全部实例共享；
+	// 每个实例只携带 @@target / @@handler / length。
+	// es5 版（defineProperty 实现）与 es3 版共用此原型方法。
+	// instanceof Array 的识别由 helpers-*/instanceof（babel 编译 instanceof
+	// 运算符时注入）处理；Array.isArray 的识别在其 polyfill（impl/Array/isArray）
+	// 里经 @@target 标记维护。
+	var arrayMethods = [
+		'entries', 'every', 'forEach', 'keys', 'values', '@@iterator',
+		'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some',
+		'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString', 'valueOf',
+		'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with',
+		'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift',
+	];
+
+	var TARGET_KEY = '@@target';
+	var HANDLER_KEY = '@@handler';
+
+	// 会写入 length 的方法：调用后长度变化经 set 陷阱报告
+	var lengthWriteMethods = {
+		push: 1, pop: 1, shift: 1, unshift: 1, splice: 1
+	};
+
+	function ProxyArray() { /* empty */ }
+	var proto = ProxyArray.prototype;
+	(function() {
+		var i = arrayMethods.length;
+		while(i--) {
+			proto[arrayMethods[i]] = proxyArrayMethod(arrayMethods[i]);
+		}
+	})();
+
+	// 数组操作一律在目标对象上执行（见 es5 版 proxyArrayMethod 的说明）；
+	// es3 版额外同步 length：放弃截持，创建时取自 target，每次方法调用后刷新
+	function proxyArrayMethod(key) {
+		var writesLength = !!lengthWriteMethods[key];
+		return function() {
+			var me = this;
+			var target = me[TARGET_KEY];
+			var handler = me[HANDLER_KEY];
+			var method = handler.get ?
+				handler.get(target, key, me) :
+				target[key];
+			var len = target.length;
+			if(!writesLength && handler.get) {
+				// 读取类方法：触发 length 读陷阱（近似：实际执行仍按真实 length）
+				handler.get(target, "length", me);
+			}
+			var r = method.apply(target, arguments);
+			if(writesLength && target.length !== len) {
+				if(handler.set) {
+					if(handler.set(target, "length", target.length, me) === false) {
+						throw new TypeError("'set' on proxy: trap returned falsish for property 'length'");
+					}
+				}
+				me.length = target.length;
+			}
+			return r;
+		};
+	}
+
+	function _instanceof(o, Class) {
+		if(Class === Array && o instanceof ProxyArray) {
+			return true;
+		}
+		return null != Class && typeof Symbol !== "undefined" && Class[Symbol.hasInstance] ?
+			!!Class[Symbol.hasInstance](o) :
+			o instanceof Class;
+	}
+
 	QUnit.test('Object.create', assert => {
 	  function getPropertyNames(object) {
 	    let result = [];
@@ -1429,7 +1538,7 @@ return class extends Parent { /* empty */ };
 	  function F() {
 	    return this.a = 1;
 	  }
-	  assert.ok(Object.create(new F()) instanceof F, "Object.create(new F())");
+	  assert.ok(_instanceof(Object.create(new F()), F), "Object.create(new F())");
 	  assert.ok(F.prototype === Object.getPrototypeOf(Object.getPrototypeOf(Object.create(new F()))));
 	  assert.ok(Object.create(new F()).a === 1);
 	  assert.ok(Object.create({}, {
@@ -2125,7 +2234,7 @@ return class extends Parent { /* empty */ };
 
 	definePrototype(Promise$1, 'finally', promise_finally);
 
-	const Symbol$6 = GLOBAL.Symbol || {};
+	const Symbol$3 = GLOBAL.Symbol || {};
 	const {
 	  setPrototypeOf,
 	  create
@@ -2208,7 +2317,7 @@ return class extends Parent { /* empty */ };
 	  let FakePromise1 = promise.constructor = function (executor) {
 	    executor(() => {/* empty */}, () => {/* empty */});
 	  };
-	  const FakePromise2 = FakePromise1[Symbol$6.species] = function (executor) {
+	  const FakePromise2 = FakePromise1[Symbol$3.species] = function (executor) {
 	    executor(() => {/* empty */}, () => {/* empty */});
 	  };
 	  // assert.ok(promise.then(() => { /* empty */ }) instanceof FakePromise2, 'subclassing, @@species pattern');
@@ -2512,12 +2621,12 @@ return class extends Parent { /* empty */ };
 	  assert.looksNative(promise$1.then);
 	  // assert.nonEnumerable(promise.constructor.prototype, 'then');
 	  function empty() {/* empty */}
-	  assert.ok(promise$1.then(empty) instanceof Promise, '`.then` returns `Promise` instance #1');
-	  assert.ok(new promise$1.constructor(empty).then(empty) instanceof Promise, '`.then` returns `Promise` instance #2');
-	  assert.ok(promise$1.catch(empty) instanceof Promise, '`.catch` returns `Promise` instance #1');
-	  assert.ok(new promise$1.constructor(empty).catch(empty) instanceof Promise, '`.catch` returns `Promise` instance #2');
-	  assert.ok(promise$1.finally(empty) instanceof Promise, '`.finally` returns `Promise` instance #1');
-	  assert.ok(new promise$1.constructor(empty).finally(empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
+	  assert.ok(_instanceof(promise$1.then(empty), Promise), '`.then` returns `Promise` instance #1');
+	  assert.ok(_instanceof(new promise$1.constructor(empty).then(empty), Promise), '`.then` returns `Promise` instance #2');
+	  assert.ok(_instanceof(promise$1.catch(empty), Promise), '`.catch` returns `Promise` instance #1');
+	  assert.ok(_instanceof(new promise$1.constructor(empty).catch(empty), Promise), '`.catch` returns `Promise` instance #2');
+	  assert.ok(_instanceof(promise$1.finally(empty), Promise), '`.finally` returns `Promise` instance #1');
+	  assert.ok(_instanceof(new promise$1.constructor(empty).finally(empty), Promise), '`.finally` returns `Promise` instance #2');
 	});
 
 	QUnit.test('Number.isNaN', assert => {
@@ -2794,7 +2903,7 @@ return class extends Parent { /* empty */ };
 		clazz.prototype.constructor = clazz;
 	}
 
-	var inherits = proto ? inherits$1 : inherits$2;
+	var inherits = proto$1 ? inherits$1 : inherits$2;
 
 	function fix_WeakMap$symbol(GWeakMap) {
 		function WeakMap() {
@@ -2850,46 +2959,6 @@ return class extends Parent { /* empty */ };
 		window.WeakMap = fix_WeakMap$symbol(WeakMap$1);
 	}
 
-	var descs = Object.create(null);
-	function Symbol$5() {
-		var desc = arguments[0];
-		if(desc !== undefined) {
-			desc = String(desc);
-		}
-		var s = Symbol$7(desc);
-		descs[s] = desc;
-		return s;
-	};
-	if(setPrototypeOf$1 && Symbol$7) {
-		setPrototypeOf$1(Symbol$5, Symbol$7);
-	}
-
-	function getSymbolDescription() {
-		var s = this.valueOf();
-		if(s in descs) {
-			return descs[s];
-		}
-		return String(this).slice(7, -1);
-	}
-
-	var Symbol$3;
-	if('description' in Symbol$7.prototype) {
-		Symbol$3 = Symbol$7;
-	} else {
-		Symbol$3 = Symbol$5;
-		Object.defineProperty(Symbol$7.prototype, 'description', {
-			configurable: true,
-			enumerable: false,
-			get: getSymbolDescription
-		});
-	}
-	var Symbol$4 = Symbol$3;
-
-	if(Symbol$7 !== Symbol$4) {
-		if(!Symbol$4.asyncIterator) { Symbol$4.asyncIterator = Symbol$4("asyncIterator"); }
-		window.Symbol = Symbol$4;
-	}
-
 	const {
 	  ownKeys: ownKeys$4
 	} = GLOBAL.Reflect || {};
@@ -2902,7 +2971,7 @@ return class extends Parent { /* empty */ };
 	  assert.ok('get' in WeakMap.prototype, 'get in WeakMap.prototype');
 	  assert.ok('has' in WeakMap.prototype, 'has in WeakMap.prototype');
 	  assert.ok('set' in WeakMap.prototype, 'set in WeakMap.prototype');
-	  assert.ok(new WeakMap() instanceof WeakMap, 'new WeakMap instanceof WeakMap');
+	  assert.ok(_instanceof(new WeakMap(), WeakMap), 'new WeakMap instanceof WeakMap');
 	  let object = {};
 	  // assert.strictEqual(new WeakMap(createIterable([[object, 42]])).get(object), 42, 'Init from iterable');
 	  // let weakmap = new WeakMap();
@@ -2948,8 +3017,8 @@ return class extends Parent { /* empty */ };
 	  if (ownKeys$4) assert.arrayEqual(ownKeys$4(object), []);
 	  if (nativeSubclass) {
 	    const Subclass = nativeSubclass(WeakMap);
-	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
-	    assert.ok(new Subclass() instanceof WeakMap, 'correct subclassing with native classes #2');
+	    assert.ok(_instanceof(new Subclass(), Subclass), 'correct subclassing with native classes #1');
+	    assert.ok(_instanceof(new Subclass(), WeakMap), 'correct subclassing with native classes #2');
 	    object = {};
 	    assert.same(new Subclass().set(object, 2).get(object), 2, 'correct subclassing with native classes #3');
 	  }
@@ -3115,7 +3184,7 @@ return class extends Parent { /* empty */ };
 	  assert.ok('add' in WeakSet.prototype, 'add in WeakSet.prototype');
 	  assert.ok('delete' in WeakSet.prototype, 'delete in WeakSet.prototype');
 	  assert.ok('has' in WeakSet.prototype, 'has in WeakSet.prototype');
-	  assert.ok(new WeakSet() instanceof WeakSet, 'new WeakSet instanceof WeakSet');
+	  assert.ok(_instanceof(new WeakSet(), WeakSet), 'new WeakSet instanceof WeakSet');
 	  let object = {};
 	  // assert.ok(new WeakSet(createIterable([object])).has(object), 'Init from iterable');
 	  // const weakset = new WeakSet();
@@ -3156,8 +3225,8 @@ return class extends Parent { /* empty */ };
 	  if (ownKeys$3) assert.arrayEqual(ownKeys$3(object), []);
 	  if (nativeSubclass) {
 	    const Subclass = nativeSubclass(WeakSet);
-	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
-	    assert.ok(new Subclass() instanceof WeakSet, 'correct subclassing with native classes #2');
+	    assert.ok(_instanceof(new Subclass(), Subclass), 'correct subclassing with native classes #1');
+	    assert.ok(_instanceof(new Subclass(), WeakSet), 'correct subclassing with native classes #2');
 	    object = {};
 	    assert.ok(new Subclass().add(object).has(object), 'correct subclassing with native classes #3');
 	  }
@@ -3254,7 +3323,7 @@ return class extends Parent { /* empty */ };
 	  assert.ok('get' in Map.prototype, 'get in Map.prototype');
 	  assert.ok('has' in Map.prototype, 'has in Map.prototype');
 	  assert.ok('set' in Map.prototype, 'set in Map.prototype');
-	  assert.ok(new Map() instanceof Map, 'new Map instanceof Map');
+	  assert.ok(_instanceof(new Map(), Map), 'new Map instanceof Map');
 	  assert.strictEqual(new Map(createIterable([[1, 1], [2, 2], [3, 3]])).size, 3, 'Init from iterable');
 	  assert.strictEqual(new Map([[Object.freeze({}), 1], [2, 3]]).size, 2, 'Support frozen objects');
 	  let done = false;
@@ -3288,8 +3357,8 @@ return class extends Parent { /* empty */ };
 	  if (ownKeys$2) assert.arrayEqual(ownKeys$2(object), []);
 	  if (nativeSubclass) {
 	    const Subclass = nativeSubclass(Map);
-	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
-	    assert.ok(new Subclass() instanceof Map, 'correct subclassing with native classes #2');
+	    assert.ok(_instanceof(new Subclass(), Subclass), 'correct subclassing with native classes #1');
+	    assert.ok(_instanceof(new Subclass(), Map), 'correct subclassing with native classes #2');
 	    assert.strictEqual(new Subclass().set(1, 2).get(1), 2, 'correct subclassing with native classes #3');
 	  }
 	});
@@ -3696,7 +3765,7 @@ return class extends Parent { /* empty */ };
 	  assert.ok('delete' in Set.prototype, 'delete in Set.prototype');
 	  assert.ok('forEach' in Set.prototype, 'forEach in Set.prototype');
 	  assert.ok('has' in Set.prototype, 'has in Set.prototype');
-	  assert.ok(new Set() instanceof Set, 'new Set instanceof Set');
+	  assert.ok(_instanceof(new Set(), Set), 'new Set instanceof Set');
 	  const set = new Set();
 	  set.add(1);
 	  set.add(2);
@@ -3751,8 +3820,8 @@ return class extends Parent { /* empty */ };
 	  if (ownKeys$1) assert.arrayEqual(ownKeys$1(object), []);
 	  if (nativeSubclass) {
 	    const Subclass = nativeSubclass(Set);
-	    assert.ok(new Subclass() instanceof Subclass, 'correct subclassing with native classes #1');
-	    assert.ok(new Subclass() instanceof Set, 'correct subclassing with native classes #2');
+	    assert.ok(_instanceof(new Subclass(), Subclass), 'correct subclassing with native classes #1');
+	    assert.ok(_instanceof(new Subclass(), Set), 'correct subclassing with native classes #2');
 	    assert.ok(new Subclass().add(2).has(2), 'correct subclassing with native classes #3');
 	  }
 	});
@@ -5418,7 +5487,7 @@ return class extends Parent { /* empty */ };
 	  assert.deepEqual(Array.of(1, 2, 3), [1, 2, 3]);
 	  class C {/* empty */}
 	  const instance = Array.of.call(C, 1, 2);
-	  assert.ok(instance instanceof C);
+	  assert.ok(_instanceof(instance, C));
 	  assert.strictEqual(instance[0], 1);
 	  assert.strictEqual(instance[1], 2);
 	  assert.strictEqual(instance.length, 2);
@@ -5568,14 +5637,14 @@ return class extends Parent { /* empty */ };
 	  assert.ok(done, '.return #throw');
 	  class C {/* empty */}
 	  let instance = from.call(C, createIterable([1, 2]));
-	  assert.ok(instance instanceof C, 'generic, iterable case, instanceof');
+	  assert.ok(_instanceof(instance, C), 'generic, iterable case, instanceof');
 	  assert.arrayEqual(instance, [1, 2], 'generic, iterable case, elements');
 	  instance = from.call(C, {
 	    0: 1,
 	    1: 2,
 	    length: 2
 	  });
-	  assert.ok(instance instanceof C, 'generic, array-like case, instanceof');
+	  assert.ok(_instanceof(instance, C), 'generic, array-like case, instanceof');
 	  assert.arrayEqual(instance, [1, 2], 'generic, array-like case, elements');
 	  let array = [1, 2, 3];
 	  done = false;
@@ -6054,7 +6123,7 @@ return class extends Parent { /* empty */ };
 	  assert.arity(Promise.prototype.finally, 1);
 	  assert.looksNative(Promise.prototype.finally);
 	  assert.nonEnumerable(Promise.prototype, 'finally');
-	  assert.ok(Promise.resolve(42).finally(() => {/* empty */}) instanceof Promise, 'returns a promise');
+	  assert.ok(_instanceof(Promise.resolve(42).finally(() => {/* empty */}), Promise), 'returns a promise');
 	});
 	QUnit.asyncTest('Promise#finally, resolved', assert => {
 	  expect(3);
@@ -6094,8 +6163,8 @@ return class extends Parent { /* empty */ };
 	  assert.looksNative(promise.finally);
 	  assert.nonEnumerable(promise.constructor.prototype, 'finally');
 	  function empty() {/* empty */}
-	  assert.ok(promise.finally(empty) instanceof Promise, '`.finally` returns `Promise` instance #1');
-	  assert.ok(new promise.constructor(empty).finally(empty) instanceof Promise, '`.finally` returns `Promise` instance #2');
+	  assert.ok(_instanceof(promise.finally(empty), Promise), '`.finally` returns `Promise` instance #1');
+	  assert.ok(_instanceof(new promise.constructor(empty).finally(empty), Promise), '`.finally` returns `Promise` instance #2');
 	});
 
 	function trimStart() {
@@ -6347,7 +6416,7 @@ return class extends Parent { /* empty */ };
 	  assert.looksNative(Object.fromEntries);
 	  // assert.nonEnumerable(Object, 'fromEntries');
 
-	  assert.ok(Object.fromEntries([]) instanceof Object);
+	  assert.ok(_instanceof(Object.fromEntries([]), Object));
 	  assert.same(Object.fromEntries([['foo', 1]]).foo, 1);
 	  assert.same(Object.fromEntries(createIterable([['bar', 2]])).bar, 2);
 	  class Unit {
@@ -6602,7 +6671,7 @@ return class extends Parent { /* empty */ };
 	  assert.arity(Promise.allSettled, 1);
 	  assert.looksNative(Promise.allSettled);
 	  // assert.nonEnumerable(Promise, 'allSettled');
-	  assert.ok(Promise.allSettled([1, 2, 3]) instanceof Promise, 'returns a promise');
+	  assert.ok(_instanceof(Promise.allSettled([1, 2, 3]), Promise), 'returns a promise');
 	});
 	QUnit.asyncTest('Promise.allSettled, resolved', assert => {
 	  expect(1);
@@ -6806,7 +6875,7 @@ return class extends Parent { /* empty */ };
 	  assert.arity(Promise.any, 1);
 	  assert.looksNative(Promise.any);
 	  // assert.nonEnumerable(Promise, 'any');
-	  assert.ok(Promise.any([1, 2, 3]) instanceof Promise, 'returns a promise');
+	  assert.ok(_instanceof(Promise.any([1, 2, 3]), Promise), 'returns a promise');
 	});
 	QUnit.asyncTest('Promise.any, resolved', assert => {
 	  expect(1);
@@ -6818,7 +6887,7 @@ return class extends Parent { /* empty */ };
 	QUnit.asyncTest('Promise.any, rejected #1', assert => {
 	  expect(2);
 	  Promise.any([Promise.reject(1), Promise.reject(2), Promise.reject(3)]).catch(error => {
-	    assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
+	    assert.ok(_instanceof(error, AggregateError), 'instanceof AggregateError');
 	    assert.deepEqual(error.errors, [1, 2, 3], 'rejected with a correct value');
 	    start();
 	  });
@@ -6833,7 +6902,7 @@ return class extends Parent { /* empty */ };
 	QUnit.asyncTest('Promise.any, rejected #3', assert => {
 	  expect(2);
 	  Promise.any([]).catch(error => {
-	    assert.ok(error instanceof AggregateError, 'instanceof AggregateError');
+	    assert.ok(_instanceof(error, AggregateError), 'instanceof AggregateError');
 	    assert.deepEqual(error.errors, [], 'rejected with a correct value');
 	    start();
 	  });
@@ -6844,10 +6913,10 @@ return class extends Parent { /* empty */ };
 	  assert.arity(AggregateError, 2);
 	  assert.name(AggregateError, 'AggregateError');
 	  assert.looksNative(AggregateError);
-	  assert.ok(new AggregateError([1]) instanceof AggregateError);
-	  assert.ok(new AggregateError([1]) instanceof Error);
-	  assert.ok(AggregateError([1]) instanceof AggregateError);
-	  assert.ok(AggregateError([1]) instanceof Error);
+	  assert.ok(_instanceof(new AggregateError([1]), AggregateError));
+	  assert.ok(_instanceof(new AggregateError([1]), Error));
+	  assert.ok(_instanceof(AggregateError([1]), AggregateError));
+	  assert.ok(_instanceof(AggregateError([1]), Error));
 	  assert.same(AggregateError([1], 'foo').message, 'foo');
 	  assert.deepEqual(AggregateError([1, 2, 3]).errors, [1, 2, 3]);
 	});
@@ -7663,7 +7732,7 @@ return class extends Parent { /* empty */ };
 	      };
 	    }
 	  };
-	  assert.equal(true, array.toReversed() instanceof Array, 'non-generic');
+	  assert.equal(true, _instanceof(array.toReversed(), Array), 'non-generic');
 	  if (STRICT) {
 	    assert.throws(() => toReversed.call(null, () => {/* empty */}, 1), TypeError);
 	    assert.throws(() => toReversed.call(undefined, () => {/* empty */}, 1), TypeError);
@@ -7797,7 +7866,7 @@ return class extends Parent { /* empty */ };
 	      };
 	    }
 	  };
-	  assert.equal(true, array.toSorted() instanceof Array, 'non-generic');
+	  assert.equal(true, _instanceof(array.toSorted(), Array), 'non-generic');
 	  if (STRICT) {
 	    assert.throws(() => toSorted.call(null), TypeError, 'ToObject(this)');
 	    assert.throws(() => toSorted.call(undefined), TypeError, 'ToObject(this)');
@@ -7842,7 +7911,7 @@ return class extends Parent { /* empty */ };
 	      };
 	    }
 	  };
-	  assert.equal(true, array.toSpliced() instanceof Array, 'non-generic');
+	  assert.equal(true, _instanceof(array.toSpliced(), Array), 'non-generic');
 
 	  // assert.equal(true, 'toSpliced' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
@@ -7967,7 +8036,7 @@ return class extends Parent { /* empty */ };
 	    assert.throws(() => isWellFormed.call(null), TypeError, 'coercible #1');
 	    assert.throws(() => isWellFormed.call(undefined), TypeError, 'coercible #2');
 	  }
-	  assert.throws(() => isWellFormed.call(Symbol$4('isWellFormed test')), 'throws on symbol context');
+	  assert.throws(() => isWellFormed.call(Symbol$5('isWellFormed test')), 'throws on symbol context');
 	});
 
 	function toWellFormed() {
@@ -8124,7 +8193,7 @@ return class extends Parent { /* empty */ };
 	  assert.isFunction(groupBy);
 	  assert.arity(groupBy, 2);
 	  assert.name(groupBy, 'groupBy');
-	  assert.ok(groupBy([], it => it) instanceof Map);
+	  assert.ok(_instanceof(groupBy([], it => it), Map));
 	  assert.deepEqual(from(groupBy([], it => it)), []);
 	  assert.deepEqual(from(groupBy([1, 2], it => it ** 2)), [[1, [1]], [4, [2]]]);
 	  assert.deepEqual(from(groupBy([1, 2, 1], it => it ** 2)), [[1, [1, 1]], [4, [2]]]);
@@ -8161,7 +8230,7 @@ return class extends Parent { /* empty */ };
 	  assert.name(withResolvers, 'withResolvers');
 	  const d1 = Promise.withResolvers();
 	  assert.same(Object.getPrototypeOf(d1), Object.prototype, 'proto is Object.prototype');
-	  assert.ok(d1.promise instanceof Promise === true, 'promise is promise');
+	  assert.ok(_instanceof(d1.promise, Promise) === true, 'promise is promise');
 	  assert.isFunction(d1.resolve, 'resolve is function');
 	  assert.isFunction(d1.reject, 'reject is function');
 
@@ -9235,7 +9304,7 @@ return class extends Parent { /* empty */ };
 	QUnit.asyncTest('subclassable', assert => {
 	  function C() {}
 	  Array.fromAsync.call(C, [1]).then(it => {
-	    assert.ok(it instanceof C);
+	    assert.ok(_instanceof(it, C));
 	    start();
 	  }).catch(err => {
 	    assert.ok(false, 'rejected: ' + err);
@@ -9264,7 +9333,7 @@ return class extends Parent { /* empty */ };
 	    0: Promise.resolve(1),
 	    1: 2
 	  }).then(result => {
-	    assert.ok(result instanceof C);
+	    assert.ok(_instanceof(result, C));
 	    assert.equal(log.length, 2);
 	    assert.equal(log[1], 2);
 	    start();
@@ -9279,7 +9348,7 @@ return class extends Parent { /* empty */ };
 	    assert.ok(false, 'should reject');
 	    start();
 	  }, err => {
-	    assert.ok(err instanceof TypeError);
+	    assert.ok(_instanceof(err, TypeError));
 	    start();
 	  }).catch(err => {
 	    assert.ok(false, 'unexpected catch');
@@ -9291,7 +9360,7 @@ return class extends Parent { /* empty */ };
 	    assert.ok(false, 'should reject');
 	    start();
 	  }, err => {
-	    assert.ok(err instanceof TypeError);
+	    assert.ok(_instanceof(err, TypeError));
 	    start();
 	  }).catch(err => {
 	    assert.ok(false, 'unexpected catch');
@@ -9303,7 +9372,7 @@ return class extends Parent { /* empty */ };
 	    assert.ok(false, 'should reject');
 	    start();
 	  }, err => {
-	    assert.ok(err instanceof TypeError);
+	    assert.ok(_instanceof(err, TypeError));
 	    start();
 	  }).catch(err => {
 	    assert.ok(false, 'unexpected catch');
@@ -9315,7 +9384,7 @@ return class extends Parent { /* empty */ };
 	    assert.ok(false, 'should reject');
 	    start();
 	  }, err => {
-	    assert.ok(err instanceof TypeError);
+	    assert.ok(_instanceof(err, TypeError));
 	    start();
 	  }).catch(err => {
 	    assert.ok(false, 'unexpected catch');

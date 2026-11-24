@@ -4,6 +4,7 @@ const inject = require("@rollup/plugin-inject");
 module.exports = [
 	polyfill({
 		polluting: {
+
 			//简易版的实现，仅适用于解析内容安全的json
 			// IE8+ Chrome4+ Safari4+ Firfox3.5+ Opera11.5+
 			"JSON": "sky-core/polyfill/JSON",
@@ -294,6 +295,17 @@ module.exports = [
 	}),
 	inject({
 		modules: {
+			"Object.setPrototypeOf": "sky-core/pure/Object/setPrototypeOf",
+
+			"Reflect.construct": "sky-core/pure/Reflect/construct",
+			"Reflect.get": "sky-core/pure/Reflect/get",
+			"Reflect.set": "sky-core/pure/Reflect/set",
+			"Reflect.apply": "sky-core/pure/Reflect/apply",
+
+			"Proxy": "sky-core/pure/Proxy",
+			"Proxy.revocable": "sky-core/pure/Proxy/revocable",
+
+
 			"setTimeout": "sky-core/pure/setTimeout",
 			"setInterval": "sky-core/pure/setInterval",
 			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
@@ -308,6 +320,7 @@ module.exports = [
 		include: [
 			"impl/**/*",
 			"impl-*/**/*",
+			"tests/sham/**/*",
 			"tests/corejs/es/*",
 			"tests/corejs/web/*",
 		]

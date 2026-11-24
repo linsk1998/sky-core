@@ -1,4 +1,20 @@
-import { Proxy } from "../../native/Proxy";
-import { revocable } from "../../impl/Proxy/revocable";
+import Proxy from "../Proxy";
 
-export default Proxy && Proxy.revocable || revocable;
+function revokedHandle() {
+	throw new TypeError('Proxy has been revoked');
+}
+
+export default Proxy.revocable || function revocable(target, handler) {
+	var trapHandler = {};
+	var proxy = new Proxy(target, handler);
+	var revoke = function() {
+		trapHandler.has =
+			trapHandler.get =
+			trapHandler.set =
+			trapHandler.apply =
+			trapHandler.construct =
+			revokedHandle;
+	};
+	proxy = new Proxy(proxy, trapHandler);
+	return { proxy: proxy, revoke: revoke };
+};
