@@ -7,14 +7,13 @@ QUnit.test('Proxy#array', function(assert) {
 			if(prop === 'length') {
 				getTime++;
 			}
-			return Reflect.get(target, prop, receiver);
+			return Reflect.get(...arguments);
 		},
 		set: function(target, prop, value, receiver) {
 			if(prop === 'length') {
 				setTime++;
 			}
-			target[prop] = value;
-				return true;
+			return Reflect.set(...arguments);
 		},
 	});
 	assert.ok(arr instanceof Array, "instanceof");

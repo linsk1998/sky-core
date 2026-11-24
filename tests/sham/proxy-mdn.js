@@ -269,7 +269,7 @@ QUnit.test('Proxy#get', function(assert) {
 			if(prop === 'secret') {
 				return `${target.secret.substring(0, 4)} ... shhhh!`;
 			}
-			return Reflect.get(target, prop, receiver);
+			return Reflect.get(...arguments);
 		},
 	};
 
