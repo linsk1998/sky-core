@@ -157,10 +157,19 @@ async function collectTasks(runner, options) {
 		var conf = browsersLib.BROWSER_FAMILIES[family];
 		var found;
 		if(conf.versions) {
-			// 固定版本列表的家族（如 IE 的 Edge 文档模式），不需要扫目录
-			found = conf.versions.map(function(version) {
+			// 固定版本列表的家族（如 IE）：字符串走 Edge IE 模式，
+			// 对象（{version, command}）用独立 exe 启动
+			found = conf.versions.map(function(v) {
+				if(typeof v === "object" && v.command) {
+					return {
+						version: v.version,
+						command: v.command,
+						conf: conf,
+						family: family
+					};
+				}
 				return {
-					version: version,
+					version: v,
 					conf: conf,
 					family: family
 				};
@@ -200,17 +209,18 @@ async function collectTasks(runner, options) {
 		return parseFloat(a.version) - parseFloat(b.version);
 	});
 	return tasks.map(function(item) {
+		// 有 command 的版本（IE6/7 独立 exe）不需要 ?ie=X 参数（不走 Edge IE 模式）
+		var isEmulated = item.conf.emulateIE && !item.command;
 		var task = {
 			flags: item.conf.flags ? item.conf.flags(item.command) : [],
 			url: "http://" + DEFAULT_HOST + ":" + options.port + "/sky-core/" + TEST_PAGE +
 				"?b=" + encodeURIComponent(item.conf.label + "-" + item.version) +
-				(item.conf.emulateIE ? "&ie=" + item.version : ""),
+				(isEmulated ? "&ie=" + item.version : ""),
 			browser: item.conf.label,
 			version: item.version,
 			timeout: options.timeout
 		};
-		// 扫描型家族传绝对路径 exe（覆盖 preset 的 command）；
-		// 固定列表家族（IE）不传 command，完全交给 preset
+		// 有 command 的（扫描到的 exe 或 IE6/7 独立 exe）直接用
 		if(item.command) {
 			task.command = item.command;
 		}

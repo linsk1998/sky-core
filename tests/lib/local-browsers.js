@@ -54,9 +54,12 @@ var BROWSER_FAMILIES = {
 	ie: {
 		label: "IE",
 		names: ["ie"],
-		// Edge IE 模式（EdgeIEMode preset + EmulateIE 插件按 ?ie=X 注入 meta），
-		// 不扫目录：版本就是可模拟的 IE 文档模式
-		versions: ["5", "7", "8", "9", "10", "11"],
+		// IE6/7 用独立 exe 启动，IE8~11 用 Edge IE 模式（mshta + EmulateIE 插件按 ?ie=X 注入 meta）
+		versions: [
+			{ version: "6", command: "D:/App/Browser/IE/Azure/VirtIE6 by Azure.no_plugins.exe" },
+			{ version: "7", command: "D:/App/Browser/IE/wyman/Internet Explorer 7.exe" },
+			"5", "8", "9", "10", "11"
+		],
 		emulateIE: true
 	}
 };
