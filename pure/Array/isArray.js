@@ -1,9 +1,5 @@
-import { Array } from "../../native/Array";
-import { isArray as impl_isArray } from "../../impl/Array/isArray";
+import { isArray as native_isArray } from "../../native/Array/isArray";
+import { isArray } from "../../impl/Array/isArray";
+import { fix_isArray$proxy } from "../../impl/Array/fix_isArray$proxy";
 
-var nativeIsArray = Array.isArray;
-// 数组代理（见 impl/Proxy/proxyArray$es3）以 @@target 为识别标记，
-// 原生 isArray 不识别，须在原有判定之上补充
-export default nativeIsArray ? function isArray(obj) {
-	return nativeIsArray(obj) || !!(obj && obj['@@target']);
-} : impl_isArray;
+export default native_isArray ? fix_isArray$proxy(native_isArray) : isArray;

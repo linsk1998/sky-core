@@ -224,23 +224,81 @@
 
 	var Array$1 = window.Array;
 
+	var isArray$1 = Array.isArray;
+
 	var prototype = Object$1.prototype;
 
 	var toString$1 = prototype.toString;
 
-	// @@target 是数组代理的识别标记（见 impl/Proxy/proxyArray$es3）
-	var TARGET_KEY$1 = '@@target';
-	function isArray(obj) {
-	  return toString$1.call(obj) === '[object Array]' || !!(obj && obj[TARGET_KEY$1]);
+	// 数组代理的公共基座：方法挂在 ProxyArray.prototype 上，全部实例共享；
+	// 每个实例只携带 @@target / @@handler / length。
+	// es5 版（defineProperty 实现）与 es3 版共用此原型方法。
+	// instanceof Array 的识别由 helpers-*/instanceof（babel 编译 instanceof
+	// 运算符时注入）处理；Array.isArray 的识别在其 polyfill（impl/Array/isArray）
+	// 里经 @@target 标记维护。
+	var arrayMethods = ['entries', 'every', 'forEach', 'keys', 'values', '@@iterator', 'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some', 'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString', 'valueOf', 'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with', 'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
+	var TARGET_KEY = '@@target';
+	var HANDLER_KEY = '@@handler';
+
+	// 会写入 length 的方法：调用后长度变化经 set 陷阱报告
+	var lengthWriteMethods = {
+	  push: 1,
+	  pop: 1,
+	  shift: 1,
+	  unshift: 1,
+	  splice: 1
+	};
+	function ProxyArray() {/* empty */}
+	var proto = ProxyArray.prototype;
+	(function () {
+	  var i = arrayMethods.length;
+	  while (i--) {
+	    proto[arrayMethods[i]] = proxyArrayMethod(arrayMethods[i]);
+	  }
+	})();
+
+	// 数组操作一律在目标对象上执行（见 es5 版 proxyArrayMethod 的说明）；
+	// es3 版额外同步 length：放弃截持，创建时取自 target，每次方法调用后刷新
+	function proxyArrayMethod(key) {
+	  var writesLength = !!lengthWriteMethods[key];
+	  return function () {
+	    var me = this;
+	    var target = me[TARGET_KEY];
+	    var handler = me[HANDLER_KEY];
+	    var method = handler.get ? handler.get(target, key, me) : target[key];
+	    var len = target.length;
+	    if (!writesLength && handler.get) {
+	      // 读取类方法：触发 length 读陷阱（近似：实际执行仍按真实 length）
+	      handler.get(target, "length", me);
+	    }
+	    var r = method.apply(target, arguments);
+	    if (writesLength && target.length !== len) {
+	      if (handler.set) {
+	        if (handler.set(target, "length", target.length, me) === false) {
+	          throw new TypeError("'set' on proxy: trap returned falsish for property 'length'");
+	        }
+	      }
+	      me.length = target.length;
+	    }
+	    return r;
+	  };
 	}
 
-	var nativeIsArray = Array$1.isArray;
-	// 数组代理（见 impl/Proxy/proxyArray$es3）以 @@target 为识别标记，
-	// 原生 isArray 不识别，须在原有判定之上补充
-	if (nativeIsArray) {
-	  Array$1.isArray = function isArray(obj) {
-	    return nativeIsArray(obj) || !!(obj && obj['@@target']);
+	// @@target 是数组代理的识别标记（见 impl/Proxy/ProxyArray），属于 isArray 实现的一部分
+	function isArray(obj) {
+	  return toString$1.call(obj) === '[object Array]' || !!(obj && obj[TARGET_KEY]);
+	}
+
+	// 数组代理（见 impl/Proxy/ProxyArray）以 @@target 为识别标记，
+	// 原生 isArray 不识别：传入原 isArray，返回补充了 @@target 识别的修复版
+	function fix_isArray$proxy(base) {
+	  return function isArray(obj) {
+	    return base(obj) || !!(obj && obj[TARGET_KEY]);
 	  };
+	}
+
+	if (isArray$1) {
+	  Array$1.isArray = fix_isArray$proxy(isArray$1);
 	} else {
 	  Array$1.isArray = isArray;
 	}
@@ -1775,60 +1833,6 @@
 	QUnit.test('Object.getPrototypeOf.sham flag', function (assert) {
 	  assert.same(Object.getPrototypeOf.sham, CORRECT_PROTOTYPE_GETTER ? undefined : true);
 	});
-
-	// 数组代理的公共基座：方法挂在 ProxyArray.prototype 上，全部实例共享；
-	// 每个实例只携带 @@target / @@handler / length。
-	// es5 版（defineProperty 实现）与 es3 版共用此原型方法。
-	// instanceof Array 的识别由 helpers-*/instanceof（babel 编译 instanceof
-	// 运算符时注入）处理；Array.isArray 的识别在其 polyfill（impl/Array/isArray）
-	// 里经 @@target 标记维护。
-	var arrayMethods = ['entries', 'every', 'forEach', 'keys', 'values', '@@iterator', 'at', 'find', 'findIndex', 'findLast', 'findLastIndex', 'includes', 'indexOf', 'lastIndexOf', 'some', 'join', 'map', 'reduce', 'reduceRight', 'toLocaleString', 'toString', 'valueOf', 'concat', 'copyWithin', 'filter', 'flat', 'flatMap', 'slice', 'toReversed', 'toSorted', 'toSpliced', 'with', 'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
-	var TARGET_KEY = '@@target';
-	var HANDLER_KEY = '@@handler';
-
-	// 会写入 length 的方法：调用后长度变化经 set 陷阱报告
-	var lengthWriteMethods = {
-	  push: 1,
-	  pop: 1,
-	  shift: 1,
-	  unshift: 1,
-	  splice: 1
-	};
-	function ProxyArray() {/* empty */}
-	var proto = ProxyArray.prototype;
-	(function () {
-	  var i = arrayMethods.length;
-	  while (i--) {
-	    proto[arrayMethods[i]] = proxyArrayMethod(arrayMethods[i]);
-	  }
-	})();
-
-	// 数组操作一律在目标对象上执行（见 es5 版 proxyArrayMethod 的说明）；
-	// es3 版额外同步 length：放弃截持，创建时取自 target，每次方法调用后刷新
-	function proxyArrayMethod(key) {
-	  var writesLength = !!lengthWriteMethods[key];
-	  return function () {
-	    var me = this;
-	    var target = me[TARGET_KEY];
-	    var handler = me[HANDLER_KEY];
-	    var method = handler.get ? handler.get(target, key, me) : target[key];
-	    var len = target.length;
-	    if (!writesLength && handler.get) {
-	      // 读取类方法：触发 length 读陷阱（近似：实际执行仍按真实 length）
-	      handler.get(target, "length", me);
-	    }
-	    var r = method.apply(target, arguments);
-	    if (writesLength && target.length !== len) {
-	      if (handler.set) {
-	        if (handler.set(target, "length", target.length, me) === false) {
-	          throw new TypeError("'set' on proxy: trap returned falsish for property 'length'");
-	        }
-	      }
-	      me.length = target.length;
-	    }
-	    return r;
-	  };
-	}
 
 	function _instanceof(o, Class) {
 	  if (Class === Array && o instanceof ProxyArray) {
