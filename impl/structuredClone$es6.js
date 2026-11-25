@@ -1,20 +1,16 @@
 import { toString } from "../native/Object/prototype/toString";
-import { Symbol } from "../impl/Symbol/Symbol";
-import { isRegExp } from "../utils/isRegExp";
 
+// es6 裁剪版：es2015 tier 中无原生 structuredClone 的浏览器（Chrome 63~133、
+// Firefox 67~137、Safari 10.1~18.3）专用，可使用 ES6+ 语法；判定逻辑内联
 export function structuredClone(obj) {
-	var r;
 	if(arguments.length === 0) {
-		throw new Error("Failed to execute 'structuredClone': 1 argumnet required.");
+		throw new Error("Failed to execute 'structuredClone': 1 argument required.");
 	}
 	if(typeof obj === "object") {
 		if(obj === null) {
 			return obj;
 		}
-		if(obj instanceof Symbol) {
-			throw new Error("Failed to execute 'structuredClone' on Symbol");
-		}
-		var proto = Object.getPrototypeOf(obj);
+		let proto = Object.getPrototypeOf(obj);
 		if(proto === null || proto === Object.prototype) {
 			return objectClone({}, obj);
 		} else if(Array.isArray(obj)) {
@@ -28,30 +24,25 @@ export function structuredClone(obj) {
 		} else if(obj instanceof Array) {
 			if(obj.buffer) {
 				return new obj.constructor(obj);
-			} else {
-				return arrayClone(obj);
 			}
-		} else if(obj instanceof Error) {
-			r = Object.create(proto);
+			return arrayClone(obj);
+		} else if(Error.isError(obj)) {
+			// Error.isError 兜住跨 realm 的 Error（instanceof 对他窗口错误失效）
+			let r = Object.create(Object.getPrototypeOf(obj));
 			r.message = obj.message;
-			Object.defineProperty(r, 'stack', {
-				value: obj.stack,
-				configurable: true,
-				enumerable: true,
-				writable: true
-			});
+			r.stack = obj.stack;
 			if('cause' in obj) {
 				r.cause = obj.cause;
 			}
 			if('errors' in obj) {
-				r.errors = obj.errors;
+				r.errors = arrayClone(obj.errors);
 			}
 			return r;
 		}
-		var type = toString.call(obj);
+		let type = toString.call(obj);
 		switch(type) {
 			case '[object Object]':
-				return objectClone(Object.create(proto), obj);
+				return objectClone(Object.create(Object.getPrototypeOf(obj)), obj);
 			case '[object Date]':
 				return new Date(obj);
 			case '[object Number]':
@@ -67,27 +58,20 @@ export function structuredClone(obj) {
 			case '[object DataView]':
 				return new DataView(new Uint8Array(obj.buffer).buffer);
 			case '[object Blob]':
-				if(obj.toString() === '[object File]') {
-					return new File([obj], obj.name, {
-						type: obj.type,
-						lastModified: obj.lastModified
-					});
-				}
 				return obj.slice(0, obj.size, obj.type);
 			case '[object File]':
-				if(window.File) {
-					return new File([obj], obj.name, {
-						type: obj.type,
-						lastModified: obj.lastModified
-					});
-				}
-				return obj;
+				return new File([obj], obj.name, {
+					type: obj.type,
+					lastModified: obj.lastModified
+				});
 			case '[object FileList]':
-				var transfer = new DataTransfer();
-				for(var i = 0, len = obj.length; i < len; i++) {
+				const transfer = new DataTransfer();
+				for(let i = 0, len = obj.length; i < len; i++) {
 					transfer.items.add(obj[i]);
 				}
 				return transfer.files;
+			case '[object BigInt]':
+				return new Object(obj.valueOf());
 			case '[object DOMRectReadOnly]':
 				return new DOMRectReadOnly(obj.x, obj.y, obj.width, obj.height);
 			case '[object DOMRect]':
@@ -102,9 +86,6 @@ export function structuredClone(obj) {
 				throw new Error("Failed to execute 'structuredClone' on " + type);
 		}
 	} else if(typeof obj === "function") {
-		if(isRegExp(obj)) {
-			return new RegExp(obj);
-		}
 		throw new Error("Failed to execute 'structuredClone' on Function");
 	} else if(typeof obj === "symbol") {
 		throw new Error("Failed to execute 'structuredClone' on Symbol");

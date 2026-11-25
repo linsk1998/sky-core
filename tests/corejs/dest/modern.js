@@ -9340,6 +9340,21 @@
 	  // assert.equal(true, 'find' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
 
+	function isError(obj) {
+	  // [[ErrorData]] 内部槽无法直接探测，Object.prototype.toString 的品牌检查是唯一跨 realm 可用的手段
+	  // DOMException 按规范也带 [[ErrorData]]，但它的 Symbol.toStringTag 会让 tag 变成 "DOMException"
+	  // Error.prototype 自己没有 [[ErrorData]]，而 Firefox 4- 把它的 tag 也报成 "Error"，只能显式排除
+	  var tag = toString$1.call(obj);
+	  return (tag === '[object Error]' || tag === '[object DOMException]') && obj !== Error$1.prototype;
+	}
+
+	// legacy / modern 两层共用这份（createRollupPlugin 的 legacy:["legacy","modern"] 会回落到这里；
+	// compat 有专属的 isError$jscript 裁剪版）
+	// 这些层的浏览器都早于原生 Error.isError（Chrome134+ / Firefox138+ / Safari18.4+），不存在原生误判 DOMException 的情况，只补缺失
+	if (!Error$1.isError) {
+	  Error$1.isError = isError;
+	}
+
 	var Event$1 = window.Event;
 
 	function Event$ff(type, init) {
@@ -9476,10 +9491,12 @@
 	  }
 	}
 
+	// es5 裁剪版（IE9+ 与同代非 IE）：判定逻辑内联（不走 utils 分派），保留 typed array/
+	// Blob/DOM 几何分支；BigInt 分支在该 tier 是死代码（Chrome67+/FF67+ 才有，已属 es2015）
 	function structuredClone$1(obj) {
 	  var r;
 	  if (arguments.length === 0) {
-	    throw new Error("Failed to execute 'structuredClone': 1 argumnet required.");
+	    throw new Error("Failed to execute 'structuredClone': 1 argument required.");
 	  }
 	  if (typeof obj === "object") {
 	    if (obj === null) {
@@ -9493,7 +9510,7 @@
 	      return objectClone({}, obj);
 	    } else if (Array.isArray(obj)) {
 	      return arrayClone(obj);
-	    } else if (obj instanceof Node || obj instanceof Event || obj === window) {
+	    } else if (isNode(obj) || isEvent(obj) || obj === window) {
 	      throw new Error("Failed to execute 'structuredClone' on DOM");
 	    } else if (obj instanceof Set) {
 	      return new Set(obj);
@@ -9502,18 +9519,13 @@
 	    } else if (obj instanceof Array) {
 	      if (obj.buffer) {
 	        return new obj.constructor(obj);
-	      } else {
-	        return arrayClone(obj);
 	      }
-	    } else if (obj instanceof Error) {
+	      return arrayClone(obj);
+	    } else if (Error.isError(obj)) {
+	      // Error.isError 兜住跨 realm 的 Error（instanceof 对他窗口错误失效）
 	      r = Object.create(proto);
 	      r.message = obj.message;
-	      $inject_Object_defineProperty(r, 'stack', {
-	        value: obj.stack,
-	        configurable: true,
-	        enumerable: true,
-	        writable: true
-	      });
+	      r.stack = obj.stack;
 	      if ('cause' in obj) {
 	        r.cause = obj.cause;
 	      }
@@ -9542,20 +9554,11 @@
 	        return new DataView(new Uint8Array(obj.buffer).buffer);
 	      case '[object Blob]':
 	        if (obj.toString() === '[object File]') {
-	          return new File([obj], obj.name, {
-	            type: obj.type,
-	            lastModified: obj.lastModified
-	          });
+	          return fileClone(obj);
 	        }
 	        return obj.slice(0, obj.size, obj.type);
 	      case '[object File]':
-	        if (window.File) {
-	          return new File([obj], obj.name, {
-	            type: obj.type,
-	            lastModified: obj.lastModified
-	          });
-	        }
-	        return obj;
+	        return fileClone(obj);
 	      case '[object FileList]':
 	        var transfer = new DataTransfer();
 	        for (var i = 0, len = obj.length; i < len; i++) {
@@ -9586,6 +9589,23 @@
 	    return obj;
 	  }
 	}
+
+	// IE9~11 的 window.Node/window.Event 不是构造函数，裸 instanceof 会抛 TypeError
+	function isNode(obj) {
+	  return typeof Node === "function" && obj instanceof Node;
+	}
+	function isEvent(obj) {
+	  return typeof Event === "function" && obj instanceof Event;
+	}
+	function fileClone(obj) {
+	  if (window.File) {
+	    return new File([obj], obj.name, {
+	      type: obj.type,
+	      lastModified: obj.lastModified
+	    });
+	  }
+	  return obj;
+	}
 	function arrayClone(obj) {
 	  var r, keys, len, i, key;
 	  r = new Array(obj.length);
@@ -9608,6 +9628,7 @@
 	  return r;
 	}
 
+	// modern tier 各浏览器均无原生 structuredClone（Chrome98/FF94/Safari15.4 起，都在 es2015 范围），直接安装 es5 裁剪版
 	window.structuredClone = structuredClone$1;
 
 	var from = Array.from;
@@ -11970,20 +11991,6 @@
 	    start();
 	  });
 	});
-
-	function isError(obj) {
-	  // [[ErrorData]] 内部槽无法直接探测，Object.prototype.toString 的品牌检查是唯一跨 realm 可用的手段
-	  // DOMException 按规范也带 [[ErrorData]]，但它的 Symbol.toStringTag 会让 tag 变成 "DOMException"
-	  // Error.prototype 自己没有 [[ErrorData]]，而 Firefox 4- 把它的 tag 也报成 "Error"，只能显式排除
-	  var tag = toString$1.call(obj);
-	  return (tag === '[object Error]' || tag === '[object DOMException]') && obj !== Error$1.prototype;
-	}
-
-	// compat / legacy / modern 三层共用这份（createRollupPlugin 的 compat:["compat","modern"]、legacy:["legacy","modern"] 会回落到这里）
-	// 这些层的浏览器都早于原生 Error.isError（Chrome134+ / Firefox138+ / Safari18.4+），不存在原生误判 DOMException 的情况，只补缺失
-	if (!Error$1.isError) {
-	  Error$1.isError = isError;
-	}
 
 	// 移植自 core-js tests/unit-global/es.error.is-error.js（MIT）
 

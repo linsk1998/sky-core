@@ -230,21 +230,21 @@
 
 	var dontEnums = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"];
 
-	var GT = '>';
-	var LT = '<';
-	var SCRIPT = 'script';
-	function scriptTag(content) {
-	  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+	var GT$1 = '>';
+	var LT$1 = '<';
+	var SCRIPT$1 = 'script';
+	function scriptTag$1(content) {
+	  return LT$1 + SCRIPT$1 + GT$1 + content + LT$1 + '/' + SCRIPT$1 + GT$1;
 	}
-	function createViaIFrame() {
+	function createViaIFrame$1() {
 	  var iframe = document.createElement('iframe');
-	  var JS = 'java' + SCRIPT + ':';
+	  var JS = 'java' + SCRIPT$1 + ':';
 	  iframe.style.display = 'none';
 	  document.documentElement.appendChild(iframe);
 	  iframe.src = String(JS);
 	  var iframeDocument = iframe.contentWindow.document;
 	  iframeDocument.open();
-	  iframeDocument.write(scriptTag('document.F=Object'));
+	  iframeDocument.write(scriptTag$1('document.F=Object'));
 	  iframeDocument.close();
 	  return iframeDocument.F;
 	}
@@ -256,20 +256,20 @@
 	  delete proto.__proto__;
 	  return proto;
 	}
-	var isNullBase = function () {
+	var isNullBase$1 = function () {
 	  function isNullBase() {
 	    return false;
 	  }
 	  return isNullBase;
 	}();
-	var getNullProto = function () {
+	var getNullProto$1 = function () {
 	  function getNullProto() {
-	    var Ctor = createViaIFrame();
+	    var Ctor = createViaIFrame$1();
 	    var proto = clearProto(Ctor);
 	    getNullProto = function () {
 	      return proto;
 	    };
-	    isNullBase = function (obj) {
+	    isNullBase$1 = function (obj) {
 	      return obj instanceof Ctor;
 	    };
 	    return proto;
@@ -278,7 +278,7 @@
 	}();
 
 	function getPrototypeOf$o(object) {
-	  return isNullBase(object) ? null : object.__proto__;
+	  return isNullBase$1(object) ? null : object.__proto__;
 	}
 	getPrototypeOf$o.sham = true;
 
@@ -2181,7 +2181,7 @@
 	function create$o(proto, properties) {
 	  var o = {};
 	  if (proto === null) {
-	    o.__proto__ = getNullProto();
+	    o.__proto__ = getNullProto$1();
 	  } else {
 	    o.__proto__ = proto;
 	  }
@@ -2199,7 +2199,7 @@
 	    o = new F();
 	    F.prototype = null;
 	  } else {
-	    F.prototype = getNullProto();
+	    F.prototype = getNullProto$1();
 	    o = new F();
 	    F.prototype = null;
 	  }
@@ -9868,10 +9868,129 @@
 	  }
 	}
 
+	function isError(obj) {
+	  // [[ErrorData]] 内部槽无法直接探测，Object.prototype.toString 的品牌检查是唯一跨 realm 可用的手段
+	  // DOMException 按规范也带 [[ErrorData]]，但它的 Symbol.toStringTag 会让 tag 变成 "DOMException"
+	  // Error.prototype 自己没有 [[ErrorData]]，而 Firefox 4- 把它的 tag 也报成 "Error"，只能显式排除
+	  var tag = toString$1.call(obj);
+	  return (tag === '[object Error]' || tag === '[object DOMException]') && obj !== Error$1.prototype;
+	}
+
+	// legacy / modern 两层共用这份（createRollupPlugin 的 legacy:["legacy","modern"] 会回落到这里；
+	// compat 有专属的 isError$jscript 裁剪版）
+	// 这些层的浏览器都早于原生 Error.isError（Chrome134+ / Firefox138+ / Safari18.4+），不存在原生误判 DOMException 的情况，只补缺失
+	if (!Error$1.isError) {
+	  Error$1.isError = isError;
+	}
+
+	var GT = '>';
+	var LT = '<';
+	var SCRIPT = 'script';
+	function scriptTag(content) {
+	  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+	}
+	function createViaActiveX(activeXDocument) {
+	  activeXDocument.write(scriptTag(''));
+	  activeXDocument.close();
+	  var temp = activeXDocument.parentWindow.Object;
+	  activeXDocument = null;
+	  return temp;
+	}
+	function createViaIFrame() {
+	  var iframe = document.createElement('iframe');
+	  var JS = 'java' + SCRIPT + ':';
+	  iframe.style.display = 'none';
+	  document.documentElement.appendChild(iframe);
+	  iframe.src = String(JS);
+	  var iframeDocument = iframe.contentWindow.document;
+	  iframeDocument.open();
+	  iframeDocument.write(scriptTag('document.F=Object'));
+	  iframeDocument.close();
+	  return iframeDocument.F;
+	}
+	var isNullBase = function () {
+	  function isNullBase() {
+	    return false;
+	  }
+	  return isNullBase;
+	}();
+	var getNullProto = function () {
+	  function getNullProto() {
+	    var activeXDocument;
+	    try {
+	      activeXDocument = document.domain && new ActiveXObject('htmlfile');
+	    } catch (error) {/* ignore */}
+	    var Ctor = activeXDocument ? createViaActiveX(activeXDocument) : createViaIFrame();
+	    var proto = Ctor.prototype;
+	    var i = dontEnums.length;
+	    while (i--) delete proto[dontEnums[i]];
+	    delete proto.constructor;
+	    getNullProto = function () {
+	      return proto;
+	    };
+	    isNullBase = function (obj) {
+	      return obj instanceof Ctor;
+	    };
+	    return proto;
+	  }
+	  return getNullProto;
+	}();
+
+	function isPlainObject$2(obj) {
+	  if (typeof obj === "object" && obj !== null) {
+	    if (obj instanceof Object) {
+	      return obj.constructor === Object;
+	    } else {
+	      return isNullBase(obj);
+	    }
+	  }
+	  return false;
+	}
+	;
+
+	function isPlainObject$1(obj) {
+	  if (typeof obj === "object" && obj !== null) {
+	    var proto = Object.getPrototypeOf(obj);
+	    if (proto === null || proto === Object.prototype) return true;
+	  }
+	  return false;
+	}
+	;
+
+	var isPlainObject = proto$1 ? isPlainObject$1 : isPlainObject$2;
+
+	function isNode$2(obj) {
+	  return obj !== null && typeof object === "object" && !(obj instanceof Object) && typeof obj.nodeType === "number" && typeof obj.attachEvent === "function";
+	}
+
+	function isNode$1(obj) {
+	  return obj instanceof Node;
+	}
+
+	var isNode = window.Node ? isNode$1 : isNode$2;
+
+	function isWindow(obj) {
+	  return window == obj;
+	}
+	;
+
+	function isEvent(obj) {
+	  // IE9~11 的 window.Event 不是构造函数，裸 instanceof 会抛 TypeError
+	  return typeof Event === "function" && obj instanceof Event;
+	}
+	function fileClone(obj) {
+	  if (window.File) {
+	    return new File([obj], obj.name, {
+	      type: obj.type,
+	      lastModified: obj.lastModified
+	    });
+	  }
+	  return obj;
+	}
 	function structuredClone$1(obj) {
 	  var r;
 	  if (arguments.length === 0) {
-	    throw new Error("Failed to execute 'structuredClone': 1 argumnet required.");
+	    throw new Error("Failed to execute 'structuredClone': 1 argument required.");
 	  }
 	  if (typeof obj === "object") {
 	    if (obj === null) {
@@ -9880,12 +9999,11 @@
 	    if (obj instanceof Symbol$3) {
 	      throw new Error("Failed to execute 'structuredClone' on Symbol");
 	    }
-	    var proto = Object.getPrototypeOf(obj);
-	    if (proto === null || proto === Object.prototype) {
-	      return objectClone({}, obj);
-	    } else if (Array.isArray(obj)) {
+	    if (Array.isArray(obj)) {
 	      return arrayClone(obj);
-	    } else if (obj instanceof Node || obj instanceof Event || obj === window) {
+	    } else if (isPlainObject(obj)) {
+	      return objectClone({}, obj);
+	    } else if (!(obj instanceof Object) || isNode(obj) || isEvent(obj)) {
 	      throw new Error("Failed to execute 'structuredClone' on DOM");
 	    } else if (obj instanceof Set) {
 	      return new Set(obj);
@@ -9894,30 +10012,28 @@
 	    } else if (obj instanceof Array) {
 	      if (obj.buffer) {
 	        return new obj.constructor(obj);
-	      } else {
-	        return arrayClone(obj);
 	      }
-	    } else if (obj instanceof Error) {
-	      r = implementation(proto);
+	      return arrayClone(obj);
+	    } else if (Error.isError(obj)) {
+	      // FF60~85 的 WebAssembly Error 不是 Error 子类，跨 realm 的 Error instanceof 同样为 false，
+	      // Error.isError 的品牌检查兜住这两类；裸引用经 conditional 的既有映射按 tier 注入
+	      r = implementation(Object.getPrototypeOf(obj));
 	      r.message = obj.message;
-	      $inject_Object_defineProperty(r, 'stack', {
-	        value: obj.stack,
-	        configurable: true,
-	        enumerable: true,
-	        writable: true
-	      });
+	      r.stack = obj.stack;
 	      if ('cause' in obj) {
 	        r.cause = obj.cause;
 	      }
 	      if ('errors' in obj) {
-	        r.errors = obj.errors;
+	        r.errors = arrayClone(obj.errors);
 	      }
 	      return r;
+	    } else if (isWindow(obj)) {
+	      throw new Error("Failed to execute 'structuredClone' on Window");
 	    }
 	    var type = toString$1.call(obj);
 	    switch (type) {
 	      case '[object Object]':
-	        return objectClone(implementation(proto), obj);
+	        return objectClone(implementation(Object.getPrototypeOf(obj)), obj);
 	      case '[object Date]':
 	        return new Date(obj);
 	      case '[object Number]':
@@ -9934,26 +10050,19 @@
 	        return new DataView(new Uint8Array(obj.buffer).buffer);
 	      case '[object Blob]':
 	        if (obj.toString() === '[object File]') {
-	          return new File([obj], obj.name, {
-	            type: obj.type,
-	            lastModified: obj.lastModified
-	          });
+	          return fileClone(obj);
 	        }
 	        return obj.slice(0, obj.size, obj.type);
 	      case '[object File]':
-	        if (window.File) {
-	          return new File([obj], obj.name, {
-	            type: obj.type,
-	            lastModified: obj.lastModified
-	          });
-	        }
-	        return obj;
+	        return fileClone(obj);
 	      case '[object FileList]':
 	        var transfer = new DataTransfer();
 	        for (var i = 0, len = obj.length; i < len; i++) {
 	          transfer.items.add(obj[i]);
 	        }
 	        return transfer.files;
+	      case '[object BigInt]':
+	        return new Object(obj.valueOf());
 	      case '[object DOMRectReadOnly]':
 	        return new DOMRectReadOnly(obj.x, obj.y, obj.width, obj.height);
 	      case '[object DOMRect]':
@@ -10000,6 +10109,8 @@
 	  return r;
 	}
 
+	// legacy 线必然无原生 structuredClone；浏览器能力跨度大（有无 Node/Event、有无 gOPD），
+	// 通用版的 utils 分派判定对各环境安全，故不走 modern 的 $es5 裁剪版
 	window.structuredClone = structuredClone$1;
 
 	var from = Array.from;
@@ -12362,20 +12473,6 @@
 	    start();
 	  });
 	});
-
-	function isError(obj) {
-	  // [[ErrorData]] 内部槽无法直接探测，Object.prototype.toString 的品牌检查是唯一跨 realm 可用的手段
-	  // DOMException 按规范也带 [[ErrorData]]，但它的 Symbol.toStringTag 会让 tag 变成 "DOMException"
-	  // Error.prototype 自己没有 [[ErrorData]]，而 Firefox 4- 把它的 tag 也报成 "Error"，只能显式排除
-	  var tag = toString$1.call(obj);
-	  return (tag === '[object Error]' || tag === '[object DOMException]') && obj !== Error$1.prototype;
-	}
-
-	// compat / legacy / modern 三层共用这份（createRollupPlugin 的 compat:["compat","modern"]、legacy:["legacy","modern"] 会回落到这里）
-	// 这些层的浏览器都早于原生 Error.isError（Chrome134+ / Firefox138+ / Safari18.4+），不存在原生误判 DOMException 的情况，只补缺失
-	if (!Error$1.isError) {
-	  Error$1.isError = isError;
-	}
 
 	// 移植自 core-js tests/unit-global/es.error.is-error.js（MIT）
 

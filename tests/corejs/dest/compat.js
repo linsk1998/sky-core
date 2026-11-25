@@ -8829,10 +8829,22 @@
 	  // assert.equal(true, 'find' in Array.prototype[Symbol.unscopables], 'In Array#@@unscopables');
 	});
 
+	// jscript（IE6~8）裁剪版：宿主对象（含 DOMException）的 tag 一律是 [object Object]，
+	// DOMException 分支不会命中；Error.prototype 的 tag 误报是 Gecko 特性（FF4-），也与 jscript 无关
+	function isError$jscript(obj) {
+	  return toString$1.call(obj) === '[object Error]';
+	}
+
+	// compat（IE6~8）必然无原生 Error.isError，直接安装 jscript 裁剪版
+	// （DOMException 判定与 Error.prototype 误报排除在该环境均为死代码，见实现注释）
+	Error$1.isError = isError$jscript;
+
+	// jscript（IE6~8）裁剪版：去掉 typed array/Blob/File/FileList/BigInt/DOM 几何等该环境
+	// 不存在的 API 分支；plain object 用 constructor/isNullBase 判定（不走 getPrototypeOf）
 	function structuredClone$1(obj) {
 	  var r;
 	  if (arguments.length === 0) {
-	    throw new Error("Failed to execute 'structuredClone': 1 argumnet required.");
+	    throw new Error("Failed to execute 'structuredClone': 1 argument required.");
 	  }
 	  if (typeof obj === "object") {
 	    if (obj === null) {
@@ -8852,7 +8864,8 @@
 	      return new Map(obj);
 	    } else if (obj instanceof Array) {
 	      return arrayClone(obj);
-	    } else if (obj instanceof Error) {
+	    } else if (Error.isError(obj)) {
+	      // Error.isError 兜住跨 realm 的 Error（instanceof 对他窗口错误失效）
 	      r = create$jscript(Object.getPrototypeOf(obj));
 	      r.message = obj.message;
 	      r.stack = obj.stack;
@@ -8911,6 +8924,7 @@
 	  return r;
 	}
 
+	// compat（IE6~8）必然无原生 structuredClone，直接安装 jscript 裁剪版
 	window.structuredClone = structuredClone$1;
 
 	var Event$1 = window.Event;
@@ -11263,20 +11277,6 @@
 	    start();
 	  });
 	});
-
-	function isError(obj) {
-	  // [[ErrorData]] 内部槽无法直接探测，Object.prototype.toString 的品牌检查是唯一跨 realm 可用的手段
-	  // DOMException 按规范也带 [[ErrorData]]，但它的 Symbol.toStringTag 会让 tag 变成 "DOMException"
-	  // Error.prototype 自己没有 [[ErrorData]]，而 Firefox 4- 把它的 tag 也报成 "Error"，只能显式排除
-	  var tag = toString$1.call(obj);
-	  return (tag === '[object Error]' || tag === '[object DOMException]') && obj !== Error$1.prototype;
-	}
-
-	// compat / legacy / modern 三层共用这份（createRollupPlugin 的 compat:["compat","modern"]、legacy:["legacy","modern"] 会回落到这里）
-	// 这些层的浏览器都早于原生 Error.isError（Chrome134+ / Firefox138+ / Safari18.4+），不存在原生误判 DOMException 的情况，只补缺失
-	if (!Error$1.isError) {
-	  Error$1.isError = isError;
-	}
 
 	// 移植自 core-js tests/unit-global/es.error.is-error.js（MIT）
 

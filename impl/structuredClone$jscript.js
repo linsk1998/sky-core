@@ -1,11 +1,13 @@
 import { toString } from "../native/Object/prototype/toString";
-import { isNullBase } from "../impl/object/proto/nullProto$jscript";
-import { Symbol } from "../impl/Symbol/Symbol";
+import { isNullBase } from "./object/proto/nullProto$jscript";
+import { Symbol } from "./Symbol/Symbol";
 
+// jscript（IE6~8）裁剪版：去掉 typed array/Blob/File/FileList/BigInt/DOM 几何等该环境
+// 不存在的 API 分支；plain object 用 constructor/isNullBase 判定（不走 getPrototypeOf）
 export function structuredClone(obj) {
 	var r;
 	if(arguments.length === 0) {
-		throw new Error("Failed to execute 'structuredClone': 1 argumnet required.");
+		throw new Error("Failed to execute 'structuredClone': 1 argument required.");
 	}
 	if(typeof obj === "object") {
 		if(obj === null) {
@@ -25,7 +27,8 @@ export function structuredClone(obj) {
 			return new Map(obj);
 		} else if(obj instanceof Array) {
 			return arrayClone(obj);
-		} else if(obj instanceof Error) {
+		} else if(Error.isError(obj)) {
+			// Error.isError 兜住跨 realm 的 Error（instanceof 对他窗口错误失效）
 			r = Object.create(Object.getPrototypeOf(obj));
 			r.message = obj.message;
 			r.stack = obj.stack;
