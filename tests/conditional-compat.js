@@ -302,7 +302,7 @@ module.exports = [
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
 
 			/* IE9+ Chrome6+ Firefox4+ Safari5.1+ Opera12.1+ */
-			"Object.preventExtensions": "sky-core/polyfill/Object/preventExtensions",
+			"Object.preventExtensions": "sky-core/pure/Object/preventExtensions",
 			"Object.seal": "sky-core/polyfill/Object/seal",
 			"Object.freeze": "sky-core/pure/Object/freeze",
 			"Object.isExtensible": "sky-core/pure/Object/isExtensible",
@@ -337,6 +337,15 @@ module.exports = [
 			"Reflect.get": "sky-core/pure/Reflect/get",
 			"Reflect.set": "sky-core/pure/Reflect/set",
 			"Reflect.apply": "sky-core/pure/Reflect/apply",
+			"Reflect.defineProperty": "sky-core/pure/Reflect/defineProperty",
+			"Reflect.deleteProperty": "sky-core/pure/Reflect/deleteProperty",
+			"Reflect.getOwnPropertyDescriptor": "sky-core/pure/Reflect/getOwnPropertyDescriptor",
+			"Reflect.getPrototypeOf": "sky-core/pure/Reflect/getPrototypeOf",
+			"Reflect.has": "sky-core/pure/Reflect/has",
+			"Reflect.isExtensible": "sky-core/pure/Reflect/isExtensible",
+			"Reflect.ownKeys": "sky-core/pure/Reflect/ownKeys",
+			"Reflect.preventExtensions": "sky-core/pure/Reflect/preventExtensions",
+			"Reflect.setPrototypeOf": "sky-core/pure/Reflect/setPrototypeOf",
 		},
 		include: [
 			"impl/**/*",

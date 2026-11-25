@@ -1,4 +1,3 @@
-
 export function set(target, propertyKey, value, receiver) {
 	if(receiver === void 0) {
 		try {
@@ -14,7 +13,7 @@ export function set(target, propertyKey, value, receiver) {
 		if(desc) {
 			if(desc.set) {
 				try {
-					descriptor.set.call(receiver, value);
+					desc.set.call(receiver, value);
 					return true;
 				} catch(e) {
 					return false;

@@ -1,20 +1,13 @@
-import { preventExtensions as Object_preventExtensions } from "../../native/Object/preventExtensions";
+import { isNotNullObject } from "../../utils/isNotNullObject";
 
-export function preventExtensions$object(target) {
+export function preventExtensions(target) {
 	if(!isNotNullObject(target)) {
-		throw new TypeError("isExtensible called on non-object");
+		throw new TypeError("preventExtensions called on non-object");
 	}
 	try {
-		Object_preventExtensions(target);
+		Object.preventExtensions(target);
 		return true;
 	} catch(e) {
 		return false;
 	}
-};
-
-export function preventExtensions(target) {
-	if(!isNotNullObject(target)) {
-		throw new TypeError("isExtensible called on non-object");
-	}
-	return false;
 };

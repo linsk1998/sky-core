@@ -269,6 +269,7 @@ defineProperty无法polyfill，因此不允许在业务代码中使用defineProp
 | Map                               | polyfill     | 修复原生功能           |
 | Set                               | polyfill     | 修复原生功能           |
 | WeakSet                           | pure         | 无法真正实现           |
+| Reflect                           | pure         | 无法真正实现           |
 | setTimeout                        | 部分pure     | 仅在传入额外参数时引入 |
 | setInterval                       | 部分pure     | 仅在传入额外参数时引入 |
 | requestAnimationFrame             | pure         | 无法完美实现           |

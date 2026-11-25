@@ -1,38 +1,15 @@
-import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
-import { getOwnPropertySymbols } from "../../native/Object/getOwnPropertySymbols";
+import { isPrimitive } from "../../utils/isPrimitive";
+import { allSymbols } from "../Symbol/Symbol";
 
-export function ownKeys$symbol(obj) {
-	return getOwnPropertyNames(obj).concat(getOwnPropertySymbols(obj));
-}
-
-export function ownKeys$property(obj) {
-	var arr = [];
-	if(isPrimitive(obj)) {
-		return arr;
-	}
-	var keys = getOwnPropertyNames(obj);
-	var len = keys.length;
-	for(var i = 0; i < len; i++) {
-		var key = keys[i];
-		if(Object.hasOwn(allSymbols, key)) {
-			if(key.slice(0, 2) === "@@") {
-				if(key in allSymbols) {
-					arr.push(allSymbols[key]);
-				}
-			} else {
-				arr.push(key);
-			}
-		}
-	}
-	return arr;
-}
+// 通用兜底实现：无 getOwnPropertyNames/getOwnPropertySymbols 的环境用 for-in 枚举自有键，
+// "@@" 前缀键经 allSymbols 还原为 Symbol polyfill 的符号
 export function ownKeys(obj) {
 	var arr = [];
 	if(isPrimitive(obj)) {
 		return arr;
 	}
 	for(var key in obj) {
-		if(Object.hasOwn(allSymbols, key)) {
+		if(Object.hasOwn(obj, key)) {
 			if(key.slice(0, 2) === "@@") {
 				if(key in allSymbols) {
 					arr.push(allSymbols[key]);
@@ -43,4 +20,4 @@ export function ownKeys(obj) {
 		}
 	}
 	return arr;
-} 
+}

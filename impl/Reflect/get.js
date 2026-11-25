@@ -1,4 +1,3 @@
-
 export function get(target, propertyKey, receiver) {
 	if(receiver === void 0) { receiver = target; }
 	var o = target, attributes;

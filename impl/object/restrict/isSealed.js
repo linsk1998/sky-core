@@ -1,4 +1,4 @@
-import { proto } from "../../support/proto";
+import { proto } from "../../../support/proto";
 
 export function isSealed(o) {
 	if((typeof o === "object")) {

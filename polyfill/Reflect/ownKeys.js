@@ -1,7 +1,9 @@
 import { Reflect } from "../Reflect";
 import { getOwnPropertySymbols } from "../../native/Object/getOwnPropertySymbols";
 import { getOwnPropertyNames } from "../../native/Object/getOwnPropertyNames";
-import { ownKeys$symbol, ownKeys$property, ownKeys } from "../../impl/Reflect/ownKeys";
+import { ownKeys$symbol } from "../../impl/Reflect/ownKeys$symbol";
+import { ownKeys$property } from "../../impl/Reflect/ownKeys$property";
+import { ownKeys } from "../../impl/Reflect/ownKeys";
 
 if(!Reflect.ownKeys) {
 	if(getOwnPropertySymbols) {

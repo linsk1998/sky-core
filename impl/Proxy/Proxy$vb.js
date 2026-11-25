@@ -1,8 +1,8 @@
 import { isFunction } from "../../utils/isFunction";
 import { proxyFunction } from "./Proxy";
 import { proxyArray$es3 } from "./proxyArray$es3";
-import { set } from "../../impl-compat/Reflect/set";
-import { get } from "../../impl-compat/Reflect/get";
+import { set$es3 as set } from "../Reflect/set$es3";
+import { get$es3 as get } from "../Reflect/get$es3";
 import { getPrototypeOf$jscript as getPrototypeOf } from "../object/proto/getPrototypeOf$jscript";
 
 // JScript（IE6~8）实现：对象用 VBScript 访问器截持；数组无访问器方案，走 es3 降级
