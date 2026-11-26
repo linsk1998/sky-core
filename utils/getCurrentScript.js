@@ -1,22 +1,21 @@
 
-import { getCurrentScript as compat_getCurrentScript } from "../utils-compat/getCurrentScript";
-import { getCurrentPathInit, getCurrentScriptByLast, ie_getCurrentScript } from "../impl-modern/document/currentScript";
+import { getCurrentScript as getCurrentScript$compat } from "../utils-compat/getCurrentScript";
+import { getCurrentScript as getCurrentScript$doc } from "../utils-es2015/getCurrentScript";
+import { getCurrentPathInit, getCurrentScriptByLast, getCurrentScript$ie } from "../impl/document/currentScript";
 import { accessor } from "../support/accessor";
 var getCurrentScript;
 if(accessor) {
 	if('currentScript' in document) {
-		getCurrentScript = function() {
-			return document.currentScript;
-		};
+		getCurrentScript = getCurrentScript$doc;
 	} else {
 		if("readyState" in document.scripts[0]) {
-			getCurrentScript = ie_getCurrentScript;
+			getCurrentScript = getCurrentScript$ie;
 		} else {
 			getCurrentPathInit();
 			getCurrentScript = getCurrentScriptByLast;
 		}
 	}
 } else {
-	getCurrentScript = compat_getCurrentScript;
+	getCurrentScript = getCurrentScript$compat;
 }
 export { getCurrentScript };

@@ -1,8 +1,10 @@
+// modern 场景实现（legacy 经回落链共用；compat 走 utils-compat 的 getCurrentScript，es2015 原生无需）
 import { Error } from "../../native/Error";
 
-export function ie_getCurrentScript() {
+export function getCurrentScript$ie() {
 	var nodes = document.scripts;
 	var i = nodes.length;
+	var node;
 	while(i--) {
 		node = nodes[i];
 		if(node.readyState === "interactive") {

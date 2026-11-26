@@ -1,5 +1,5 @@
 import { getCurrentScript } from "./getCurrentScript";
-import { getStackSupport, getCurrentPathByStack } from "../impl-modern/document/currentScript";
+import { getStackSupport, getCurrentPathByStack } from "../impl/document/currentScript";
 
 export var getCurrentPath = ('currentScript' in document || !getStackSupport()) ? function() {
 	var url = new URL(getCurrentScript().src, location);
@@ -9,4 +9,3 @@ export var getCurrentPath = ('currentScript' in document || !getStackSupport()) 
 		url = null;
 	}
 } : getCurrentPathByStack;
-

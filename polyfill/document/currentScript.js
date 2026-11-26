@@ -1,10 +1,10 @@
-import { getCurrentPathInit, getCurrentScriptByLast, ie_getCurrentScript } from "../../impl-modern/document/currentScript";
+import { getCurrentPathInit, getCurrentScriptByLast, getCurrentScript$ie } from "../../impl/document/currentScript";
 import { accessor } from "../../support/accessor";
 
 var getCurrentScript;
 if(accessor && !('currentScript' in document)) {
 	if("readyState" in document.scripts[0]) {
-		getCurrentScript = ie_getCurrentScript;
+		getCurrentScript = getCurrentScript$ie;
 	} else {
 		getCurrentPathInit();
 		getCurrentScript = getCurrentScriptByLast;
