@@ -1,5 +1,4 @@
 const polyfill = require("rollup-plugin-polyfill-inject");
-const inject = require("@rollup/plugin-inject");
 
 module.exports = [
 	polyfill({
@@ -198,7 +197,7 @@ module.exports = [
 				"sky-core/polyfill/Date/prototype/toJSON"
 			],
 			'.at': [
-				/* Chrome41+ Firefox34+ Safari9.1+*/
+				/* Chrome92+ Firefox90+ Safari15.4+*/
 				"sky-core/polyfill/String/prototype/at",
 				/* Chrome92+ Firefox90+ Safari15.4+*/
 				"sky-core/polyfill/Array/prototype/at",
@@ -286,15 +285,9 @@ module.exports = [
 			".isWellFormed": "sky-core/polyfill/String/prototype/isWellFormed",
 			".toWellFormed": "sky-core/polyfill/String/prototype/toWellFormed",
 		},
-		exclude: [
-			"tests/corejs/helpers/*",
-			"native/**/*",
-			"polyfill/**/*",
-			"polyfill-*/**/*"
-		]
-	}),
-	inject({
-		modules: {
+		pure: {
+			// 引用替换为 pure 模块默认导出（原 @rollup/plugin-inject 的 modules 迁入）。
+			// 与 polluting 重复的 key 以 pure 优先，typeof 引用仍走 polluting 的副作用安装
 			"Object.setPrototypeOf": "sky-core/pure/Object/setPrototypeOf",
 
 			"Reflect.construct": "sky-core/pure/Reflect/construct",
@@ -314,9 +307,6 @@ module.exports = [
 			"Proxy": "sky-core/pure/Proxy",
 			"Proxy.revocable": "sky-core/pure/Proxy/revocable",
 
-
-			"setTimeout": "sky-core/pure/setTimeout",
-			"setInterval": "sky-core/pure/setInterval",
 			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
 			"Symbol.asyncIterator": "sky-core/pure/Symbol/asyncIterator",
@@ -326,12 +316,15 @@ module.exports = [
 			"Symbol.keyFor": "sky-core/pure/Symbol/keyFor",
 			"Symbol": "sky-core/pure/Symbol",
 		},
-		include: [
-			"impl/**/*",
-			"impl-*/**/*",
-			"tests/sham/**/*",
-			"tests/corejs/es/*",
-			"tests/corejs/web/*",
+		timer: {
+			"setTimeout": "sky-core/pure/setTimeout",
+			"setInterval": "sky-core/pure/setInterval",
+		},
+		exclude: [
+			"tests/corejs/helpers/*",
+			"native/**/*",
+			"polyfill/**/*",
+			"polyfill-*/**/*"
 		]
 	})
 ];

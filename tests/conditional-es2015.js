@@ -54,7 +54,7 @@ module.exports = [
 				"sky-core/polyfill/Date/prototype/toJSON"
 			],
 			'.at': [
-				/* Chrome41+ Firefox34+ Safari9.1+*/
+				/* Chrome92+ Firefox90+ Safari15.4+*/
 				"sky-core/polyfill/String/prototype/at",
 				/* Chrome92+ Firefox90+ Safari15.4+*/
 				"sky-core/polyfill/Array/prototype/at",
@@ -143,10 +143,8 @@ module.exports = [
 			".isWellFormed": "sky-core/polyfill/String/prototype/isWellFormed",
 			".toWellFormed": "sky-core/polyfill/String/prototype/toWellFormed",
 		},
-		timer: {
-			"setTimeout": "sky-core/pure/setTimeout",
-			"setInterval": "sky-core/pure/setInterval",
-		},
+		// timer 不配置：setTimeout/setInterval 的额外参数传递仅 IE9- 不支持，
+		// 本 tier 浏览器（Chrome63+/Safari10.1+/FF67+/Edge79+）全部原生支持
 		exclude: [
 			"tests/corejs/helpers/*",
 			"native/**/*",

@@ -2453,13 +2453,13 @@
 	});
 
 	if (PROTO) QUnit.test('Object.setPrototypeOf', function (assert) {
-	  assert.isFunction(Object.setPrototypeOf);
-	  assert.arity(Object.setPrototypeOf, 2);
+	  assert.isFunction(setPrototypeOf$jscript);
+	  assert.arity(setPrototypeOf$jscript, 2);
 	  // assert.name(Object.setPrototypeOf, 'setPrototypeOf');
-	  assert.looksNative(Object.setPrototypeOf);
+	  assert.looksNative(setPrototypeOf$jscript);
 	  // assert.nonEnumerable(Object, 'setPrototypeOf');
 	  // assert.ok('apply' in Object.setPrototypeOf({}, Function.prototype), 'Parent properties in target');
-	  assert.strictEqual(Object.setPrototypeOf({
+	  assert.strictEqual(setPrototypeOf$jscript({
 	    a: 2
 	  }, {
 	    b: function () {
@@ -2467,7 +2467,7 @@
 	    }
 	  }).b(), 4, 'Child and parent properties in target');
 	  var object = {};
-	  assert.strictEqual(Object.setPrototypeOf(object, {
+	  assert.strictEqual(setPrototypeOf$jscript(object, {
 	    a: 1
 	  }), object, 'setPrototypeOf return target');
 	  // assert.ok(!('toString' in Object.setPrototypeOf({}, null)), 'Can set null as prototype');

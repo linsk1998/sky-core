@@ -1128,43 +1128,9 @@ return class extends Parent { /* empty */ };
 	  }
 	});
 
-	var slice = Array.prototype.slice;
-
-	var setTimeout$2 = window.setTimeout;
-
-	function setTimeout$1(cb) {
-		var ms = arguments[1];
-		if(arguments.length <= 2) {
-			return setTimeout$2(cb, ms);
-		}
-		var args = slice.call(arguments, 2);
-		var cba = function() {
-			cb.apply(this, args);
-		};
-		return setTimeout$2(cba, ms);
-	}
-
-	var argsSetTimeout = document.documentMode <= 9 ? setTimeout$1 : setTimeout$2;
-
-	var setInterval$1 = window.setInterval;
-
-	function setInterval(cb) {
-		var ms = arguments[1];
-		if(arguments.length <= 2) {
-			return setInterval$1(cb, ms);
-		}
-		var args = slice.call(arguments, 2);
-		var cba = function() {
-			cb.apply(this, args);
-		};
-		return setInterval$1(cba, ms);
-	}
-
-	var argsSetInterval = document.documentMode <= 9 ? setInterval : setInterval$1;
-
 	QUnit.asyncTest('setTimeout works with additional args', assert => {
 	  expect(1);
-	  const timeout = argsSetTimeout(function (a, b) {
+	  const timeout = setTimeout(function (a, b) {
 	    clearTimeout(guard);
 	    assert.strictEqual(a + b, 'ab', 'setTimeout works with additional args');
 	    start();
@@ -1189,7 +1155,7 @@ return class extends Parent { /* empty */ };
 	QUnit.asyncTest('setInterval works with additional args', assert => {
 	  expect(1);
 	  let i = 0;
-	  const interval = argsSetInterval(function (a, b) {
+	  const interval = setInterval(function (a, b) {
 	    if (a + b !== 'ab') {
 	      clearInterval(interval);
 	      assert.ok(false, `setInterval works with additional args: ${a}, ${b}`);
@@ -1719,6 +1685,8 @@ return class extends Parent { /* empty */ };
 	//   assert.same(Object.defineProperties.sham, DESCRIPTORS ? undefined : true);
 	// });
 
+	var slice = Array.prototype.slice;
+
 	function bind(context) {
 		var self = this, args = slice.call(arguments, 1);
 		var Bind = function() {
@@ -1813,7 +1781,7 @@ return class extends Parent { /* empty */ };
 	var queueMicrotask$2 = window.queueMicrotask;
 
 	var ticks = null;
-	var nextTick = argsSetTimeout;
+	var nextTick = setTimeout;
 	function initQueueMicrotask(fn) {
 		nextTick = fn;
 		return queueMicrotask$1;

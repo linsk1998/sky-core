@@ -1,5 +1,4 @@
 const polyfill = require("rollup-plugin-polyfill-inject");
-const inject = require("@rollup/plugin-inject");
 
 module.exports = [
 	polyfill({
@@ -100,7 +99,7 @@ module.exports = [
 			// ".innerText": "sky-core/polyfill/Element/prototype/innerText",
 
 			'.at': [
-				/* Chrome41+ Firefox34+ Safari9.1+*/
+				/* Chrome92+ Firefox90+ Safari15.4+*/
 				"sky-core/polyfill/String/prototype/at",
 				/* Chrome92+ Firefox90+ Safari15.4+*/
 				"sky-core/polyfill/Array/prototype/at",
@@ -318,20 +317,8 @@ module.exports = [
 			"Symbol.for": "sky-core/pure/Symbol/for",
 			"Symbol.keyFor": "sky-core/pure/Symbol/keyFor",
 			"Symbol": "sky-core/pure/Symbol",
-		},
-		timer: {
-			"setTimeout": "sky-core/pure/setTimeout",
-			"setInterval": "sky-core/pure/setInterval",
-		},
-		exclude: [
-			"tests/corejs/helpers/*",
-			"native/**/*",
-			"polyfill/**/*",
-			"polyfill-*/**/*"
-		]
-	}),
-	inject({
-		modules: {
+
+			// 以下自原 @rollup/plugin-inject 的独立调用迁入（引用替换语义同 pure）
 			"Object.setPrototypeOf": "sky-core/pure/Object/setPrototypeOf",
 			"Reflect.construct": "sky-core/pure/Reflect/construct",
 			"Reflect.get": "sky-core/pure/Reflect/get",
@@ -347,10 +334,15 @@ module.exports = [
 			"Reflect.preventExtensions": "sky-core/pure/Reflect/preventExtensions",
 			"Reflect.setPrototypeOf": "sky-core/pure/Reflect/setPrototypeOf",
 		},
-		include: [
-			"impl/**/*",
-			"impl-*/**/*",
-			"tests/sham/**/*"
+		timer: {
+			"setTimeout": "sky-core/pure/setTimeout",
+			"setInterval": "sky-core/pure/setInterval",
+		},
+		exclude: [
+			"tests/corejs/helpers/*",
+			"native/**/*",
+			"polyfill/**/*",
+			"polyfill-*/**/*"
 		]
 	})
 ];

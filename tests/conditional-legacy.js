@@ -1,5 +1,4 @@
 const polyfill = require("rollup-plugin-polyfill-inject");
-const inject = require("@rollup/plugin-inject");
 
 module.exports = [
 	polyfill({
@@ -218,7 +217,7 @@ module.exports = [
 			// Opera 9.64 对 NaN Date toString 返回 'NaN' 而非 'Invalid Date'
 			"Date": "sky-core/polyfill/Date/prototype/toString",
 			'.at': [
-				/* Chrome41+ Firefox34+ Safari9.1+*/
+				/* Chrome92+ Firefox90+ Safari15.4+*/
 				"sky-core/polyfill/String/prototype/at",
 				/* Chrome92+ Firefox90+ Safari15.4+*/
 				"sky-core/polyfill/Array/prototype/at",
@@ -306,15 +305,9 @@ module.exports = [
 			".isWellFormed": "sky-core/polyfill/String/prototype/isWellFormed",
 			".toWellFormed": "sky-core/polyfill/String/prototype/toWellFormed",
 		},
-		exclude: [
-			"tests/corejs/helpers/*",
-			"native/**/*",
-			"polyfill/**/*",
-			"polyfill-*/**/*"
-		]
-	}),
-	inject({
-		modules: {
+		pure: {
+			// 引用替换为 pure 模块默认导出（原 @rollup/plugin-inject 的 modules 迁入）。
+			// 与 polluting 重复的 key 以 pure 优先，typeof 引用仍走 polluting 的副作用安装
 			"Object.setPrototypeOf": "sky-core/pure/Object/setPrototypeOf",
 
 			"Reflect.construct": "sky-core/pure/Reflect/construct",
@@ -334,9 +327,6 @@ module.exports = [
 			"Proxy": "sky-core/pure/Proxy",
 			"Proxy.revocable": "sky-core/pure/Proxy/revocable",
 
-
-			"setTimeout": "sky-core/pure/setTimeout",
-			"setInterval": "sky-core/pure/setInterval",
 			"Object.create": "sky-core/pure/Object/create",
 			"Object.defineProperty": "sky-core/pure/Object/defineProperty",
 			"Object.defineProperties": "sky-core/pure/Object/defineProperties",
@@ -347,12 +337,13 @@ module.exports = [
 			"Symbol.keyFor": "sky-core/pure/Symbol/keyFor",
 			"Symbol": "sky-core/pure/Symbol",
 		},
-		include: [
-			"impl/**/*",
-			"impl-*/**/*",
-			"tests/sham/**/*",
-			"tests/corejs/es/*",
-			"tests/corejs/web/*",
+		// timer 不配置：setTimeout/setInterval 的额外参数传递仅 IE9- 不支持，
+		// 本 tier 全为非 IE（实测 Opera 9.64~12.18、Safari 3~5.1、Chrome 5、Firefox 3.6 均原生支持）
+		exclude: [
+			"tests/corejs/helpers/*",
+			"native/**/*",
+			"polyfill/**/*",
+			"polyfill-*/**/*"
 		]
 	})
 ];
