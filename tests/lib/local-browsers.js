@@ -54,11 +54,16 @@ var BROWSER_FAMILIES = {
 	ie: {
 		label: "IE",
 		names: ["ie"],
-		// IE6/7 用独立 exe 启动，IE8~11 用 Edge IE 模式（mshta + EmulateIE 插件按 ?ie=X 注入 meta）
+		// IE6~10 用独立 exe；IE11 用内置 IE preset（iexplore）；
+		// IE5 用 IE-Embedding preset（mshta）
 		versions: [
 			{ version: "6", command: "D:/App/Browser/IE/Azure/VirtIE6 by Azure.no_plugins.exe" },
-			{ version: "7", command: "D:/App/Browser/IE/wyman/Internet Explorer 7.exe" },
-			"5", "8", "9", "10", "11"
+			{ version: "7", command: "D:/App/Browser/IE/ThinApp/IE7.exe" },
+			{ version: "8", command: "D:/App/Browser/IE/ThinApp/IE8.exe" },
+			{ version: "9", command: "D:/App/Browser/IE/ThinApp/IE9(64-bit).exe" },
+			{ version: "10", command: "D:/App/Browser/IE/ThinApp/IE10(32-bit).exe" },
+			{ version: "11", preset: "IE" },
+			{ version: "5", preset: "IE-Embedding" }
 		],
 		emulateIE: true
 	}

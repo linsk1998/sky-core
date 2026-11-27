@@ -157,13 +157,15 @@ async function collectTasks(runner, options) {
 		var conf = browsersLib.BROWSER_FAMILIES[family];
 		var found;
 		if(conf.versions) {
-			// 固定版本列表的家族（如 IE）：字符串走 Edge IE 模式，
-			// 对象（{version, command}）用独立 exe 启动
+			// 固定版本列表的家族（如 IE）：
+			// {version, command} → 独立 exe 启动
+			// {version, preset} → 走指定 preset（如 IE-Embedding 走 mshta）
 			found = conf.versions.map(function(v) {
-				if(typeof v === "object" && v.command) {
+				if(typeof v === "object") {
 					return {
 						version: v.version,
 						command: v.command,
+						preset: v.preset,
 						conf: conf,
 						family: family
 					};
@@ -209,7 +211,7 @@ async function collectTasks(runner, options) {
 		return parseFloat(a.version) - parseFloat(b.version);
 	});
 	return tasks.map(function(item) {
-		// 有 command 的版本（IE6/7 独立 exe）不需要 ?ie=X 参数（不走 Edge IE 模式）
+		// 有 command 的版本（独立 exe）不需要 ?ie=X 参数（不走 Edge IE 模式）
 		var isEmulated = item.conf.emulateIE && !item.command;
 		var task = {
 			flags: item.conf.flags ? item.conf.flags(item.command) : [],
@@ -220,12 +222,13 @@ async function collectTasks(runner, options) {
 			version: item.version,
 			timeout: options.timeout
 		};
-		// 有 command 的（扫描到的 exe 或 IE6/7 独立 exe）直接用
 		if(item.command) {
 			task.command = item.command;
 		}
-		if(item.conf.preset) {
-			task.preset = item.conf.preset;
+		// 版本级 preset 优先，家族级 preset 兜底
+		var preset = item.preset || item.conf.preset;
+		if(preset) {
+			task.preset = preset;
 		}
 		return task;
 	});
